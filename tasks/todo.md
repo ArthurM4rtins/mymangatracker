@@ -156,6 +156,9 @@ pela sessão normalmente. O banco continua sendo criado pelo dashboard.
 
 ## Sessao 27/08 — continuacao (boilerplate)
 
+Repo: https://github.com/ArthurM4rtins/mymangatracker (publico, default `main`).
+Issue do boilerplate: #1. PR aberto: #2 (`feature/boilerplate` -> `main`).
+
 Rede voltou: `npm ping` deu `PONG 321ms` sem `NODE_OPTIONS`. Passos 1, 2 e 4 do plano feitos.
 
 Desvios do que estava escrito aqui, e o porque:
@@ -191,7 +194,7 @@ Pendente de decisao antes de seguir: estrategia de commit (o `CLAUDE.md` proibe 
 - [ ] teste da derivação de template passa
 - [ ] teste de privacidade do progresso passa
 - [x] `pnpm build` verde **sem** `DATABASE_URL`
-- [ ] repo público no GitHub
+- [x] repo público no GitHub
 - [ ] deploy na Vercel respondendo
 - [ ] Neon conectado, migration aplicada, `/api/v1/health` reportando banco OK
 - [ ] links do repo e do ar atualizados no artifact (painel do cabeçalho e checklist do painel 09)
