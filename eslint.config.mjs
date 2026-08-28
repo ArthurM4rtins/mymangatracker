@@ -20,21 +20,21 @@ const eslintConfig = defineConfig([
     files: ["src/**/*.{ts,tsx}"],
     plugins: { boundaries },
     settings: {
-      "boundaries/include": ["src/**/*"],
+      "boundaries/include": ["src/**"],
       // A ordem importa: o primeiro padrao que casar define o tipo do arquivo.
       // Por isso `controller` (src/app/api) vem antes de `ui` (o resto de src/app).
       "boundaries/elements": [
-        { type: "prisma", partialMatch: false, pattern: "src/generated/**/*" },
-        { type: "controller", partialMatch: false, pattern: "src/app/api/**/*" },
-        { type: "ui", partialMatch: false, pattern: "src/app/**/*" },
-        { type: "domain", partialMatch: false, pattern: "src/server/domain/**/*" },
+        { type: "prisma", partialMatch: false, pattern: "src/generated/**" },
+        { type: "controller", partialMatch: false, pattern: "src/app/api/**" },
+        { type: "ui", partialMatch: false, pattern: "src/app/**" },
+        { type: "domain", partialMatch: false, pattern: "src/server/domain/**" },
         {
           type: "repository",
           partialMatch: false,
-          pattern: "src/server/repositories/**/*",
+          pattern: "src/server/repositories/**",
         },
-        { type: "service", partialMatch: false, pattern: "src/server/services/**/*" },
-        { type: "infra", partialMatch: false, pattern: "src/server/infra/**/*" },
+        { type: "service", partialMatch: false, pattern: "src/server/services/**" },
+        { type: "infra", partialMatch: false, pattern: "src/server/infra/**" },
       ],
     },
     rules: {
