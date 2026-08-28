@@ -70,9 +70,13 @@ export function derivarCandidatos(urlDoCapitulo1: string): CandidatoTemplate[]
     return b.peso - a.peso || a.segmentIndex - b.segmentIndex;
   });
 
-  return candidatos.map(function ({ peso: _peso, ...candidato })
+  return candidatos.map(function (candidato)
   {
-    return candidato;
+    return {
+      sourceHost: candidato.sourceHost,
+      urlTemplate: candidato.urlTemplate,
+      segmentIndex: candidato.segmentIndex,
+    };
   });
 }
 
