@@ -1,69 +1,105 @@
-import Image from "next/image";
+import Link from "next/link";
+import { verificarSaudeDoSistema } from "@/server/services/sistema.service";
+import type { Dependencia, EstadoGeral } from "@/server/domain/health-status";
 
-export default function Home() {
+// Mede o agora: nunca pré-renderizada, nunca servida de cache.
+export const dynamic = "force-dynamic";
+
+const RESUMO: Record<EstadoGeral, string> = {
+  ok: "Tudo no ar.",
+  degraded: "No ar, com configuração pendente.",
+  down: "Alguma dependência está fora.",
+};
+
+const ROTULO_DEPENDENCIA: Record<string, string> = {
+  database: "Banco de dados",
+  anilist: "Catálogo AniList",
+};
+
+const ESTADO_DEPENDENCIA: Record<Dependencia["status"], string> = {
+  ok: "respondendo",
+  down: "fora do ar",
+  not_configured: "não configurado",
+};
+
+const COR: Record<Dependencia["status"], string> = {
+  ok: "bg-emerald-500",
+  down: "bg-red-500",
+  not_configured: "bg-amber-500",
+};
+
+export default async function Home()
+{
+  const saude = await verificarSaudeDoSistema();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-10 px-6 py-16">
+      <header className="flex flex-col gap-3">
+        <h1 className="text-3xl font-semibold tracking-tight">MyMangaTracker</h1>
+        <p className="text-neutral-600 dark:text-neutral-400">
+          Um Letterboxd para mangá, manhwa e novel, com progresso de leitura
+          automático e privado.
+        </p>
+      </header>
+
+      <section
+        aria-labelledby="titulo-status"
+        className="flex flex-col gap-4 rounded-lg border border-neutral-200 p-6 dark:border-neutral-800"
+      >
+        <div className="flex flex-col gap-1">
+          <h2 id="titulo-status" className="text-sm font-medium uppercase tracking-wide text-neutral-500">
+            Status do sistema
+          </h2>
+          <p className="text-lg">{RESUMO[saude.status]}</p>
+        </div>
+
+        <ul className="flex flex-col gap-2">
+          {saude.dependencies.map(function (dependencia)
+          {
+            return (
+              <li key={dependencia.name} className="flex items-center gap-3 text-sm">
+                <span
+                  aria-hidden
+                  className={`size-2 shrink-0 rounded-full ${COR[dependencia.status]}`}
+                />
+                <span className="flex-1">
+                  {ROTULO_DEPENDENCIA[dependencia.name] ?? dependencia.name}
+                </span>
+                <span className="text-neutral-600 dark:text-neutral-400">
+                  {ESTADO_DEPENDENCIA[dependencia.status]}
+                  {dependencia.latencyMs !== undefined && ` · ${dependencia.latencyMs} ms`}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+
+        {saude.status === "degraded" && (
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            As telas que dependem do banco ficam indisponíveis até a configuração
+            ser concluída. O catálogo continua funcionando.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        )}
+
+        <p className="text-xs text-neutral-500">
+          Verificado em {saude.checkedAt} ·{" "}
+          <Link href="/api/v1/health" className="underline underline-offset-4">
+            /api/v1/health
+          </Link>
+        </p>
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-500">
+          Começar
+        </h2>
+        <Link
+          href="/catalogo"
+          className="w-fit rounded-md border border-neutral-900 px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-900 hover:text-white dark:border-neutral-100 dark:hover:bg-neutral-100 dark:hover:text-neutral-900"
+        >
+          Buscar no catálogo
+        </Link>
+      </section>
+    </main>
   );
 }
