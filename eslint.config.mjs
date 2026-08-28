@@ -58,8 +58,13 @@ const eslintConfig = defineConfig([
               allow: { to: { module: { origin: "external" } } },
             },
             {
+              // A tela chama serviço direto. Server component que fizesse fetch no
+              // próprio /api/v1 custaria uma segunda invocação de função por render.
+              // O que continua barrado é o que importa: repositório, infra e Prisma.
               from: { element: { type: "ui" } },
-              allow: { to: { element: { types: { anyOf: ["ui", "domain"] } } } },
+              allow: {
+                to: { element: { types: { anyOf: ["ui", "service", "domain"] } } },
+              },
             },
             {
               from: { element: { type: "controller" } },
