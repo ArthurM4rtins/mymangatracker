@@ -1,7 +1,8 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// Modelo do painel 06 da apresentação. Só as entidades da Fase 1 — o resto
+// (Entry, List, ListItem, Follow, MediaRequest) entra por migration aditiva
+// quando tiver tela que use.
+//
+// A URL do banco não fica aqui: vem de `prisma7.config.ts`, que lê DATABASE_URL.
 
 generator client {
   provider = "prisma-client"
@@ -10,4 +11,130 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// Formato da obra. Manhwa e manhua não entram aqui — a distinção é
+// `countryOfOrigin`, como no AniList. Deixar o formato separado é o que permite
+// `ANIME` e `LIVE_ACTION` depois por ALTER TYPE, que é aditivo.
+enum MediaType {
+  MANGA
+  NOVEL
+}
+
+enum CountryOfOrigin {
+  JP
+  KR
+  CN
+}
+
+enum ShelfStatus {
+  READING
+  COMPLETED
+  PLANNED
+  PAUSED
+  DROPPED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  shelfEntries    ShelfEntry[]
+  readingSources  ReadingSource[]
+  readingProgress ReadingProgress[]
+}
+
+// Cache do AniList. Se sumir, é reconstruído da API — nenhum dado do usuário
+// se perde junto, e é por isso que as FKs que apontam para cá são Restrict.
+model Media {
+  id              String           @id @default(cuid())
+  anilistId       Int              @unique
+  type            MediaType
+  countryOfOrigin CountryOfOrigin?
+  titleRomaji     String
+  titleEnglish    String?
+  titleNative     String?
+  coverImageUrl   String?
+  description     String?
+  chapters        Int?
+  syncedAt        DateTime
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  shelfEntries    ShelfEntry[]
+  readingSources  ReadingSource[]
+  readingProgress ReadingProgress[]
+}
+
+// O resumo da linha do tempo: uma linha por obra por usuário.
+model ShelfEntry {
+  id              String      @id @default(cuid())
+  userId          String
+  mediaId         String
+  status          ShelfStatus
+  progressChapter Decimal?    @db.Decimal(8, 2)
+  startedAt       DateTime?
+  finishedAt      DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, mediaId])
+  @@index([userId, status])
+}
+
+// PRIVADO DO DONO. O que o usuário escreve: onde ele lê.
+// Toda consulta carrega userId — invariante do sistema, não preferência.
+model ReadingSource {
+  id          String    @id @default(cuid())
+  userId      String
+  mediaId     String
+  sourceHost  String
+  urlTemplate String
+  isActive    Boolean   @default(true)
+  confirmedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  readingProgress ReadingProgress[]
+
+  // O índice único PARCIAL — muitas fontes por obra, só uma ativa — o Prisma não
+  // gera. Está escrito à mão na migration.
+  @@index([userId, mediaId])
+}
+
+// PRIVADO DO DONO. O que o sistema grava: qual capítulo, quando, por qual fonte.
+// O progresso pertence à obra, não ao site: por isso readingSourceId é anulável
+// com SetNull — trocar ou apagar a fonte não apaga o histórico.
+model ReadingProgress {
+  id              String   @id @default(cuid())
+  userId          String
+  mediaId         String
+  readingSourceId String?
+  chapter         Decimal  @db.Decimal(8, 2)
+  resolvedUrl     String
+  openedAt        DateTime @default(now())
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  media         Media          @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+  readingSource ReadingSource? @relation(fields: [readingSourceId], references: [id], onDelete: SetNull)
+
+  // "Qual foi o último capítulo aberto" é a consulta mais frequente do app.
+  // O índice nasce na direção dela.
+  @@index([userId, mediaId, openedAt(sort: Desc)])
 }
