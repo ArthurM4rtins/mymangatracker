@@ -195,9 +195,9 @@ Pendente de decisao antes de seguir: estrategia de commit (o `CLAUDE.md` proibe 
 - [x] teste de privacidade do progresso passa
 - [x] `pnpm build` verde **sem** `DATABASE_URL`
 - [x] repo público no GitHub
-- [ ] deploy na Vercel respondendo
-- [ ] Neon conectado, migration aplicada, `/api/v1/health` reportando banco OK
-- [ ] links do repo e do ar atualizados no artifact (painel do cabeçalho e checklist do painel 09)
+- [x] deploy na Vercel respondendo
+- [x] Neon conectado, migration aplicada, `/api/v1/health` reportando banco OK
+- [x] links do repo e do ar atualizados no artifact (painel do cabeçalho e checklist do painel 09)
 
 ## Decisões já fechadas — não reabrir
 
