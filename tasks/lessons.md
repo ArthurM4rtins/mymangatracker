@@ -71,3 +71,31 @@ os symlinks pendurados.
 
 **Regra:** depois de `prisma init`, conferir `git status` antes de commitar. Symlink em repo Git
 no Windows quebra o clone de quem nao tem developer mode ligado — doc de vendor nao entra no repo.
+
+---
+
+## Mexer no boundaries sem reprovar — `partialMatch` nao e `mode: "full"`
+
+**27/08/2026.** As regras de camada foram provadas quebrando com `mode: "full"` nos elementos.
+Depois, para calar um aviso de deprecacao, `mode: "full"` virou `partialMatch: false` — e a troca
+foi commitada sem refazer a prova.
+
+Nao sao equivalentes no casamento de padrao. Com `partialMatch: false`, `X/**/*` deixou de casar
+quando `**` precisa cobrir zero segmentos:
+
+| Arquivo | Padrao | `mode: "full"` | `partialMatch: false` |
+|---|---|---|---|
+| `src/app/(ui)/page.tsx` | `src/app/**/*` | casa | casa (`**` = `(ui)`) |
+| `src/server/domain/rating.ts` | `src/server/domain/**/*` | casa | **nao casa** |
+
+Resultado: todo arquivo direto em `src/server/{domain,services,repositories,infra}` virava
+"unknown element" e passava por cima das regras de fronteira sem erro nenhum. O lint continuava
+verde — a falha era silenciosa, que e o pior tipo.
+
+**Regra:** a exigencia do `CLAUDE.md` de comprovar o boundaries quebrando vale para **qualquer**
+alteracao na config, inclusive troca de sintaxe que "deveria ser equivalente". A prova nao e o
+lint dar verde; e o import proibido dar vermelho. Cobrir os dois lados: um caminho permitido que
+passa e um proibido que quebra, por regra.
+
+Usar `X/**` nos padroes de elemento. `X/**/*` so funciona quando sempre existe um segmento
+intermediario.
