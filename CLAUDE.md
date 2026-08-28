@@ -49,7 +49,7 @@ pnpm prisma studio            # inspecionar dados
 Apresentação   → src/app/(ui)          telas, componentes, design system
 Controllers    → src/app/api/v1        valida com Zod, resolve sessão, delega
 Serviços       → src/server/services   casos de uso, transações
-Repositórios   → src/server/repositories   ÚNICO ponto que importa @prisma/client
+Repositórios   → src/server/repositories   ÚNICO ponto que importa o Prisma Client
 Infra          → src/server/infra      anilist, auth, config
 Domínio        → src/server/domain     regras puras, ZERO imports do projeto
 ```
@@ -64,7 +64,9 @@ propósito, rodar `pnpm lint`, ver falhar, desfazer.
 
 - Controller nunca contém regra de negócio.
 - Serviço nunca toca em `Request`, `cookies()` ou `headers()` — quem resolve sessão é o controller.
-- Só `repositories/` importa `@prisma/client`.
+- Só `repositories/` importa o Prisma Client. O generator do Prisma 7 é o `prisma-client`,
+  com saída em `src/generated/prisma`, então o import real é `@/generated/prisma`. O lint
+  bloqueia esse e também `@prisma/client` em qualquer camada que não seja `repositories/`.
 - `domain/` não importa nada do projeto.
 - Resposta de API é DTO do contrato, nunca entidade do Prisma — coluna nova não vaza sem alguém decidir.
 - **`ReadingSource` e `ReadingProgress` são privados do dono.** Toda consulta carrega `userId`.
