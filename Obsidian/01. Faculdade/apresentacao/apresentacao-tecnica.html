@@ -1,0 +1,763 @@
+<title>MyMangaTracker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Familjen+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#F1F0F4; --panel:#FCFBFD; --panel-2:#E9E7F0;
+  --ink:#17151E; --ink-2:#57516A; --ink-3:#847D97;
+  --rule:#D2CEDC; --edge:#17151E;
+  --accent:#C31A5F; --accent-soft:rgba(195,26,95,.09);
+  --good:#1C6B58; --good-soft:rgba(28,107,88,.10);
+  --dot:rgba(23,21,30,.11);
+  --code:#EBE8F1;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100E15; --panel:#191722; --panel-2:#221F2D;
+    --ink:#ECE9F3; --ink-2:#A09AB2; --ink-3:#7A7391;
+    --rule:#302C3E; --edge:#4A4459;
+    --accent:#FF6098; --accent-soft:rgba(255,96,152,.13);
+    --good:#4FBFA3; --good-soft:rgba(79,191,163,.13);
+    --dot:rgba(236,233,243,.09);
+    --code:#221F2D;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100E15; --panel:#191722; --panel-2:#221F2D;
+  --ink:#ECE9F3; --ink-2:#A09AB2; --ink-3:#7A7391;
+  --rule:#302C3E; --edge:#4A4459;
+  --accent:#FF6098; --accent-soft:rgba(255,96,152,.13);
+  --good:#4FBFA3; --good-soft:rgba(79,191,163,.13);
+  --dot:rgba(236,233,243,.09);
+  --code:#221F2D;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Familjen Grotesk","Segoe UI",system-ui,sans-serif;
+  font-size:16px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.page{max-width:1080px;margin:0 auto;padding:22px 18px 72px;display:grid;gap:18px}
+
+.panel{background:var(--panel);border:1.5px solid var(--edge);padding:26px 28px 30px}
+.panel--hero{padding:0;background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:6px 6px}
+
+.head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.num{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:11px;font-weight:700;
+     border:1.5px solid var(--edge);padding:2px 8px;line-height:1.5}
+.tag{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:10.5px;font-weight:700;
+     letter-spacing:.17em;text-transform:uppercase;color:var(--ink-2)}
+.head::after{content:"";flex:1;height:1.5px;background:var(--edge)}
+
+h2{font-family:"Archivo","Arial Narrow",Helvetica,sans-serif;font-stretch:74%;font-weight:800;
+   text-transform:uppercase;font-size:clamp(27px,3.6vw,40px);line-height:.96;letter-spacing:.005em;
+   margin:0 0 14px;text-wrap:balance}
+h3{font-size:16px;font-weight:700;margin:26px 0 8px;letter-spacing:.005em}
+h3:first-child{margin-top:0}
+p{margin:0 0 12px;max-width:70ch}
+.lede{font-size:18px;color:var(--ink-2);max-width:64ch}
+strong{font-weight:700}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.mono{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace}
+code{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:.87em;
+     background:var(--code);padding:1px 5px;border:1px solid var(--rule)}
+pre{background:var(--code);border:1px solid var(--rule);padding:14px 16px;margin:14px 0 0;
+    overflow-x:auto;font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+    font-size:12.5px;line-height:1.6}
+pre code{background:none;border:0;padding:0;font-size:inherit}
+.c-key{color:var(--accent)}
+.c-dim{color:var(--ink-3)}
+
+.mast{padding:34px 28px 0}
+.wordmark{font-family:"Archivo","Arial Narrow",Helvetica,sans-serif;font-stretch:66%;font-weight:900;
+  text-transform:uppercase;line-height:.8;letter-spacing:.008em;margin:0;
+  font-size:clamp(54px,13.5vw,132px)}
+.wordmark span{display:block}
+.wordmark .hollow{color:transparent;-webkit-text-stroke:2px var(--ink);paint-order:stroke}
+.pitch{margin:20px 0 0;font-size:clamp(17px,2.1vw,21px);line-height:1.4;max-width:32ch;
+  font-weight:500;color:var(--ink)}
+.meta{display:grid;grid-template-columns:repeat(4,1fr);border-top:1.5px solid var(--edge);margin-top:30px}
+.meta div{padding:14px 18px;border-right:1px solid var(--rule)}
+.meta div:last-child{border-right:0}
+.meta dt{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:9.5px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin:0 0 5px}
+.meta dd{margin:0;font-size:14px;font-weight:600;line-height:1.4}
+.meta .sub{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:11.5px;
+  font-weight:400;color:var(--ink-2)}
+
+.chip{display:inline-block;font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  border:1px solid var(--accent);color:var(--accent);background:var(--accent-soft);padding:2px 7px}
+.chip--ok{border-color:var(--good);color:var(--good);background:var(--good-soft)}
+
+.scroll{overflow-x:auto;margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:520px}
+th{text-align:left;font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+   font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-2);
+   border-bottom:1.5px solid var(--edge);padding:0 14px 9px 0;white-space:nowrap}
+td{padding:12px 14px 12px 0;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:0}
+td.mono{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:12.5px}
+
+figure{margin:20px 0 0}
+.figwrap{overflow-x:auto}
+figure svg{display:block;width:100%;height:auto;min-width:600px}
+figcaption{font-size:13.5px;color:var(--ink-2);margin-top:12px;max-width:78ch;line-height:1.55}
+
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 18px;margin:18px 0 0}
+.note p{margin:0;max-width:68ch}
+.note p+p{margin-top:9px}
+
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;margin-top:4px}
+.cols h3{margin-top:0}
+.cols p{font-size:14.5px;color:var(--ink-2);margin:0}
+
+ul{margin:10px 0 0;padding-left:0;list-style:none;max-width:74ch}
+ul li{position:relative;padding-left:20px;margin-bottom:8px;line-height:1.55}
+ul li::before{content:"";position:absolute;left:2px;top:.62em;width:7px;height:1.5px;background:var(--accent)}
+ol{margin:10px 0 0;padding-left:22px;max-width:74ch}
+ol li{margin-bottom:8px;line-height:1.55;padding-left:4px}
+
+.phase{display:grid;grid-template-columns:76px 1fr;gap:0 18px;border-top:1px solid var(--rule);padding:14px 0}
+.phase:first-of-type{border-top:1.5px solid var(--edge)}
+.phase b{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:11px;font-weight:700;
+  letter-spacing:.08em;color:var(--ink-3);padding-top:4px}
+.phase h3{margin:0;font-size:15.5px}
+.phase p{margin:4px 0 0;font-size:14.5px;color:var(--ink-2);max-width:66ch}
+
+.foot{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:11px;
+  letter-spacing:.06em;color:var(--ink-3);text-align:center;padding-top:2px}
+
+@media (max-width:720px){
+  .meta{grid-template-columns:repeat(2,1fr)}
+  .meta div:nth-child(2){border-right:0}
+  .meta div:nth-child(-n+2){border-bottom:1px solid var(--rule)}
+  .panel{padding:22px 20px 26px}
+  .mast{padding:26px 20px 0}
+  .phase{grid-template-columns:1fr;gap:2px}
+}
+</style>
+
+<div class="page">
+
+<header class="panel panel--hero">
+  <div class="mast">
+    <h1 class="wordmark"><span>MyManga</span><span class="hollow">Tracker</span></h1>
+    <p class="pitch">Um Letterboxd para mangá, manhwa e novel &mdash; que lembra sozinho em que capítulo você parou.</p>
+  </div>
+  <dl class="meta">
+    <div><dt>Disciplina</dt><dd>Projeto full-stack<br><span class="sub">front + back + ORM + banco</span></dd></div>
+    <div><dt>Integrantes</dt><dd>Arthur Juchem Martins<br>Nicholas Gabriel Deotti Schlindwein</dd></div>
+    <div><dt>Repositório</dt><dd><a href="https://github.com/ArthurM4rtins/mymangatracker"><span class="sub">github.com/ArthurM4rtins/<br>mymangatracker</span></a><br><span class="chip chip--ok">público</span></dd></div>
+    <div><dt>No ar</dt><dd><a href="https://mymangatracker.vercel.app"><span class="sub">mymangatracker<br>.vercel.app</span></a><br><span class="chip chip--ok">no ar</span></dd></div>
+  </dl>
+</header>
+
+<section class="panel">
+  <div class="head"><span class="num">01</span><span class="tag">A ideia</span></div>
+  <h2>Registrar o que se leu &mdash; e voltar de onde parou</h2>
+  <p class="lede">O Letterboxd resolveu isso para filme: você loga o que viu, dá nota, escreve resenha, monta listas, segue gente. Mídia serializada não tem esse lugar. E tem um problema que filme não tem &mdash; a obra continua saindo, em capítulos, espalhada por sites diferentes.</p>
+
+  <div class="cols" style="margin-top:26px">
+    <div>
+      <h3>O catálogo não é nosso</h3>
+      <p>Toda obra vem da API do <strong>AniList</strong>: capa, sinopse, gêneros, total de capítulos e país de origem &mdash; que é o campo que separa mangá de manhwa e manhua. Guardamos só um cache indexado por <code>anilistId</code>.</p>
+    </div>
+    <div>
+      <h3>O registro é nosso</h3>
+      <p>Log de leitura com data, nota de 0,5 a 5, resenha e marca de releitura. Estante com status e progresso. Listas ordenadas. Seguir usuário, curtir resenha. E a resenha diz <strong>até que capítulo ela fala</strong> &mdash; quem ainda não chegou lá não a vê.</p>
+    </div>
+    <div>
+      <h3>O capítulo se grava sozinho</h3>
+      <p>O usuário informa <strong>uma coisa só, uma vez</strong>: onde ele vai ler, colando o link do primeiro capítulo. Dali em diante o progresso avança sem ele digitar nada. Só volta a mexer se trocar de site. Como isso funciona está no painel 02.</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <p><strong>Por que esse dado é privado por projeto, e não por configuração.</strong> Um diretório público de onde cada obra é lida vira alvo. Então a visibilidade não é uma caixinha que o usuário desmarca &mdash; é invariante do sistema: <code>ReadingSource</code> e <code>ReadingProgress</code> só são consultadas com o <code>userId</code> da sessão, nunca entram em contagem pública, e existe um teste que falha se alguém escrever uma consulta sem esse filtro.</p>
+  </div>
+
+  <h3>Obra que falta no catálogo</h3>
+  <p>Se a obra não existe no AniList, o usuário abre uma solicitação (<code>MediaRequest</code>) em vez de cadastrar texto solto. Um admin resolve: aprova apontando para o registro certo, ou rejeita com motivo. Mantém o catálogo limpo e é o que justifica os dois papéis do login.</p>
+</section>
+
+<section class="panel">
+  <div class="head"><span class="num">02</span><span class="tag">O mecanismo</span></div>
+  <h2>Ele diz onde lê. O resto o sistema deduz</h2>
+  <p class="lede">Pedir o número do capítulo toda vez é o tipo de trabalho que faz o usuário abandonar o app na terceira semana. Então ele digita uma vez só, no cadastro da fonte &mdash; e o sistema aprende a montar o link dos capítulos seguintes sozinho.</p>
+
+  <figure>
+    <div class="figwrap">
+    <svg viewBox="0 0 980 330" role="img" aria-label="Duas faixas. Em cima, o que acontece uma vez no cadastro: o usuário cola o link do primeiro capítulo, o aplicativo deriva um template de URL trocando o número do capítulo por uma variável, e pede confirmação mostrando o link previsto do capítulo dois. Embaixo, o que acontece a cada leitura: o usuário clica em continuar, o aplicativo gera a URL do próximo capítulo pelo template, grava o progresso junto com a estante na mesma transação e abre o site.">
+      <defs>
+        <marker id="d0a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+      <g color="var(--ink)">
+
+      <text x="14" y="26" font-size="10" font-weight="700" letter-spacing="1.4" font-family="JetBrains Mono, monospace" fill="var(--ink-3)">UMA VEZ — AO CADASTRAR A FONTE</text>
+
+      <rect x="14" y="40" width="280" height="88" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="28" y="66" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Cola o link do capítulo 1</text>
+      <text x="28" y="90" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">demonicscans.org/title/Lookism</text>
+      <text x="28" y="106" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">/chapter/1/1</text>
+
+      <rect x="354" y="40" width="280" height="88" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="368" y="66" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Deriva o template</text>
+      <text x="368" y="90" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">.../chapter/</text>
+      <text x="437" y="90" font-size="9.5" font-weight="700" font-family="JetBrains Mono, monospace" fill="#C31A5F">{cap}</text>
+      <text x="472" y="90" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">/1</text>
+      <text x="368" y="108" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-3)">o segmento que muda vira variável</text>
+
+      <rect x="694" y="40" width="272" height="88" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="708" y="66" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Confirma o palpite</text>
+      <text x="708" y="90" font-size="10.5" font-family="Familjen Grotesk, sans-serif" fill="var(--ink-2)">&#8220;O capítulo 2 é este link?&#8221;</text>
+      <text x="708" y="108" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-3)">.../chapter/2/1</text>
+
+      <line x1="294" y1="84" x2="351" y2="84" stroke="currentColor" stroke-width="1.5" marker-end="url(#d0a)"/>
+      <line x1="634" y1="84" x2="691" y2="84" stroke="currentColor" stroke-width="1.5" marker-end="url(#d0a)"/>
+      <text x="322" y="76" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">deriva</text>
+      <text x="662" y="76" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">propõe</text>
+
+      <line x1="14" y1="162" x2="966" y2="162" stroke="currentColor" stroke-width="1" stroke-dasharray="5 5" opacity=".45"/>
+
+      <text x="14" y="190" font-size="10" font-weight="700" letter-spacing="1.4" font-family="JetBrains Mono, monospace" fill="#C31A5F">TODA VEZ — SEM O USUÁRIO DIGITAR NADA</text>
+
+      <rect x="14" y="204" width="190" height="92" fill="var(--accent-soft)" stroke="#C31A5F" stroke-width="1.5"/>
+      <text x="28" y="232" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Continuar</text>
+      <text x="28" y="255" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">o usuário só clica</text>
+      <text x="28" y="273" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">um botão</text>
+
+      <rect x="264" y="204" width="210" height="92" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="278" y="232" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Monta a URL</text>
+      <text x="278" y="255" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">template + progresso atual</text>
+      <text x="278" y="273" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">.../chapter/58/1</text>
+
+      <rect x="534" y="204" width="230" height="92" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="548" y="232" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Grava sozinho</text>
+      <text x="548" y="255" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">ReadingProgress + estante</text>
+      <text x="548" y="273" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">na mesma transação</text>
+
+      <rect x="824" y="204" width="142" height="92" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <text x="838" y="232" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Abre o site</text>
+      <text x="838" y="255" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">em nova aba</text>
+
+      <line x1="204" y1="250" x2="261" y2="250" stroke="currentColor" stroke-width="1.5" marker-end="url(#d0a)"/>
+      <line x1="474" y1="250" x2="531" y2="250" stroke="currentColor" stroke-width="1.5" marker-end="url(#d0a)"/>
+      <line x1="764" y1="250" x2="821" y2="250" stroke="currentColor" stroke-width="1.5" marker-end="url(#d0a)"/>
+      <text x="232" y="242" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">clica</text>
+      <text x="502" y="242" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">cap + 1</text>
+      <text x="794" y="242" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">abre</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>O que o usuário informa está inteiro na faixa de cima, e acontece uma vez por obra. A faixa de baixo é o que se repete a cada capítulo &mdash; e nela ele só clica.</figcaption>
+  </figure>
+
+  <h3>Como o template é derivado</h3>
+  <p>O link do primeiro capítulo é quebrado em segmentos. Onde aparece o valor <code>1</code>, existe um candidato a ser o número do capítulo. Em <code>/title/Lookism/chapter/1/1</code> há dois candidatos &mdash; o do capítulo e o da página. Em vez de chutar em silêncio, o sistema ordena os candidatos (o que vem logo depois de um segmento como <code>chapter</code>, <code>cap</code> ou <code>ch</code> ganha peso) e <strong>mostra o resultado</strong>: &#8220;o capítulo 2 seria este link&#8221;. Um clique confirma. Se estiver errado, o usuário escolhe o outro candidato na mesma tela.</p>
+
+  <h3>O que o sistema faz quando a vida não coopera</h3>
+  <div class="scroll">
+    <table>
+      <thead><tr><th style="width:36%">Situação</th><th>Resposta</th></tr></thead>
+      <tbody>
+        <tr><td>O link tem mais de um número candidato</td><td>propõe o mais provável e pede confirmação mostrando o link do capítulo 2 &mdash; erro vira um clique, não um bug silencioso</td></tr>
+        <tr><td>O usuário leu direto no site, sem passar pelo app</td><td>o progresso não avança sozinho; ele ajusta em um clique na estante. A extensão de navegador da fase 6 fecha esse buraco</td></tr>
+        <tr><td>O site mudou a estrutura da URL</td><td>o link gerado quebra; o usuário recadastra a fonte e a antiga vira inativa &mdash; o histórico de leitura fica preservado</td></tr>
+        <tr><td>Ele pulou capítulos</td><td>o progresso é o <em>maior</em> capítulo aberto, não a contagem de cliques</td></tr>
+        <tr><td>Ele trocou de site no meio da obra</td><td>nova fonte, mesmo progresso &mdash; o progresso pertence à obra, não ao site. É por isso que são duas tabelas e não uma</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <p><strong>Duas tabelas, dois donos.</strong> <code>ReadingSource</code> é o que o <em>usuário</em> escreve: o site e o template. <code>ReadingProgress</code> é o que o <em>sistema</em> escreve: qual capítulo, quando, por qual fonte. Separar as duas é o que permite trocar de site sem perder o histórico &mdash; e é o que deixa a regra &#8220;o usuário nunca digita número de capítulo&#8221; ser verdade no banco, não só na tela.</p>
+    <p>Quem já cadastrou duas fontes para a mesma obra tem uma <em>ativa</em>, e é dela que o botão Continuar monta o link. Isso não fica por conta do código: um índice único parcial permite muitas fontes por obra, mas só uma com <code>isActive</code> verdadeiro. O banco recusa a segunda.</p>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="head"><span class="num">03</span><span class="tag">Requisitos da atividade</span></div>
+  <h2>O que foi pedido, onde está</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th style="width:19%">Requisito</th><th style="width:36%">Escolha</th><th>Onde se verifica</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Front-end</strong></td><td>React 19 via Next.js 16 (App Router), PWA instalável</td><td class="mono">src/app/(ui)/</td></tr>
+        <tr><td><strong>Back-end</strong></td><td>Route Handlers do Next sobre Node &mdash; API REST versionada</td><td class="mono">src/app/api/v1/</td></tr>
+        <tr><td><strong>ORM</strong></td><td>Prisma &mdash; schema declarativo, migrations versionadas, client tipado</td><td class="mono">prisma/schema.prisma</td></tr>
+        <tr><td><strong>Banco</strong></td><td>PostgreSQL &mdash; Neon em produção, Docker Compose no dev</td><td class="mono">docker-compose.yml</td></tr>
+        <tr><td><strong>Camadas</strong></td><td>4 camadas + domínio isolado, dependência de sentido único</td><td class="mono">src/server/ &mdash; painel 04</td></tr>
+        <tr><td><strong>Deploy</strong></td><td>Vercel, build automático a cada push na <code>main</code></td><td class="mono">painel 08</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="head"><span class="num">04</span><span class="tag">Arquitetura em camadas</span></div>
+  <h2>Camada não é pasta &mdash; é regra que o build cobra</h2>
+  <p class="lede">Separar em pastas é fácil e não prova nada: nada impede um componente de tela importar o Prisma direto e furar as três camadas do meio. Aqui a dependência tem sentido único, e esse sentido é verificado no lint. Se alguém furar, <code>pnpm lint</code> falha e o deploy não sai.</p>
+
+  <figure>
+    <div class="figwrap">
+    <svg viewBox="0 0 860 560" role="img" aria-label="Cinco camadas empilhadas: apresentação, controllers, serviços, repositórios e PostgreSQL, cada uma chamando apenas a camada imediatamente abaixo. O domínio é uma coluna isolada à esquerda, importada pelas camadas do meio e que não importa ninguém. Uma seta da apresentação direto para os repositórios aparece riscada e marcada como proibida pelo lint.">
+      <defs>
+        <marker id="d1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+        <marker id="d1b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#C31A5F"/>
+        </marker>
+        <marker id="d1c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor" opacity=".55"/>
+        </marker>
+      </defs>
+      <g color="var(--ink)">
+
+      <rect x="36" y="142" width="104" height="276" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <g transform="rotate(-90 88 280)">
+        <text x="88" y="275" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--good)" font-family="Familjen Grotesk, sans-serif">DOMÍNIO</text>
+        <text x="88" y="292" text-anchor="middle" font-size="10" fill="var(--ink-2)" font-family="JetBrains Mono, monospace">regras puras &#183; zero imports</text>
+      </g>
+
+      <rect x="180" y="40" width="380" height="72" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="200" y="71" font-size="15" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Apresentação</text>
+      <text x="200" y="93" font-size="11" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">src/app/(ui) — telas, design system</text>
+
+      <rect x="180" y="142" width="380" height="72" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="200" y="173" font-size="15" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Controllers</text>
+      <text x="200" y="195" font-size="11" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">src/app/api/v1 — valida Zod, resolve sessão</text>
+
+      <rect x="180" y="244" width="380" height="72" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="200" y="275" font-size="15" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Serviços</text>
+      <text x="200" y="297" font-size="11" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">src/server/services — casos de uso, transações</text>
+
+      <rect x="180" y="346" width="380" height="72" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="200" y="377" font-size="15" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Repositórios</text>
+      <text x="200" y="399" font-size="11" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">src/server/repositories — único ponto com Prisma</text>
+
+      <rect x="180" y="448" width="380" height="64" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <text x="200" y="477" font-size="15" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">PostgreSQL</text>
+      <text x="200" y="498" font-size="11" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">Neon (prod) &#183; Docker Compose (dev)</text>
+
+      <line x1="370" y1="112" x2="370" y2="139" stroke="currentColor" stroke-width="1.5" marker-end="url(#d1a)"/>
+      <line x1="370" y1="214" x2="370" y2="241" stroke="currentColor" stroke-width="1.5" marker-end="url(#d1a)"/>
+      <line x1="370" y1="316" x2="370" y2="343" stroke="currentColor" stroke-width="1.5" marker-end="url(#d1a)"/>
+      <line x1="370" y1="418" x2="370" y2="445" stroke="currentColor" stroke-width="1.5" marker-end="url(#d1a)"/>
+      <text x="382" y="131" font-size="10.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">fetch</text>
+      <text x="382" y="233" font-size="10.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">chama caso de uso</text>
+      <text x="382" y="335" font-size="10.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">pede dado</text>
+      <text x="382" y="437" font-size="10.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">SQL gerado pelo Prisma</text>
+
+      <line x1="140" y1="178" x2="175" y2="178" stroke="currentColor" opacity=".55" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#d1c)"/>
+      <line x1="140" y1="280" x2="175" y2="280" stroke="currentColor" opacity=".55" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#d1c)"/>
+      <line x1="140" y1="382" x2="175" y2="382" stroke="currentColor" opacity=".55" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#d1c)"/>
+
+      <path d="M 560 76 H 628 Q 648 76 648 96 V 362 Q 648 382 628 382 H 567"
+            fill="none" stroke="#C31A5F" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#d1b)"/>
+      <circle cx="648" cy="229" r="13" fill="var(--panel)"/>
+      <line x1="640" y1="221" x2="656" y2="237" stroke="#C31A5F" stroke-width="2.6"/>
+      <line x1="656" y1="221" x2="640" y2="237" stroke="#C31A5F" stroke-width="2.6"/>
+      <text x="672" y="214" font-size="13.5" font-weight="700" fill="#C31A5F" font-family="Familjen Grotesk, sans-serif">Proibido</text>
+      <text x="672" y="233" font-size="12.5" fill="currentColor" font-family="Familjen Grotesk, sans-serif">tela → repositório</text>
+      <text x="672" y="255" font-size="10" fill="var(--ink-2)" font-family="JetBrains Mono, monospace">o lint quebra o build</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>Cada camada enxerga só a de baixo. O domínio fica fora da pilha: as três camadas do meio importam dele e ele não importa ninguém &mdash; por isso a derivação do template do painel 02 é testável sem banco, sem HTTP e sem mock.</figcaption>
+  </figure>
+
+  <h3>As regras, e quem cobra cada uma</h3>
+  <div class="scroll">
+    <table>
+      <thead><tr><th style="width:52%">Regra</th><th>Cobrada por</th></tr></thead>
+      <tbody>
+        <tr><td>Controller não contém regra de negócio &mdash; valida entrada, resolve sessão, delega</td><td>revisão de PR + teste de serviço</td></tr>
+        <tr><td>Serviço nunca toca em <code>Request</code>, <code>cookies()</code> ou <code>headers()</code></td><td class="mono">eslint no-restricted-imports</td></tr>
+        <tr><td><code>@prisma/client</code> só pode ser importado dentro de <code>repositories/</code></td><td class="mono">eslint-plugin-boundaries</td></tr>
+        <tr><td><code>domain/</code> não importa nada do projeto &mdash; nem Prisma, nem Next, nem serviço</td><td class="mono">eslint-plugin-boundaries</td></tr>
+        <tr><td>Toda consulta a <code>ReadingSource</code> e <code>ReadingProgress</code> carrega <code>userId</code></td><td class="mono">vitest &mdash; teste de privacidade</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<pre><code><span class="c-dim">// eslint.config.mjs — a camada vira configuração, não boa intenção</span>
+<span class="c-dim">// abreviado: cada policy real usa seletor { element: { type } }</span>
+"boundaries/dependencies": [<span class="c-key">"error"</span>, {
+  default: <span class="c-key">"disallow"</span>,
+  checkAllOrigins: <span class="c-key">true</span>,
+  policies: [
+    <span class="c-dim">// pacotes externos liberados; os bloqueios pontuais vão no fim</span>
+    { allow: <span class="c-key">"external"</span> },
+    { from: <span class="c-key">"ui"</span>,         allow: [<span class="c-key">"ui"</span>, <span class="c-key">"service"</span>, <span class="c-key">"domain"</span>] },
+    { from: <span class="c-key">"controller"</span>, allow: [<span class="c-key">"controller"</span>, <span class="c-key">"service"</span>, <span class="c-key">"domain"</span>] },
+    { from: <span class="c-key">"service"</span>,    allow: [<span class="c-key">"service"</span>, <span class="c-key">"repository"</span>, <span class="c-key">"infra"</span>, <span class="c-key">"domain"</span>] },
+    { from: <span class="c-key">"repository"</span>, allow: [<span class="c-key">"repository"</span>, <span class="c-key">"infra"</span>, <span class="c-key">"domain"</span>, <span class="c-key">"prisma"</span>] },
+    { from: <span class="c-key">"domain"</span>,     allow: [<span class="c-key">"domain"</span>] },
+    <span class="c-dim">// e os externos que não passam de camada</span>
+    { from: <span class="c-key">"!repository"</span>, disallow: <span class="c-key">"@prisma/client"</span> },
+    { from: [<span class="c-key">"service"</span>, <span class="c-key">"repository"</span>, <span class="c-key">"infra"</span>, <span class="c-key">"domain"</span>],
+      disallow: [<span class="c-key">"next/headers"</span>, <span class="c-key">"next/server"</span>] },
+  ],
+}]</code></pre>
+</section>
+
+<section class="panel">
+  <div class="head"><span class="num">05</span><span class="tag">Fluxo de uma requisição</span></div>
+  <h2>Onde cada camada entra, do clique ao SQL</h2>
+
+  <figure>
+    <div class="figwrap">
+    <svg viewBox="0 0 960 300" role="img" aria-label="Fluxo da esquerda para a direita: navegador, controller, serviço, repositório e PostgreSQL. Abaixo do serviço, um ramo desce para a camada de infraestrutura do AniList, que é a única a falar com a API externa graphql.anilist.co.">
+      <defs>
+        <marker id="d2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+      <g color="var(--ink)">
+
+      <text x="184" y="32" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">POST /api/v1/continuar</text>
+      <text x="380" y="32" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">DTO validado + userId</text>
+      <text x="576" y="32" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">monta URL, grava progresso</text>
+      <text x="772" y="32" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">where: { userId }</text>
+
+      <rect x="12" y="44" width="150" height="68" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="28" y="72" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Navegador</text>
+      <text x="28" y="92" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">PWA instalável</text>
+
+      <rect x="208" y="44" width="150" height="68" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="224" y="72" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Controller</text>
+      <text x="224" y="92" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">app/api/v1</text>
+
+      <rect x="404" y="44" width="150" height="68" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="420" y="72" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Serviço</text>
+      <text x="420" y="92" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">server/services</text>
+
+      <rect x="600" y="44" width="150" height="68" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="616" y="72" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Repositório</text>
+      <text x="616" y="92" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">server/repositories</text>
+
+      <rect x="796" y="44" width="150" height="68" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <text x="812" y="72" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">PostgreSQL</text>
+      <text x="812" y="92" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">Neon</text>
+
+      <line x1="162" y1="78" x2="205" y2="78" stroke="currentColor" stroke-width="1.5" marker-end="url(#d2a)"/>
+      <line x1="358" y1="78" x2="401" y2="78" stroke="currentColor" stroke-width="1.5" marker-end="url(#d2a)"/>
+      <line x1="554" y1="78" x2="597" y2="78" stroke="currentColor" stroke-width="1.5" marker-end="url(#d2a)"/>
+      <line x1="750" y1="78" x2="793" y2="78" stroke="currentColor" stroke-width="1.5" marker-end="url(#d2a)"/>
+
+      <line x1="479" y1="112" x2="479" y2="197" stroke="currentColor" stroke-width="1.5" marker-end="url(#d2a)"/>
+      <text x="490" y="162" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">catálogo</text>
+
+      <rect x="404" y="200" width="150" height="64" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="420" y="227" font-size="13" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Infra AniList</text>
+      <text x="420" y="246" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">cache 24 h no Media</text>
+
+      <rect x="600" y="200" width="150" height="64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="616" y="227" font-size="12.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">graphql.anilist.co</text>
+      <text x="616" y="246" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">fora do nosso deploy</text>
+
+      <line x1="554" y1="232" x2="597" y2="232" stroke="currentColor" stroke-width="1.5" marker-end="url(#d2a)"/>
+      <text x="576" y="190" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">só em cache miss</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>A chamada externa nunca sai da camada de infraestrutura, e nunca sai do navegador do usuário: o AniList limita requisições por minuto, então quem fala com ele é o servidor, uma vez, e guarda o resultado em <code>Media</code>.</figcaption>
+  </figure>
+
+  <ol>
+    <li><strong>Controller</strong> valida o corpo com Zod e resolve <code>userId</code> a partir do cookie de sessão. Nada além disso.</li>
+    <li><strong>Serviço</strong> aplica a regra &mdash; monta a URL pelo template, confere se o capítulo não passou do total da obra, e grava progresso e estante na mesma transação.</li>
+    <li><strong>Repositório</strong> traduz para Prisma. É o único arquivo do projeto que conhece o nome de uma tabela.</li>
+    <li>A resposta volta como DTO do contrato, não como entidade do Prisma &mdash; assim uma coluna nova no banco não vaza para a API sem alguém decidir.</li>
+  </ol>
+</section>
+
+<section class="panel">
+  <div class="head"><span class="num">06</span><span class="tag">Modelo de dados</span></div>
+  <h2>O ORM tem o que mostrar</h2>
+  <p class="lede">O modelo foi desenhado para exercitar o Prisma de verdade, não para ter cinco tabelas soltas: tem relacionamento muitos-para-muitos com carga, auto-relacionamento, chave única composta e índice já na direção da consulta.</p>
+
+  <figure>
+    <div class="figwrap">
+    <svg viewBox="0 0 1000 760" role="img" aria-label="Diagrama entidade-relacionamento. À esquerda, User com a tabela Follow acima formando um auto-relacionamento muitos-para-muitos. No centro, as tabelas do usuário: Entry, ShelfEntry, ReadingSource e ReadingProgress (as duas destacadas como privadas), List e ListItem. À direita, Media, que é o cache do AniList e recebe chave estrangeira das tabelas do centro.">
+      <defs>
+        <marker id="d3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+      <g color="var(--ink)">
+
+      <rect x="40" y="48" width="200" height="86" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="54" y="74" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Follow</text>
+      <text x="54" y="95" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">followerId + followingId</text>
+      <text x="54" y="113" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">@@id composto</text>
+
+      <rect x="40" y="250" width="200" height="118" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="54" y="277" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">User</text>
+      <text x="54" y="299" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">username @unique</text>
+      <text x="54" y="317" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">email @unique</text>
+      <text x="54" y="335" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">passwordHash (scrypt)</text>
+      <text x="54" y="353" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">role: USER | ADMIN</text>
+
+      <line x1="90" y1="134" x2="90" y2="247" stroke="currentColor" stroke-width="1.4" marker-end="url(#d3a)"/>
+      <line x1="190" y1="134" x2="190" y2="247" stroke="currentColor" stroke-width="1.4" marker-end="url(#d3a)"/>
+      <text x="84" y="196" text-anchor="end" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">seguidor</text>
+      <text x="196" y="196" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">seguido</text>
+      <text x="140" y="30" text-anchor="middle" font-size="10.5" font-weight="700" font-family="JetBrains Mono, monospace" fill="#C31A5F">N:N auto-relacionado</text>
+
+      <rect x="400" y="40" width="220" height="96" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="414" y="66" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Entry</text>
+      <text x="414" y="87" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">rating Decimal(2,1), readAt</text>
+      <text x="414" y="105" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">reviewText, chapterUpTo</text>
+      <text x="414" y="123" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">@@index([userId, readAt desc])</text>
+
+      <rect x="400" y="162" width="220" height="96" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="414" y="188" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">ShelfEntry</text>
+      <text x="414" y="209" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">status, progressChapter</text>
+      <text x="414" y="227" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">startedAt, finishedAt</text>
+      <text x="414" y="245" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">@@unique([userId, mediaId])</text>
+
+      <rect x="400" y="284" width="220" height="104" fill="var(--accent-soft)" stroke="#C31A5F" stroke-width="2"/>
+      <text x="414" y="310" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">ReadingSource</text>
+      <rect x="530" y="296" width="76" height="18" fill="none" stroke="#C31A5F" stroke-width="1"/>
+      <text x="568" y="309" text-anchor="middle" font-size="9.5" font-weight="700" font-family="JetBrains Mono, monospace" fill="#C31A5F">PRIVADO</text>
+      <text x="414" y="331" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">o que o usuário informa</text>
+      <text x="414" y="349" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">sourceHost, urlTemplate</text>
+      <text x="414" y="367" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">isActive, confirmedAt</text>
+      <text x="414" y="381" font-size="9" font-family="JetBrains Mono, monospace" fill="var(--ink-3)">índice parcial: 1 ativa por obra</text>
+
+      <rect x="400" y="410" width="220" height="96" fill="var(--accent-soft)" stroke="#C31A5F" stroke-width="2"/>
+      <text x="414" y="436" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">ReadingProgress</text>
+      <rect x="530" y="422" width="76" height="18" fill="none" stroke="#C31A5F" stroke-width="1"/>
+      <text x="568" y="435" text-anchor="middle" font-size="9.5" font-weight="700" font-family="JetBrains Mono, monospace" fill="#C31A5F">PRIVADO</text>
+      <text x="414" y="457" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">o que o sistema grava</text>
+      <text x="414" y="475" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">chapter, resolvedUrl, openedAt</text>
+      <text x="414" y="493" font-size="9" font-family="JetBrains Mono, monospace" fill="var(--ink-3)">@@index([userId, mediaId, openedAt desc])</text>
+
+      <rect x="400" y="532" width="220" height="80" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="414" y="558" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">List</text>
+      <text x="414" y="579" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">isPublic, isRanked</text>
+      <text x="414" y="597" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">@@unique([userId, slug])</text>
+
+      <rect x="400" y="638" width="220" height="86" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="414" y="664" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">ListItem</text>
+      <text x="414" y="685" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">position, note</text>
+      <text x="414" y="703" font-size="10" font-weight="700" font-family="JetBrains Mono, monospace" fill="#C31A5F">N:N com carga</text>
+
+      <rect x="790" y="320" width="180" height="124" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="804" y="347" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Media</text>
+      <text x="804" y="368" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">cache do AniList</text>
+      <text x="804" y="388" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">anilistId @unique</text>
+      <text x="804" y="406" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">countryOrigin KR/JP/CN</text>
+      <text x="804" y="424" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">syncedAt (TTL)</text>
+
+      <line x1="240" y1="309" x2="320" y2="309" stroke="currentColor" stroke-width="1.4"/>
+      <line x1="320" y1="88" x2="320" y2="572" stroke="currentColor" stroke-width="1.4"/>
+      <line x1="320" y1="88"  x2="396" y2="88"  stroke="currentColor" stroke-width="1.4" marker-end="url(#d3a)"/>
+      <line x1="320" y1="210" x2="396" y2="210" stroke="currentColor" stroke-width="1.4" marker-end="url(#d3a)"/>
+      <line x1="320" y1="336" x2="396" y2="336" stroke="currentColor" stroke-width="1.4" marker-end="url(#d3a)"/>
+      <line x1="320" y1="458" x2="396" y2="458" stroke="currentColor" stroke-width="1.4" marker-end="url(#d3a)"/>
+      <line x1="320" y1="572" x2="396" y2="572" stroke="currentColor" stroke-width="1.4" marker-end="url(#d3a)"/>
+      <text x="334" y="80"  font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">1:N</text>
+      <text x="334" y="202" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">1:N</text>
+      <text x="334" y="328" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">1:N</text>
+      <text x="334" y="450" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">1:N</text>
+      <text x="334" y="564" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">1:N</text>
+
+      <line x1="470" y1="388" x2="470" y2="407" stroke="#C31A5F" stroke-width="1.6" marker-end="url(#d3a)"/>
+      <text x="480" y="403" font-size="9.5" font-family="JetBrains Mono, monospace" fill="#C31A5F">1:N</text>
+
+      <line x1="510" y1="612" x2="510" y2="635" stroke="currentColor" stroke-width="1.4" marker-end="url(#d3a)"/>
+      <text x="520" y="629" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">1:N</text>
+
+      <line x1="620" y1="88"  x2="700" y2="88"  stroke="currentColor" stroke-width="1.4"/>
+      <line x1="620" y1="210" x2="700" y2="210" stroke="currentColor" stroke-width="1.4"/>
+      <line x1="620" y1="336" x2="700" y2="336" stroke="currentColor" stroke-width="1.4"/>
+      <line x1="620" y1="458" x2="700" y2="458" stroke="currentColor" stroke-width="1.4"/>
+      <line x1="620" y1="681" x2="700" y2="681" stroke="currentColor" stroke-width="1.4"/>
+      <line x1="700" y1="88"  x2="700" y2="681" stroke="currentColor" stroke-width="1.4"/>
+      <line x1="700" y1="382" x2="786" y2="382" stroke="currentColor" stroke-width="1.4" marker-end="url(#d3a)"/>
+      <text x="634" y="80"  font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">N:1</text>
+      <text x="634" y="202" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">N:1</text>
+      <text x="634" y="328" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">N:1</text>
+      <text x="634" y="450" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">N:1</text>
+      <text x="634" y="673" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">N:1</text>
+      <text x="712" y="374" font-size="9.5" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">FK</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>As duas tabelas em magenta são as privadas, e a divisão entre elas é a do painel 02: <code>ReadingSource</code> guarda o que o usuário escreveu, <code>ReadingProgress</code> guarda o que o sistema deduziu. O <code>Media</code> aparece tracejado porque é cache: se sumir, é reconstruído do AniList &mdash; nenhum dado do usuário se perde junto. Fora do diagrama, por espaço: <code>Genre</code> e <code>MediaGenre</code>, <code>EntryLike</code> e <code>ListLike</code>, e <code>MediaRequest</code>.</figcaption>
+  </figure>
+
+  <h3>O que cada relacionamento demonstra</h3>
+  <div class="scroll">
+    <table>
+      <thead><tr><th style="width:26%">Recurso do ORM</th><th style="width:26%">Onde</th><th>Por que está ali</th></tr></thead>
+      <tbody>
+        <tr><td>N:N com carga</td><td class="mono">List → ListItem → Media</td><td>a posição na lista é dado do relacionamento, não das pontas &mdash; tabela de junção explícita, não implícita</td></tr>
+        <tr><td>N:N auto-relacionado</td><td class="mono">Follow (User ↔ User)</td><td>duas relações nomeadas para a mesma entidade, com <em>check</em> impedindo alguém seguir a si mesmo</td></tr>
+        <tr><td>Chave única composta</td><td class="mono">@@unique([userId, mediaId])</td><td>a estante tem uma linha por obra por usuário &mdash; a regra é do banco, não do código</td></tr>
+        <tr><td>Índice único parcial</td><td class="mono">ReadingSource<br>WHERE isActive</td><td>várias fontes cadastradas para a mesma obra, mas só uma ativa. O Postgres recusa a segunda &mdash; o serviço não precisa conferir</td></tr>
+        <tr><td>Índice com ordenação</td><td class="mono">@@index([userId, mediaId,<br>openedAt desc])</td><td>&#8220;qual foi o último capítulo aberto&#8221; é a consulta mais frequente do app; o índice já nasce na direção dela</td></tr>
+        <tr><td>Transação</td><td class="mono">$transaction</td><td>abrir um capítulo grava <code>ReadingProgress</code> e atualiza <code>ShelfEntry.progressChapter</code> &mdash; ou os dois, ou nenhum</td></tr>
+        <tr><td>Histórico versus estado</td><td class="mono">ReadingProgress<br>vs ShelfEntry</td><td>o progresso é a linha do tempo; a estante é o resumo dela. Trocar de site preserva o histórico porque ele pertence à obra</td></tr>
+        <tr><td>Consulta que cruza<br>duas tabelas do usuário</td><td class="mono">Entry.chapterUpTo<br>× progresso do leitor</td><td>a listagem de resenhas esconde as que falam de capítulo além de onde <em>quem está lendo a página</em> chegou &mdash; o filtro depende de dois usuários diferentes na mesma consulta</td></tr>
+        <tr><td>Migrations versionadas</td><td class="mono">prisma/migrations/</td><td>o histórico do banco vive no Git e roda igual no dev e na Vercel</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>A trava de spoiler</h3>
+  <p>Uma resenha do capítulo 400 estraga a leitura de quem está no 120. Então toda resenha declara até onde ela fala (<code>chapterUpTo</code>), e a listagem de uma obra mostra só as que cabem no progresso de <em>quem abriu a página</em>. O resto aparece coberto, com a opção de revelar &mdash; a decisão é do leitor, mas o padrão protege.</p>
+  <p>A regra vive no serviço, não no componente: qualquer cliente que consuma <code>/api/v1</code> recebe a lista já filtrada. É a consulta mais interessante do projeto, porque cruza o dado de um usuário (a resenha) com o estado de outro (o progresso de quem lê).</p>
+
+  <h3>Previsto no desenho, construído depois</h3>
+  <p>Duas ideias ficaram fora do recorte do semestre, mas o modelo já reserva lugar para elas &mdash; assim entram por migration aditiva, sem redesenhar o que já estiver no ar.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th style="width:24%">O que</th><th style="width:34%">Como entraria</th><th>Por que não agora</th></tr></thead>
+      <tbody>
+        <tr><td>Arcos e sagas</td><td class="mono">Arc(mediaId, nome,<br>chapterStart, chapterEnd)<br>Entry.arcId?</td><td>o AniList não fornece a divisão em arcos &mdash; é curadoria manual, obra por obra. A resenha por arco só faz sentido depois que existir arco cadastrado</td></tr>
+        <tr><td>Adaptações da<br>mesma obra</td><td class="mono">Work como pai de Media</td><td>o vínculo existe no AniList, em <code>relations</code> com <code>relationType: ADAPTATION</code>, então é derivável &mdash; mas só rende quando houver mais de um tipo de mídia no ar</td></tr>
+        <tr><td>Anime e live action</td><td class="mono">ALTER TYPE MediaType<br>ADD VALUE</td><td>migration aditiva, não toca em nenhuma linha existente. <code>Media</code> já nasceu genérico justamente para isso &mdash; nada no schema se chama <code>Manga</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>A regra de privacidade, escrita como teste</h3>
+  <p>Este teste foi escrito antes do repositório existir, e é o que trava a regra do painel 01:</p>
+<pre><code><span class="c-dim">// tests/repositories/reading-progress.privacy.test.ts</span>
+it(<span class="c-key">"não devolve progresso de outro usuário"</span>, <span class="c-dim">async</span> () =&gt; {
+  <span class="c-dim">const</span> { alice, bob } = <span class="c-dim">await</span> seedDoisUsuarios()
+  <span class="c-dim">await</span> repo.registrarAbertura({ userId: bob.id, mediaId, chapter: <span class="c-key">58</span> })
+
+  <span class="c-dim">const</span> achados = <span class="c-dim">await</span> repo.ultimoCapitulo(alice.id, mediaId)
+
+  expect(achados).toBeNull()
+})</code></pre>
+</section>
+
+<section class="panel">
+  <div class="head"><span class="num">07</span><span class="tag">Tecnologias</span></div>
+  <h2>A stack, e o motivo de cada peça</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th style="width:22%">Camada</th><th style="width:30%">Tecnologia</th><th>Motivo</th></tr></thead>
+      <tbody>
+        <tr><td>Linguagem</td><td class="mono">TypeScript</td><td>o mesmo tipo atravessa tela, API e banco &mdash; o Prisma gera os tipos do schema</td></tr>
+        <tr><td>Front</td><td class="mono">React 19 + Next.js 16</td><td>App Router, Server Components para o catálogo, client só onde há interação</td></tr>
+        <tr><td>PWA</td><td class="mono">manifest + service worker</td><td>instala no celular e guarda a estante para leitura offline &mdash; o app é usado no transporte</td></tr>
+        <tr><td>Estilo</td><td class="mono">Tailwind v4 + tokens</td><td>design system em <em>custom properties</em>: tema claro e escuro saem do mesmo conjunto de tokens</td></tr>
+        <tr><td>Back</td><td class="mono">Route Handlers (Node)</td><td>API REST versionada em <code>/api/v1</code>, consumida pela tela e pela extensão da fase 6</td></tr>
+        <tr><td>ORM</td><td class="mono">Prisma</td><td>migrations versionadas, client tipado, <code>$transaction</code>, relacionamentos declarativos</td></tr>
+        <tr><td>Banco</td><td class="mono">PostgreSQL 16</td><td>Neon em produção (free, sem cartão), Docker Compose no dev &mdash; mesma versão nos dois</td></tr>
+        <tr><td>Validação</td><td class="mono">Zod</td><td>um schema por rota; o mesmo objeto valida a entrada e descreve o contrato</td></tr>
+        <tr><td>Sessão</td><td class="mono">cookie httpOnly + JWT</td><td>senha com <code>scrypt</code> do Node &mdash; sem dependência nativa que quebre no build da Vercel</td></tr>
+        <tr><td>Testes</td><td class="mono">Vitest</td><td>domínio e serviços rodam sem banco; repositórios contra o Postgres do Compose</td></tr>
+        <tr><td>Catálogo</td><td class="mono">AniList GraphQL</td><td>público, sem chave, cobre mangá, manhwa, manhua e novel na mesma API</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="head"><span class="num">08</span><span class="tag">Deploy</span></div>
+  <h2>Do push ao ar, sem etapa manual</h2>
+
+  <figure>
+    <div class="figwrap">
+    <svg viewBox="0 0 960 250" role="img" aria-label="Pipeline: branch de feature vira pull request no GitHub, o GitHub dispara o build da Vercel, que roda migrations e o build do Next e publica. A aplicação publicada conversa com o Neon Postgres. Abaixo, o GitHub Actions roda lint, typecheck e testes e bloqueia o merge.">
+      <defs>
+        <marker id="d4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+      <g color="var(--ink)">
+
+      <text x="184" y="38" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">pull request</text>
+      <text x="374" y="38" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">webhook no push</text>
+      <text x="564" y="38" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">migrate deploy + build</text>
+      <text x="754" y="38" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">DATABASE_URL</text>
+
+      <rect x="16" y="52" width="150" height="72" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="32" y="80" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">feature/…</text>
+      <text x="32" y="100" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">branch local</text>
+
+      <rect x="206" y="52" width="150" height="72" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="222" y="80" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">GitHub</text>
+      <text x="222" y="100" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">repo público, main</text>
+
+      <rect x="396" y="52" width="150" height="72" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="412" y="80" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Build</text>
+      <text x="412" y="100" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">Vercel</text>
+
+      <rect x="586" y="52" width="150" height="72" fill="var(--panel-2)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="602" y="80" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">No ar</text>
+      <text x="602" y="100" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">SSR + estático + API</text>
+
+      <rect x="776" y="52" width="150" height="72" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <text x="792" y="80" font-size="13.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">Neon</text>
+      <text x="792" y="100" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">PostgreSQL gerenciado</text>
+
+      <line x1="166" y1="88" x2="203" y2="88" stroke="currentColor" stroke-width="1.5" marker-end="url(#d4a)"/>
+      <line x1="356" y1="88" x2="393" y2="88" stroke="currentColor" stroke-width="1.5" marker-end="url(#d4a)"/>
+      <line x1="546" y1="88" x2="583" y2="88" stroke="currentColor" stroke-width="1.5" marker-end="url(#d4a)"/>
+      <line x1="736" y1="88" x2="773" y2="88" stroke="currentColor" stroke-width="1.5" marker-end="url(#d4a)"/>
+
+      <rect x="204" y="158" width="340" height="56" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="220" y="182" font-size="12.5" font-weight="700" font-family="Familjen Grotesk, sans-serif" fill="currentColor">GitHub Actions</text>
+      <text x="220" y="201" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-2)">lint &#183; typecheck &#183; vitest — bloqueia o merge</text>
+      <line x1="374" y1="158" x2="374" y2="95" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#d4a)"/>
+      </g>
+    </svg>
+    </div>
+    <figcaption>Nenhum passo é manual depois do merge: a Vercel roda <code>prisma migrate deploy</code> antes do <code>next build</code>, então o schema do banco e o código sobem juntos ou não sobem.</figcaption>
+  </figure>
+
+  <div class="cols" style="margin-top:26px">
+    <div>
+      <h3>Rodar local</h3>
+      <p class="mono" style="font-size:12.5px;line-height:1.9">docker compose up -d<br>pnpm install<br>pnpm prisma migrate dev<br>pnpm dev</p>
+    </div>
+    <div>
+      <h3>Variáveis</h3>
+      <p class="mono" style="font-size:12.5px;line-height:1.9">DATABASE_URL<br>SESSION_SECRET<br>ANILIST_ENDPOINT</p>
+    </div>
+    <div>
+      <h3>Ambientes</h3>
+      <p><strong>Preview</strong> a cada pull request, com banco separado. <strong>Produção</strong> só a partir da <code>main</code>. O link entregue no Classroom é o de produção.</p>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="head"><span class="num">09</span><span class="tag">Entrega</span></div>
+  <h2>O caminho até a apresentação</h2>
+
+  <div class="phase"><b>Fase 1</b><div><h3>Esqueleto no ar</h3><p>Repositório público, camadas com o lint configurado, schema do Prisma com as migrations, banco no Neon, deploy na Vercel. É o que a atividade pede &mdash; e o que está sendo mostrado aqui.</p></div></div>
+  <div class="phase"><b>Fase 2</b><div><h3>Login e catálogo</h3><p>Cadastro e sessão com cookie httpOnly. Busca no AniList com cache em <code>Media</code>. Página da obra.</p></div></div>
+  <div class="phase"><b>Fase 3</b><div><h3>Fonte e progresso automático</h3><p>Cadastro da fonte com derivação e confirmação do template, botão continuar, gravação do progresso junto com a estante. É o diferencial do projeto &mdash; e já entra com o teste de privacidade.</p></div></div>
+  <div class="phase"><b>Fase 4</b><div><h3>Log, nota e resenha</h3><p>Diário cronológico, nota em meia estrela e a trava de spoiler &mdash; a resenha declara até que capítulo fala, e a listagem respeita o progresso de quem lê.</p></div></div>
+  <div class="phase"><b>Fase 5</b><div><h3>Listas e social</h3><p>Listas ordenadas, seguir usuário, curtir resenha, feed de atividade. Se o catálogo curado avançar, os arcos entram aqui.</p></div></div>
+  <div class="phase"><b>Fase 6</b><div><h3>Extensão de navegador</h3><p>Opcional, se sobrar semestre: grava o progresso mesmo quando o usuário vai direto ao site, sem passar pelo app.</p></div></div>
+
+  <h3>Checklist do que vai no Classroom</h3>
+  <ul>
+    <li><strong>Integrantes</strong> &mdash; Arthur Juchem Martins e Nicholas Gabriel Deotti Schlindwein <span class="chip chip--ok">ok</span></li>
+    <li><strong>Ideia</strong> &mdash; Letterboxd para mangá, manhwa e novel, com progresso de leitura automático e privado <span class="chip chip--ok">ok</span></li>
+    <li><strong>Tecnologias</strong> &mdash; Next.js + Prisma + PostgreSQL, em quatro camadas <span class="chip chip--ok">ok</span></li>
+    <li><strong>Link do GitHub</strong> &mdash; <a href="https://github.com/ArthurM4rtins/mymangatracker">github.com/ArthurM4rtins/mymangatracker</a> <span class="chip chip--ok">ok</span></li>
+    <li><strong>Link do projeto no ar</strong> &mdash; <a href="https://mymangatracker.vercel.app">mymangatracker.vercel.app</a> <span class="chip chip--ok">ok</span></li>
+  </ul>
+</section>
+
+<p class="foot">MyMangaTracker &#183; apresentação técnica do setup</p>
+
+</div>
