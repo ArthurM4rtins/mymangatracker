@@ -99,3 +99,56 @@ passa e um proibido que quebra, por regra.
 
 Usar `X/**` nos padroes de elemento. `X/**/*` so funciona quando sempre existe um segmento
 intermediario.
+
+---
+
+## Prisma 7 nao abre conexao sozinho — driver adapter e obrigatorio
+
+**27/08/2026.** O handoff listava `@prisma/client` e mais nada. Nao basta: na v7 o
+`PrismaClient` so aceita `adapter` ou uma URL do Accelerate — o modo em que o proprio client
+abria a conexao a partir da `datasource` saiu. Sem `@prisma/adapter-pg` o TypeScript recusa o
+construtor, e a mensagem nao diz o que falta instalar.
+
+Junto disso: a tag `latest` do CLI `prisma` estava em `8.0.0-rc.12` enquanto `@prisma/client`
+estava em `7.10.0` estavel. `pnpm add` pega `latest` dos dois e monta majors diferentes.
+
+**Regra:** ao instalar Prisma, conferir `npm view prisma dist-tags` e `npm view @prisma/client
+dist-tags` antes de aceitar o que veio, e ja adicionar o adapter do banco (`@prisma/adapter-pg`
+no Postgres, que traz o `pg` junto). Instanciar o client dentro de uma funcao, nao no import,
+senao o `next build` sem `DATABASE_URL` quebra.
+
+---
+
+## Editar migration ja aplicada exige reset
+
+**27/08/2026.** Indice parcial e `CHECK` nao saem do schema do Prisma, entao vao a mao no
+`migration.sql`. Mas editar o arquivo **depois** de `migrate dev` ja ter aplicado quebra o
+checksum guardado em `_prisma_migrations`, e a proxima migration reclama.
+
+Dois caminhos: `migrate reset` (apaga o banco e reaplica do zero, deixando uma migration unica)
+ou uma segunda migration so com o SQL manual (aditiva, nao destroi nada).
+
+O `migrate reset` da v7 exige consentimento explicito do usuario — recusa rodar e manda pedir,
+aceitando so via `PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION` com o texto da resposta.
+
+**Regra:** decidir antes de rodar `migrate dev` se aquela migration vai ter SQL manual. Se vai,
+gerar com `--create-only`, editar, e so entao aplicar — nao ha checksum para quebrar. Contar as
+linhas do banco antes de qualquer reset, e perguntar.
+
+---
+
+## Teste verde nao prova invariante — quebrar de proposito, de novo
+
+**27/08/2026.** Depois da mordida do boundaries, o mesmo metodo foi aplicado aos testes de banco
+antes de dar a tarefa por feita:
+
+| O que foi quebrado | O que ficou vermelho |
+|---|---|
+| `where: { userId, mediaId }` virou `where: { mediaId }` | os 2 testes de privacidade |
+| `DROP INDEX "ReadingSource_userId_mediaId_active_key"` | o teste da segunda fonte ativa |
+
+Os dois foram restaurados e a suite voltou a 10 verdes.
+
+**Regra:** invariante que a nota depende (privacidade do progresso, indice parcial) so conta como
+provado depois de ver o teste falhar com a regra removida. Vale para schema e banco tanto quanto
+para config de lint.

@@ -189,10 +189,10 @@ Pendente de decisao antes de seguir: estrategia de commit (o `CLAUDE.md` proibe 
 - [x] `npm ping` responde
 - [x] scaffold do Next rodou
 - [x] dependências instaladas
-- [ ] `schema.prisma` escrito, com o índice parcial na migration
+- [x] `schema.prisma` escrito, com o índice parcial na migration
 - [x] `eslint-plugin-boundaries` configurado e **comprovado quebrando**
-- [ ] teste da derivação de template passa
-- [ ] teste de privacidade do progresso passa
+- [x] teste da derivação de template passa
+- [x] teste de privacidade do progresso passa
 - [x] `pnpm build` verde **sem** `DATABASE_URL`
 - [x] repo público no GitHub
 - [ ] deploy na Vercel respondendo

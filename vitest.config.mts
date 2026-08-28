@@ -9,6 +9,8 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["tests/**/*.test.ts"],
+    // Só o que roda sem banco. Os testes de repositório vão no
+    // `vitest.db.config.mts`, por `pnpm test:db`.
+    include: ["tests/domain/**/*.test.ts"],
   },
 });
