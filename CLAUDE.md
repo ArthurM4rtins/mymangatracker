@@ -101,7 +101,8 @@ Pipeline de uma feature nova:
 
 ### Banco
 
-- Tabela e coluna em `PascalCase` (padrão do Prisma), sem renomear via `@@map` sem motivo.
+- Tabela em `PascalCase`, coluna em `camelCase` — o padrão do Prisma, sem renomear via
+  `@@map`/`@map` sem motivo.
 - FK sempre com `onDelete` explícito.
 - Índice nasce na direção da consulta que ele serve.
 - Índice parcial e `CHECK` não saem do schema do Prisma — escrever à mão na migration.
