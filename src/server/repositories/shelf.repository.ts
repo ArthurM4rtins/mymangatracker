@@ -111,6 +111,24 @@ export async function atualizarStatusDaEntrada(
 }
 
 /**
+ * Edição manual do capítulo em leitura — correção do dono, seta direto
+ * (inclusive para trás). `null` para entrada alheia ou inexistente, iguais.
+ */
+export async function atualizarProgressoDaEntrada(
+  userId: string,
+  entradaId: string,
+  capitulo: number,
+): Promise<{ id: string } | null>
+{
+  const resultado = await getPrisma().shelfEntry.updateMany({
+    where: { id: entradaId, userId },
+    data: { progressChapter: capitulo },
+  });
+
+  return resultado.count === 0 ? null : { id: entradaId };
+}
+
+/**
  * Os anilistIds das obras na estante DO USUÁRIO — o catálogo usa para marcar
  * o que já foi adicionado sem uma consulta por card.
  */

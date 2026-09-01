@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { salvarMediaDoAniList } from "@/server/repositories/media.repository";
 import {
   adicionarOuAtualizarEntrada,
+  atualizarProgressoDaEntrada,
   atualizarStatusDaEntrada,
   listarAnilistIdsDaEstante,
   listarEntradasDoUsuario,
@@ -66,6 +67,35 @@ describe("listarEntradasDoUsuario", function ()
     const usuario = await semearUsuario("novato");
 
     await expect(listarEntradasDoUsuario(usuario.id)).resolves.toEqual([]);
+  });
+});
+
+describe("atualizarProgressoDaEntrada", function ()
+{
+  it("seta o capítulo do dono, inclusive para trás; entrada alheia não é tocada", async function ()
+  {
+    const dono = await semearUsuario("dono");
+    const intruso = await semearUsuario("intruso");
+    const media = await salvarMediaDoAniList(OBRA, new Date());
+    const entrada = await adicionarOuAtualizarEntrada({
+      userId: dono.id,
+      mediaId: media.id,
+      status: "READING",
+    });
+
+    await expect(
+      atualizarProgressoDaEntrada(dono.id, entrada.id, 57.5),
+    ).resolves.toEqual({ id: entrada.id });
+    await expect(
+      atualizarProgressoDaEntrada(dono.id, entrada.id, 12),
+    ).resolves.toEqual({ id: entrada.id });
+
+    await expect(
+      atualizarProgressoDaEntrada(intruso.id, entrada.id, 99),
+    ).resolves.toBeNull();
+
+    const [doDono] = await listarEntradasDoUsuario(dono.id);
+    expect(doDono.progressChapter).toBe("12");
   });
 });
 

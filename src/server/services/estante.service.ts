@@ -6,7 +6,11 @@
  * cache alimentado pelo cliente seria dado forjável.
  */
 import { cacheEstaFresco } from "@/server/domain/media-cache";
-import { proximoCapitulo, tipoDaFonte } from "@/server/domain/progresso";
+import {
+  proximoCapitulo,
+  tipoDaFonte,
+  urlDaPagina,
+} from "@/server/domain/progresso";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId } from "@/server/infra/anilist";
 import {
@@ -15,6 +19,7 @@ import {
 } from "@/server/repositories/media.repository";
 import {
   adicionarOuAtualizarEntrada,
+  atualizarProgressoDaEntrada,
   atualizarStatusDaEntrada,
   listarAnilistIdsDaEstante,
   listarEntradasDoUsuario,
@@ -117,8 +122,14 @@ export type EntradaDaEstante = {
     countryOfOrigin: string | null;
     chapters: number | null;
   };
-  /** A fonte de leitura ativa — só o que a tela mostra, nunca o template. */
-  fonte: { sourceHost: string; tipo: "template" | "pagina" } | null;
+  /**
+   * A fonte de leitura ativa. `urlDaObra` só existe no tipo página: a tela
+   * abre direto, sem fingir registro de capítulo que não controla.
+   */
+  fonte:
+    | { sourceHost: string; tipo: "template" }
+    | { sourceHost: string; tipo: "pagina"; urlDaObra: string }
+    | null;
   proximoCapitulo: number;
 };
 
@@ -172,12 +183,79 @@ export async function listarEstante(
       status: entrada.status,
       progressChapter: entrada.progressChapter,
       obra: entrada.obra,
-      fonte:
-        fonte === null
-          ? null
-          : { sourceHost: fonte.sourceHost, tipo: tipoDaFonte(fonte.urlTemplate) },
+      fonte: fonte === null ? null : recorteDaFonte(fonte),
       proximoCapitulo: proximoCapitulo(maior),
     };
+  });
+}
+
+function recorteDaFonte(fonte: {
+  sourceHost: string;
+  urlTemplate: string;
+}): NonNullable<EntradaDaEstante["fonte"]>
+{
+  if (tipoDaFonte(fonte.urlTemplate) === "template")
+  {
+    return { sourceHost: fonte.sourceHost, tipo: "template" };
+  }
+
+  return {
+    sourceHost: fonte.sourceHost,
+    tipo: "pagina",
+    urlDaObra: urlDaPagina(fonte.sourceHost, fonte.urlTemplate),
+  };
+}
+
+export type PedidoDeProgresso = {
+  userId: string;
+  entradaId: string;
+  capitulo: number;
+};
+
+export type ResultadoDeProgresso =
+  | { estado: "ok" }
+  | { estado: "nao_encontrada" }
+  | { estado: "capitulo_invalido" };
+
+export type DependenciasDeProgresso = {
+  atualizarProgresso: (
+    userId: string,
+    entradaId: string,
+    capitulo: number,
+  ) => Promise<{ id: string } | null>;
+};
+
+/**
+ * Edição manual do capítulo em leitura. Correção do dono: seta direto,
+ * inclusive para trás — a regra do maior capítulo vale para aberturas, não
+ * para edição. Entrada alheia responde igual à inexistente.
+ */
+export async function definirProgresso(
+  pedido: PedidoDeProgresso,
+  deps: DependenciasDeProgresso,
+): Promise<ResultadoDeProgresso>
+{
+  if (!Number.isFinite(pedido.capitulo) || pedido.capitulo <= 0)
+  {
+    return { estado: "capitulo_invalido" };
+  }
+
+  const atualizada = await deps.atualizarProgresso(
+    pedido.userId,
+    pedido.entradaId,
+    pedido.capitulo,
+  );
+
+  return atualizada === null ? { estado: "nao_encontrada" } : { estado: "ok" };
+}
+
+/** A composição de produção. */
+export function definirProgressoDoSistema(
+  pedido: PedidoDeProgresso,
+): Promise<ResultadoDeProgresso>
+{
+  return definirProgresso(pedido, {
+    atualizarProgresso: atualizarProgressoDaEntrada,
   });
 }
 
