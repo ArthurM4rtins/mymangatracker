@@ -170,6 +170,21 @@ inline — o erro so aparece na execucao.
 
 ---
 
+## Botao nao promete o que o sistema nao controla
+
+**01/09/2026.** Correcao do usuario: com fonte de pagina da obra, o botao dizia
+"Abrir obra + registrar cap. 2" mas abria sempre a pagina salva (o link colado,
+que era do capitulo 1). O sistema registrava um capitulo que nao tinha como
+saber se foi lido, e abria um lugar que nao era o prometido.
+
+**Regra:** rotulo de acao descreve APENAS o que o codigo faz de verdade. Se o
+sistema nao controla o resultado (nao sabe qual capitulo a pagina vai mostrar,
+nao sabe onde o usuario parou), a acao nao registra nada em silencio — vira
+acao explicita do usuario (edicao manual do capitulo). Registro automatico so
+quando a informacao e real (template resolve o capitulo; extensao le a pagina).
+
+---
+
 ## Identidade visual — nao ecoar o Letterboxd
 
 **31/08/2026.** Duas correcoes do usuario na primeira rodada de identidade: (1) os temas sumi e

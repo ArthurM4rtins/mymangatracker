@@ -383,3 +383,23 @@ ser a PAGINA DA OBRA; botao vira abrir obra + registrar cap. N.
 - Branch feature/fonte-sem-template, empilhada na catalogo-front. PR #30.
 
 Cadeia: #19 <- #20 <- #22 <- #24 <- #26 <- #28 <- #30. Mergear em ordem.
+
+## Sessao 01/09 — continuacao: capitulo editavel e fonte-pagina honesta (#31)
+
+Correcao do usuario: fonte de pagina prometia registrar cap. N mas abria a
+pagina salva (licao nova em lessons.md — botao nao promete o que nao controla).
+
+- Capitulo em leitura editavel na estante (inclusive para tras — edicao e
+  correcao do dono; regra do maior capitulo vale para ABERTURAS). Repo
+  atualizarProgressoDaEntrada + servico definirProgresso (TDD) + PATCH
+  /api/v1/estante/:id aceita { capitulo } alem de { status }.
+- Fonte de pagina virou link direto "Abrir a obra" (sem POST, sem registro
+  automatico); DTO da fonte expoe urlDaObra. Template continua com o
+  Continuar cap. N automatico.
+- Extensao (Fase 6): decidido — clique na pagina do capitulo registra o cap e
+  o abrir passa a usar a ultima URL registrada. No esboco do vault.
+- Provas: lint 0, 127 unitarios, 33 test:db, build verde. E2E: PATCH capitulo
+  12.5 regrediu o progresso, tela mostra campo editavel + Abrir a obra.
+- Branch feature/editar-progresso, empilhada na fonte-sem-template. PR #32.
+
+Cadeia: #19 <- #20 <- #22 <- #24 <- #26 <- #28 <- #30 <- #32.
