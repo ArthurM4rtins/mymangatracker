@@ -5,16 +5,20 @@
  * minuto, e se cada visitante chamasse direto, a cota do projeto inteiro queimaria
  * no primeiro acesso com movimento. Quem chama e o servidor. Painel 05 do artifact.
  */
-import { mapearBusca, type MediaDoAniList } from "@/server/domain/anilist-media";
+import {
+  mapearBusca,
+  mapearRecomendacoes,
+  type MediaDoAniList,
+} from "@/server/domain/anilist-media";
 import { anilistEndpoint } from "./config";
 
 const TIMEOUT_MS = 5000;
 const LIMITE_PADRAO = 20;
+const LIMITE_SIMILARES = 6;
 
-const BUSCA = `
-query($termo: String, $limite: Int) {
-  Page(perPage: $limite) {
-    media(search: $termo, type: MANGA, sort: SEARCH_MATCH) {
+// O recorte de campos é um só para toda consulta: o cache em `Media` guarda
+// tudo isso, e a página da obra é quem usa os campos além do card.
+const CAMPOS_DE_MEDIA = `
       id
       title { romaji english native }
       format
@@ -22,6 +26,18 @@ query($termo: String, $limite: Int) {
       chapters
       description(asHtml: false)
       coverImage { large }
+      bannerImage
+      startDate { year }
+      genres
+      averageScore
+      staff(perPage: 6, sort: RELEVANCE) {
+        edges { role node { id name { full } } }
+      }`;
+
+const BUSCA = `
+query($termo: String, $limite: Int) {
+  Page(perPage: $limite) {
+    media(search: $termo, type: MANGA, sort: SEARCH_MATCH) {${CAMPOS_DE_MEDIA}
     }
   }
 }`;
@@ -31,14 +47,23 @@ query($termo: String, $limite: Int) {
 const POPULARES = `
 query($limite: Int) {
   Page(perPage: $limite) {
-    media(type: MANGA, sort: POPULARITY_DESC, isAdult: false) {
-      id
-      title { romaji english native }
-      format
-      countryOfOrigin
-      chapters
-      description(asHtml: false)
-      coverImage { large }
+    media(type: MANGA, sort: POPULARITY_DESC, isAdult: false) {${CAMPOS_DE_MEDIA}
+    }
+  }
+}`;
+
+// Similares = recommendations da própria obra, votadas pela comunidade do
+// AniList. Só a página da obra consulta; não entra no cache do banco.
+const SIMILARES = `
+query($id: Int, $limite: Int) {
+  Page(perPage: 1) {
+    media(id: $id, type: MANGA) {
+      recommendations(perPage: $limite, sort: RATING_DESC) {
+        nodes {
+          mediaRecommendation {${CAMPOS_DE_MEDIA}
+          }
+        }
+      }
     }
   }
 }`;
@@ -54,14 +79,7 @@ const PING = `query { Media(id: 1) { id } }`;
 const POR_ID = `
 query($id: Int) {
   Page(perPage: 1) {
-    media(id: $id, type: MANGA) {
-      id
-      title { romaji english native }
-      format
-      countryOfOrigin
-      chapters
-      description(asHtml: false)
-      coverImage { large }
+    media(id: $id, type: MANGA) {${CAMPOS_DE_MEDIA}
     }
   }
 }`;
@@ -115,6 +133,21 @@ export async function buscarMediaPorId(
   const resposta = await chamar(POR_ID, { id: anilistId });
 
   return mapearBusca(resposta)[0] ?? null;
+}
+
+/**
+ * Obras similares — as recommendations da comunidade do AniList para a obra.
+ *
+ * @throws quando o AniList não responde; resposta torta vira lista vazia.
+ */
+export async function buscarSimilares(
+  anilistId: number,
+  limite: number = LIMITE_SIMILARES,
+): Promise<MediaDoAniList[]>
+{
+  const resposta = await chamar(SIMILARES, { id: anilistId, limite });
+
+  return mapearRecomendacoes(resposta);
 }
 
 /**
