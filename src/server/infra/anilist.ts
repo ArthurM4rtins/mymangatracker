@@ -31,6 +31,24 @@ query($termo: String, $limite: Int) {
 // provided" quando não há campo de conteúdo dentro de `Page`.
 const PING = `query { Media(id: 1) { id } }`;
 
+// Por id, mas via `Page`: `Media(id:)` direto responde erro de GraphQL quando o
+// id não existe, e não dá para distinguir de rate limit. `Page.media` devolve
+// lista vazia — id inexistente vira `null`, não exceção.
+const POR_ID = `
+query($id: Int) {
+  Page(perPage: 1) {
+    media(id: $id, type: MANGA) {
+      id
+      title { romaji english native }
+      format
+      countryOfOrigin
+      chapters
+      description(asHtml: false)
+      coverImage { large }
+    }
+  }
+}`;
+
 /**
  * Busca obras por termo. Devolve lista vazia quando o termo é vazio — não gasta
  * requisição da cota para perguntar nada.
@@ -50,6 +68,21 @@ export async function buscarMedia(
   const resposta = await chamar(BUSCA, { termo: termo.trim(), limite });
 
   return mapearBusca(resposta);
+}
+
+/**
+ * Uma obra pelo id do AniList. `null` quando o id não existe ou o formato não
+ * cabe no nosso modelo (o domínio descartou).
+ *
+ * @throws quando o AniList não responde — indisponibilidade, não ausência.
+ */
+export async function buscarMediaPorId(
+  anilistId: number,
+): Promise<MediaDoAniList | null>
+{
+  const resposta = await chamar(POR_ID, { id: anilistId });
+
+  return mapearBusca(resposta)[0] ?? null;
 }
 
 /**

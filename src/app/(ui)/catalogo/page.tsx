@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import { buscarNoCatalogo } from "@/server/services/catalogo.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
+import { BotaoEstante } from "./botao-estante";
 
 // A busca depende do termo da URL e do AniList: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -24,14 +24,11 @@ export default async function Catalogo({ searchParams }: Props)
   const resultado = await buscarNoCatalogo(q ?? "");
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-8 px-6 py-16">
+    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
       <header className="flex flex-col gap-2">
-        <Link href="/" className="w-fit text-sm text-neutral-500 underline underline-offset-4">
-          ← Início
-        </Link>
-        <h1 className="text-3xl font-semibold tracking-tight">Catálogo</h1>
-        <p className="text-neutral-600 dark:text-neutral-400">
-          Busca no AniList. Funciona sem banco — nada é gravado nesta tela.
+        <h1 className="font-marca text-3xl font-bold tracking-tight">Catálogo</h1>
+        <p className="text-texto-suave">
+          Busque a obra, adicione à estante e a leitura começa a contar.
         </p>
       </header>
 
@@ -43,30 +40,30 @@ export default async function Catalogo({ searchParams }: Props)
           defaultValue={resultado.termo}
           placeholder="Lookism, Solo Leveling, Berserk…"
           aria-label="Buscar obra"
-          className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="flex-1 rounded-md border border-borda bg-superficie px-3 py-2 text-sm outline-none focus:border-acento"
         />
         <button
           type="submit"
-          className="rounded-md border border-neutral-900 px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-900 hover:text-white dark:border-neutral-100 dark:hover:bg-neutral-100 dark:hover:text-neutral-900"
+          className="rounded-md bg-acento px-4 py-2 text-sm font-medium text-acento-contraste"
         >
           Buscar
         </button>
       </form>
 
       {resultado.estado === "indisponivel" && (
-        <p className="rounded-md border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+        <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
           O AniList não respondeu agora. Tente de novo em instantes.
         </p>
       )}
 
       {resultado.estado === "vazio" && resultado.termo !== "" && (
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="text-sm text-texto-suave">
           Nada encontrado para <strong>{resultado.termo}</strong>.
         </p>
       )}
 
       {resultado.estado === "ok" && (
-        <ul className="flex flex-col gap-4">
+        <ul className="grid gap-4 sm:grid-cols-2">
           {resultado.obras.map(function (obra)
           {
             return <Obra key={obra.anilistId} obra={obra} />;
@@ -82,32 +79,46 @@ function Obra({ obra }: { obra: MediaDoAniList })
   const rotulo = obra.countryOfOrigin ? PAIS[obra.countryOfOrigin] : "Obra";
 
   return (
-    <li className="flex gap-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
-      {obra.coverImageUrl && (
+    <li className="flex gap-4 rounded-lg border border-borda bg-superficie p-4">
+      {obra.coverImageUrl ? (
         <Image
           src={obra.coverImageUrl}
           alt=""
-          width={64}
-          height={96}
-          className="h-24 w-16 shrink-0 rounded object-cover"
+          width={96}
+          height={144}
+          className="h-36 w-24 shrink-0 rounded object-cover"
           unoptimized
         />
+      ) : (
+        <div
+          aria-hidden
+          className="flex h-36 w-24 shrink-0 items-center justify-center rounded bg-fundo text-texto-suave"
+        >
+          —
+        </div>
       )}
 
-      <div className="flex min-w-0 flex-col gap-1">
-        <h2 className="font-medium">{obra.titleEnglish ?? obra.titleRomaji}</h2>
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+        <h2 className="font-medium leading-snug">
+          {obra.titleEnglish ?? obra.titleRomaji}
+        </h2>
 
-        <p className="text-xs text-neutral-500">
-          {rotulo}
-          {obra.type === "NOVEL" && " · Novel"}
-          {obra.chapters !== undefined && ` · ${obra.chapters} capítulos`}
+        <p className="flex flex-wrap items-center gap-1.5 text-xs text-texto-suave">
+          <span className="rounded-full border border-borda px-2 py-0.5">
+            {obra.type === "NOVEL" ? "Novel" : rotulo}
+          </span>
+          {obra.chapters !== undefined && (
+            <span className="tabular-nums">{obra.chapters} capítulos</span>
+          )}
         </p>
 
         {obra.description && (
-          <p className="line-clamp-3 text-sm text-neutral-600 dark:text-neutral-400">
-            {obra.description}
-          </p>
+          <p className="line-clamp-2 text-sm text-texto-suave">{obra.description}</p>
         )}
+
+        <div className="mt-auto pt-2">
+          <BotaoEstante anilistId={obra.anilistId} />
+        </div>
       </div>
     </li>
   );
