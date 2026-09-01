@@ -6,6 +6,7 @@
  * cache alimentado pelo cliente seria dado forjável.
  */
 import { cacheEstaFresco } from "@/server/domain/media-cache";
+import { proximoCapitulo } from "@/server/domain/progresso";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId } from "@/server/infra/anilist";
 import {
@@ -17,6 +18,7 @@ import {
   atualizarStatusDaEntrada,
   listarEntradasDoUsuario,
 } from "@/server/repositories/shelf.repository";
+import { listarFontesAtivas } from "@/server/repositories/reading-source.repository";
 
 export type StatusDaEstante =
   | "READING"
@@ -114,6 +116,9 @@ export type EntradaDaEstante = {
     countryOfOrigin: string | null;
     chapters: number | null;
   };
+  /** A fonte de leitura ativa — só o que a tela mostra, nunca o template. */
+  fonte: { sourceHost: string } | null;
+  proximoCapitulo: number;
 };
 
 export type FiltroDaEstante = {
@@ -121,23 +126,55 @@ export type FiltroDaEstante = {
   status?: StatusDaEstante;
 };
 
+type EntradaNoRepositorio = Omit<EntradaDaEstante, "fonte" | "proximoCapitulo"> & {
+  mediaId: string;
+};
+
 export type DependenciasDeListagem = {
   listarEntradas: (
     userId: string,
     status?: StatusDaEstante,
-  ) => Promise<EntradaDaEstante[]>;
+  ) => Promise<EntradaNoRepositorio[]>;
+  listarFontes: (
+    userId: string,
+  ) => Promise<Array<{ mediaId: string; sourceHost: string }>>;
 };
 
 /**
  * A estante é privada do dono: o userId vem da sessão resolvida no controller
  * e é obrigatório aqui por tipo — não existe caminho de listar sem ele.
+ *
+ * O DTO compõe a fonte ativa e o próximo capítulo; o mediaId interno não sai.
  */
-export function listarEstante(
+export async function listarEstante(
   filtro: FiltroDaEstante,
   deps: DependenciasDeListagem,
 ): Promise<EntradaDaEstante[]>
 {
-  return deps.listarEntradas(filtro.userId, filtro.status);
+  const [entradas, fontes] = await Promise.all([
+    deps.listarEntradas(filtro.userId, filtro.status),
+    deps.listarFontes(filtro.userId),
+  ]);
+
+  const fontePorMedia = new Map(
+    fontes.map(function (fonte) { return [fonte.mediaId, fonte] as const; }),
+  );
+
+  return entradas.map(function (entrada)
+  {
+    const fonte = fontePorMedia.get(entrada.mediaId) ?? null;
+    const maior =
+      entrada.progressChapter === null ? null : Number(entrada.progressChapter);
+
+    return {
+      entradaId: entrada.entradaId,
+      status: entrada.status,
+      progressChapter: entrada.progressChapter,
+      obra: entrada.obra,
+      fonte: fonte === null ? null : { sourceHost: fonte.sourceHost },
+      proximoCapitulo: proximoCapitulo(maior),
+    };
+  });
 }
 
 export type PedidoDeStatus = {
@@ -179,7 +216,10 @@ export function listarEstanteDoSistema(
   filtro: FiltroDaEstante,
 ): Promise<EntradaDaEstante[]>
 {
-  return listarEstante(filtro, { listarEntradas: listarEntradasDoUsuario });
+  return listarEstante(filtro, {
+    listarEntradas: listarEntradasDoUsuario,
+    listarFontes: listarFontesAtivas,
+  });
 }
 
 /** A composição de produção. */

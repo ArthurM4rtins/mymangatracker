@@ -9,42 +9,69 @@ import {
 // usuário nunca aparece para outro; entrada que não é do usuário não é
 // encontrada (não "proibida": não revelamos que existe).
 
-const ENTRADA: EntradaDaEstante = {
+const OBRA = {
+  titleRomaji: "Vinland Saga",
+  titleEnglish: null,
+  coverImageUrl: null,
+  type: "MANGA" as const,
+  countryOfOrigin: "JP",
+  chapters: 224,
+};
+
+const NO_REPOSITORIO = {
   entradaId: "e1",
-  status: "READING",
-  progressChapter: null,
-  obra: {
-    titleRomaji: "Vinland Saga",
-    titleEnglish: null,
-    coverImageUrl: null,
-    type: "MANGA",
-    countryOfOrigin: "JP",
-    chapters: 224,
-  },
+  mediaId: "m1",
+  status: "READING" as const,
+  progressChapter: "57.5",
+  obra: OBRA,
+};
+
+const FONTE_ATIVA = {
+  id: "f1",
+  mediaId: "m1",
+  sourceHost: "mangalivre.blog",
+  urlTemplate: "/title/Vinland-Saga/chapter/{chapter}/1",
 };
 
 describe("listarEstante", function ()
 {
-  it("delega ao repositório com o userId e o filtro de status", async function ()
+  it("compõe a entrada com a fonte ativa e o próximo capítulo, sem vazar mediaId", async function ()
   {
-    const listarEntradas = vi.fn(async function () { return [ENTRADA]; });
+    const listarEntradas = vi.fn(async function () { return [NO_REPOSITORIO]; });
+    const listarFontes = vi.fn(async function () { return [FONTE_ATIVA]; });
 
     const entradas = await listarEstante(
       { userId: "u1", status: "READING" },
-      { listarEntradas },
+      { listarEntradas, listarFontes },
     );
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", "READING");
-    expect(entradas).toEqual([ENTRADA]);
+    expect(listarFontes).toHaveBeenCalledWith("u1");
+    expect(entradas).toEqual([
+      {
+        entradaId: "e1",
+        status: "READING",
+        progressChapter: "57.5",
+        obra: OBRA,
+        fonte: { sourceHost: "mangalivre.blog" },
+        proximoCapitulo: 58,
+      } satisfies EntradaDaEstante,
+    ]);
+    expect(entradas[0]).not.toHaveProperty("mediaId");
   });
 
-  it("sem filtro, pede a estante inteira do usuário", async function ()
+  it("sem fonte configurada, fonte é null e o próximo capítulo é 1", async function ()
   {
-    const listarEntradas = vi.fn(async function () { return []; });
+    const listarEntradas = vi.fn(async function ()
+    {
+      return [{ ...NO_REPOSITORIO, progressChapter: null }];
+    });
+    const listarFontes = vi.fn(async function () { return []; });
 
-    await listarEstante({ userId: "u1" }, { listarEntradas });
+    const entradas = await listarEstante({ userId: "u1" }, { listarEntradas, listarFontes });
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", undefined);
+    expect(entradas[0]).toMatchObject({ fonte: null, proximoCapitulo: 1 });
   });
 });
 
