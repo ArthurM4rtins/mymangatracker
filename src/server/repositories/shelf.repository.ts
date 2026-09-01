@@ -111,6 +111,32 @@ export async function atualizarStatusDaEntrada(
 }
 
 /**
+ * A entrada DO USUÁRIO para uma obra específica — o que a página da obra
+ * precisa para mostrar os controles. `null` = não está na estante.
+ */
+export async function buscarEntradaPorMedia(
+  userId: string,
+  mediaId: string,
+): Promise<{ entradaId: string; status: ShelfStatus; progressChapter: string | null } | null>
+{
+  const linha = await getPrisma().shelfEntry.findUnique({
+    where: { userId_mediaId: { userId, mediaId } },
+    select: { id: true, status: true, progressChapter: true },
+  });
+
+  if (linha === null)
+  {
+    return null;
+  }
+
+  return {
+    entradaId: linha.id,
+    status: linha.status,
+    progressChapter: linha.progressChapter?.toString() ?? null,
+  };
+}
+
+/**
  * Edição manual do capítulo em leitura — correção do dono, seta direto
  * (inclusive para trás). `null` para entrada alheia ou inexistente, iguais.
  */

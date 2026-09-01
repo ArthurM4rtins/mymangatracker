@@ -61,6 +61,30 @@ export async function listarAvaliacoes(userId: string): Promise<AvaliacaoDaObra[
   });
 }
 
+/** A avaliação DO USUÁRIO para uma obra. `null` = ainda não avaliou. */
+export async function buscarAvaliacao(
+  userId: string,
+  mediaId: string,
+): Promise<AvaliacaoDaObra | null>
+{
+  const linha = await getPrisma().entry.findUnique({
+    where: { userId_mediaId: { userId, mediaId } },
+    select: { mediaId: true, rating: true, review: true, containsSpoilers: true },
+  });
+
+  if (linha === null)
+  {
+    return null;
+  }
+
+  return {
+    mediaId: linha.mediaId,
+    rating: linha.rating?.toString() ?? null,
+    review: linha.review,
+    containsSpoilers: linha.containsSpoilers,
+  };
+}
+
 /**
  * Remove a avaliação DO USUÁRIO. `null` quando não existe ou é de outro —
  * iguais de propósito.
