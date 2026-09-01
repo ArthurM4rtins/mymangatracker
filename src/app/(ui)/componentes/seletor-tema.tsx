@@ -2,10 +2,13 @@
 
 import { useSyncExternalStore } from "react";
 
+// Cada tema vira uma bolinha de duas metades: fundo à esquerda, acento à
+// direita — as cores são as NOSSAS variáveis de tema (swatch funcional, não o
+// trio do Letterboxd; ver lessons.md).
 const TEMAS = [
-  { id: "sumi", rotulo: "Sumi" },
-  { id: "noturno", rotulo: "Noturno" },
-  { id: "matcha", rotulo: "Matcha" },
+  { id: "sumi", rotulo: "Sumi", fundo: "#faf7f2", acento: "#d6402b" },
+  { id: "noturno", rotulo: "Noturno", fundo: "#12141f", acento: "#f0a842" },
+  { id: "matcha", rotulo: "Matcha", fundo: "#343a2f", acento: "#a3c585" },
 ] as const;
 
 type Tema = (typeof TEMAS)[number]["id"];
@@ -47,11 +50,7 @@ export function SeletorTema() {
   const ativo = useSyncExternalStore(assinar, lerTemaAtivo, lerTemaNoServidor);
 
   return (
-    <div
-      role="group"
-      aria-label="Tema do site"
-      className="flex items-center rounded-full border border-borda p-0.5"
-    >
+    <div role="group" aria-label="Tema do site" className="flex items-center gap-1.5">
       {TEMAS.map(function (tema) {
         const selecionado = ativo === tema.id;
         return (
@@ -62,14 +61,15 @@ export function SeletorTema() {
               escolher(tema.id);
             }}
             aria-pressed={selecionado}
-            className={`rounded-full px-2.5 py-1 text-xs transition-colors ${
-              selecionado
-                ? "bg-acento font-medium text-acento-contraste"
-                : "text-texto-suave hover:text-texto"
+            aria-label={`Tema ${tema.rotulo}`}
+            title={tema.rotulo}
+            className={`h-5 w-5 rounded-full border transition-transform hover:scale-110 ${
+              selecionado ? "border-acento ring-2 ring-acento/50" : "border-borda"
             }`}
-          >
-            {tema.rotulo}
-          </button>
+            style={{
+              background: `linear-gradient(90deg, ${tema.fundo} 50%, ${tema.acento} 50%)`,
+            }}
+          />
         );
       })}
     </div>

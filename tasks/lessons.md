@@ -209,3 +209,8 @@ visual do logo do Letterboxd.
 marca deles (trio de circulos coloridos, em especial) nao entra. E temas so contam como opcoes
 distintas se o **fundo** muda de verdade entre eles; trocar so o acento nao e um tema novo.
 Matcha virou meio-termo real (verde-oliva dim) e o seletor virou controle segmentado com texto.
+
+**Nuance (01/09, decisao do usuario):** bolinhas de tema voltaram por pedido explicito, mas como
+SWATCH funcional — cada uma com as duas metades das cores do PROPRIO tema (fundo + acento),
+nao o trio solido laranja/verde/azul da marca deles. A regra continua valendo para cores/arranjo
+que imitem o logo do Letterboxd.

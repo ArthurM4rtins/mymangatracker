@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, Zen_Kaku_Gothic_New } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 import { usuarioDaSessao } from "../api/v1/_shared/sessao";
+import { BotaoSair } from "./componentes/botao-sair";
 import { Logo } from "./componentes/logo";
-import { MenuNavegacao } from "./componentes/menu-navegacao";
+import { SeletorTema } from "./componentes/seletor-tema";
 
 const fonteUi = Instrument_Sans({
   variable: "--font-ui",
@@ -35,6 +37,23 @@ const SCRIPT_TEMA = `(function () {
   } catch (e) {}
 })();`;
 
+function LinkDoHeader({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className="text-sm text-texto-suave transition-colors hover:text-texto"
+    >
+      {children}
+    </Link>
+  );
+}
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   // Resolver sessão aqui torna todas as rotas dinâmicas — aceito: as telas que
   // importam já são dinâmicas, e o header precisa saber se há alguém logado.
@@ -51,7 +70,21 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <header className="border-b border-borda">
           <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 py-4">
             <Logo />
-            <MenuNavegacao logado={Boolean(userId)} />
+            <div className="flex items-center gap-4">
+              <nav aria-label="Navegação" className="flex items-center gap-3">
+                <LinkDoHeader href="/catalogo">Catálogo</LinkDoHeader>
+                <LinkDoHeader href="/listas">Listas</LinkDoHeader>
+                {userId && <LinkDoHeader href="/estante">Estante</LinkDoHeader>}
+              </nav>
+
+              <SeletorTema />
+
+              {userId ? (
+                <BotaoSair />
+              ) : (
+                <LinkDoHeader href="/entrar">Entrar</LinkDoHeader>
+              )}
+            </div>
           </div>
         </header>
         {children}
