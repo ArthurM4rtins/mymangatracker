@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { mapearBusca, mapearMedia } from "@/server/domain/anilist-media";
+import {
+  mapearBusca,
+  mapearMedia,
+  mapearRecomendacoes,
+} from "@/server/domain/anilist-media";
 
 // Registro real, capturado de graphql.anilist.co em 27/08/2026.
 const LOOKISM = {
@@ -185,5 +189,41 @@ describe("mapearMedia — campos da página da obra", () =>
     expect(media).not.toHaveProperty("genres");
     expect(media).not.toHaveProperty("averageScore");
     expect(media).not.toHaveProperty("autores");
+  });
+});
+
+describe("mapearRecomendacoes", () =>
+{
+  it("extrai as obras recomendadas, descartando o que não mapeia", () =>
+  {
+    const resposta = {
+      data: {
+        Page: {
+          media: [
+            {
+              recommendations: {
+                nodes: [
+                  { mediaRecommendation: LOOKISM },
+                  { mediaRecommendation: { id: 1, title: {}, format: "MANGA" } },
+                  { mediaRecommendation: null },
+                  null,
+                ],
+              },
+            },
+          ],
+        },
+      },
+    };
+
+    const obras = mapearRecomendacoes(resposta);
+
+    expect(obras).toHaveLength(1);
+    expect(obras[0].anilistId).toBe(86848);
+  });
+
+  it("resposta torta vira lista vazia, não exceção", () =>
+  {
+    expect(mapearRecomendacoes(null)).toEqual([]);
+    expect(mapearRecomendacoes({ data: { Page: { media: [] } } })).toEqual([]);
   });
 });

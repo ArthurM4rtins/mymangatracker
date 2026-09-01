@@ -223,6 +223,58 @@ export function mapearBusca(resposta: unknown): MediaDoAniList[]
 }
 
 /**
+ * Extrai as obras recomendadas da resposta de `recommendations` do AniList.
+ * Resposta torta vira lista vazia — a seção de similares some, a página fica.
+ */
+export function mapearRecomendacoes(resposta: unknown): MediaDoAniList[]
+{
+  if (!ehObjeto(resposta) || !ehObjeto(resposta.data))
+  {
+    return [];
+  }
+
+  const page = resposta.data.Page;
+
+  if (!ehObjeto(page) || !Array.isArray(page.media))
+  {
+    return [];
+  }
+
+  const obra = page.media[0];
+
+  if (!ehObjeto(obra) || !ehObjeto(obra.recommendations))
+  {
+    return [];
+  }
+
+  const nodes = obra.recommendations.nodes;
+
+  if (!Array.isArray(nodes))
+  {
+    return [];
+  }
+
+  const mapeadas: MediaDoAniList[] = [];
+
+  nodes.forEach(function (node)
+  {
+    if (!ehObjeto(node))
+    {
+      return;
+    }
+
+    const media = mapearMedia(node.mediaRecommendation);
+
+    if (media !== null)
+    {
+      mapeadas.push(media);
+    }
+  });
+
+  return mapeadas;
+}
+
+/**
  * Tira as tags da descricao. O AniList devolve `<br>` e `<i>` mesmo com
  * `asHtml: false`, e renderizar isso como HTML seria injecao de conteudo de
  * terceiro na nossa pagina.
