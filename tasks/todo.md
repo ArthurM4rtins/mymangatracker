@@ -449,3 +449,20 @@ Desenho em Obsidian/02. Implementacoes/feature-pagina-obra/.
 - Branch feature/pagina-obra, empilhada na avaliacao. PR #36.
 
 Cadeia: ... <- #34 <- #36. Proximo do roadmap: C (filtros do catalogo).
+
+## Sessao 01/09 — continuacao: filtros do catalogo (#37), bloco C
+
+- Dominio catalogo-filtros: whitelist da URL (tipo, genero fixo do AniList,
+  decada, ordem). Valor desconhecido descartado em silencio.
+- Infra buscarFiltrado com query montada SO com args presentes — o AniList
+  responde 400/500 para variavel de filtro null (provado com probe; nao usar
+  variaveis opcionais nulas nunca). buscarMedia/BUSCA antigas removidas.
+- Servico: vitrine de populares so sem termo E sem filtro; o resto e busca.
+- UI: selects tipo/genero/decada/ordem gravando na URL + limpar filtros;
+  busca ao digitar e filtros preservam-se mutuamente.
+- Provas: lint 0, 159 unitarios, build verde. Smoke: manhwa+nota devolve
+  The Greatest Estate Developer; Romance+1990 devolve Uzumaki (que TEM
+  Romance nos generos do AniList — dado deles, filtro correto).
+- Branch feature/catalogo-filtros, empilhada na pagina-obra. PR #38.
+
+Cadeia: ... <- #36 <- #38. Proximo do roadmap: B (reviews sociais publicas).
