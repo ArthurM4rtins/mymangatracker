@@ -52,6 +52,7 @@ model User {
   shelfEntries    ShelfEntry[]
   readingSources  ReadingSource[]
   readingProgress ReadingProgress[]
+  entries         Entry[]
 }
 
 // Cache do AniList. Se sumir, é reconstruído da API — nenhum dado do usuário
@@ -74,6 +75,27 @@ model Media {
   shelfEntries    ShelfEntry[]
   readingSources  ReadingSource[]
   readingProgress ReadingProgress[]
+  entries         Entry[]
+}
+
+// A avaliação do usuário: nota e/ou resenha, uma por obra (painel 06).
+// Nota 0,5–5,0 em passos de 0,5 — o CHECK está à mão na migration, porque
+// não sai do schema do Prisma. Visível só ao dono até a fase social.
+model Entry {
+  id               String   @id @default(cuid())
+  userId           String
+  mediaId          String
+  rating           Decimal? @db.Decimal(2, 1)
+  review           String?  @db.Text
+  containsSpoilers Boolean  @default(false)
+  reviewedAt       DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, mediaId])
 }
 
 // O resumo da linha do tempo: uma linha por obra por usuário.
