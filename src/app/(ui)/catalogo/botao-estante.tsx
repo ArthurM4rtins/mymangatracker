@@ -9,10 +9,17 @@ import { useState } from "react";
 
 type Estado = "parado" | "salvando" | "salvo" | "erro";
 
-export function BotaoEstante({ anilistId }: { anilistId: number })
+export function BotaoEstante({
+  anilistId,
+  jaNaEstante = false,
+}: {
+  anilistId: number;
+  /** Vem do servidor: obra que já está na estante nasce marcada. */
+  jaNaEstante?: boolean;
+})
 {
   const roteador = useRouter();
-  const [estado, setEstado] = useState<Estado>("parado");
+  const [estado, setEstado] = useState<Estado>(jaNaEstante ? "salvo" : "parado");
 
   async function adicionar()
   {

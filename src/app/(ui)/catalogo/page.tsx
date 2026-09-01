@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { buscarNoCatalogo } from "@/server/services/catalogo.service";
+import { anilistIdsNaEstanteDoSistema } from "@/server/services/estante.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
+import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
 import { BotaoEstante } from "./botao-estante";
 import { BuscaCatalogo } from "./busca-catalogo";
 
@@ -22,7 +24,10 @@ type Props = {
 export default async function Catalogo({ searchParams }: Props)
 {
   const { q } = await searchParams;
-  const resultado = await buscarNoCatalogo(q ?? "");
+  const [resultado, naEstante] = await Promise.all([
+    buscarNoCatalogo(q ?? ""),
+    idsNaEstante(),
+  ]);
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
@@ -58,10 +63,16 @@ export default async function Catalogo({ searchParams }: Props)
               Populares agora
             </h2>
           )}
-          <ul className="grid gap-4 sm:grid-cols-2">
+          <ul className="grid gap-5 sm:grid-cols-2">
             {resultado.obras.map(function (obra)
             {
-              return <Obra key={obra.anilistId} obra={obra} />;
+              return (
+                <Obra
+                  key={obra.anilistId}
+                  obra={obra}
+                  jaNaEstante={naEstante.has(obra.anilistId)}
+                />
+              );
             })}
           </ul>
         </section>
@@ -70,32 +81,52 @@ export default async function Catalogo({ searchParams }: Props)
   );
 }
 
-function Obra({ obra }: { obra: MediaDoAniList })
+/** Banco fora ou sem sessão: nada marcado, o catálogo segue de pé. */
+async function idsNaEstante(): Promise<Set<number>>
+{
+  try
+  {
+    const userId = await usuarioDaSessao();
+
+    if (!userId)
+    {
+      return new Set();
+    }
+
+    return new Set(await anilistIdsNaEstanteDoSistema(userId));
+  }
+  catch
+  {
+    return new Set();
+  }
+}
+
+function Obra({ obra, jaNaEstante }: { obra: MediaDoAniList; jaNaEstante: boolean })
 {
   const rotulo = obra.countryOfOrigin ? PAIS[obra.countryOfOrigin] : "Obra";
 
   return (
-    <li className="flex gap-4 rounded-lg border border-borda bg-superficie p-4">
+    <li className="group flex gap-4 rounded-lg border border-borda bg-superficie p-4 transition-colors hover:border-acento/60">
       {obra.coverImageUrl ? (
         <Image
           src={obra.coverImageUrl}
           alt=""
-          width={96}
-          height={144}
-          className="h-36 w-24 shrink-0 rounded object-cover"
+          width={112}
+          height={168}
+          className="h-42 w-28 shrink-0 rounded-md object-cover shadow-sm"
           unoptimized
         />
       ) : (
         <div
           aria-hidden
-          className="flex h-36 w-24 shrink-0 items-center justify-center rounded bg-fundo text-texto-suave"
+          className="flex h-42 w-28 shrink-0 items-center justify-center rounded-md bg-fundo text-texto-suave"
         >
           —
         </div>
       )}
 
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <h2 className="font-medium leading-snug">
+        <h2 className="line-clamp-2 font-medium leading-snug">
           {obra.titleEnglish ?? obra.titleRomaji}
         </h2>
 
@@ -109,11 +140,11 @@ function Obra({ obra }: { obra: MediaDoAniList })
         </p>
 
         {obra.description && (
-          <p className="line-clamp-2 text-sm text-texto-suave">{obra.description}</p>
+          <p className="line-clamp-3 text-sm text-texto-suave">{obra.description}</p>
         )}
 
         <div className="mt-auto pt-2">
-          <BotaoEstante anilistId={obra.anilistId} />
+          <BotaoEstante anilistId={obra.anilistId} jaNaEstante={jaNaEstante} />
         </div>
       </div>
     </li>
