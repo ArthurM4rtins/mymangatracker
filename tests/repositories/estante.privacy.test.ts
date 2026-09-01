@@ -3,6 +3,7 @@ import { salvarMediaDoAniList } from "@/server/repositories/media.repository";
 import {
   adicionarOuAtualizarEntrada,
   atualizarStatusDaEntrada,
+  listarAnilistIdsDaEstante,
   listarEntradasDoUsuario,
 } from "@/server/repositories/shelf.repository";
 import { limparBanco, semearUsuario } from "./apoio";
@@ -65,6 +66,23 @@ describe("listarEntradasDoUsuario", function ()
     const usuario = await semearUsuario("novato");
 
     await expect(listarEntradasDoUsuario(usuario.id)).resolves.toEqual([]);
+  });
+});
+
+describe("listarAnilistIdsDaEstante", function ()
+{
+  it("devolve só os ids da estante do usuário consultado", async function ()
+  {
+    const um = await semearUsuario("um");
+    const outro = await semearUsuario("outro");
+    const media = await salvarMediaDoAniList(OBRA, new Date());
+    const outraMedia = await salvarMediaDoAniList(OUTRA_OBRA, new Date());
+
+    await adicionarOuAtualizarEntrada({ userId: um.id, mediaId: media.id, status: "READING" });
+    await adicionarOuAtualizarEntrada({ userId: outro.id, mediaId: outraMedia.id, status: "PLANNED" });
+
+    await expect(listarAnilistIdsDaEstante(um.id)).resolves.toEqual([30013]);
+    await expect(listarAnilistIdsDaEstante(outro.id)).resolves.toEqual([30002]);
   });
 });
 

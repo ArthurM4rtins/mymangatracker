@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  anilistIdsNaEstante,
   listarEstante,
   mudarStatusDaEntrada,
   type EntradaDaEstante,
@@ -72,6 +73,19 @@ describe("listarEstante", function ()
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", undefined);
     expect(entradas[0]).toMatchObject({ fonte: null, proximoCapitulo: 1 });
+  });
+});
+
+describe("anilistIdsNaEstante", function ()
+{
+  it("delega ao repositório com o userId — o catálogo marca o que já está na estante", async function ()
+  {
+    const listarAnilistIds = vi.fn(async function () { return [30013, 30002]; });
+
+    const ids = await anilistIdsNaEstante("u1", { listarAnilistIds });
+
+    expect(listarAnilistIds).toHaveBeenCalledWith("u1");
+    expect(ids).toEqual([30013, 30002]);
   });
 });
 

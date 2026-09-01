@@ -16,6 +16,7 @@ import {
 import {
   adicionarOuAtualizarEntrada,
   atualizarStatusDaEntrada,
+  listarAnilistIdsDaEstante,
   listarEntradasDoUsuario,
 } from "@/server/repositories/shelf.repository";
 import { listarFontesAtivas } from "@/server/repositories/reading-source.repository";
@@ -174,6 +175,27 @@ export async function listarEstante(
       fonte: fonte === null ? null : { sourceHost: fonte.sourceHost },
       proximoCapitulo: proximoCapitulo(maior),
     };
+  });
+}
+
+export type DependenciasDeMarcacao = {
+  listarAnilistIds: (userId: string) => Promise<number[]>;
+};
+
+/** O que da estante já existe, por anilistId — para o catálogo marcar os cards. */
+export function anilistIdsNaEstante(
+  userId: string,
+  deps: DependenciasDeMarcacao,
+): Promise<number[]>
+{
+  return deps.listarAnilistIds(userId);
+}
+
+/** A composição de produção. */
+export function anilistIdsNaEstanteDoSistema(userId: string): Promise<number[]>
+{
+  return anilistIdsNaEstante(userId, {
+    listarAnilistIds: listarAnilistIdsDaEstante,
   });
 }
 

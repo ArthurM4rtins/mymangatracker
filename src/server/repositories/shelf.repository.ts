@@ -110,6 +110,20 @@ export async function atualizarStatusDaEntrada(
   return resultado.count === 0 ? null : { id: entradaId };
 }
 
+/**
+ * Os anilistIds das obras na estante DO USUÁRIO — o catálogo usa para marcar
+ * o que já foi adicionado sem uma consulta por card.
+ */
+export async function listarAnilistIdsDaEstante(userId: string): Promise<number[]>
+{
+  const linhas = await getPrisma().shelfEntry.findMany({
+    where: { userId },
+    select: { media: { select: { anilistId: true } } },
+  });
+
+  return linhas.map(function (linha) { return linha.media.anilistId; });
+}
+
 export function adicionarOuAtualizarEntrada(dados: {
   userId: string;
   mediaId: string;
