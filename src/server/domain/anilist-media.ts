@@ -274,6 +274,123 @@ export function mapearRecomendacoes(resposta: unknown): MediaDoAniList[]
   return mapeadas;
 }
 
+export type ObraDoAutor = {
+  anilistId: number;
+  titleRomaji: string;
+  titleEnglish: string | null;
+  coverImageUrl: string | null;
+  startYear: number | null;
+  papel: string;
+};
+
+export type AutorDoAniList = {
+  staffId: number;
+  nome: string;
+  nomeNativo: string | null;
+  imagemUrl: string | null;
+  descricao: string | null;
+  obras: ObraDoAutor[];
+};
+
+/**
+ * O perfil do autor a partir de `Page.staff` (issue #43) — por `Page` porque
+ * `Staff(id:)` direto responde 404 com `errors` para id inexistente,
+ * indistinguível de rate limit (mesmo caso do POR_ID; probe de 01/09).
+ * A mesma obra chega uma vez por papel (Story, Art) — fica a primeira. Bio
+ * perde HTML e o markdown de link; `null` quando o staff não existe.
+ */
+export function mapearAutor(resposta: unknown): AutorDoAniList | null
+{
+  if (!ehObjeto(resposta) || !ehObjeto(resposta.data))
+  {
+    return null;
+  }
+
+  const page = resposta.data.Page;
+
+  if (!ehObjeto(page) || !Array.isArray(page.staff))
+  {
+    return null;
+  }
+
+  const staff = page.staff[0];
+
+  if (!ehObjeto(staff))
+  {
+    return null;
+  }
+
+  const staffId = staff.id;
+  const nomes = ehObjeto(staff.name) ? staff.name : {};
+  const nome = nomes.full;
+
+  if (typeof staffId !== "number" || typeof nome !== "string")
+  {
+    return null;
+  }
+
+  const imagem = ehObjeto(staff.image) ? staff.image.large : undefined;
+  const descricao =
+    typeof staff.description === "string" ? semMarkdownDeLink(semHtml(staff.description)) : null;
+
+  const obras: ObraDoAutor[] = [];
+  const vistos = new Set<number>();
+  const edges = ehObjeto(staff.staffMedia) ? staff.staffMedia.edges : undefined;
+
+  if (Array.isArray(edges))
+  {
+    edges.forEach(function (edge)
+    {
+      if (!ehObjeto(edge) || !ehObjeto(edge.node))
+      {
+        return;
+      }
+
+      const node = edge.node;
+      const anilistId = node.id;
+      const titulo = ehObjeto(node.title) ? node.title : {};
+
+      if (
+        typeof anilistId !== "number" ||
+        typeof titulo.romaji !== "string" ||
+        vistos.has(anilistId)
+      )
+      {
+        return;
+      }
+
+      vistos.add(anilistId);
+
+      const capa = ehObjeto(node.coverImage) ? node.coverImage.large : undefined;
+      const inicio = ehObjeto(node.startDate) ? node.startDate.year : undefined;
+
+      obras.push({
+        anilistId,
+        titleRomaji: titulo.romaji,
+        titleEnglish: typeof titulo.english === "string" ? titulo.english : null,
+        coverImageUrl: typeof capa === "string" ? capa : null,
+        startYear: typeof inicio === "number" ? inicio : null,
+        papel: typeof edge.staffRole === "string" ? edge.staffRole : "",
+      });
+    });
+  }
+
+  return {
+    staffId,
+    nome,
+    nomeNativo: typeof nomes.native === "string" ? nomes.native : null,
+    imagemUrl: typeof imagem === "string" ? imagem : null,
+    descricao,
+    obras,
+  };
+}
+
+/** O AniList usa markdown de link na bio do staff — fica só o texto. */
+function semMarkdownDeLink(texto: string): string
+{
+  return texto.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").trim();
+}
+
 /**
  * Tira as tags da descricao. O AniList devolve `<br>` e `<i>` mesmo com
  * `asHtml: false`, e renderizar isso como HTML seria injecao de conteudo de

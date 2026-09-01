@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  mapearAutor,
   mapearBusca,
   mapearMedia,
   mapearRecomendacoes,
@@ -225,5 +226,84 @@ describe("mapearRecomendacoes", () =>
   {
     expect(mapearRecomendacoes(null)).toEqual([]);
     expect(mapearRecomendacoes({ data: { Page: { media: [] } } })).toEqual([]);
+  });
+});
+
+// A página do autor (issue #43): perfil do staff + obras, dedup dos papéis
+// Story/Art (a mesma obra vem duas vezes) e bio sem markdown de link.
+const INOUE = {
+  data: {
+    Page: {
+      staff: [{
+      id: 96911,
+      name: { full: "Takehiko Inoue", native: "井上雄彦" },
+      image: { large: "https://s4.anilist.co/staff/n96911.png" },
+      description: "Autor de [Slam Dunk](https://anilist.co/manga/30051/).<br>Fã de basquete.",
+      staffMedia: {
+        edges: [
+          {
+            staffRole: "Story & Art",
+            node: {
+              id: 30656,
+              title: { romaji: "Vagabond" },
+              coverImage: { large: "https://capa/vagabond.jpg" },
+              startDate: { year: 1998 },
+            },
+          },
+          {
+            staffRole: "Art",
+            node: { id: 30656, title: { romaji: "Vagabond" } },
+          },
+          {
+            staffRole: "Story & Art",
+            node: { id: 30051, title: { romaji: "Slam Dunk" }, startDate: { year: 1990 } },
+          },
+          { staffRole: "Story", node: null },
+          null,
+        ],
+      },
+      }],
+    },
+  },
+};
+
+describe("mapearAutor", () =>
+{
+  it("mapeia o perfil com bio limpa e as obras sem duplicar papéis", () =>
+  {
+    const autor = mapearAutor(INOUE);
+
+    expect(autor).toEqual({
+      staffId: 96911,
+      nome: "Takehiko Inoue",
+      nomeNativo: "井上雄彦",
+      imagemUrl: "https://s4.anilist.co/staff/n96911.png",
+      descricao: "Autor de Slam Dunk.\nFã de basquete.",
+      obras: [
+        {
+          anilistId: 30656,
+          titleRomaji: "Vagabond",
+          titleEnglish: null,
+          coverImageUrl: "https://capa/vagabond.jpg",
+          startYear: 1998,
+          papel: "Story & Art",
+        },
+        {
+          anilistId: 30051,
+          titleRomaji: "Slam Dunk",
+          titleEnglish: null,
+          coverImageUrl: null,
+          startYear: 1990,
+          papel: "Story & Art",
+        },
+      ],
+    });
+  });
+
+  it("staff inexistente ou resposta torta vira null", () =>
+  {
+    expect(mapearAutor(null)).toBeNull();
+    expect(mapearAutor({ data: { Page: { staff: [] } } })).toBeNull();
+    expect(mapearAutor({ data: { Page: { staff: [{ id: 1, name: {} }] } } })).toBeNull();
   });
 });
