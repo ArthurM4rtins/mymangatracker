@@ -185,6 +185,19 @@ quando a informacao e real (template resolve o capitulo; extensao le a pagina).
 
 ---
 
+## gh com duas contas: a ativa troca sozinha e o push da 403
+
+**01/09/2026.** Duas contas logadas no gh (`NicholasSchlindwein-dev`, com
+permissao no repo, e `NicholasSchlindwein`, sem). Duas vezes na sessao o push
+falhou com 403 porque a conta ativa tinha trocado — e `gh auth setup-git`
+sozinho nao resolve, porque o helper usa a conta ATIVA.
+
+**Regra:** push com 403 inesperado → `gh auth status` primeiro. Se a ativa for
+a errada: `gh auth switch --user NicholasSchlindwein-dev` e so entao
+`gh auth setup-git` + push.
+
+---
+
 ## Identidade visual — nao ecoar o Letterboxd
 
 **31/08/2026.** Duas correcoes do usuario na primeira rodada de identidade: (1) os temas sumi e
