@@ -28,6 +28,40 @@ export function registrarAbertura(dados: NovaAbertura): Promise<ReadingProgress>
 }
 
 /**
+ * Abertura que avança o progresso: grava o histórico e atualiza o
+ * `ShelfEntry.progressChapter` na MESMA transação — a denormalização que a
+ * estante mostra nunca diverge do histórico.
+ *
+ * Quem decide se avança é o serviço (regra do maior capítulo, no domínio);
+ * releitura usa `registrarAbertura` puro.
+ */
+export async function registrarAberturaComProgresso(
+  dados: NovaAbertura & { novoProgresso: number },
+): Promise<{ id: string }>
+{
+  const prisma = getPrisma();
+
+  const [registro] = await prisma.$transaction([
+    prisma.readingProgress.create({
+      data: {
+        userId: dados.userId,
+        mediaId: dados.mediaId,
+        readingSourceId: dados.readingSourceId ?? null,
+        chapter: dados.chapter,
+        resolvedUrl: dados.resolvedUrl,
+      },
+      select: { id: true },
+    }),
+    prisma.shelfEntry.updateMany({
+      where: { userId: dados.userId, mediaId: dados.mediaId },
+      data: { progressChapter: dados.novoProgresso },
+    }),
+  ]);
+
+  return registro;
+}
+
+/**
  * A abertura mais recente. É a consulta que o índice
  * `[userId, mediaId, openedAt desc]` serve.
  */

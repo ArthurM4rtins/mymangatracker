@@ -6,6 +6,7 @@ import { getPrisma } from "./prisma";
 /** Uma entrada com o recorte da obra que a tela da estante mostra. */
 export type EntradaComObra = {
   entradaId: string;
+  mediaId: string;
   status: ShelfStatus;
   progressChapter: string | null;
   obra: {
@@ -33,6 +34,7 @@ export async function listarEntradasDoUsuario(
     orderBy: { updatedAt: "desc" },
     select: {
       id: true,
+      mediaId: true,
       status: true,
       progressChapter: true,
       media: {
@@ -52,11 +54,41 @@ export async function listarEntradasDoUsuario(
   {
     return {
       entradaId: linha.id,
+      mediaId: linha.mediaId,
       status: linha.status,
       progressChapter: linha.progressChapter?.toString() ?? null,
       obra: linha.media,
     };
   });
+}
+
+/**
+ * Uma entrada específica DO USUÁRIO, com o mínimo que os fluxos de fonte e
+ * progresso precisam. `null` para entrada alheia ou inexistente — iguais.
+ */
+export function buscarEntradaDoUsuario(
+  userId: string,
+  entradaId: string,
+): Promise<{ entradaId: string; mediaId: string; progressChapter: string | null } | null>
+{
+  return getPrisma()
+    .shelfEntry.findFirst({
+      where: { id: entradaId, userId },
+      select: { id: true, mediaId: true, progressChapter: true },
+    })
+    .then(function (linha)
+    {
+      if (linha === null)
+      {
+        return null;
+      }
+
+      return {
+        entradaId: linha.id,
+        mediaId: linha.mediaId,
+        progressChapter: linha.progressChapter?.toString() ?? null,
+      };
+    });
 }
 
 /**
