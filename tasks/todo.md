@@ -547,3 +547,19 @@ Feedback do usuario com prints:
 - Branch feature/visual-obra, empilhada na pagina-autor. PR #46.
 
 Cadeia: ... <- #44 <- #46.
+
+## Sessao 01/09 — organizacao do board de issues
+
+- FECHADAS 23 issues ja entregues (#7-#14, #17, #18, #21, #23, #25, #27, #29,
+  #31, #33, #35, #37, #39, #41, #43, #45), cada uma comentada com o PR da
+  cadeia. #21 tem nota: dropdown foi substituido pelo header inline no #46.
+- ABERTA que continua: #16 (curadoria narrativa, 56/100).
+- BACKLOG NOVO criado:
+  - #47 mergear a cadeia de PRs #19->#46 em ordem (para o Arthur)
+  - #48 nota media do Kidoku na pagina da obra (substitui a do AniList)
+  - #49 perfil publico do usuario (/u/:username, abre caminho pro Follow)
+  - #50 feed de atividade na home
+  - #51 lists: editar, reordenar e curtir
+  - #52 extensao de navegador (Fase 6, modelo do esboco no vault)
+  - #53 fonte MangaDex por API oficial
+  - #54 historico de leitura visivel ao dono
