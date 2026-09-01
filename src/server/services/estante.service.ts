@@ -12,7 +12,11 @@ import {
   buscarMediaPorAnilistId,
   salvarMediaDoAniList,
 } from "@/server/repositories/media.repository";
-import { adicionarOuAtualizarEntrada } from "@/server/repositories/shelf.repository";
+import {
+  adicionarOuAtualizarEntrada,
+  atualizarStatusDaEntrada,
+  listarEntradasDoUsuario,
+} from "@/server/repositories/shelf.repository";
 
 export type StatusDaEstante =
   | "READING"
@@ -95,6 +99,97 @@ export async function adicionarNaEstante(
   });
 
   return { estado: "ok", entradaId: entrada.id };
+}
+
+/** O que a tela da estante recebe por entrada. Contrato, não entidade do Prisma. */
+export type EntradaDaEstante = {
+  entradaId: string;
+  status: StatusDaEstante;
+  progressChapter: string | null;
+  obra: {
+    titleRomaji: string;
+    titleEnglish: string | null;
+    coverImageUrl: string | null;
+    type: "MANGA" | "NOVEL";
+    countryOfOrigin: string | null;
+    chapters: number | null;
+  };
+};
+
+export type FiltroDaEstante = {
+  userId: string;
+  status?: StatusDaEstante;
+};
+
+export type DependenciasDeListagem = {
+  listarEntradas: (
+    userId: string,
+    status?: StatusDaEstante,
+  ) => Promise<EntradaDaEstante[]>;
+};
+
+/**
+ * A estante é privada do dono: o userId vem da sessão resolvida no controller
+ * e é obrigatório aqui por tipo — não existe caminho de listar sem ele.
+ */
+export function listarEstante(
+  filtro: FiltroDaEstante,
+  deps: DependenciasDeListagem,
+): Promise<EntradaDaEstante[]>
+{
+  return deps.listarEntradas(filtro.userId, filtro.status);
+}
+
+export type PedidoDeStatus = {
+  userId: string;
+  entradaId: string;
+  status: StatusDaEstante;
+};
+
+export type ResultadoDeStatus = { estado: "ok" } | { estado: "nao_encontrada" };
+
+export type DependenciasDeStatus = {
+  atualizarStatus: (
+    userId: string,
+    entradaId: string,
+    status: StatusDaEstante,
+  ) => Promise<{ id: string } | null>;
+};
+
+/**
+ * Entrada de outro usuário e entrada inexistente respondem igual
+ * (`nao_encontrada`): não revelamos que a entrada alheia existe.
+ */
+export async function mudarStatusDaEntrada(
+  pedido: PedidoDeStatus,
+  deps: DependenciasDeStatus,
+): Promise<ResultadoDeStatus>
+{
+  const atualizada = await deps.atualizarStatus(
+    pedido.userId,
+    pedido.entradaId,
+    pedido.status,
+  );
+
+  return atualizada === null ? { estado: "nao_encontrada" } : { estado: "ok" };
+}
+
+/** A composição de produção. */
+export function listarEstanteDoSistema(
+  filtro: FiltroDaEstante,
+): Promise<EntradaDaEstante[]>
+{
+  return listarEstante(filtro, { listarEntradas: listarEntradasDoUsuario });
+}
+
+/** A composição de produção. */
+export function mudarStatusDaEntradaDoSistema(
+  pedido: PedidoDeStatus,
+): Promise<ResultadoDeStatus>
+{
+  return mudarStatusDaEntrada(pedido, {
+    atualizarStatus: atualizarStatusDaEntrada,
+  });
 }
 
 /** A composição de produção. */
