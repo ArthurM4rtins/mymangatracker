@@ -53,6 +53,8 @@ model User {
   readingSources  ReadingSource[]
   readingProgress ReadingProgress[]
   entries         Entry[]
+  reviewLikes     ReviewLike[]
+  reviewComments  ReviewComment[]
 }
 
 // Cache do AniList. Se sumir, é reconstruído da API — nenhum dado do usuário
@@ -104,7 +106,40 @@ model Entry {
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   media Media @relation(fields: [mediaId], references: [id], onDelete: Restrict)
 
+  likes      ReviewLike[]
+  comentarios ReviewComment[]
+
   @@unique([userId, mediaId])
+}
+
+// Curtida numa resenha: uma por (entryId, userId), toggle. Apagar a resenha ou
+// a conta leva as curtidas junto — Cascade dos dois lados.
+model ReviewLike {
+  id        String   @id @default(cuid())
+  entryId   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  entry Entry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([entryId, userId])
+}
+
+// Comentário numa resenha: sequência cronológica plana, tipo chat. O CHECK de
+// texto não-vazio está à mão na migration.
+model ReviewComment {
+  id        String   @id @default(cuid())
+  entryId   String
+  userId    String
+  texto     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  entry Entry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([entryId, createdAt])
 }
 
 // O resumo da linha do tempo: uma linha por obra por usuário.
