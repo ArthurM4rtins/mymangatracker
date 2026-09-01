@@ -307,3 +307,28 @@ do progresso de leitura (ReadingSource/ReadingProgress).
 - Perfil entra no menu quando a tela de perfil existir.
 
 Proximo: Fase 2 — progresso de leitura (ReadingSource/ReadingProgress).
+
+## Sessao 01/09 — continuacao: Fase 2, progresso de leitura (#23)
+
+Desenho aprovado em Obsidian/02. Implementacoes/feature-progresso-leitura/
+(CLAUDE.md da tarefa + esboco-extensao-fase-6.md com a conversa sobre a
+extensao de navegador). Branch feature/progresso-leitura, empilhada no menu.
+
+- Dominio `progresso`: proximoCapitulo (floor+1), progrideEstante (maior
+  manda, releitura nao regride), urlDaLeitura sobre o aplicarTemplate da Fase 1.
+- Repositorios: reading-source (trocarFonteAtiva em transacao, uma ativa,
+  historico fica) e registrarAberturaComProgresso (historico + progressChapter
+  da estante na MESMA transacao). ATENCAO: reading-progress.repository ja
+  existia da Fase 1 (registrarAbertura/ultimaAbertura/maiorCapitulo) — foi
+  preservado, so ganhou a variante transacional.
+- Servicos: fonte (candidatos com exemplo do cap 2, confirmacao valida
+  template) e progresso (URL resolvida server-side, client so manda numero).
+  DTO da estante compoe fonte + proximoCapitulo, sem vazar mediaId.
+- Rotas: POST /api/v1/fontes/candidatos, /api/v1/fontes, /api/v1/progresso.
+- Tela: Configurar leitura / Trocar fonte + Continuar cap. N na estante.
+- Provas: lint 0, 113 unitarios, 31 test:db, build verde. E2E: derivar ->
+  confirmar -> abrir 1 -> abrir 57.5 -> releitura 3 nao regrediu (57.5),
+  proximo 58 na tela.
+
+Proximo: front/disposicao geral (pedido do usuario) apos merges; depois
+avaliacao/rating na estante ou pagina da obra.
