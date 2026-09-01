@@ -9,6 +9,8 @@ export async function limparBanco(): Promise<void>
   // A ordem respeita as FKs: o que aponta some antes do que é apontado.
   await prisma.readingProgress.deleteMany();
   await prisma.readingSource.deleteMany();
+  await prisma.reviewLike.deleteMany();
+  await prisma.reviewComment.deleteMany();
   await prisma.entry.deleteMany();
   await prisma.shelfEntry.deleteMany();
   await prisma.media.deleteMany();
