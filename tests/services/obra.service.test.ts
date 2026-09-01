@@ -68,9 +68,13 @@ function fakeDeps(cenario: {
     }
     return [DO_ANILIST];
   });
-  const buscarEntrada = vi.fn(async function ()
+  const buscarEntrada = vi.fn(async function (): Promise<{
+    entradaId: string;
+    status: "READING";
+    progressChapter: string | null;
+  } | null>
   {
-    return { entradaId: "e1", status: "READING" as const, progressChapter: "57.5" };
+    return { entradaId: "e1", status: "READING", progressChapter: "57.5" };
   });
   const buscarFonte = vi.fn(async function ()
   {

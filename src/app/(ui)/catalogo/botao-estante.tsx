@@ -12,10 +12,13 @@ type Estado = "parado" | "salvando" | "salvo" | "erro";
 export function BotaoEstante({
   anilistId,
   jaNaEstante = false,
+  atualizarAoSalvar = false,
 }: {
   anilistId: number;
   /** Vem do servidor: obra que já está na estante nasce marcada. */
   jaNaEstante?: boolean;
+  /** Na página da obra, salvar recarrega os dados para os controles aparecerem. */
+  atualizarAoSalvar?: boolean;
 })
 {
   const roteador = useRouter();
@@ -40,6 +43,11 @@ export function BotaoEstante({
       }
 
       setEstado(resposta.ok ? "salvo" : "erro");
+
+      if (resposta.ok && atualizarAoSalvar)
+      {
+        roteador.refresh();
+      }
     }
     catch
     {

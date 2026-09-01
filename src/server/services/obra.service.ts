@@ -164,7 +164,22 @@ export async function obraParaPagina(
     userId === null ? Promise.resolve(null) : minhaRelacao(userId, cache.id, deps),
   ]);
 
-  const { id: _id, syncedAt: _syncedAt, ...obra } = cache;
+  const obra: ObraDaPagina = {
+    anilistId: cache.anilistId,
+    type: cache.type,
+    countryOfOrigin: cache.countryOfOrigin,
+    titleRomaji: cache.titleRomaji,
+    titleEnglish: cache.titleEnglish,
+    titleNative: cache.titleNative,
+    coverImageUrl: cache.coverImageUrl,
+    bannerImageUrl: cache.bannerImageUrl,
+    description: cache.description,
+    chapters: cache.chapters,
+    startYear: cache.startYear,
+    genres: cache.genres,
+    averageScore: cache.averageScore,
+    autores: cache.autores,
+  };
 
   return { estado: "ok", obra, similares, minha };
 }

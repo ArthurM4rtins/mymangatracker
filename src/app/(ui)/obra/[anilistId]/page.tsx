@@ -1,0 +1,281 @@
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import {
+  obraParaPaginaDoSistema,
+  type MinhaRelacao,
+  type ObraSimilar,
+} from "@/server/services/obra.service";
+import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
+import { BotaoEstante } from "../../catalogo/botao-estante";
+import { Avaliar } from "../../estante/avaliar";
+import { ConfigurarFonte } from "../../estante/configurar-fonte";
+import { ContinuarLeitura } from "../../estante/continuar-leitura";
+import { EditarProgresso } from "../../estante/editar-progresso";
+import { SeletorStatus } from "../../estante/seletor-status";
+
+// Sessão + AniList: nada aqui é pré-renderizável.
+export const dynamic = "force-dynamic";
+
+const PAIS: Record<string, string> = {
+  JP: "Mangá",
+  KR: "Manhwa",
+  CN: "Manhua",
+};
+
+type Props = {
+  params: Promise<{ anilistId: string }>;
+};
+
+export async function generateMetadata({ params }: Props)
+{
+  const id = Number((await params).anilistId);
+
+  if (!Number.isInteger(id) || id <= 0)
+  {
+    return { title: "Obra" };
+  }
+
+  // Segunda chamada barata: a página acabou de encher o cache.
+  const resultado = await obraParaPaginaDoSistema(id, null);
+
+  return {
+    title:
+      resultado.estado === "ok"
+        ? resultado.obra.titleEnglish ?? resultado.obra.titleRomaji
+        : "Obra",
+  };
+}
+
+export default async function PaginaDaObra({ params }: Props)
+{
+  const id = Number((await params).anilistId);
+
+  if (!Number.isInteger(id) || id <= 0)
+  {
+    notFound();
+  }
+
+  const userId = await usuarioDaSessao();
+  const resultado = await obraParaPaginaDoSistema(id, userId);
+
+  if (resultado.estado === "nao_encontrada")
+  {
+    notFound();
+  }
+
+  if (resultado.estado === "indisponivel")
+  {
+    return (
+      <main className="mx-auto w-full max-w-4xl px-6 py-12">
+        <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
+          O AniList não respondeu agora e esta obra ainda não está no nosso
+          cache. Tente de novo em instantes.
+        </p>
+      </main>
+    );
+  }
+
+  const { obra, similares, minha } = resultado;
+
+  return (
+    <main className="flex min-h-screen flex-col">
+      {obra.bannerImageUrl && (
+        <div className="relative h-44 w-full sm:h-64">
+          <Image
+            src={obra.bannerImageUrl}
+            alt=""
+            fill
+            className="object-cover opacity-50"
+            unoptimized
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-fundo" />
+        </div>
+      )}
+
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-6 py-10">
+        <section className="flex flex-col gap-6 sm:flex-row">
+          {obra.coverImageUrl ? (
+            <Image
+              src={obra.coverImageUrl}
+              alt=""
+              width={192}
+              height={288}
+              className={`h-72 w-48 shrink-0 rounded-lg object-cover shadow-lg ${obra.bannerImageUrl ? "-mt-20 sm:-mt-28" : ""}`}
+              unoptimized
+              priority
+            />
+          ) : (
+            <div
+              aria-hidden
+              className="flex h-72 w-48 shrink-0 items-center justify-center rounded-lg bg-superficie text-texto-suave"
+            >
+              —
+            </div>
+          )}
+
+          <div className="flex min-w-0 flex-1 flex-col gap-3">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <h1 className="font-marca text-3xl font-bold tracking-tight">
+                {obra.titleEnglish ?? obra.titleRomaji}
+              </h1>
+              {obra.startYear !== null && (
+                <span className="text-lg text-texto-suave">{obra.startYear}</span>
+              )}
+            </div>
+
+            {obra.autores.length > 0 && (
+              <p className="text-sm text-texto-suave">
+                por{" "}
+                <span className="text-texto">
+                  {obra.autores.map(function (autor) { return autor.nome; }).join(", ")}
+                </span>
+              </p>
+            )}
+
+            <p className="flex flex-wrap items-center gap-1.5 text-xs text-texto-suave">
+              <span className="rounded-full border border-borda px-2 py-0.5">
+                {obra.type === "NOVEL"
+                  ? "Novel"
+                  : (obra.countryOfOrigin && PAIS[obra.countryOfOrigin]) ?? "Obra"}
+              </span>
+              {obra.genres.map(function (genero)
+              {
+                return (
+                  <span key={genero} className="rounded-full border border-borda px-2 py-0.5">
+                    {genero}
+                  </span>
+                );
+              })}
+              {obra.chapters !== null && (
+                <span className="tabular-nums">{obra.chapters} capítulos</span>
+              )}
+              {obra.averageScore !== null && (
+                <span className="tabular-nums">
+                  {(obra.averageScore / 20).toFixed(1)}/5 no AniList
+                </span>
+              )}
+            </p>
+
+            {obra.description && (
+              <p className="whitespace-pre-line text-sm leading-relaxed text-texto-suave">
+                {obra.description}
+              </p>
+            )}
+          </div>
+        </section>
+
+        <PainelDoUsuario anilistId={obra.anilistId} minha={minha} logado={userId !== null} />
+
+        {similares.length > 0 && <Similares similares={similares} />}
+      </div>
+    </main>
+  );
+}
+
+function PainelDoUsuario({
+  anilistId,
+  minha,
+  logado,
+}: {
+  anilistId: number;
+  minha: MinhaRelacao | null;
+  logado: boolean;
+})
+{
+  if (!logado)
+  {
+    return (
+      <section className="rounded-lg border border-borda bg-superficie p-4 text-sm text-texto-suave">
+        <Link href="/entrar" className="text-acento underline underline-offset-4">
+          Entre
+        </Link>{" "}
+        para adicionar à estante, avaliar e registrar a leitura.
+      </section>
+    );
+  }
+
+  if (minha === null)
+  {
+    return (
+      <section className="flex items-center gap-4 rounded-lg border border-borda bg-superficie p-4">
+        <BotaoEstante anilistId={anilistId} atualizarAoSalvar />
+        <span className="text-sm text-texto-suave">
+          Adicione à estante para avaliar e registrar a leitura.
+        </span>
+      </section>
+    );
+  }
+
+  return (
+    <section className="flex flex-col gap-3 rounded-lg border border-borda bg-superficie p-4">
+      <div className="flex flex-wrap items-center gap-4">
+        <SeletorStatus entradaId={minha.entradaId} status={minha.status} />
+        <span className="text-xs text-texto-suave">
+          <EditarProgresso
+            entradaId={minha.entradaId}
+            progressChapter={minha.progressChapter}
+          />
+        </span>
+        <ConfigurarFonte entradaId={minha.entradaId} temFonte={minha.fonte !== null} />
+      </div>
+
+      {minha.fonte && (
+        <ContinuarLeitura
+          entradaId={minha.entradaId}
+          proximoCapitulo={minha.proximoCapitulo}
+          tipoDaFonte={minha.fonte.tipo}
+          urlDaObra={minha.fonte.tipo === "pagina" ? minha.fonte.urlDaObra : undefined}
+        />
+      )}
+
+      <Avaliar entradaId={minha.entradaId} avaliacao={minha.avaliacao} />
+    </section>
+  );
+}
+
+function Similares({ similares }: { similares: ObraSimilar[] })
+{
+  return (
+    <section className="flex flex-col gap-4">
+      <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
+        Obras similares
+      </h2>
+      <ul className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+        {similares.map(function (similar)
+        {
+          return (
+            <li key={similar.anilistId}>
+              <Link
+                href={`/obra/${similar.anilistId}`}
+                className="group flex flex-col gap-1.5"
+              >
+                {similar.coverImageUrl ? (
+                  <Image
+                    src={similar.coverImageUrl}
+                    alt=""
+                    width={144}
+                    height={216}
+                    className="aspect-[2/3] w-full rounded object-cover transition-opacity group-hover:opacity-80"
+                    unoptimized
+                  />
+                ) : (
+                  <div
+                    aria-hidden
+                    className="flex aspect-[2/3] w-full items-center justify-center rounded bg-superficie text-texto-suave"
+                  >
+                    —
+                  </div>
+                )}
+                <span className="line-clamp-1 text-xs text-texto-suave group-hover:text-texto">
+                  {similar.titleEnglish ?? similar.titleRomaji}
+                </span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
