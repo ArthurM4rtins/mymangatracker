@@ -118,7 +118,7 @@ export function AvaliacaoDaObra({
   }
 
   return (
-    <section className="flex w-fit flex-col gap-3 rounded-lg border border-borda bg-superficie p-4">
+    <section className="flex w-full flex-col gap-3 rounded-lg border border-borda bg-superficie p-4">
       <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
         Sua avaliação
       </h2>

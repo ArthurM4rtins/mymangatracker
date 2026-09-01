@@ -169,11 +169,6 @@ export default async function PaginaDaObra({ params }: Props)
               {obra.chapters !== null && (
                 <span className="tabular-nums">{obra.chapters} capítulos</span>
               )}
-              {obra.averageScore !== null && (
-                <span className="tabular-nums">
-                  {(obra.averageScore / 20).toFixed(1)}/5 no AniList
-                </span>
-              )}
             </p>
 
             {descricao && descricao.sinopse !== "" && (
@@ -182,6 +177,18 @@ export default async function PaginaDaObra({ params }: Props)
               </p>
             )}
           </div>
+
+          {userId !== null && (
+            <div className="shrink-0 sm:w-64">
+              <AvaliacaoDaObra
+                anilistId={obra.anilistId}
+                titulo={obra.titleEnglish ?? obra.titleRomaji}
+                ano={obra.startYear}
+                coverImageUrl={obra.coverImageUrl}
+                avaliacao={minhaAvaliacao}
+              />
+            </div>
+          )}
         </section>
 
         {descricao && descricao.notas.length > 0 && (
@@ -204,16 +211,6 @@ export default async function PaginaDaObra({ params }: Props)
         )}
 
         <PainelDoUsuario anilistId={obra.anilistId} minha={minha} logado={userId !== null} />
-
-        {userId !== null && (
-          <AvaliacaoDaObra
-            anilistId={obra.anilistId}
-            titulo={obra.titleEnglish ?? obra.titleRomaji}
-            ano={obra.startYear}
-            coverImageUrl={obra.coverImageUrl}
-            avaliacao={minhaAvaliacao}
-          />
-        )}
 
         <section className="flex flex-col gap-4">
           <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">

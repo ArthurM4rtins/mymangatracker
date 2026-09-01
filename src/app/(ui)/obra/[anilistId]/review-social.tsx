@@ -6,6 +6,7 @@
  */
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { estrelasTexto } from "../../componentes/estrelas";
 
 export type ReviewParaTela = {
   entryId: string;
@@ -153,7 +154,7 @@ export function ReviewSocial({
         )}
         {review.rating !== null && (
           <span aria-label={`Nota ${review.rating} de 5`} className="text-acento">
-            {estrelas(Number(review.rating))}
+            {estrelasTexto(Number(review.rating))}
           </span>
         )}
       </p>
@@ -254,7 +255,3 @@ export function ReviewSocial({
   );
 }
 
-function estrelas(nota: number): string
-{
-  return "★".repeat(Math.floor(nota)) + (nota % 1 !== 0 ? "½" : "");
-}

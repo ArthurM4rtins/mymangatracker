@@ -1,9 +1,15 @@
 "use client";
 
 /**
- * As estrelas do rating, compartilhadas entre estante e página da obra:
- * meia estrela por clique (duas metades clicáveis por estrela).
+ * O rating do Kidoku, compartilhado entre estante e página da obra: meia em
+ * meia (duas metades clicáveis por símbolo), com preview no hover — passar o
+ * mouse preenche, clicar confirma.
+ *
+ * O glyph vive num lugar só: trocar SIMBOLO muda o site inteiro.
  */
+import { useState } from "react";
+
+export const SIMBOLO = "✦";
 
 export function SeletorDeEstrelas({
   nota,
@@ -15,37 +21,52 @@ export function SeletorDeEstrelas({
   tamanho?: string;
 })
 {
+  const [preview, setPreview] = useState<number | null>(null);
+  const exibida = preview ?? nota;
+
   return (
     <div className="flex items-center gap-2">
-      <div role="group" aria-label="Nota de 0,5 a 5" className="flex">
-        {[1, 2, 3, 4, 5].map(function (estrela)
+      <div
+        role="group"
+        aria-label="Nota de 0,5 a 5"
+        className="flex"
+        onMouseLeave={function () { setPreview(null); }}
+      >
+        {[1, 2, 3, 4, 5].map(function (posicao)
         {
-          const cheia = nota !== null && nota >= estrela;
-          const metade = nota !== null && nota === estrela - 0.5;
+          const cheia = exibida !== null && exibida >= posicao;
+          const metade = exibida !== null && exibida === posicao - 0.5;
 
           return (
-            <span key={estrela} className={`relative leading-none ${tamanho}`}>
-              <span aria-hidden className={cheia ? "text-acento" : "text-borda"}>
-                ★
+            <span key={posicao} className={`relative leading-none ${tamanho}`}>
+              <span
+                aria-hidden
+                className={`transition-colors ${cheia ? "text-acento" : "text-borda"}`}
+              >
+                {SIMBOLO}
               </span>
               {metade && (
                 <span
                   aria-hidden
                   className="absolute inset-0 w-1/2 overflow-hidden text-acento"
                 >
-                  ★
+                  {SIMBOLO}
                 </span>
               )}
               <button
                 type="button"
-                aria-label={`${estrela - 0.5} estrelas`}
-                onClick={function () { aoEscolher(estrela - 0.5); }}
+                aria-label={`${posicao - 0.5} de 5`}
+                onMouseEnter={function () { setPreview(posicao - 0.5); }}
+                onFocus={function () { setPreview(posicao - 0.5); }}
+                onClick={function () { aoEscolher(posicao - 0.5); }}
                 className="absolute inset-y-0 left-0 w-1/2"
               />
               <button
                 type="button"
-                aria-label={`${estrela} estrelas`}
-                onClick={function () { aoEscolher(estrela); }}
+                aria-label={`${posicao} de 5`}
+                onMouseEnter={function () { setPreview(posicao); }}
+                onFocus={function () { setPreview(posicao); }}
+                onClick={function () { aoEscolher(posicao); }}
                 className="absolute inset-y-0 right-0 w-1/2"
               />
             </span>
@@ -53,7 +74,7 @@ export function SeletorDeEstrelas({
         })}
       </div>
       <span className="text-xs tabular-nums text-texto-suave">
-        {nota === null ? "sem nota" : nota.toLocaleString("pt-BR")}
+        {exibida === null ? "sem nota" : exibida.toLocaleString("pt-BR")}
       </span>
       {nota !== null && (
         <button
@@ -70,5 +91,5 @@ export function SeletorDeEstrelas({
 
 export function estrelasTexto(nota: number): string
 {
-  return "★".repeat(Math.floor(nota)) + (nota % 1 !== 0 ? "½" : "");
+  return SIMBOLO.repeat(Math.floor(nota)) + (nota % 1 !== 0 ? "½" : "");
 }
