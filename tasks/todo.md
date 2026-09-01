@@ -426,3 +426,26 @@ social.
 
 Cadeia: #19 <- #20 <- #22 <- #24 <- #26 <- #28 <- #30 <- #32 <- #34.
 Proximo: pagina da obra (junta busca+avaliacao+fonte) ou fase social.
+
+## Sessao 01/09 — continuacao: pagina da obra (#35), bloco A do roadmap
+
+Roadmap aprovado pelo usuario: A pagina da obra -> C filtros do catalogo ->
+B reviews sociais (PUBLICAS, confirmado) -> D lists -> E pagina do autor.
+Desenho em Obsidian/02. Implementacoes/feature-pagina-obra/.
+
+- Cache Media ganhou banner, ano, generos, nota media e autores (Json) —
+  migration aditiva; linha velha reidrata pelo TTL de 24h.
+- Mapper com autores do staff (papeis com Story/Art) e mapearRecomendacoes.
+- Queries do AniList unificadas num fragmento; buscarSimilares novo.
+- obra.service: cache fresco nao gasta cota; velho rebusca; AniList fora
+  serve cache mesmo velho (pagina e leitura); similares falhando somem.
+- /obra/[anilistId] com banner+capa+painel do usuario (controles da estante
+  reusados) + similares. Capas de home/catalogo/estante linkam para la.
+- Provas: lint 0, 153 unitarios, 37 test:db, build verde. Smoke: Vagabond com
+  autor/ano/nota/similares; logado ve controles.
+- PEGADINHA: primeiro hit pos-restart do dev server serviu modulo velho do
+  turbopack e salvou cache sem os campos — envelhecer o syncedAt e revisitar
+  corrige. Depois de migration, reiniciar o pnpm dev (client em memoria).
+- Branch feature/pagina-obra, empilhada na avaliacao. PR #36.
+
+Cadeia: ... <- #34 <- #36. Proximo do roadmap: C (filtros do catalogo).
