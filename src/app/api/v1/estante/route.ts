@@ -1,4 +1,5 @@
 /**
+ * GET /api/v1/estante — listar a estante do usuário, com ?status= opcional.
  * POST /api/v1/estante — adicionar/atualizar uma obra na estante.
  *
  * Controller: resolve a sessão (só aqui), valida com Zod, delega ao serviço.
@@ -6,17 +7,62 @@
  */
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { adicionarNaEstanteDoSistema } from "@/server/services/estante.service";
+import {
+  adicionarNaEstanteDoSistema,
+  listarEstanteDoSistema,
+} from "@/server/services/estante.service";
 import { usuarioDaSessao } from "../_shared/sessao";
 
 export const dynamic = "force-dynamic";
 
+const STATUS = z.enum(["READING", "COMPLETED", "PLANNED", "PAUSED", "DROPPED"]);
+
 const ESQUEMA_ESTANTE = z.object({
   anilistId: z.number().int().positive(),
-  status: z
-    .enum(["READING", "COMPLETED", "PLANNED", "PAUSED", "DROPPED"])
-    .default("PLANNED"),
+  status: STATUS.default("PLANNED"),
 });
+
+export async function GET(request: Request)
+{
+  const userId = await usuarioDaSessao();
+
+  if (!userId)
+  {
+    return NextResponse.json(
+      { erros: { _geral: "entre para usar a estante" } },
+      { status: 401 },
+    );
+  }
+
+  const statusBruto = new URL(request.url).searchParams.get("status");
+  const analise = STATUS.optional().safeParse(statusBruto ?? undefined);
+
+  if (!analise.success)
+  {
+    return NextResponse.json(
+      { erros: { _geral: "status inválido" } },
+      { status: 400 },
+    );
+  }
+
+  try
+  {
+    const entradas = await listarEstanteDoSistema({
+      userId,
+      status: analise.data,
+    });
+
+    return NextResponse.json({ entradas }, { status: 200 });
+  }
+  catch (erro)
+  {
+    console.error("[estante] falha ao listar:", erro instanceof Error ? erro.message : erro);
+    return NextResponse.json(
+      { erros: { _geral: "não foi possível carregar a estante agora" } },
+      { status: 500 },
+    );
+  }
+}
 
 export async function POST(request: Request)
 {
