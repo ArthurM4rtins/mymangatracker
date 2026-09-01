@@ -55,6 +55,39 @@ model User {
   entries         Entry[]
   reviewLikes     ReviewLike[]
   reviewComments  ReviewComment[]
+  lists           List[]
+}
+
+// Lista nomeada de obras (painel 06). Pública desde o início — recorte do
+// social: username do dono, nunca e-mail. Nome não é único, como no
+// Letterboxd; o CHECK de não-vazio está à mão na migration.
+model List {
+  id          String   @id @default(cuid())
+  userId      String
+  nome        String
+  descricao   String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itens ListItem[]
+
+  @@index([createdAt(sort: Desc)])
+}
+
+// Uma obra por lista; ordem = posição de inserção.
+model ListItem {
+  id        String   @id @default(cuid())
+  listId    String
+  mediaId   String
+  position  Int
+  createdAt DateTime @default(now())
+
+  list  List  @relation(fields: [listId], references: [id], onDelete: Cascade)
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@unique([listId, mediaId])
+  @@index([listId, position])
 }
 
 // Cache do AniList. Se sumir, é reconstruído da API — nenhum dado do usuário
@@ -87,6 +120,7 @@ model Media {
   readingSources  ReadingSource[]
   readingProgress ReadingProgress[]
   entries         Entry[]
+  listItems       ListItem[]
 }
 
 // A avaliação do usuário: nota e/ou resenha, uma por obra (painel 06).
