@@ -403,3 +403,26 @@ pagina salva (licao nova em lessons.md — botao nao promete o que nao controla)
 - Branch feature/editar-progresso, empilhada na fonte-sem-template. PR #32.
 
 Cadeia: #19 <- #20 <- #22 <- #24 <- #26 <- #28 <- #30 <- #32.
+
+## Sessao 01/09 — continuacao: avaliacao nota + resenha (#33)
+
+Desenho aprovado (Obsidian/02. Implementacoes/feature-avaliacao/): UMA
+avaliacao por (userId, mediaId), nota 0,5-5,0 em meia estrela, nota e resenha
+independentes (vazia nao existe), spoiler flag, visivel so ao dono ate a fase
+social.
+
+- Entidade Entry por migration aditiva (--create-only) com DOIS CHECKs a mao:
+  meia estrela e nao-vazia — ambos provados quebrando com INSERT invalido.
+  ATENCAO: depois de migration nova, rodar pnpm prisma generate (o client
+  velho nao tem o model e o teste morre com undefined.upsert).
+- Dominio rating.ts (TDD), avaliacao.repository (upsert por dono, privacidade
+  provada), avaliacao.service (TDD, 8 testes), POST/DELETE /api/v1/avaliacoes,
+  DTO da estante ganha avaliacao, componente Avaliar com estrelas de duas
+  metades clicaveis e resenha com spoiler escondido por padrao.
+- Provas: lint 0, 140 unitarios, 37 test:db, build verde. E2E: salvar 4.5 com
+  spoiler -> 200; 3.7 -> 422; tela mostra estrelas e o botao de mostrar
+  spoiler.
+- Branch feature/avaliacao, empilhada na editar-progresso. PR #34.
+
+Cadeia: #19 <- #20 <- #22 <- #24 <- #26 <- #28 <- #30 <- #32 <- #34.
+Proximo: pagina da obra (junta busca+avaliacao+fonte) ou fase social.
