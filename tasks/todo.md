@@ -332,3 +332,19 @@ extensao de navegador). Branch feature/progresso-leitura, empilhada no menu.
 
 Proximo: front/disposicao geral (pedido do usuario) apos merges; depois
 avaliacao/rating na estante ou pagina da obra.
+
+## Sessao 01/09 — continuacao: home leitura primeiro (#25)
+
+Conceito escolhido pelo usuario entre 3 mockups: "leitura primeiro".
+Regra de lessons.md respeitada: Letterboxd e benchmark de produto, nao estetica.
+
+- Logado: "Boa leitura, <username>" + fila Continuar lendo (READING com fonte,
+  botao compacto). Deslogado: proposta + Criar conta/Entrar.
+- Populares do AniList como grade de capas linkando o catalogo (todos).
+- Status do sistema: linha no rodape; aviso no topo so quando degradado/fora.
+- usuario.service novo (perfil publico, TDD); ContinuarLeitura ganhou `compacto`.
+- Provas: lint 0, 115 unitarios, build verde, smoke logado/deslogado.
+- Branch feature/home-leitura, empilhada na progresso-leitura.
+
+Cadeia de PRs: #19 <- #20 <- #22 <- #24 <- #26(home). Mergear em ordem.
+Proximo: continuar o front (catalogo/estante) ou rating.
