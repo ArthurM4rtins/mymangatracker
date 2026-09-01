@@ -10,6 +10,10 @@ import {
   mapearRecomendacoes,
   type MediaDoAniList,
 } from "@/server/domain/anilist-media";
+import type {
+  FiltroDoCatalogo,
+  OrdemDoCatalogo,
+} from "@/server/domain/catalogo-filtros";
 import { anilistEndpoint } from "./config";
 
 const TIMEOUT_MS = 5000;
@@ -33,14 +37,6 @@ const CAMPOS_DE_MEDIA = `
       staff(perPage: 6, sort: RELEVANCE) {
         edges { role node { id name { full } } }
       }`;
-
-const BUSCA = `
-query($termo: String, $limite: Int) {
-  Page(perPage: $limite) {
-    media(search: $termo, type: MANGA, sort: SEARCH_MATCH) {${CAMPOS_DE_MEDIA}
-    }
-  }
-}`;
 
 // Vitrine do catálogo sem termo. `isAdult: false` porque a tela é pública e
 // sem sessão — não é o lugar de decidir preferência de conteúdo por usuário.
@@ -85,27 +81,6 @@ query($id: Int) {
 }`;
 
 /**
- * Busca obras por termo. Devolve lista vazia quando o termo é vazio — não gasta
- * requisição da cota para perguntar nada.
- *
- * @throws quando o AniList não responde ou responde fora do 2xx.
- */
-export async function buscarMedia(
-  termo: string,
-  limite: number = LIMITE_PADRAO,
-): Promise<MediaDoAniList[]>
-{
-  if (termo.trim() === "")
-  {
-    return [];
-  }
-
-  const resposta = await chamar(BUSCA, { termo: termo.trim(), limite });
-
-  return mapearBusca(resposta);
-}
-
-/**
  * As obras mais populares do AniList. É o que o catálogo mostra antes de
  * qualquer termo ser digitado.
  *
@@ -133,6 +108,78 @@ export async function buscarMediaPorId(
   const resposta = await chamar(POR_ID, { id: anilistId });
 
   return mapearBusca(resposta)[0] ?? null;
+}
+
+const ORDEM_ANILIST: Record<OrdemDoCatalogo, string> = {
+  popular: "POPULARITY_DESC",
+  nota: "SCORE_DESC",
+  alta: "TRENDING_DESC",
+  recente: "START_DATE_DESC",
+};
+
+/**
+ * Busca filtrada do catálogo. A query é montada só com os argumentos
+ * presentes: o AniList responde 400/500 para variável de filtro com null —
+ * visto no probe de 01/09, não é hipótese. Tudo que entra aqui já passou pela
+ * whitelist do domínio; o termo vai por variável, nunca interpolado.
+ */
+export async function buscarFiltrado(
+  filtro: FiltroDoCatalogo,
+  limite: number = LIMITE_PADRAO,
+): Promise<MediaDoAniList[]>
+{
+  const args: string[] = ["type: MANGA", "isAdult: false"];
+  const declaracoes: string[] = ["$limite: Int"];
+  const variables: Record<string, unknown> = { limite };
+
+  if (filtro.termo !== "")
+  {
+    declaracoes.push("$termo: String");
+    args.push("search: $termo");
+    variables.termo = filtro.termo;
+  }
+
+  if (filtro.genero !== undefined)
+  {
+    args.push(`genre_in: ${JSON.stringify([filtro.genero])}`);
+  }
+
+  if (filtro.tipo === "novel")
+  {
+    args.push("format_in: [NOVEL]");
+  }
+  else if (filtro.tipo !== undefined)
+  {
+    const pais = { manga: "JP", manhwa: "KR", manhua: "CN" }[filtro.tipo];
+    args.push("format_in: [MANGA, ONE_SHOT]", `countryOfOrigin: "${pais}"`);
+  }
+
+  if (filtro.decada !== undefined)
+  {
+    args.push(
+      `startDate_greater: ${(filtro.decada - 1) * 10000 + 1231}`,
+      `startDate_lesser: ${(filtro.decada + 10) * 10000 + 101}`,
+    );
+  }
+
+  // Busca por termo sem ordem escolhida fica na relevância do AniList.
+  const ordem =
+    filtro.termo !== "" && filtro.ordem === "popular"
+      ? "SEARCH_MATCH"
+      : ORDEM_ANILIST[filtro.ordem];
+  args.push(`sort: ${ordem}`);
+
+  const query = `
+query(${declaracoes.join(", ")}) {
+  Page(perPage: $limite) {
+    media(${args.join(", ")}) {${CAMPOS_DE_MEDIA}
+    }
+  }
+}`;
+
+  const resposta = await chamar(query, variables);
+
+  return mapearBusca(resposta);
 }
 
 /**
