@@ -1,7 +1,29 @@
 import { describe, expect, it } from "vitest";
 import { validarEstruturaNarrativa } from "@/server/domain/story-structure";
 
-const ESTRUTURA_VALIDA = {
+type Intervalo = { unit: string; start: string; end: string };
+
+// `range` e `ranges` opcionais no tipo: o teste de intervalos descontínuos
+// troca um pelo outro, e o literal inferido não permitiria.
+type Segmento = {
+  key: string;
+  parentKey?: string;
+  kind: string;
+  position: number;
+  title: string;
+  range?: Intervalo;
+  ranges?: Intervalo[];
+  sourceIds: string[];
+  status: string;
+};
+
+const ESTRUTURA_VALIDA: {
+  schemaVersion: number;
+  media: { anilistId: number; title: string };
+  curation: { status: string };
+  sources: { id: string; url: string }[];
+  segments: Segmento[];
+} = {
   schemaVersion: 1,
   media: { anilistId: 1, title: "Obra" },
   curation: { status: "VERIFIED" },
@@ -36,7 +58,7 @@ describe("validarEstruturaNarrativa", () => {
 
   it("recusa fim anterior ao início", () => {
     const invalida = structuredClone(ESTRUTURA_VALIDA);
-    invalida.segments[0].range.end = "0.5";
+    invalida.segments[0].range!.end = "0.5";
 
     expect(validarEstruturaNarrativa(invalida)).toContain("segments[0]: intervalo inválido");
   });
@@ -54,7 +76,7 @@ describe("validarEstruturaNarrativa", () => {
 
     expect(validarEstruturaNarrativa(invalida)).toContain("segments[1]: segmento verificado sem fonte");
   });
-  it("accepts discontinuous arc ranges", () => {
+  it("aceita arco com intervalos descontínuos", () => {
     const valida = structuredClone(ESTRUTURA_VALIDA);
     delete valida.segments[1].range;
     valida.segments[1].ranges = [
