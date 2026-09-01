@@ -7,6 +7,8 @@ import {
   type StatusDaEstante,
 } from "@/server/services/estante.service";
 import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
+import { ConfigurarFonte } from "./configurar-fonte";
+import { ContinuarLeitura } from "./continuar-leitura";
 import { SeletorStatus } from "./seletor-status";
 
 // Estante é da sessão e do banco: nada aqui é pré-renderizável.
@@ -162,8 +164,25 @@ function Entrada({ entrada }: { entrada: EntradaDaEstante })
           )}
         </p>
 
-        <div className="mt-auto pt-2">
-          <SeletorStatus entradaId={entrada.entradaId} status={entrada.status} />
+        <div className="mt-auto flex flex-col gap-2 pt-2">
+          {entrada.fonte && (
+            <ContinuarLeitura
+              entradaId={entrada.entradaId}
+              proximoCapitulo={entrada.proximoCapitulo}
+            />
+          )}
+
+          <div className="flex flex-wrap items-center gap-3">
+            <SeletorStatus entradaId={entrada.entradaId} status={entrada.status} />
+            <ConfigurarFonte
+              entradaId={entrada.entradaId}
+              temFonte={entrada.fonte !== null}
+            />
+          </div>
+
+          {entrada.fonte && (
+            <p className="text-xs text-texto-suave">lendo em {entrada.fonte.sourceHost}</p>
+          )}
         </div>
       </div>
     </li>
