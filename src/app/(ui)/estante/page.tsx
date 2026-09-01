@@ -9,6 +9,7 @@ import {
 import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
 import { ConfigurarFonte } from "./configurar-fonte";
 import { ContinuarLeitura } from "./continuar-leitura";
+import { EditarProgresso } from "./editar-progresso";
 import { SeletorStatus } from "./seletor-status";
 
 // Estante é da sessão e do banco: nada aqui é pré-renderizável.
@@ -159,9 +160,10 @@ function Entrada({ entrada }: { entrada: EntradaDaEstante })
           {obra.chapters !== null && (
             <span className="tabular-nums">{obra.chapters} capítulos</span>
           )}
-          {entrada.progressChapter !== null && (
-            <span className="tabular-nums">no cap. {entrada.progressChapter}</span>
-          )}
+          <EditarProgresso
+            entradaId={entrada.entradaId}
+            progressChapter={entrada.progressChapter}
+          />
         </p>
 
         <div className="mt-auto flex flex-col gap-2 pt-2">
@@ -170,6 +172,7 @@ function Entrada({ entrada }: { entrada: EntradaDaEstante })
               entradaId={entrada.entradaId}
               proximoCapitulo={entrada.proximoCapitulo}
               tipoDaFonte={entrada.fonte.tipo}
+              urlDaObra={entrada.fonte.tipo === "pagina" ? entrada.fonte.urlDaObra : undefined}
             />
           )}
 

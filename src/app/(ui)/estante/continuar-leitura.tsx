@@ -11,12 +11,15 @@ export function ContinuarLeitura({
   entradaId,
   proximoCapitulo,
   tipoDaFonte = "template",
+  urlDaObra,
   compacto = false,
 }: {
   entradaId: string;
   proximoCapitulo: number;
-  /** Fonte de página da obra abre a série, não o capítulo — o rótulo avisa. */
+  /** Fonte de página da obra vira link direto — sem fingir registro. */
   tipoDaFonte?: "template" | "pagina";
+  /** URL da página da obra, quando a fonte é do tipo página. */
+  urlDaObra?: string;
   /** Na home o card é pequeno: só o botão principal, sem capítulo manual. */
   compacto?: boolean;
 })
@@ -82,6 +85,22 @@ export function ContinuarLeitura({
     void abrir(numero);
   }
 
+  // Fonte de página da obra: link direto, sem registro automático — não
+  // sabemos onde o usuário parou lá dentro. O capítulo é editado na entrada.
+  if (tipoDaFonte === "pagina" && urlDaObra !== undefined)
+  {
+    return (
+      <a
+        href={urlDaObra}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-fit rounded-md bg-acento px-3 py-1.5 text-sm font-medium text-acento-contraste"
+      >
+        Abrir a obra ↗
+      </a>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex flex-wrap items-center gap-2">
@@ -91,11 +110,7 @@ export function ContinuarLeitura({
           disabled={ocupado}
           className="rounded-md bg-acento px-3 py-1.5 text-sm font-medium text-acento-contraste disabled:opacity-60"
         >
-          {ocupado
-            ? "Abrindo…"
-            : tipoDaFonte === "pagina"
-              ? `Abrir obra · registrar cap. ${proximoCapitulo}`
-              : `Continuar cap. ${proximoCapitulo} →`}
+          {ocupado ? "Abrindo…" : `Continuar cap. ${proximoCapitulo} →`}
         </button>
 
         {!compacto && (

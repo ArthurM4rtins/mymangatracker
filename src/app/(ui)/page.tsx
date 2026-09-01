@@ -244,6 +244,7 @@ function CardContinuar({ entrada }: { entrada: EntradaDaEstante })
         entradaId={entrada.entradaId}
         proximoCapitulo={entrada.proximoCapitulo}
         tipoDaFonte={entrada.fonte?.tipo}
+        urlDaObra={entrada.fonte?.tipo === "pagina" ? entrada.fonte.urlDaObra : undefined}
         compacto
       />
     </li>
