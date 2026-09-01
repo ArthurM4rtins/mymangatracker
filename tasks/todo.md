@@ -487,3 +487,22 @@ e-mail e ids de usuario NUNCA. Progresso e fonte seguem 100% privados.
 
 Cadeia: ... <- #38 <- #40. Proximo do roadmap: D (lists) e E (pagina do
 autor); front geral segue evoluindo.
+
+## Sessao 01/09 — continuacao: lists (#41), bloco D
+
+- List/ListItem por migration aditiva (nome nao-unico como Letterboxd, CHECK
+  de nao-vazio provado quebrando; item unico por obra, ordem de insercao).
+- Publicas desde o inicio (recorte do social: username, nunca e-mail/ids —
+  travado em teste). Escrita so do dono, intruso provado falhando.
+- Servico: nome 1-100; toggle poe/tira obra (por anilistId, obra do cache).
+- Rotas: GET/POST /api/v1/listas, DELETE /:id, POST /:id/itens (toggle).
+- Telas: /listas (capas empilhadas + criar inline), /listas/:id (grade,
+  remover/apagar so dono), + Lista no painel da pagina da obra, menu.
+- Fora do MVP (registrado no vault): editar nome/descricao, reordenar,
+  curtir/comentar lista.
+- Provas: lint 0, 172 unitarios, 49 test:db, build verde. E2E: smoketest
+  criou "seinen essencial", pos Berserk+Vagabond, /listas mostra "por
+  smoketest · 2 obras", dono ve apagar/remover, anonimo le sem controles.
+- Branch feature/lists, empilhada na reviews-sociais. PR #42.
+
+Cadeia: ... <- #40 <- #42. Resta do roadmap: E (pagina do autor).
