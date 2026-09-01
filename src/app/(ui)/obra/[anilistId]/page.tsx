@@ -130,9 +130,20 @@ export default async function PaginaDaObra({ params }: Props)
             {obra.autores.length > 0 && (
               <p className="text-sm text-texto-suave">
                 por{" "}
-                <span className="text-texto">
-                  {obra.autores.map(function (autor) { return autor.nome; }).join(", ")}
-                </span>
+                {obra.autores.map(function (autor, indice)
+                {
+                  return (
+                    <span key={autor.anilistStaffId}>
+                      {indice > 0 && ", "}
+                      <Link
+                        href={`/autor/${autor.anilistStaffId}`}
+                        className="text-texto underline decoration-dotted underline-offset-4 hover:text-acento"
+                      >
+                        {autor.nome}
+                      </Link>
+                    </span>
+                  );
+                })}
               </p>
             )}
 
