@@ -53,7 +53,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <header className="border-b border-borda">
           <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 py-4">
             <Logo />
+            {/* Ordem provisória: o seletor de tema migra para o dropdown de
+                navegação quando ele existir (issue #18). */}
             <div className="flex items-center gap-4">
+              <SeletorTema />
               {userId ? (
                 <BotaoSair />
               ) : (
@@ -64,7 +67,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   Entrar
                 </Link>
               )}
-              <SeletorTema />
             </div>
           </div>
         </header>
