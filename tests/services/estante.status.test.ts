@@ -28,6 +28,8 @@ const NO_REPOSITORIO = {
   obra: OBRA,
 };
 
+const vazio = async function () { return []; };
+
 const FONTE_ATIVA = {
   id: "f1",
   mediaId: "m1",
@@ -37,18 +39,25 @@ const FONTE_ATIVA = {
 
 describe("listarEstante", function ()
 {
-  it("compõe a entrada com a fonte ativa e o próximo capítulo, sem vazar mediaId", async function ()
+  it("compõe a entrada com fonte, avaliação e próximo capítulo, sem vazar mediaId", async function ()
   {
     const listarEntradas = vi.fn(async function () { return [NO_REPOSITORIO]; });
     const listarFontes = vi.fn(async function () { return [FONTE_ATIVA]; });
+    const listarAvaliacoes = vi.fn(async function ()
+    {
+      return [
+        { mediaId: "m1", rating: "4.5", review: "obra-prima", containsSpoilers: false },
+      ];
+    });
 
     const entradas = await listarEstante(
       { userId: "u1", status: "READING" },
-      { listarEntradas, listarFontes },
+      { listarEntradas, listarFontes, listarAvaliacoes },
     );
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", "READING");
     expect(listarFontes).toHaveBeenCalledWith("u1");
+    expect(listarAvaliacoes).toHaveBeenCalledWith("u1");
     expect(entradas).toEqual([
       {
         entradaId: "e1",
@@ -57,6 +66,7 @@ describe("listarEstante", function ()
         obra: OBRA,
         fonte: { sourceHost: "mangalivre.blog", tipo: "template" },
         proximoCapitulo: 58,
+        avaliacao: { rating: "4.5", review: "obra-prima", containsSpoilers: false },
       } satisfies EntradaDaEstante,
     ]);
     expect(entradas[0]).not.toHaveProperty("mediaId");
@@ -77,7 +87,10 @@ describe("listarEstante", function ()
       ];
     });
 
-    const entradas = await listarEstante({ userId: "u1" }, { listarEntradas, listarFontes });
+    const entradas = await listarEstante(
+      { userId: "u1" },
+      { listarEntradas, listarFontes, listarAvaliacoes: vazio },
+    );
 
     expect(entradas[0].fonte).toEqual({
       sourceHost: "mangafire.to",
@@ -86,7 +99,7 @@ describe("listarEstante", function ()
     });
   });
 
-  it("sem fonte configurada, fonte é null e o próximo capítulo é 1", async function ()
+  it("sem fonte nem avaliação, ambos são null e o próximo capítulo é 1", async function ()
   {
     const listarEntradas = vi.fn(async function ()
     {
@@ -94,10 +107,13 @@ describe("listarEstante", function ()
     });
     const listarFontes = vi.fn(async function () { return []; });
 
-    const entradas = await listarEstante({ userId: "u1" }, { listarEntradas, listarFontes });
+    const entradas = await listarEstante(
+      { userId: "u1" },
+      { listarEntradas, listarFontes, listarAvaliacoes: vazio },
+    );
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", undefined);
-    expect(entradas[0]).toMatchObject({ fonte: null, proximoCapitulo: 1 });
+    expect(entradas[0]).toMatchObject({ fonte: null, avaliacao: null, proximoCapitulo: 1 });
   });
 });
 

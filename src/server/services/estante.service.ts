@@ -25,6 +25,7 @@ import {
   listarEntradasDoUsuario,
 } from "@/server/repositories/shelf.repository";
 import { listarFontesAtivas } from "@/server/repositories/reading-source.repository";
+import { listarAvaliacoes } from "@/server/repositories/avaliacao.repository";
 
 export type StatusDaEstante =
   | "READING"
@@ -131,6 +132,12 @@ export type EntradaDaEstante = {
     | { sourceHost: string; tipo: "pagina"; urlDaObra: string }
     | null;
   proximoCapitulo: number;
+  /** A avaliação do dono — nota e/ou resenha, estilo Letterboxd. */
+  avaliacao: {
+    rating: string | null;
+    review: string | null;
+    containsSpoilers: boolean;
+  } | null;
 };
 
 export type FiltroDaEstante = {
@@ -150,6 +157,16 @@ export type DependenciasDeListagem = {
   listarFontes: (
     userId: string,
   ) => Promise<Array<{ mediaId: string; sourceHost: string; urlTemplate: string }>>;
+  listarAvaliacoes: (
+    userId: string,
+  ) => Promise<
+    Array<{
+      mediaId: string;
+      rating: string | null;
+      review: string | null;
+      containsSpoilers: boolean;
+    }>
+  >;
 };
 
 /**
@@ -163,18 +180,23 @@ export async function listarEstante(
   deps: DependenciasDeListagem,
 ): Promise<EntradaDaEstante[]>
 {
-  const [entradas, fontes] = await Promise.all([
+  const [entradas, fontes, avaliacoes] = await Promise.all([
     deps.listarEntradas(filtro.userId, filtro.status),
     deps.listarFontes(filtro.userId),
+    deps.listarAvaliacoes(filtro.userId),
   ]);
 
   const fontePorMedia = new Map(
     fontes.map(function (fonte) { return [fonte.mediaId, fonte] as const; }),
   );
+  const avaliacaoPorMedia = new Map(
+    avaliacoes.map(function (avaliacao) { return [avaliacao.mediaId, avaliacao] as const; }),
+  );
 
   return entradas.map(function (entrada)
   {
     const fonte = fontePorMedia.get(entrada.mediaId) ?? null;
+    const avaliacao = avaliacaoPorMedia.get(entrada.mediaId) ?? null;
     const maior =
       entrada.progressChapter === null ? null : Number(entrada.progressChapter);
 
@@ -185,6 +207,14 @@ export async function listarEstante(
       obra: entrada.obra,
       fonte: fonte === null ? null : recorteDaFonte(fonte),
       proximoCapitulo: proximoCapitulo(maior),
+      avaliacao:
+        avaliacao === null
+          ? null
+          : {
+              rating: avaliacao.rating,
+              review: avaliacao.review,
+              containsSpoilers: avaliacao.containsSpoilers,
+            },
     };
   });
 }
@@ -322,6 +352,7 @@ export function listarEstanteDoSistema(
   return listarEstante(filtro, {
     listarEntradas: listarEntradasDoUsuario,
     listarFontes: listarFontesAtivas,
+    listarAvaliacoes,
   });
 }
 
