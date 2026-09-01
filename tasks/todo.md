@@ -296,3 +296,14 @@ Proximo: #11 — tela /estante e mudanca de status; depois dropdown de navegacao
 
 Proximo: dropdown de navegacao no header (perfil, catalogo, temas) ou Fase 2
 do progresso de leitura (ReadingSource/ReadingProgress).
+
+## Sessao 01/09 — continuacao: dropdown de navegacao (#21)
+
+- Menu unico no header (`componentes/menu-navegacao.tsx`): Catalogo, Estante
+  (logado), seletor de tema dentro do menu, Entrar/Sair. Esc/clique fora fecha.
+- Branch feature/menu-navegacao, empilhada na feature/estante-tela.
+- Abrir/fechar nao foi testado em browser (extensao desconectada) — conferir
+  a mao antes do merge.
+- Perfil entra no menu quando a tela de perfil existir.
+
+Proximo: Fase 2 — progresso de leitura (ReadingSource/ReadingProgress).
