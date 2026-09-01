@@ -221,3 +221,62 @@ Pendente de decisao antes de seguir: estrategia de commit (o `CLAUDE.md` proibe 
 usuário, nunca entram em contagem ou ranking público. Toda consulta carrega `userId`.
 Isso é invariante do sistema, não preferência do usuário — o motivo está no painel 01
 do artifact.
+
+## Sessao 31/08 — identidade visual + auth (issues #7, #8, #9)
+
+Maquina nova (Nicholas). pnpm instalado via `npm i -g pnpm@9.15.0` (corepack pede admin).
+**Sem Docker e sem `.env` aqui** — `pnpm test:db` nao rodou nesta sessao; o teste novo
+`tests/repositories/usuario.privacy.test.ts` roda quando houver Postgres.
+
+Nada commitado ainda — o usuario pediu para segurar o git. Trabalho pronto para virar
+commits atomicos em `feature/identidade-visual` e `feature/auth`.
+
+Feito:
+
+- Identidade Kidoku: nome, logo double-check, 3 temas (sumi/noturno/matcha) com seletor
+  segmentado, fontes Zen Kaku Gothic New + Instrument Sans. Ver
+  `Obsidian/02. Implementacoes/identidade-visual/CLAUDE.md` e licao nova em `lessons.md`
+  (nao ecoar estetica do Letterboxd).
+- #7 cadastro: domain/senha (scrypt, formato autodescritivo), usuario.repository (leitura
+  nunca devolve hash), cadastro.service, POST /api/v1/usuarios, tela /cadastrar.
+- #8 login: infra/sessao (jose, HS256, so sub no payload), sessao.service (hash fantasma
+  contra timing de e-mail inexistente), POST /api/v1/sessao, tela /entrar.
+- #9 logout: DELETE /api/v1/sessao, BotaoSair, usuarioDaSessao() em api/v1/_shared.
+- Boundaries: liberado `node:*` e novo elemento `sessao` — ambos provados quebrando.
+
+Provas: pnpm lint 0, pnpm test 69/69, pnpm build verde. Issues #7-#9 NAO fechadas no
+GitHub (dependem de test:db + commit).
+
+Proximo: #10 (adicionar a estante) + redesign do /catalogo junto, depois #11.
+
+## Sessao 31/08 — continuacao: issue #10 + redesign do catalogo
+
+- #10 feita em TDD: domain/media-cache (TTL 24h, sonda vista falhando),
+  estante.service (cache fresco nao chama AniList; obra descartada nao vira linha),
+  media.repository e shelf.repository (upserts), infra buscarMediaPorId (via Page.media,
+  id inexistente = null e nao erro), POST /api/v1/estante (401 sem sessao),
+  botao-estante no catalogo redesenhado (grade 2 col, capas, badges).
+- Provas: 78 testes unitarios, lint 0, build verde. No browser: + Estante sem sessao
+  redireciona para /entrar.
+- tests/repositories/estante.upsert.test.ts escrito, aguardando Postgres.
+- Issue #10 NAO fechada (test:db + commit pendentes).
+
+Proximo: #11 — tela /estante e mudanca de status.
+
+## Sessao 01/09 — banco local, catalogo live (#17, #18) e commits
+
+Maquina do Nicholas, sem Docker. Postgres nativo 17.2 na 5432: criados role
+`mymangatracker` e bancos `mymangatracker`/`mymangatracker_test`, migration
+`entidades_fase_1` aplicada. `.env` criado do exemplo com SESSION_SECRET gerado.
+
+- `pnpm test:db` rodou pela primeira vez: achou bug real — Prisma 7 com driver
+  adapter nao poe `meta.target` no P2002; o indice vem em
+  `meta.driverAdapterError.cause.constraint.index`. Traducao corrigida no
+  usuario.repository (username duplicado caia no ramo email). 20/20 verdes.
+- #17: busca ao digitar (debounce 400ms, ?q= na URL) + campo vazio mostra
+  populares do AniList (estado novo `destaques` no catalogo.service, TDD).
+- #18: Sair a direita do seletor de tema. Seletor migra para o dropdown de
+  navegacao quando ele existir.
+- Backlog inteiro virou commits atomicos em `feature/fase-2` (1 PR).
+
+Proximo: #11 — tela /estante e mudanca de status; depois dropdown de navegacao.

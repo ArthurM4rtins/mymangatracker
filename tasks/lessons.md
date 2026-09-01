@@ -152,3 +152,17 @@ Os dois foram restaurados e a suite voltou a 10 verdes.
 **Regra:** invariante que a nota depende (privacidade do progresso, indice parcial) so conta como
 provado depois de ver o teste falhar com a regra removida. Vale para schema e banco tanto quanto
 para config de lint.
+
+---
+
+## Identidade visual — nao ecoar o Letterboxd
+
+**31/08/2026.** Duas correcoes do usuario na primeira rodada de identidade: (1) os temas sumi e
+matcha eram ambos papel-claro com branco de superficie — na tela, "iguais, so muda a cor do
+logo"; (2) o seletor de tema com tres bolinhas coloridas lado a lado reproduzia a assinatura
+visual do logo do Letterboxd.
+
+**Regra:** o Letterboxd e benchmark de produto, nao de estetica — elemento visual que evoca a
+marca deles (trio de circulos coloridos, em especial) nao entra. E temas so contam como opcoes
+distintas se o **fundo** muda de verdade entre eles; trocar so o acento nao e um tema novo.
+Matcha virou meio-termo real (verde-oliva dim) e o seletor virou controle segmentado com texto.

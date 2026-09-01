@@ -1,0 +1,317 @@
+<title>Kidoku — Identidade Visual</title>
+<style>
+  :root {
+    --paper: #faf7f2;
+    --paper-2: #f0ece4;
+    --ink: #1c1a17;
+    --ink-2: #5c574e;
+    --line: #ddd7cc;
+    --seal: #d6402b;
+    --card: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #171512;
+      --paper-2: #211e1a;
+      --ink: #ece7de;
+      --ink-2: #a49c8e;
+      --line: #383329;
+      --seal: #e85a44;
+      --card: #211e1a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #171512;
+    --paper-2: #211e1a;
+    --ink: #ece7de;
+    --ink-2: #a49c8e;
+    --line: #383329;
+    --seal: #e85a44;
+    --card: #211e1a;
+  }
+  :root[data-theme="light"] {
+    --paper: #faf7f2;
+    --paper-2: #f0ece4;
+    --ink: #1c1a17;
+    --ink-2: #5c574e;
+    --line: #ddd7cc;
+    --seal: #d6402b;
+    --card: #ffffff;
+  }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Segoe UI", system-ui, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.72rem;
+    color: var(--seal); font-weight: 600; margin: 0 0 0.5rem;
+  }
+  h1 { font-size: clamp(2rem, 5vw, 3rem); margin: 0 0 0.3rem; letter-spacing: -0.02em; text-wrap: balance; }
+  h1 .kanji { color: var(--seal); font-weight: 400; }
+  .lede { color: var(--ink-2); max-width: 62ch; margin: 0.4rem 0 0; }
+  section { margin-top: 4rem; }
+  h2 { font-size: 1.4rem; letter-spacing: -0.01em; margin: 0 0 0.3rem; }
+  .secnote { color: var(--ink-2); font-size: 0.92rem; max-width: 65ch; margin: 0 0 1.5rem; }
+  .grid { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+
+  .concept { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--card); }
+  .concept .previews { display: grid; grid-template-columns: 1fr 1fr; }
+  .concept .pv { display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+  .pv.on-light { background: #faf7f2; }
+  .pv.on-dark  { background: #171512; }
+  .concept .meta { padding: 1rem 1.2rem 1.2rem; border-top: 1px solid var(--line); }
+  .concept h3 { margin: 0 0 0.3rem; font-size: 1.02rem; }
+  .concept p { margin: 0; font-size: 0.87rem; color: var(--ink-2); }
+  .tag {
+    display: inline-block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--seal); border: 1px solid var(--seal); border-radius: 99px;
+    padding: 0.1rem 0.55rem; margin-bottom: 0.55rem; font-weight: 600;
+  }
+
+  .dir { border: 1px solid var(--line); border-radius: 10px; background: var(--card); overflow: hidden; }
+  .dir .head { padding: 1rem 1.2rem 0.8rem; }
+  .dir h3 { margin: 0 0 0.25rem; font-size: 1.02rem; }
+  .dir .head p { margin: 0; font-size: 0.87rem; color: var(--ink-2); }
+  .swatches { display: flex; height: 44px; }
+  .swatches div { flex: 1; position: relative; }
+  .swatches span {
+    position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
+    font-size: 0.58rem; font-family: Consolas, monospace; white-space: nowrap;
+  }
+  .mock { padding: 1.1rem; }
+  .mockcard { border-radius: 10px; padding: 1rem; display: flex; gap: 0.9rem; align-items: center; }
+  .cover { width: 52px; height: 74px; border-radius: 5px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+  .mockinfo { flex: 1; min-width: 0; }
+  .mocktitle { font-weight: 600; font-size: 0.95rem; }
+  .mocksub { font-size: 0.76rem; opacity: 0.75; margin-top: 0.1rem; }
+  .stars { font-size: 0.8rem; letter-spacing: 0.1em; margin-top: 0.25rem; }
+  .btn {
+    font-size: 0.74rem; font-weight: 600; border-radius: 7px; padding: 0.45rem 0.8rem;
+    white-space: nowrap; letter-spacing: 0.02em;
+  }
+
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 0.55rem 0.9rem 0.55rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-2); }
+  .table-scroll { overflow-x: auto; }
+
+  .rec {
+    margin-top: 4rem; border-left: 3px solid var(--seal);
+    background: var(--paper-2); padding: 1.3rem 1.5rem; border-radius: 0 10px 10px 0;
+  }
+  .rec h2 { margin-top: 0; }
+  .rec p { margin: 0.5rem 0 0; max-width: 68ch; }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Proposta de identidade visual</p>
+    <h1>kidoku <span class="kanji">既読</span></h1>
+    <p class="lede">"Já lido." O selo que o mensageiro carimba quando a mensagem foi vista — aqui,
+    o selo que o leitor carimba quando o capítulo foi lido. Três conceitos de logo e três direções
+    de cor, cada uma aplicada num pedaço real da interface.</p>
+  </header>
+
+  <section>
+    <h2>Conceitos de logo</h2>
+    <p class="secnote">Cada conceito mostrado sobre fundo claro e escuro. São rascunhos de direção —
+    o desenho final refina traço e tipografia depois da escolha.</p>
+    <div class="grid">
+
+      <div class="concept">
+        <div class="previews">
+          <div class="pv on-light">
+            <svg width="150" height="90" viewBox="0 0 150 90" role="img" aria-label="Logo hanko claro">
+              <circle cx="42" cy="38" r="26" fill="none" stroke="#d6402b" stroke-width="3.5"/>
+              <text x="42" y="47" font-size="21" fill="#d6402b" text-anchor="middle" font-family="'Yu Mincho','Hiragino Mincho',serif" font-weight="bold">読</text>
+              <text x="42" y="82" font-size="17" fill="#1c1a17" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-weight="700" letter-spacing="0.5">kidoku</text>
+            </svg>
+          </div>
+          <div class="pv on-dark">
+            <svg width="150" height="90" viewBox="0 0 150 90" role="img" aria-label="Logo hanko escuro">
+              <circle cx="42" cy="38" r="26" fill="none" stroke="#e85a44" stroke-width="3.5"/>
+              <text x="42" y="47" font-size="21" fill="#e85a44" text-anchor="middle" font-family="'Yu Mincho','Hiragino Mincho',serif" font-weight="bold">読</text>
+              <text x="42" y="82" font-size="17" fill="#ece7de" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-weight="700" letter-spacing="0.5">kidoku</text>
+            </svg>
+          </div>
+        </div>
+        <div class="meta">
+          <span class="tag">Conceito 1</span>
+          <h3>Hanko — o carimbo</h3>
+          <p>Selo circular vermelho com o kanji 読 (ler), como o carimbo pessoal japonês.
+          Carimbar = marcar como lido. Vira botão, favicon e selo de "lido" na própria UI.</p>
+        </div>
+      </div>
+
+      <div class="concept">
+        <div class="previews">
+          <div class="pv on-light">
+            <svg width="150" height="90" viewBox="0 0 150 90" role="img" aria-label="Logo double-check claro">
+              <polyline points="30,42 44,56 72,26" fill="none" stroke="#d6402b" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="56,42 70,56 98,26" fill="none" stroke="#1c1a17" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="75" y="82" font-size="17" fill="#1c1a17" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-weight="700" letter-spacing="0.5">kidoku</text>
+            </svg>
+          </div>
+          <div class="pv on-dark">
+            <svg width="150" height="90" viewBox="0 0 150 90" role="img" aria-label="Logo double-check escuro">
+              <polyline points="30,42 44,56 72,26" fill="none" stroke="#e85a44" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="56,42 70,56 98,26" fill="none" stroke="#ece7de" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="75" y="82" font-size="17" fill="#ece7de" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-weight="700" letter-spacing="0.5">kidoku</text>
+            </svg>
+          </div>
+        </div>
+        <div class="meta">
+          <span class="tag">Conceito 2</span>
+          <h3>Double-check — o visto</h3>
+          <p>Dois vistos sobrepostos, o selo universal de "visualizado" do mensageiro.
+          Leitura imediata pra qualquer usuário, funciona minúsculo, anima bem
+          (o segundo check aparece quando o capítulo é registrado).</p>
+        </div>
+      </div>
+
+      <div class="concept">
+        <div class="previews">
+          <div class="pv on-light">
+            <svg width="150" height="90" viewBox="0 0 150 90" role="img" aria-label="Logo marcador claro">
+              <rect x="30" y="14" width="52" height="50" rx="4" fill="none" stroke="#1c1a17" stroke-width="3.5"/>
+              <path d="M 60 10 L 60 46 L 69 37 L 78 46 L 78 10 Z" fill="#d6402b"/>
+              <text x="75" y="84" font-size="17" fill="#1c1a17" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-weight="700" letter-spacing="0.5">kidoku</text>
+            </svg>
+          </div>
+          <div class="pv on-dark">
+            <svg width="150" height="90" viewBox="0 0 150 90" role="img" aria-label="Logo marcador escuro">
+              <rect x="30" y="14" width="52" height="50" rx="4" fill="none" stroke="#ece7de" stroke-width="3.5"/>
+              <path d="M 60 10 L 60 46 L 69 37 L 78 46 L 78 10 Z" fill="#e85a44"/>
+              <text x="75" y="84" font-size="17" fill="#ece7de" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-weight="700" letter-spacing="0.5">kidoku</text>
+            </svg>
+          </div>
+        </div>
+        <div class="meta">
+          <span class="tag">Conceito 3</span>
+          <h3>Shiori — o marcador no painel</h3>
+          <p>Painel de manga com a fita de marcador atravessando a borda — "guardei onde parei".
+          Conecta o quadrinho (painel) ao progresso (marcador). O mais literal dos três.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Direções de cor</h2>
+    <p class="secnote">Três mundos possíveis. Cada mock usa a mesma entrada de estante pra comparação
+    justa: capa, progresso, nota e o botão de registrar leitura.</p>
+    <div class="grid">
+
+      <div class="dir">
+        <div class="head">
+          <span class="tag">Direção A</span>
+          <h3>Sumi &amp; Hanko</h3>
+          <p>Tinta e papel do manga impresso, com o vermelho do carimbo como único acento.
+          Preto-e-branco é a cara da mídia; a cor aparece só onde há ação.</p>
+        </div>
+        <div class="swatches">
+          <div style="background:#faf7f2"><span style="color:#1c1a17">#FAF7F2</span></div>
+          <div style="background:#1c1a17"><span style="color:#faf7f2">#1C1A17</span></div>
+          <div style="background:#d6402b"><span style="color:#fff">#D6402B</span></div>
+          <div style="background:#8a8375"><span style="color:#fff">#8A8375</span></div>
+        </div>
+        <div class="mock" style="background:#141210">
+          <div class="mockcard" style="background:#1f1c18; color:#ece7de;">
+            <div class="cover" style="background:#312c26;">📖</div>
+            <div class="mockinfo">
+              <div class="mocktitle">Vinland Saga</div>
+              <div class="mocksub">Cap. 214 · manhwa toon</div>
+              <div class="stars" style="color:#d6402b">★★★★½</div>
+            </div>
+            <div class="btn" style="background:#d6402b; color:#fff;">✓✓ Lido</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dir">
+        <div class="head">
+          <span class="tag">Direção B</span>
+          <h3>Leitura noturna</h3>
+          <p>Índigo profundo com âmbar de luminária — a hora em que manga é lido de verdade.
+          Dark-first como o Letterboxd, mas em temperatura própria.</p>
+        </div>
+        <div class="swatches">
+          <div style="background:#12141f"><span style="color:#e8e4f0">#12141F</span></div>
+          <div style="background:#1d2133"><span style="color:#e8e4f0">#1D2133</span></div>
+          <div style="background:#f0a842"><span style="color:#12141f">#F0A842</span></div>
+          <div style="background:#7a82a8"><span style="color:#12141f">#7A82A8</span></div>
+        </div>
+        <div class="mock" style="background:#12141f">
+          <div class="mockcard" style="background:#1d2133; color:#e8e4f0;">
+            <div class="cover" style="background:#2a2f47;">📖</div>
+            <div class="mockinfo">
+              <div class="mocktitle">Vinland Saga</div>
+              <div class="mocksub">Cap. 214 · manhwa toon</div>
+              <div class="stars" style="color:#f0a842">★★★★½</div>
+            </div>
+            <div class="btn" style="background:#f0a842; color:#12141f;">✓✓ Lido</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dir">
+        <div class="head">
+          <span class="tag">Direção C</span>
+          <h3>Matcha &amp; papel</h3>
+          <p>Verde matcha sobre papel quente — biblioteca calma, não app de streaming.
+          A mais "livraria" das três; afasta a estética de scan pirata.</p>
+        </div>
+        <div class="swatches">
+          <div style="background:#f7f5ee"><span style="color:#23281e">#F7F5EE</span></div>
+          <div style="background:#23281e"><span style="color:#f7f5ee">#23281E</span></div>
+          <div style="background:#5c7a4e"><span style="color:#fff">#5C7A4E</span></div>
+          <div style="background:#c9a86a"><span style="color:#23281e">#C9A86A</span></div>
+        </div>
+        <div class="mock" style="background:#f7f5ee">
+          <div class="mockcard" style="background:#ffffff; color:#23281e; border:1px solid #e0dccf;">
+            <div class="cover" style="background:#e8e4d6;">📖</div>
+            <div class="mockinfo">
+              <div class="mocktitle">Vinland Saga</div>
+              <div class="mocksub">Cap. 214 · manhwa toon</div>
+              <div class="stars" style="color:#c9a86a">★★★★½</div>
+            </div>
+            <div class="btn" style="background:#5c7a4e; color:#fff;">✓✓ Lido</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Tipografia</h2>
+    <p class="secnote">Os previews acima usam fonte de sistema (limite deste documento).
+    No site, carregar via <code>next/font</code>:</p>
+    <div class="table-scroll">
+      <table>
+        <tr><th>Papel</th><th>Fonte (Google Fonts)</th><th>Por quê</th></tr>
+        <tr><td>Marca / títulos</td><td><strong>Zen Kaku Gothic New</strong></td>
+          <td>Gótico japonês geométrico — carrega a origem do nome sem virar clichê "oriental". Suporta o kanji 既読 no próprio peso da marca.</td></tr>
+        <tr><td>Texto / UI</td><td><strong>Instrument Sans</strong></td>
+          <td>Humanista, ótima em corpo pequeno de card e resenha, distinta do Inter de todo app.</td></tr>
+        <tr><td>Números / capítulos</td><td>Instrument Sans com <code>tabular-nums</code></td>
+          <td>Progresso de capítulo alinha em coluna na estante.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <div class="rec">
+    <h2>Recomendação</h2>
+    <p><strong>Conceito 1 (Hanko) + Direção A (Sumi &amp; Hanko).</strong> O carimbo é a metáfora
+    inteira do produto num símbolo só: pessoal, japonês, e a ação de "carimbar como lido" pode ser
+    o micro-momento de prazer da UI — o hanko estampa na capa quando o capítulo é registrado.
+    A paleta tinta-e-papel deixa as capas das obras serem a cor da página, como o Letterboxd faz
+    com pôsteres. O double-check (Conceito 2) sobrevive como ícone de estado dentro da UI mesmo
+    não sendo o logo.</p>
+  </div>
+</div>
