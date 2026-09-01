@@ -6,8 +6,13 @@ import { buscarMediaPorAnilistId } from "@/server/repositories/media.repository"
 import {
   adicionarItem,
   apagarLista,
+  buscarListaComItens,
   criarLista,
+  listarListasPublicas,
+  listarMinhasListas,
   removerItem,
+  type ListaComItens,
+  type ListaPublica,
 } from "@/server/repositories/lista.repository";
 
 const NOME_MAXIMO = 100;
@@ -111,6 +116,38 @@ export function alternarObraNaListaDoSistema(pedido: {
     adicionar: adicionarItem,
     remover: removerItem,
   });
+}
+
+const LIMITE_DE_LISTAS_PUBLICAS = 30;
+
+/** A composição de produção. As listas recentes de todo mundo. */
+export function listasPublicasDoSistema(): Promise<ListaPublica[]>
+{
+  return listarListasPublicas(LIMITE_DE_LISTAS_PUBLICAS);
+}
+
+/** A composição de produção. A lista com as obras, para a página dela. */
+export function listaComItensDoSistema(
+  listaId: string,
+  userId: string | null,
+): Promise<ListaComItens | null>
+{
+  return buscarListaComItens(listaId, userId);
+}
+
+/**
+ * A composição de produção. As listas do usuário para o dropdown da página da
+ * obra — `jaContem` marcado quando o anilistId veio e a obra está no cache.
+ */
+export async function minhasListasDoSistema(
+  userId: string,
+  anilistId: number | null,
+): Promise<Array<{ listaId: string; nome: string; jaContem: boolean }>>
+{
+  const media =
+    anilistId === null ? null : await buscarMediaPorAnilistId(anilistId);
+
+  return listarMinhasListas(userId, media?.id ?? null);
 }
 
 /** A composição de produção. Apagar é repasse direto — a posse decide no banco. */
