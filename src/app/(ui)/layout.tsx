@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, Zen_Kaku_Gothic_New } from "next/font/google";
-import Link from "next/link";
 import "./globals.css";
 import { usuarioDaSessao } from "../api/v1/_shared/sessao";
-import { BotaoSair } from "./componentes/botao-sair";
 import { Logo } from "./componentes/logo";
-import { SeletorTema } from "./componentes/seletor-tema";
+import { MenuNavegacao } from "./componentes/menu-navegacao";
 
 const fonteUi = Instrument_Sans({
   variable: "--font-ui",
@@ -53,29 +51,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <header className="border-b border-borda">
           <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 py-4">
             <Logo />
-            {/* Ordem provisória: o seletor de tema migra para o dropdown de
-                navegação quando ele existir (issue #18). */}
-            <div className="flex items-center gap-4">
-              {userId && (
-                <Link
-                  href="/estante"
-                  className="text-sm text-texto-suave transition-colors hover:text-texto"
-                >
-                  Estante
-                </Link>
-              )}
-              <SeletorTema />
-              {userId ? (
-                <BotaoSair />
-              ) : (
-                <Link
-                  href="/entrar"
-                  className="text-sm text-texto-suave transition-colors hover:text-texto"
-                >
-                  Entrar
-                </Link>
-              )}
-            </div>
+            <MenuNavegacao logado={Boolean(userId)} />
           </div>
         </header>
         {children}
