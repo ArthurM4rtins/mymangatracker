@@ -361,3 +361,25 @@ Proximo: continuar o front (catalogo/estante) ou rating.
 
 Cadeia: #19 <- #20 <- #22 <- #24 <- #26 <- #28. Mergear em ordem.
 Proximo: front da estante (refino visual) ou rating/avaliacao.
+
+## Sessao 01/09 — continuacao: fonte sem template (#29)
+
+Problema levantado pelo usuario: MangaFire/MangaDex nao carregam o numero do
+capitulo na URL (id opaco/uuid) — derivacao de template falha. Decisao
+(opcao 1, registrada no CLAUDE.md da feature-progresso-leitura): fonte pode
+ser a PAGINA DA OBRA; botao vira abrir obra + registrar cap. N.
+
+- Dominio: tipoDaFonte (discrimina pela presenca de {chapter}) e urlDaPagina.
+  Sem migration — o proprio urlTemplate carrega o tipo.
+- candidatosDeFonte sempre devolve paginaDaObra; confirmar aceita path sem
+  marcador; abrirCapitulo abre a pagina e registra igual. DTO da estante ganha
+  fonte.tipo. Template com offset (id sequencial) descartado: cap .5 e
+  re-upload quebram a aritmetica.
+- Tela: sem candidato o erro virou oferta de salvar a pagina, com dica de
+  colar a URL da serie. Bug pego no smoke: controller nao repassava
+  paginaDaObra.
+- Provas: lint 0, 123 unitarios, build verde. E2E: URL real do MangaFire ->
+  0 candidatos -> salva pagina -> abrir devolve a URL da obra e registra 58.
+- Branch feature/fonte-sem-template, empilhada na catalogo-front. PR #30.
+
+Cadeia: #19 <- #20 <- #22 <- #24 <- #26 <- #28 <- #30. Mergear em ordem.

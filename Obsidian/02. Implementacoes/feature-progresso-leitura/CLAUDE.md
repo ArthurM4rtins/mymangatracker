@@ -61,6 +61,22 @@ registro acontece quando o usuário abre o capítulo PELO app.
 - Abrir em nova aba com `window.open` depois da resposta — o registro não
   depende do site de terceiro responder.
 
+## Decisão 01/09 — fonte sem template (opção 1)
+
+Sites como MangaFire (`/chapter/4745883`, id sequencial interno) e MangaDex
+(`/chapter/<uuid>`) não carregam o NÚMERO do capítulo na URL — template
+`{chapter}` não existe neles. Decidido com o usuário: **fallback de página da
+obra**. Quando a derivação não encontra template, a fonte guarda a URL da
+página da série; o botão vira "Abrir obra + registrar cap. N" — abre a página,
+o usuário clica no capítulo lá, e o registro/progresso continuam idênticos.
+
+- Discriminador é o próprio `urlTemplate`: com `{chapter}` = template, sem =
+  página da obra. Sem migration; quem decide é o domínio (`tipoDaFonte`).
+- Template com offset (id sequencial do MangaFire) foi descartado: capítulo
+  .5 quebra a aritmética, re-upload fura a sequência, offset varia por obra.
+- Adapter MangaDex via API oficial fica como possível passo 2; scraping nunca;
+  extensão (Fase 6) é a solução definitiva para captura automática.
+
 ## Pendências
 
 - ~~Aprovação do desenho~~ — aprovado em 01/09, com a regra do maior capítulo
