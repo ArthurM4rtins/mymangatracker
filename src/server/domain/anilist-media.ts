@@ -13,6 +13,12 @@
 export type TipoMedia = "MANGA" | "NOVEL";
 export type PaisDeOrigem = "JP" | "KR" | "CN";
 
+export type AutorDaObra = {
+  anilistStaffId: number;
+  nome: string;
+  papel: string;
+};
+
 export type MediaDoAniList = {
   anilistId: number;
   type: TipoMedia;
@@ -23,7 +29,15 @@ export type MediaDoAniList = {
   coverImageUrl?: string;
   description?: string;
   chapters?: number;
+  bannerImageUrl?: string;
+  startYear?: number;
+  genres?: string[];
+  averageScore?: number;
+  autores?: AutorDaObra[];
 };
+
+/** Papéis do staff que contam como autoria — o resto (tradução etc.) fica fora. */
+const PAPEIS_DE_AUTOR = ["Story", "Art"];
 
 const TIPO_POR_FORMATO: Record<string, TipoMedia> = {
   MANGA: "MANGA",
@@ -96,7 +110,81 @@ export function mapearMedia(bruto: unknown): MediaDoAniList | null
     media.chapters = bruto.chapters;
   }
 
+  const banner = bruto.bannerImage;
+
+  if (typeof banner === "string")
+  {
+    media.bannerImageUrl = banner;
+  }
+
+  const inicio = ehObjeto(bruto.startDate) ? bruto.startDate.year : undefined;
+
+  if (typeof inicio === "number")
+  {
+    media.startYear = inicio;
+  }
+
+  if (Array.isArray(bruto.genres))
+  {
+    const generos = bruto.genres.filter(function (g): g is string
+    {
+      return typeof g === "string";
+    });
+
+    if (generos.length > 0)
+    {
+      media.genres = generos;
+    }
+  }
+
+  if (typeof bruto.averageScore === "number")
+  {
+    media.averageScore = bruto.averageScore;
+  }
+
+  const autores = mapearAutores(bruto.staff);
+
+  if (autores.length > 0)
+  {
+    media.autores = autores;
+  }
+
   return media;
+}
+
+function mapearAutores(staff: unknown): AutorDaObra[]
+{
+  if (!ehObjeto(staff) || !Array.isArray(staff.edges))
+  {
+    return [];
+  }
+
+  const autores: AutorDaObra[] = [];
+
+  staff.edges.forEach(function (edge)
+  {
+    if (!ehObjeto(edge) || typeof edge.role !== "string" || !ehObjeto(edge.node))
+    {
+      return;
+    }
+
+    const papel = edge.role;
+
+    if (!PAPEIS_DE_AUTOR.some(function (p) { return papel.includes(p); }))
+    {
+      return;
+    }
+
+    const id = edge.node.id;
+    const nome = ehObjeto(edge.node.name) ? edge.node.name.full : undefined;
+
+    if (typeof id === "number" && typeof nome === "string")
+    {
+      autores.push({ anilistStaffId: id, nome, papel });
+    }
+  });
+
+  return autores;
 }
 
 /**

@@ -130,3 +130,60 @@ describe("mapearBusca", () =>
     expect(mapearBusca(null)).toEqual([]);
   });
 });
+
+// Os campos que a página da obra usa (issue #35): banner, ano, gêneros, nota
+// média e autores vindos do staff. Ausência vira undefined, nunca chute.
+const VAGABOND_COMPLETO = {
+  id: 30656,
+  title: { romaji: "Vagabond" },
+  format: "MANGA",
+  countryOfOrigin: "JP",
+  bannerImage: "https://s4.anilist.co/file/anilistcdn/media/manga/banner/30656.jpg",
+  startDate: { year: 1998 },
+  genres: ["Action", "Adventure", "Drama"],
+  averageScore: 92,
+  staff: {
+    edges: [
+      { role: "Story & Art", node: { id: 96879, name: { full: "Takehiko Inoue" } } },
+      { role: "Original Story", node: { id: 97197, name: { full: "Eiji Yoshikawa" } } },
+      { role: "Translator", node: { id: 111111, name: { full: "Alguém" } } },
+      { role: "Assistant", node: null },
+    ],
+  },
+};
+
+describe("mapearMedia — campos da página da obra", () =>
+{
+  it("mapeia banner, ano, gêneros e nota média", () =>
+  {
+    const media = mapearMedia(VAGABOND_COMPLETO);
+
+    expect(media).toMatchObject({
+      bannerImageUrl: "https://s4.anilist.co/file/anilistcdn/media/manga/banner/30656.jpg",
+      startYear: 1998,
+      genres: ["Action", "Adventure", "Drama"],
+      averageScore: 92,
+    });
+  });
+
+  it("extrai autores do staff pelos papéis de história e arte, ignorando o resto", () =>
+  {
+    const media = mapearMedia(VAGABOND_COMPLETO);
+
+    expect(media?.autores).toEqual([
+      { anilistStaffId: 96879, nome: "Takehiko Inoue", papel: "Story & Art" },
+      { anilistStaffId: 97197, nome: "Eiji Yoshikawa", papel: "Original Story" },
+    ]);
+  });
+
+  it("sem os campos novos, nada é inventado", () =>
+  {
+    const media = mapearMedia(LOOKISM);
+
+    expect(media).not.toHaveProperty("bannerImageUrl");
+    expect(media).not.toHaveProperty("startYear");
+    expect(media).not.toHaveProperty("genres");
+    expect(media).not.toHaveProperty("averageScore");
+    expect(media).not.toHaveProperty("autores");
+  });
+});
