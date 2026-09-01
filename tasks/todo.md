@@ -280,3 +280,19 @@ Maquina do Nicholas, sem Docker. Postgres nativo 17.2 na 5432: criados role
 - Backlog inteiro virou commits atomicos em `feature/fase-2` (1 PR).
 
 Proximo: #11 — tela /estante e mudanca de status; depois dropdown de navegacao.
+
+## Sessao 01/09 — continuacao: issue #11
+
+- #11 em TDD: repositorio (listar com userId obrigatorio + updateMany com userId
+  no where, protecao vista falhando), servico (listar/mudarStatus), GET e PATCH
+  em /api/v1/estante, tela /estante com abas por ?status= e select inline.
+  Link Estante no header para logado.
+- Smoke E2E via HTTP: cadastro 201, login 200, add 200, lista 200, PATCH 200,
+  tela renderiza Berserk como Lendo. Sem sessao: API 401, tela 307 -> /entrar.
+- Provas: lint 0, 90 testes unitarios, 26 test:db, build verde COM e SEM
+  DATABASE_URL. Branch feature/estante-tela (empilhada na feature/fase-2),
+  PR aguardando o merge do #19.
+- Usuario de smoke `smoketest`/`smoke@teste.local` ficou no banco local dev.
+
+Proximo: dropdown de navegacao no header (perfil, catalogo, temas) ou Fase 2
+do progresso de leitura (ReadingSource/ReadingProgress).
