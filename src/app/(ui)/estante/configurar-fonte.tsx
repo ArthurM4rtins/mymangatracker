@@ -26,6 +26,7 @@ export function ConfigurarFonte({
   const [aberto, setAberto] = useState(false);
   const [url, setUrl] = useState("");
   const [candidatos, setCandidatos] = useState<Candidato[] | null>(null);
+  const [paginaDaObra, setPaginaDaObra] = useState<Candidato | null>(null);
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -34,6 +35,7 @@ export function ConfigurarFonte({
     setOcupado(true);
     setErro(null);
     setCandidatos(null);
+    setPaginaDaObra(null);
 
     try
     {
@@ -57,13 +59,8 @@ export function ConfigurarFonte({
         return;
       }
 
-      if (corpo.candidatos.length === 0)
-      {
-        setErro("nenhum segmento com \"1\" no link — cole o link do capítulo 1");
-        return;
-      }
-
       setCandidatos(corpo.candidatos);
+      setPaginaDaObra(corpo.paginaDaObra);
     }
     catch
     {
@@ -107,6 +104,7 @@ export function ConfigurarFonte({
       setAberto(false);
       setUrl("");
       setCandidatos(null);
+      setPaginaDaObra(null);
       roteador.refresh();
     }
     catch
@@ -156,7 +154,13 @@ export function ConfigurarFonte({
         </button>
         <button
           type="button"
-          onClick={function () { setAberto(false); setErro(null); setCandidatos(null); }}
+          onClick={function ()
+          {
+            setAberto(false);
+            setErro(null);
+            setCandidatos(null);
+            setPaginaDaObra(null);
+          }}
           className="text-sm text-texto-suave hover:text-texto"
         >
           Cancelar
@@ -169,7 +173,7 @@ export function ConfigurarFonte({
         </p>
       )}
 
-      {candidatos && (
+      {candidatos && candidatos.length > 0 && (
         <ul className="flex flex-col gap-2">
           {candidatos.map(function (candidato)
           {
@@ -201,6 +205,36 @@ export function ConfigurarFonte({
             );
           })}
         </ul>
+      )}
+
+      {paginaDaObra && (
+        <div className="flex flex-col gap-1 rounded-md border border-dashed border-borda p-2">
+          <span className="text-xs text-texto-suave">
+            {candidatos && candidatos.length > 0
+              ? "Nenhum desses abre o capítulo 2? Alguns sites não colocam o número na URL — salve a página da obra e o registro continua igual:"
+              : "Esse site não coloca o número do capítulo na URL. Salve a página da obra: o botão abre a página e você registra o capítulo aqui."}
+          </span>
+          <a
+            href={paginaDaObra.urlExemplo}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="break-all text-xs text-acento underline underline-offset-4"
+          >
+            {paginaDaObra.urlExemplo}
+          </a>
+          <span className="text-xs text-texto-suave">
+            Dica: para salvar a página da série (e não um capítulo), cole a URL
+            da obra no campo acima e derive de novo.
+          </span>
+          <button
+            type="button"
+            onClick={function () { void confirmar(paginaDaObra); }}
+            disabled={ocupado}
+            className="w-fit rounded-md border border-acento px-3 py-1 text-xs font-medium text-acento transition-colors hover:bg-acento hover:text-acento-contraste disabled:opacity-60"
+          >
+            Salvar página da obra
+          </button>
+        </div>
       )}
     </div>
   );

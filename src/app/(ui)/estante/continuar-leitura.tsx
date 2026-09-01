@@ -10,10 +10,13 @@ import { useState } from "react";
 export function ContinuarLeitura({
   entradaId,
   proximoCapitulo,
+  tipoDaFonte = "template",
   compacto = false,
 }: {
   entradaId: string;
   proximoCapitulo: number;
+  /** Fonte de página da obra abre a série, não o capítulo — o rótulo avisa. */
+  tipoDaFonte?: "template" | "pagina";
   /** Na home o card é pequeno: só o botão principal, sem capítulo manual. */
   compacto?: boolean;
 })
@@ -88,7 +91,11 @@ export function ContinuarLeitura({
           disabled={ocupado}
           className="rounded-md bg-acento px-3 py-1.5 text-sm font-medium text-acento-contraste disabled:opacity-60"
         >
-          {ocupado ? "Abrindo…" : `Continuar cap. ${proximoCapitulo} →`}
+          {ocupado
+            ? "Abrindo…"
+            : tipoDaFonte === "pagina"
+              ? `Abrir obra · registrar cap. ${proximoCapitulo}`
+              : `Continuar cap. ${proximoCapitulo} →`}
         </button>
 
         {!compacto && (

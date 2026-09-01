@@ -169,6 +169,7 @@ function Entrada({ entrada }: { entrada: EntradaDaEstante })
             <ContinuarLeitura
               entradaId={entrada.entradaId}
               proximoCapitulo={entrada.proximoCapitulo}
+              tipoDaFonte={entrada.fonte.tipo}
             />
           )}
 

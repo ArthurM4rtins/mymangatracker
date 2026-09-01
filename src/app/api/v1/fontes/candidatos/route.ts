@@ -59,5 +59,8 @@ export async function POST(request: Request)
     );
   }
 
-  return NextResponse.json({ candidatos: resultado.candidatos }, { status: 200 });
+  return NextResponse.json(
+    { candidatos: resultado.candidatos, paginaDaObra: resultado.paginaDaObra },
+    { status: 200 },
+  );
 }
