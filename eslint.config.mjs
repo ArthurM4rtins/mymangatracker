@@ -58,6 +58,11 @@ const eslintConfig = defineConfig([
               allow: { to: { module: { origin: "external" } } },
             },
             {
+              // Builtin do Node ("node:crypto" no domain/senha, "node:*" em geral)
+              // nao e pacote externo nem arquivo do projeto — liberar explicito.
+              allow: { to: { module: { source: "node:*" } } },
+            },
+            {
               // A tela chama serviço direto. Server component que fizesse fetch no
               // próprio /api/v1 custaria uma segunda invocação de função por render.
               // O que continua barrado é o que importa: repositório, infra e Prisma.
