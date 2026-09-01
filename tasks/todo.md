@@ -527,3 +527,23 @@ ROADMAP A-E COMPLETO. Cadeia final de PRs para o Arthur mergear EM ORDEM:
 <- #40 <- #42 <- #44 (retarget de cada um apos o merge do anterior).
 Proximos candidatos: perfil publico do usuario, feed de atividade, extensao
 (Fase 6), refino visual continuo.
+
+## Sessao 01/09 — continuacao: visual da obra e avaliacao livre (#45)
+
+Feedback do usuario com prints:
+
+- Banner com fallback: obra sem banner usa a capa esticada com blur — todas
+  consistentes. Capa nao sobrepoe mais o banner (Chainsaw Man coberto).
+- Dominio descricao (TDD): sinopse sem "(Source: ...)"; bloco Notes vira a
+  secao "Curiosidades" em topicos com marcador.
+- AVALIAR NAO EXIGE MAIS ESTANTE: avaliacao por anilistId (servico resolve
+  pelo cache), rotas /api/v1/avaliacoes mudaram o contrato (anilistId no
+  corpo/rota). obra.service devolve minhaAvaliacao separada do recorte.
+- Na tela da obra: "Sua avaliacao" e secao propria fora do tracking —
+  estrela SALVA no clique, resenha em caixa sempre aberta com salvar proprio.
+  Estrelas viraram componente compartilhado (componentes/estrelas.tsx).
+- Provas: lint 0, 181 unitarios, build verde. E2E: leitor2 avaliou Berserk
+  sem ter na estante (200); pagina sem Source, com Curiosidades e blur.
+- Branch feature/visual-obra, empilhada na pagina-autor. PR #46.
+
+Cadeia: ... <- #44 <- #46.
