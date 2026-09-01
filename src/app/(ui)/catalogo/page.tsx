@@ -2,6 +2,7 @@ import Image from "next/image";
 import { buscarNoCatalogo } from "@/server/services/catalogo.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { BotaoEstante } from "./botao-estante";
+import { BuscaCatalogo } from "./busca-catalogo";
 
 // A busca depende do termo da URL e do AniList: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -32,23 +33,7 @@ export default async function Catalogo({ searchParams }: Props)
         </p>
       </header>
 
-      {/* GET: o termo fica na URL, então a busca é compartilhável e recarregável. */}
-      <form action="/catalogo" method="get" className="flex gap-2">
-        <input
-          type="search"
-          name="q"
-          defaultValue={resultado.termo}
-          placeholder="Lookism, Solo Leveling, Berserk…"
-          aria-label="Buscar obra"
-          className="flex-1 rounded-md border border-borda bg-superficie px-3 py-2 text-sm outline-none focus:border-acento"
-        />
-        <button
-          type="submit"
-          className="rounded-md bg-acento px-4 py-2 text-sm font-medium text-acento-contraste"
-        >
-          Buscar
-        </button>
-      </form>
+      <BuscaCatalogo termoInicial={resultado.termo} />
 
       {resultado.estado === "indisponivel" && (
         <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
@@ -56,19 +41,30 @@ export default async function Catalogo({ searchParams }: Props)
         </p>
       )}
 
-      {resultado.estado === "vazio" && resultado.termo !== "" && (
+      {resultado.estado === "vazio" && (
         <p className="text-sm text-texto-suave">
-          Nada encontrado para <strong>{resultado.termo}</strong>.
+          {resultado.termo === "" ? (
+            "O catálogo não respondeu nada agora. Tente de novo em instantes."
+          ) : (
+            <>Nada encontrado para <strong>{resultado.termo}</strong>.</>
+          )}
         </p>
       )}
 
-      {resultado.estado === "ok" && (
-        <ul className="grid gap-4 sm:grid-cols-2">
-          {resultado.obras.map(function (obra)
-          {
-            return <Obra key={obra.anilistId} obra={obra} />;
-          })}
-        </ul>
+      {(resultado.estado === "ok" || resultado.estado === "destaques") && (
+        <section className="flex flex-col gap-4">
+          {resultado.estado === "destaques" && (
+            <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
+              Populares agora
+            </h2>
+          )}
+          <ul className="grid gap-4 sm:grid-cols-2">
+            {resultado.obras.map(function (obra)
+            {
+              return <Obra key={obra.anilistId} obra={obra} />;
+            })}
+          </ul>
+        </section>
       )}
     </main>
   );

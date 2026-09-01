@@ -26,6 +26,23 @@ query($termo: String, $limite: Int) {
   }
 }`;
 
+// Vitrine do catálogo sem termo. `isAdult: false` porque a tela é pública e
+// sem sessão — não é o lugar de decidir preferência de conteúdo por usuário.
+const POPULARES = `
+query($limite: Int) {
+  Page(perPage: $limite) {
+    media(type: MANGA, sort: POPULARITY_DESC, isAdult: false) {
+      id
+      title { romaji english native }
+      format
+      countryOfOrigin
+      chapters
+      description(asHtml: false)
+      coverImage { large }
+    }
+  }
+}`;
+
 // Um registro por id: a consulta mais barata que ainda prova ida e volta.
 // `Page { pageInfo }` sozinho não serve — o AniList responde 400 "No field
 // provided" quando não há campo de conteúdo dentro de `Page`.
@@ -66,6 +83,21 @@ export async function buscarMedia(
   }
 
   const resposta = await chamar(BUSCA, { termo: termo.trim(), limite });
+
+  return mapearBusca(resposta);
+}
+
+/**
+ * As obras mais populares do AniList. É o que o catálogo mostra antes de
+ * qualquer termo ser digitado.
+ *
+ * @throws quando o AniList não responde ou responde fora do 2xx.
+ */
+export async function buscarPopulares(
+  limite: number = LIMITE_PADRAO,
+): Promise<MediaDoAniList[]>
+{
+  const resposta = await chamar(POPULARES, { limite });
 
   return mapearBusca(resposta);
 }

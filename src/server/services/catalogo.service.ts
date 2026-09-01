@@ -6,29 +6,37 @@
  * `ShelfEntry.mediaId` — ver o desvio registrado em
  * `Obsidian/02. Implementacoes/slice-vertical/CLAUDE.md`.
  */
-import { buscarMedia } from "@/server/infra/anilist";
+import { buscarMedia, buscarPopulares } from "@/server/infra/anilist";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 
 export type ResultadoBusca =
   | { estado: "ok"; termo: string; obras: MediaDoAniList[] }
+  | { estado: "destaques"; termo: ""; obras: MediaDoAniList[] }
   | { estado: "vazio"; termo: string }
   | { estado: "indisponivel"; termo: string };
 
 /**
  * Nunca levanta. A tela é pública e o AniList é de terceiro: fora do ar, a
  * página informa e continua de pé em vez de virar erro 500.
+ *
+ * Sem termo, a resposta são os populares (`destaques`) — o catálogo abre com
+ * vitrine, não com tela em branco.
  */
 export async function buscarNoCatalogo(termo: string): Promise<ResultadoBusca>
 {
   const limpo = termo.trim();
 
-  if (limpo === "")
-  {
-    return { estado: "vazio", termo: limpo };
-  }
-
   try
   {
+    if (limpo === "")
+    {
+      const obras = await buscarPopulares();
+
+      return obras.length === 0
+        ? { estado: "vazio", termo: "" }
+        : { estado: "destaques", termo: "", obras };
+    }
+
     const obras = await buscarMedia(limpo);
 
     return obras.length === 0
