@@ -206,7 +206,13 @@ export default async function PaginaDaObra({ params }: Props)
         <PainelDoUsuario anilistId={obra.anilistId} minha={minha} logado={userId !== null} />
 
         {userId !== null && (
-          <AvaliacaoDaObra anilistId={obra.anilistId} avaliacao={minhaAvaliacao} />
+          <AvaliacaoDaObra
+            anilistId={obra.anilistId}
+            titulo={obra.titleEnglish ?? obra.titleRomaji}
+            ano={obra.startYear}
+            coverImageUrl={obra.coverImageUrl}
+            avaliacao={minhaAvaliacao}
+          />
         )}
 
         <section className="flex flex-col gap-4">
