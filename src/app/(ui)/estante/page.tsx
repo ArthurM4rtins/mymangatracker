@@ -131,27 +131,31 @@ function Entrada({ entrada }: { entrada: EntradaDaEstante })
 
   return (
     <li className="flex gap-4 rounded-lg border border-borda bg-superficie p-4">
-      {obra.coverImageUrl ? (
-        <Image
-          src={obra.coverImageUrl}
-          alt=""
-          width={96}
-          height={144}
-          className="h-36 w-24 shrink-0 rounded object-cover"
-          unoptimized
-        />
-      ) : (
-        <div
-          aria-hidden
-          className="flex h-36 w-24 shrink-0 items-center justify-center rounded bg-fundo text-texto-suave"
-        >
-          —
-        </div>
-      )}
+      <Link href={`/obra/${obra.anilistId}`} className="shrink-0">
+        {obra.coverImageUrl ? (
+          <Image
+            src={obra.coverImageUrl}
+            alt=""
+            width={96}
+            height={144}
+            className="h-36 w-24 rounded object-cover transition-opacity hover:opacity-80"
+            unoptimized
+          />
+        ) : (
+          <div
+            aria-hidden
+            className="flex h-36 w-24 items-center justify-center rounded bg-fundo text-texto-suave"
+          >
+            —
+          </div>
+        )}
+      </Link>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <h2 className="font-medium leading-snug">
-          {obra.titleEnglish ?? obra.titleRomaji}
+          <Link href={`/obra/${obra.anilistId}`} className="hover:text-acento">
+            {obra.titleEnglish ?? obra.titleRomaji}
+          </Link>
         </h2>
 
         <p className="flex flex-wrap items-center gap-1.5 text-xs text-texto-suave">

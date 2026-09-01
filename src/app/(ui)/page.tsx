@@ -237,7 +237,9 @@ function CardContinuar({ entrada }: { entrada: EntradaDaEstante })
       )}
 
       <p className="line-clamp-1 text-sm font-medium">
-        {entrada.obra.titleEnglish ?? entrada.obra.titleRomaji}
+        <Link href={`/obra/${entrada.obra.anilistId}`} className="hover:text-acento">
+          {entrada.obra.titleEnglish ?? entrada.obra.titleRomaji}
+        </Link>
       </p>
 
       <ContinuarLeitura
@@ -258,7 +260,7 @@ function CapaPopular({ obra }: { obra: MediaDoAniList })
   return (
     <li>
       <Link
-        href={`/catalogo?q=${encodeURIComponent(titulo)}`}
+        href={`/obra/${obra.anilistId}`}
         className="group flex flex-col gap-1.5"
       >
         {obra.coverImageUrl ? (

@@ -12,6 +12,7 @@ import {
 // encontrada (não "proibida": não revelamos que existe).
 
 const OBRA = {
+  anilistId: 30013,
   titleRomaji: "Vinland Saga",
   titleEnglish: null,
   coverImageUrl: null,

@@ -116,6 +116,7 @@ export type EntradaDaEstante = {
   status: StatusDaEstante;
   progressChapter: string | null;
   obra: {
+    anilistId: number;
     titleRomaji: string;
     titleEnglish: string | null;
     coverImageUrl: string | null;
@@ -145,7 +146,10 @@ export type FiltroDaEstante = {
   status?: StatusDaEstante;
 };
 
-type EntradaNoRepositorio = Omit<EntradaDaEstante, "fonte" | "proximoCapitulo"> & {
+type EntradaNoRepositorio = Omit<
+  EntradaDaEstante,
+  "fonte" | "proximoCapitulo" | "avaliacao"
+> & {
   mediaId: string;
 };
 

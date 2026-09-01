@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { buscarNoCatalogo } from "@/server/services/catalogo.service";
 import { anilistIdsNaEstanteDoSistema } from "@/server/services/estante.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
@@ -107,27 +108,31 @@ function Obra({ obra, jaNaEstante }: { obra: MediaDoAniList; jaNaEstante: boolea
 
   return (
     <li className="group flex gap-4 rounded-lg border border-borda bg-superficie p-4 transition-colors hover:border-acento/60">
-      {obra.coverImageUrl ? (
-        <Image
-          src={obra.coverImageUrl}
-          alt=""
-          width={112}
-          height={168}
-          className="h-42 w-28 shrink-0 rounded-md object-cover shadow-sm"
-          unoptimized
-        />
-      ) : (
-        <div
-          aria-hidden
-          className="flex h-42 w-28 shrink-0 items-center justify-center rounded-md bg-fundo text-texto-suave"
-        >
-          —
-        </div>
-      )}
+      <Link href={`/obra/${obra.anilistId}`} className="shrink-0">
+        {obra.coverImageUrl ? (
+          <Image
+            src={obra.coverImageUrl}
+            alt=""
+            width={112}
+            height={168}
+            className="h-42 w-28 rounded-md object-cover shadow-sm transition-opacity hover:opacity-80"
+            unoptimized
+          />
+        ) : (
+          <div
+            aria-hidden
+            className="flex h-42 w-28 items-center justify-center rounded-md bg-fundo text-texto-suave"
+          >
+            —
+          </div>
+        )}
+      </Link>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <h2 className="line-clamp-2 font-medium leading-snug">
-          {obra.titleEnglish ?? obra.titleRomaji}
+          <Link href={`/obra/${obra.anilistId}`} className="hover:text-acento">
+            {obra.titleEnglish ?? obra.titleRomaji}
+          </Link>
         </h2>
 
         <p className="flex flex-wrap items-center gap-1.5 text-xs text-texto-suave">

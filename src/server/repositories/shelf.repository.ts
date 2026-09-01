@@ -10,6 +10,7 @@ export type EntradaComObra = {
   status: ShelfStatus;
   progressChapter: string | null;
   obra: {
+    anilistId: number;
     titleRomaji: string;
     titleEnglish: string | null;
     coverImageUrl: string | null;
@@ -39,6 +40,7 @@ export async function listarEntradasDoUsuario(
       progressChapter: true,
       media: {
         select: {
+          anilistId: true,
           titleRomaji: true,
           titleEnglish: true,
           coverImageUrl: true,
