@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30564,
+    "title": "Gantz",
+    "titleRomaji": "GANTZ",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 383,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "shueisha-gantz-volume-37", "url": "https://www.shueisha.co.jp/books/items/contents.html?jdcn=08879627876105315501", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "gantz-wiki-story-arcs", "url": "https://gantz.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "gantz-chapter-reference", "url": "https://en.wikipedia.org/wiki/List_of_Gantz_chapters", "type": "REFERENCE", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "phase-1-missions", "kind": "SAGA", "position": 1, "title": "Phase 1: Missions", "range": { "unit": "CHAPTER", "start": "1", "end": "237" }, "sourceIds": ["gantz-wiki-story-arcs", "gantz-chapter-reference"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "phase-2-katastrophe", "kind": "SAGA", "position": 2, "title": "Phase 2: Katastrophe", "range": { "unit": "CHAPTER", "start": "238", "end": "303" }, "sourceIds": ["gantz-wiki-story-arcs", "gantz-chapter-reference"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "phase-3-invasion", "kind": "SAGA", "position": 3, "title": "Phase 3: Invasion", "range": { "unit": "CHAPTER", "start": "304", "end": "383" }, "sourceIds": ["gantz-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "phase 3 start", "reason": "A referência de capítulos descreve a fase final como 303-383, enquanto a wiki comunitária declara que a fase 2 termina no 303 e a fase 3 começa no 304. Foi adotado 304 para evitar sobreposição; os segmentos permanecem DRAFT." },
+    { "field": "arc taxonomy", "reason": "As fases são amplamente registradas, mas os nomes e limites usados aqui não foram publicados como taxonomia pela Shueisha." }
+  ]
+}

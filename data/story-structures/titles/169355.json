@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 169355,
+    "title": "Kagurabachi",
+    "titleRomaji": "Kagurabachi",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "manga-plus-kagurabachi", "url": "https://mangaplus.shueisha.co.jp/web_pages/1447/", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "viz-kagurabachi-chapters", "url": "https://www.viz.com/shonenjump/chapters/kagurabachi", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "kagurabachi-wiki-story-arcs", "url": "https://kagurabachi.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "kagurabachi-arc-boundaries-reference", "url": "https://mangania.net/kagurabachi-full-story-synopsis/", "type": "EDITORIAL", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A wiki comunitária lista Vs. Sojo, Rakuzaichi e um extenso Sword Bearer Assassination Arc desde o capítulo 45; uma referência editorial baseada na organização oficial separa esse trecho em Sword Bearer Assassination, Kyoto e Assault on Kamunabi HQ. Não há uma tabela oficial de limites que reconcilie as classificações." },
+    { "field": "current endpoint", "reason": "Kagurabachi continua em publicação. As fontes oficiais confirmam capítulos novos, mas não publicam uma taxonomia de arcos com inícios e fins." }
+  ]
+}

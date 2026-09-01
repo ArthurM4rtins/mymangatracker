@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 111233,
+    "title": "Call of the Night",
+    "titleRomaji": "Yofukashi no Uta",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 203,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

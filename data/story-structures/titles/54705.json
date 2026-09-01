@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 54705,
+    "title": "The Flowers of Evil",
+    "titleRomaji": "Aku no Hana",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 58,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "kodansha-inkr-flowers-of-evil", "url": "https://comics.inkr.com/title/802-the-flowers-of-evil/chapters", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "kodansha-flowers-of-evil", "url": "https://kodansha.us/series/the-flowers-of-evil/", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "flowers-of-evil-chapter-list", "url": "https://en.wikipedia.org/wiki/List_of_The_Flowers_of_Evil_chapters", "type": "REFERENCE", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "chapter total", "reason": "A edição digital oficial e a lista de capítulos consultada enumeram 57 capítulos principais, enquanto AniList registra 58. Não foi localizada uma explicação oficial que associe o capítulo adicional a uma posição da serialização original." },
+    { "field": "arc taxonomy", "reason": "Não foi localizada uma taxonomia oficial, editorial ou comunitária estável de arcos com limites de capítulos. A obra é tratada pelas fontes consultadas como uma narrativa contínua de 11 volumes." }
+  ],
+  "notes": "Reavaliar se surgir uma equivalência para o capítulo adicional do AniList e uma divisão narrativa explícita com limites verificáveis."
+}

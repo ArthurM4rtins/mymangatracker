@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30028,
+    "title": "Nana",
+    "titleRomaji": "NANA",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

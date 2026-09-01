@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30013,
+    "title": "One Piece",
+    "titleRomaji": "ONE PIECE",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    {
+      "id": "library-of-ohara-shueisha-structure",
+      "url": "https://thelibraryofohara.com/one-piece-story-arcs-and-sagas/",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-08-31"
+    },
+    {
+      "id": "one-piece-ex-shueisha-structure",
+      "url": "https://opexcast.com.br/sueisha-revela-subdivisao-oficial-de-arcos-e-sagas-de-one-piece/",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-08-31"
+    }
+  ],
+  "segments": [
+    { "key": "east-blue", "kind": "SAGA", "position": 1, "title": "East Blue Saga", "range": { "unit": "CHAPTER", "start": "1", "end": "101" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "dawn-island", "parentKey": "east-blue", "kind": "ARC", "position": 1, "title": "Dawn Island", "range": { "unit": "CHAPTER", "start": "1", "end": "1" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "goat-island", "parentKey": "east-blue", "kind": "ARC", "position": 2, "title": "Goat Island", "range": { "unit": "CHAPTER", "start": "2", "end": "2" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "shells-town", "parentKey": "east-blue", "kind": "ARC", "position": 3, "title": "Shells Town", "range": { "unit": "CHAPTER", "start": "3", "end": "7" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "organ-archipelago", "parentKey": "east-blue", "kind": "ARC", "position": 4, "title": "Organ Archipelago", "range": { "unit": "CHAPTER", "start": "8", "end": "21" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "rare-animal-island", "parentKey": "east-blue", "kind": "ARC", "position": 5, "title": "Rare Animal Island", "range": { "unit": "CHAPTER", "start": "22", "end": "22" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "gecko-archipelago", "parentKey": "east-blue", "kind": "ARC", "position": 6, "title": "Gecko Archipelago", "range": { "unit": "CHAPTER", "start": "23", "end": "41" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "baratie", "parentKey": "east-blue", "kind": "ARC", "position": 7, "title": "Sea Restaurant Baratie", "range": { "unit": "CHAPTER", "start": "42", "end": "68" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "conomi-archipelago", "parentKey": "east-blue", "kind": "ARC", "position": 8, "title": "Conomi Archipelago", "range": { "unit": "CHAPTER", "start": "69", "end": "95" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "loguetown", "parentKey": "east-blue", "kind": "ARC", "position": 9, "title": "Loguetown", "range": { "unit": "CHAPTER", "start": "96", "end": "101" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "alabasta", "kind": "SAGA", "position": 2, "title": "Alabasta Saga", "range": { "unit": "CHAPTER", "start": "102", "end": "218" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "reverse-mountain", "parentKey": "alabasta", "kind": "ARC", "position": 1, "title": "Reverse Mountain", "range": { "unit": "CHAPTER", "start": "102", "end": "105" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "cactus-island", "parentKey": "alabasta", "kind": "ARC", "position": 2, "title": "Cactus Island", "range": { "unit": "CHAPTER", "start": "106", "end": "114" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "little-garden", "parentKey": "alabasta", "kind": "ARC", "position": 3, "title": "Little Garden", "range": { "unit": "CHAPTER", "start": "115", "end": "129" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "drum-island", "parentKey": "alabasta", "kind": "ARC", "position": 4, "title": "Drum Island", "range": { "unit": "CHAPTER", "start": "130", "end": "154" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "sandy-island-alabasta", "parentKey": "alabasta", "kind": "ARC", "position": 5, "title": "Sandy Island, Alabasta Kingdom", "range": { "unit": "CHAPTER", "start": "155", "end": "218" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "sky-island", "kind": "SAGA", "position": 3, "title": "Sky Island Saga", "range": { "unit": "CHAPTER", "start": "219", "end": "303" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "jaya", "parentKey": "sky-island", "kind": "ARC", "position": 1, "title": "Jaya", "range": { "unit": "CHAPTER", "start": "219", "end": "236" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "skypiea", "parentKey": "sky-island", "kind": "ARC", "position": 2, "title": "Skypiea", "range": { "unit": "CHAPTER", "start": "237", "end": "303" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "water-seven-enies-lobby", "kind": "SAGA", "position": 4, "title": "Water Seven/Enies Lobby Saga", "range": { "unit": "CHAPTER", "start": "304", "end": "441" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "long-ring-long-land", "parentKey": "water-seven-enies-lobby", "kind": "ARC", "position": 1, "title": "Long Ring Long Land", "range": { "unit": "CHAPTER", "start": "304", "end": "321" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "water-seven", "parentKey": "water-seven-enies-lobby", "kind": "ARC", "position": 2, "title": "Water 7", "range": { "unit": "CHAPTER", "start": "322", "end": "375" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "enies-lobby", "parentKey": "water-seven-enies-lobby", "kind": "ARC", "position": 3, "title": "Enies Lobby", "range": { "unit": "CHAPTER", "start": "376", "end": "430" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "water-seven-post-robin", "parentKey": "water-seven-enies-lobby", "kind": "ARC", "position": 4, "title": "Water Seven Post-Rescuing Robin", "range": { "unit": "CHAPTER", "start": "431", "end": "441" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "thriller-bark", "kind": "SAGA", "position": 5, "title": "Thriller Bark Saga", "range": { "unit": "CHAPTER", "start": "442", "end": "490" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "thriller-bark-arc", "parentKey": "thriller-bark", "kind": "ARC", "position": 1, "title": "Thriller Bark", "range": { "unit": "CHAPTER", "start": "442", "end": "490" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "summit-war", "kind": "SAGA", "position": 6, "title": "Summit War Saga", "range": { "unit": "CHAPTER", "start": "491", "end": "597" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "sabaody-archipelago", "parentKey": "summit-war", "kind": "ARC", "position": 1, "title": "Sabaody Archipelago", "range": { "unit": "CHAPTER", "start": "491", "end": "513" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "amazon-lily", "parentKey": "summit-war", "kind": "ARC", "position": 2, "title": "Island of Women, Amazon Lily", "range": { "unit": "CHAPTER", "start": "514", "end": "524" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "impel-down", "parentKey": "summit-war", "kind": "ARC", "position": 3, "title": "Impel Down", "range": { "unit": "CHAPTER", "start": "525", "end": "548" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "marineford", "parentKey": "summit-war", "kind": "ARC", "position": 4, "title": "Marineford", "range": { "unit": "CHAPTER", "start": "549", "end": "581" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "post-summit-war", "parentKey": "summit-war", "kind": "ARC", "position": 5, "title": "Amazon Lily Post-Summit War Conclusion", "range": { "unit": "CHAPTER", "start": "582", "end": "597" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "fishman-island", "kind": "SAGA", "position": 7, "title": "Fishman Island Saga", "range": { "unit": "CHAPTER", "start": "598", "end": "653" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "sabaody-two-years-later", "parentKey": "fishman-island", "kind": "ARC", "position": 1, "title": "Sabaody Archipelago (2 Years Later)", "range": { "unit": "CHAPTER", "start": "598", "end": "602" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "ryuguu-kingdom", "parentKey": "fishman-island", "kind": "ARC", "position": 2, "title": "Fishman Island, Ryuguu Kingdom", "range": { "unit": "CHAPTER", "start": "603", "end": "653" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "punk-hazard", "kind": "SAGA", "position": 8, "title": "Punk Hazard Saga", "range": { "unit": "CHAPTER", "start": "654", "end": "699" }, "sourceIds": ["one-piece-ex-shueisha-structure"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "punk-hazard-arc", "parentKey": "punk-hazard", "kind": "ARC", "position": 1, "title": "Punk Hazard", "range": { "unit": "CHAPTER", "start": "654", "end": "699" }, "sourceIds": ["one-piece-ex-shueisha-structure"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "dressrosa", "kind": "SAGA", "position": 9, "title": "Dressrosa Saga", "range": { "unit": "CHAPTER", "start": "700", "end": "801" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "dressrosa-arc", "parentKey": "dressrosa", "kind": "ARC", "position": 1, "title": "Dressrosa", "range": { "unit": "CHAPTER", "start": "700", "end": "801" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "zou", "kind": "SAGA", "position": 10, "title": "Zou Saga", "range": { "unit": "CHAPTER", "start": "802", "end": "822" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "zou-arc", "parentKey": "zou", "kind": "ARC", "position": 1, "title": "Zou, Mokomo Dukedom", "range": { "unit": "CHAPTER", "start": "802", "end": "822" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "whole-cake-island", "kind": "SAGA", "position": 11, "title": "Whole Cake Island Saga", "range": { "unit": "CHAPTER", "start": "823", "end": "908" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "totto-land", "parentKey": "whole-cake-island", "kind": "ARC", "position": 1, "title": "Totto Land", "range": { "unit": "CHAPTER", "start": "823", "end": "908" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "wano-country", "kind": "SAGA", "position": 12, "title": "Wano Country Saga", "range": { "unit": "CHAPTER", "start": "909", "end": "1054" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "wano-country-arc", "parentKey": "wano-country", "kind": "ARC", "position": 1, "title": "Wano Country", "range": { "unit": "CHAPTER", "start": "909", "end": "1054" }, "sourceIds": ["library-of-ohara-shueisha-structure", "one-piece-ex-shueisha-structure"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "Punk Hazard start", "reason": "Library of Ohara transcreve 652-699, o que sobrepoe Fishman Island (598-653); One Piece Ex transcreve 654-699 e foi adotada provisoriamente." },
+    { "field": "current serialization", "reason": "As duas fontes reproduzem uma classificacao publicada pela Shueisha ate o capitulo 1054. O conteudo posterior nao foi associado a Wano ou a uma nova saga nesta curadoria." }
+  ],
+  "notes": "Estrutura oficial reproduzida por duas fontes editoriais. Os segmentos 1-908 foram confirmados entre elas; a obra continua em publicacao e exige um lote separado para 1055 em diante."
+}

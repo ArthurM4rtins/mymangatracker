@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 87395,
+    "title": "Grand Blue Dreaming",
+    "titleRomaji": "Grand Blue",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "kodansha-grand-blue-dreaming", "url": "https://kodansha.us/series/grand-blue-dreaming/", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "grand-blue-wiki-chapters", "url": "https://grandblue.fandom.com/es/wiki/Lista_de_Cap%C3%ADtulos_y_Vol%C3%BAmenes", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A Kodansha confirma série em curso e 24 volumes em inglês; a wiki organiza capítulos por volume, mas não apresenta uma taxonomia de arcos com intervalos. Referências comunitárias descrevem eventos como arcos, sem consenso ou limites verificáveis." },
+    { "field": "narrative structure", "reason": "A obra combina comédia episódica com eventos recorrentes de faculdade e mergulho. Sem uma divisão estável, não é seguro classificá-la como puramente episódica nem publicar arcos." }
+  ]
+}

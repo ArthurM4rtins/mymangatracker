@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 119257,
+    "title": "Omniscient Reader",
+    "titleRomaji": "Jeonjijeok Dokja Sijeom",
+    "format": "MANGA",
+    "countryOfOrigin": "KR",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "orv-wiki-arcs", "url": "https://omniscient-readers-viewpoint.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "webtoon-official", "url": "https://www.webtoons.com/en/action/omniscient-reader/list?title_no=2154", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-08-31" },
+    { "id": "orv-chapterbrief-2026", "url": "https://www.chapterbrief.net/blog/omniscient-reader-manhwa-reading-guide", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "source medium", "reason": "A principal lista de arcos apresenta colunas distintas para webnovel e webtoon e declara que todos os nomes e conteudos sao nao oficiais." },
+    { "field": "numbering", "reason": "O manhwa/webtoon adapta a novel com ritmo diferente; episodios do manhwa nao correspondem 1:1 aos capitulos da novel. AniList nao fornece a base de episodio necessaria para uma associacao segura." }
+  ],
+  "notes": "Antes de curar, adicionar ao modelo identificador de meio e unidade EPISODE para o webtoon. Depois, usar somente os episodios oficiais do WEBTOON, sem reutilizar intervalos da webnovel."
+}

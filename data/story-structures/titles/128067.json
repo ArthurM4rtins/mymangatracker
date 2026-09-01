@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 128067,
+    "title": "SSS-Class Revival Hunter",
+    "titleRomaji": "SSS-geup Jugeoya Saneun Hunter",
+    "format": "MANGA",
+    "countryOfOrigin": "KR",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "sss-revival-hunter-webcomic-wiki", "url": "https://sss-class-revival-hunter.fandom.com/wiki/Webcomic", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "sss-revival-hunter-story-arcs", "url": "https://sss-class-revival-hunter.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "sss-revival-hunter-novel", "url": "https://lite.wuxiaworld.com/novel/sss-class-revival-hunter", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "adaptation numbering", "reason": "A fonte oficial da novel registra 400 capítulos concluídos. A wiki de arcos mistura capítulos da novel com episódios da webcomic e só lista limites de uma parte inicial da adaptação." },
+    { "field": "arc taxonomy", "reason": "Não foi localizada uma taxonomia completa e atualizada de arcos da webcomic que possa ser associada com segurança à obra AniList em publicação." }
+  ]
+}

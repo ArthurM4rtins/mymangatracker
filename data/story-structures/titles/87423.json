@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 87423,
+    "title": "The Promised Neverland",
+    "titleRomaji": "Yakusoku no Neverland",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 181,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "neverland-wiki-arcs", "url": "https://yakusokunoneverland.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "neverland-chapters-wikipedia", "url": "https://en.wikipedia.org/wiki/List_of_The_Promised_Neverland_chapters", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "introduction", "kind": "ARC", "position": 1, "title": "Introduction Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "9" }, "sourceIds": ["neverland-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "jailbreak", "kind": "ARC", "position": 2, "title": "Jailbreak Arc", "range": { "unit": "CHAPTER", "start": "10", "end": "37" }, "sourceIds": ["neverland-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "promised-forest", "kind": "ARC", "position": 3, "title": "Promised Forest Arc", "range": { "unit": "CHAPTER", "start": "38", "end": "52" }, "sourceIds": ["neverland-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "search-for-minerva", "kind": "ARC", "position": 4, "title": "Search for Minerva Arc", "range": { "unit": "CHAPTER", "start": "53", "end": "74" }, "sourceIds": ["neverland-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "goldy-pond-battle", "kind": "ARC", "position": 5, "title": "Goldy Pond Battle Arc", "range": { "unit": "CHAPTER", "start": "75", "end": "95" }, "sourceIds": ["neverland-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "cuvitidala", "kind": "ARC", "position": 6, "title": "Cuvitidala Arc", "range": { "unit": "CHAPTER", "start": "96", "end": "112" }, "sourceIds": ["neverland-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "king-of-paradise", "kind": "ARC", "position": 7, "title": "King of Paradise Arc", "range": { "unit": "CHAPTER", "start": "113", "end": "130" }, "sourceIds": ["neverland-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "seven-walls", "kind": "ARC", "position": 8, "title": "Seven Walls Arc", "range": { "unit": "CHAPTER", "start": "131", "end": "145" }, "sourceIds": ["neverland-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "imperial-capital-battle", "kind": "ARC", "position": 9, "title": "Imperial Capital Battle Arc", "range": { "unit": "CHAPTER", "start": "146", "end": "159" }, "sourceIds": ["neverland-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "return-to-grace-field", "kind": "ARC", "position": 10, "title": "Return to Grace Field Arc", "range": { "unit": "CHAPTER", "start": "160", "end": "178" }, "sourceIds": ["neverland-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "human-world", "kind": "ARC", "position": 11, "title": "Human World Arc", "range": { "unit": "CHAPTER", "start": "179", "end": "181" }, "sourceIds": ["neverland-wiki-arcs", "neverland-chapters-wikipedia"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "arc names", "reason": "A referencia informa que parte dos nomes nao e canonica; Introduction, Jailbreak, Promised Forest, Search for Minerva e Cuvitidala sao os nomes mais firmes, enquanto King of Paradise e Imperial Capital Battle sao titulos de volume." }
+  ],
+  "notes": "Cobre somente os 181 capitulos principais. Os especiais 181.1-181.5 sao materiais posteriores/bonus e nao pertencem a estes arcos."
+}

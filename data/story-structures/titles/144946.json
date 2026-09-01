@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 144946,
+    "title": "Gachiakuta",
+    "titleRomaji": "Gachiakuta",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "gachiakuta-wiki-story-arcs", "url": "https://gachiakuta.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "gachiakuta-wiki-volumes-chapters", "url": "https://gachiakuta.fandom.com/wiki/Volumes_%26_Chapters", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "ground-wanderer", "kind": "ARC", "position": 1, "title": "Ground Wanderer Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "6" }, "sourceIds": ["gachiakuta-wiki-story-arcs", "gachiakuta-wiki-volumes-chapters"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "workplace-observation", "kind": "ARC", "position": 2, "title": "Workplace Observation Arc", "range": { "unit": "CHAPTER", "start": "7", "end": "11" }, "sourceIds": ["gachiakuta-wiki-story-arcs", "gachiakuta-wiki-volumes-chapters"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "raiders-trap", "kind": "ARC", "position": 3, "title": "Raiders Trap Arc", "range": { "unit": "CHAPTER", "start": "12", "end": "22" }, "sourceIds": ["gachiakuta-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "successor-spellcaster", "kind": "ARC", "position": 4, "title": "Successor Spellcaster Arc", "range": { "unit": "CHAPTER", "start": "23", "end": "28" }, "sourceIds": ["gachiakuta-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "lady-of-penta", "kind": "ARC", "position": 5, "title": "The Lady of Penta Arc", "range": { "unit": "CHAPTER", "start": "29", "end": "43" }, "sourceIds": ["gachiakuta-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "trash-storm", "kind": "ARC", "position": 6, "title": "Trash Storm Arc", "range": { "unit": "CHAPTER", "start": "44", "end": "81" }, "sourceIds": ["gachiakuta-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "heritage-mural", "kind": "ARC", "position": 7, "title": "Heritage Mural Arc", "range": { "unit": "CHAPTER", "start": "82", "end": "90" }, "sourceIds": ["gachiakuta-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "information-broker", "kind": "ARC", "position": 8, "title": "Information Broker Arc", "range": { "unit": "CHAPTER", "start": "91", "end": "116" }, "sourceIds": ["gachiakuta-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "first-job", "kind": "ARC", "position": 9, "title": "First Job Arc", "range": { "unit": "CHAPTER", "start": "117", "end": "130" }, "sourceIds": ["gachiakuta-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "doll-festival", "kind": "ARC", "position": 10, "title": "Doll Festival Arc", "range": { "unit": "CHAPTER", "start": "131", "end": null }, "sourceIds": ["gachiakuta-wiki-story-arcs", "gachiakuta-wiki-volumes-chapters"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A divisao em arcos e seus limites vem de uma wiki comunitaria. A lista de volumes/capitulos corrobora a numeracao, mas nao foi localizada uma taxonomia editorial oficial; todos os segmentos permanecem DRAFT." }
+  ]
+}

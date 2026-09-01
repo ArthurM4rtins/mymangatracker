@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 100664,
+    "title": "Don't Toy With Me, Miss Nagatoro",
+    "titleRomaji": "Ijiranaide, Nagatoro-san",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 189,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "magazine-pocket-nagatoro-chapter-154", "url": "https://pocket.shonenmagazine.com/title/00321/episode/399050", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "nagatoro-wiki-chapters-volumes", "url": "https://nagatoro.fandom.com/wiki/List_of_Chapters_and_Volumes", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "nagatoro-wiki-manga", "url": "https://nagatoro.fandom.com/wiki/Manga", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "chapter numbering", "reason": "A fonte oficial termina a serialização principal no capítulo 154, enquanto AniList registra 189 capítulos. A referência comunitária identifica material anterior de cinco capítulos no Pixiv, extras e capítulos bônus, mas não apresenta uma equivalência completa que permita usar o total AniList como numeração da serialização principal." },
+    { "field": "arc taxonomy", "reason": "Não foi localizada uma classificação editorial ou comunitária estável de arcos com limites de capítulos. A obra combina narrativa romântica contínua com capítulos cotidianos e extras, sem divisão verificável para o contrato." }
+  ],
+  "notes": "Reavaliar caso surja uma tabela oficial de equivalência para o total AniList e uma taxonomia narrativa com limites explícitos."
+}

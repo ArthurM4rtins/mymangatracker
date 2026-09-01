@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 86082,
+    "title": "Delicious in Dungeon",
+    "titleRomaji": "Dungeon Meshi",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 111,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 101583,
+    "title": "My Dress-Up Darling",
+    "titleRomaji": "Sono Bisque Doll wa Koi wo Suru",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 119,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

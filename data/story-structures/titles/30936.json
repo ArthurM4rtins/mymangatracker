@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30936,
+    "title": "Homunculus",
+    "titleRomaji": "Homunculus",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 166,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    {
+      "id": "penguin-random-house-homunculus",
+      "url": "https://www.penguinrandomhouse.com/series/NCU/homunculus/",
+      "type": "OFFICIAL_REFERENCE",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "homunculus-manga-reference",
+      "url": "https://en.wikipedia.org/wiki/Homunculus_(manga)",
+      "type": "REFERENCE",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [],
+  "conflicts": [
+    {
+      "field": "arc taxonomy",
+      "reason": "Não foi localizada uma taxonomia oficial, editorial ou comunitária estável que associe arcos a intervalos de capítulos. As fontes encontradas descrevem volumes e edições omnibus, não arcos narrativos."
+    },
+    {
+      "field": "chapter numbering",
+      "reason": "AniList registra 166 capítulos, enquanto as referências de publicação consultadas organizam a obra em 15 volumes e omnibus sem uma lista de capítulos que permita confirmar cada limite."
+    }
+  ]
+}

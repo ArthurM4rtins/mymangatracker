@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 61499,
+    "title": "Nisekoi: False Love",
+    "titleRomaji": "Nisekoi",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 240,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

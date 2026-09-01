@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 85486,
+    "title": "My Hero Academia",
+    "titleRomaji": "Boku no Hero Academia",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 432,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "listfist-2022", "url": "https://listfist.com/list-of-my-hero-academia-arcs", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "minha-serie-2024", "url": "https://www.tecmundo.com.br/minha-serie/288021-my-hero-academia-veja-arcos-historia-ordem-cronologica.htm", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "gamesradar-2026", "url": "https://www.gamesradar.com/entertainment/anime-shows/my-hero-academia-season-8-release-date-trailer-cast-final-season/", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "ua-beginnings", "kind": "SAGA", "position": 1, "title": "U.A. Beginnings Saga", "range": { "unit": "CHAPTER", "start": "1", "end": "97" }, "sourceIds": ["minha-serie-2024"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "entrance-exam", "parentKey": "ua-beginnings", "kind": "ARC", "position": 1, "title": "Entrance Exam Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "4" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "quirk-apprehension", "parentKey": "ua-beginnings", "kind": "ARC", "position": 2, "title": "Quirk Apprehension Test Arc", "range": { "unit": "CHAPTER", "start": "5", "end": "7" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "battle-trial", "parentKey": "ua-beginnings", "kind": "ARC", "position": 3, "title": "Battle Trial Arc", "range": { "unit": "CHAPTER", "start": "8", "end": "11" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "usj", "parentKey": "ua-beginnings", "kind": "ARC", "position": 4, "title": "U.S.J. Arc", "range": { "unit": "CHAPTER", "start": "12", "end": "21" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "ua-sports-festival", "parentKey": "ua-beginnings", "kind": "ARC", "position": 5, "title": "U.A. Sports Festival Arc", "range": { "unit": "CHAPTER", "start": "22", "end": "44" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "hero-killer", "parentKey": "ua-beginnings", "kind": "ARC", "position": 6, "title": "Vs. Hero Killer Arc", "range": { "unit": "CHAPTER", "start": "45", "end": "59" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "final-exams", "parentKey": "ua-beginnings", "kind": "ARC", "position": 7, "title": "Final Exams Arc", "range": { "unit": "CHAPTER", "start": "60", "end": "69" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "forest-training", "parentKey": "ua-beginnings", "kind": "ARC", "position": 8, "title": "Forest Training Camp Arc", "range": { "unit": "CHAPTER", "start": "70", "end": "83" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "hideout-raid", "parentKey": "ua-beginnings", "kind": "ARC", "position": 9, "title": "Hideout Raid Arc", "range": { "unit": "CHAPTER", "start": "84", "end": "97" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "rise-of-villains", "kind": "SAGA", "position": 2, "title": "Rise of Villains Saga", "range": { "unit": "CHAPTER", "start": "98", "end": "306" }, "sourceIds": ["minha-serie-2024"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "provisional-license", "parentKey": "rise-of-villains", "kind": "ARC", "position": 1, "title": "Provisional Hero License Exam Arc", "range": { "unit": "CHAPTER", "start": "98", "end": "121" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "shie-hassaikai", "parentKey": "rise-of-villains", "kind": "ARC", "position": 2, "title": "Shie Hassaikai Arc", "range": { "unit": "CHAPTER", "start": "122", "end": "162" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "remedial-course", "parentKey": "rise-of-villains", "kind": "ARC", "position": 3, "title": "Remedial Course Arc", "range": { "unit": "CHAPTER", "start": "163", "end": "168" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "school-festival", "parentKey": "rise-of-villains", "kind": "ARC", "position": 4, "title": "U.A. School Festival Arc", "range": { "unit": "CHAPTER", "start": "169", "end": "183" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "pro-hero", "parentKey": "rise-of-villains", "kind": "ARC", "position": 5, "title": "Pro Hero Arc", "range": { "unit": "CHAPTER", "start": "184", "end": "193" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "joint-training", "parentKey": "rise-of-villains", "kind": "ARC", "position": 6, "title": "Joint Training Arc", "range": { "unit": "CHAPTER", "start": "194", "end": "217" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "meta-liberation", "parentKey": "rise-of-villains", "kind": "ARC", "position": 7, "title": "Meta Liberation Army Arc", "range": { "unit": "CHAPTER", "start": "218", "end": "240" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "endeavor-agency", "parentKey": "rise-of-villains", "kind": "ARC", "position": 8, "title": "Endeavor Agency Arc", "range": { "unit": "CHAPTER", "start": "241", "end": "252" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "paranormal-liberation-war", "parentKey": "rise-of-villains", "kind": "ARC", "position": 9, "title": "Paranormal Liberation War Arc", "range": { "unit": "CHAPTER", "start": "253", "end": "306" }, "sourceIds": ["listfist-2022", "minha-serie-2024"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "final-act", "kind": "SAGA", "position": 3, "title": "Final Act Saga", "range": { "unit": "CHAPTER", "start": "307", "end": "431" }, "sourceIds": ["minha-serie-2024", "gamesradar-2026"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "dark-hero", "parentKey": "final-act", "kind": "ARC", "position": 1, "title": "Dark Hero Arc", "range": { "unit": "CHAPTER", "start": "307", "end": "328" }, "sourceIds": ["listfist-2022", "minha-serie-2024"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "star-and-stripe", "parentKey": "final-act", "kind": "ARC", "position": 2, "title": "Star and Stripe Arc", "range": { "unit": "CHAPTER", "start": "329", "end": "334" }, "sourceIds": ["listfist-2022", "minha-serie-2024"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "ua-traitor", "parentKey": "final-act", "kind": "ARC", "position": 3, "title": "U.A. Traitor Arc", "range": { "unit": "CHAPTER", "start": "335", "end": "342" }, "sourceIds": ["listfist-2022", "minha-serie-2024"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "final-war", "parentKey": "final-act", "kind": "ARC", "position": 4, "title": "Final War Arc", "range": { "unit": "CHAPTER", "start": "343", "end": "424" }, "sourceIds": ["listfist-2022", "gamesradar-2026"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "epilogue", "parentKey": "final-act", "kind": "ARC", "position": 5, "title": "Epilogue Arc", "range": { "unit": "CHAPTER", "start": "425", "end": "431" }, "sourceIds": ["listfist-2022", "gamesradar-2026"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "post-serialization material", "reason": "O fim serializado costuma ser listado como capitulo 430; fontes recentes registram material de epilogo ate 431, enquanto AniList informa 432. O capitulo 432 nao foi associado a um arco sem fonte de limites consolidada." }
+  ]
+}

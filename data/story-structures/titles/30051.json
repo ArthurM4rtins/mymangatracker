@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30051,
+    "title": "Slam Dunk",
+    "titleRomaji": "SLAM DUNK",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 276,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "shueisha-s-manga-slam-dunk-16", "url": "https://www.s-manga.net/items/contents.html?jdcn=08X10000000062718600", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "slamdunk-wiki-manga", "url": "https://slamdunk.fandom.com/wiki/Manga", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "slamdunk-wiki-arcs", "url": "https://slamdunk.fandom.com/es/wiki/Arcos", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "slam-dunk-chapter-list", "url": "https://en.wikipedia.org/wiki/List_of_Slam_Dunk_chapters", "type": "REFERENCE", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A wiki especializada declara que os nomes de arcos são criados por fãs. Não foi localizada uma divisão narrativa oficial ou uma taxonomia independente convergente com limites verificáveis." },
+    { "field": "arc boundaries", "reason": "Um guia externo de adaptação informa um arco final que chega ao capítulo 332, embora a numeração original confirmada termine no capítulo 276. A edição Shinsōban recompila capítulos em 20 volumes, mas essa organização editorial não declara limites de arcos narrativos." }
+  ],
+  "notes": "A serialização original de 276 capítulos e 31 volumes está confirmada. Reavaliar somente com uma taxonomia de arcos que apresente limites compatíveis com essa numeração."
+}

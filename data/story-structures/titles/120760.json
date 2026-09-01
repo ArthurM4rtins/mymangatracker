@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 120760,
+    "title": "Kaiju No.8",
+    "titleRomaji": "Kaijuu 8-gou",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 129,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "kaiju-no-8-wiki-story-arcs", "url": "https://kaiju-no-8.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "kaiju-no-8-wiki-last-wave", "url": "https://kaiju-no-8.fandom.com/wiki/The_Last_Wave_Arc", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "viz-kaiju-no-8-chapters", "url": "https://www.viz.com/shonenjump/chapters/kaiju-no-8", "type": "OFFICIAL", "accessedAt": "2026-08-31" },
+    { "id": "kaiju-no-8-arc-guide", "url": "https://beebom.com/kaiju-no-8-arcs-in-order/amp/", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "man-who-became-a-kaiju", "kind": "ARC", "position": 1, "title": "The Man Who Became a Kaiju Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "11" }, "sourceIds": ["kaiju-no-8-wiki-story-arcs", "kaiju-no-8-arc-guide"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "sagamihara-neutralization-operation", "kind": "ARC", "position": 2, "title": "Sagamihara Neutralization Operation at Daybreak Arc", "range": { "unit": "CHAPTER", "start": "12", "end": "23" }, "sourceIds": ["kaiju-no-8-wiki-story-arcs", "kaiju-no-8-arc-guide"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "raid-on-tachikawa-base", "kind": "ARC", "position": 3, "title": "Raid on Tachikawa Base Arc", "range": { "unit": "CHAPTER", "start": "24", "end": "32" }, "sourceIds": ["kaiju-no-8-wiki-story-arcs", "kaiju-no-8-arc-guide"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kaiju-no-8-captured", "kind": "ARC", "position": 4, "title": "Kaiju No. 8 Captured Arc", "range": { "unit": "CHAPTER", "start": "33", "end": "39" }, "sourceIds": ["kaiju-no-8-wiki-story-arcs", "kaiju-no-8-arc-guide"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kaiju-weapon", "kind": "ARC", "position": 5, "title": "Kaiju Weapon Arc", "range": { "unit": "CHAPTER", "start": "40", "end": "55" }, "sourceIds": ["kaiju-no-8-wiki-story-arcs", "kaiju-no-8-arc-guide"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "compatible-user", "kind": "ARC", "position": 6, "title": "The Compatible User Arc", "range": { "unit": "CHAPTER", "start": "56", "end": "68" }, "sourceIds": ["kaiju-no-8-wiki-story-arcs", "kaiju-no-8-arc-guide"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "cataclysms", "kind": "ARC", "position": 7, "title": "Cataclysms Arc", "range": { "unit": "CHAPTER", "start": "69", "end": "75" }, "sourceIds": ["kaiju-no-8-wiki-story-arcs", "kaiju-no-8-arc-guide"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "second-wave", "kind": "ARC", "position": 8, "title": "The Second Wave Arc", "range": { "unit": "CHAPTER", "start": "76", "end": "95" }, "sourceIds": ["kaiju-no-8-wiki-story-arcs", "kaiju-no-8-arc-guide"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "last-wave", "kind": "ARC", "position": 9, "title": "The Last Wave Arc", "range": { "unit": "CHAPTER", "start": "96", "end": "129" }, "sourceIds": ["kaiju-no-8-wiki-story-arcs", "kaiju-no-8-wiki-last-wave", "viz-kaiju-no-8-chapters", "kaiju-no-8-arc-guide"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "fractional special chapters", "reason": "A VIZ lista 106.1 e 119.1 entre os capitulos do arco final. O contrato de arcos usa apenas limites inteiros; os especiais pertencem ao intervalo narrativo, mas nao recebem segmento ou avaliacao propria." }
+  ]
+}

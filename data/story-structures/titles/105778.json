@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 105778,
+    "title": "Chainsaw Man",
+    "titleRomaji": "Chainsaw Man",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 232,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "comingsoon-2024", "url": "https://www.comingsoon.net/guides/news/1761692-chainsaw-man-story-arcs-list-in-order-manga-chapters-anime-episodes", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "attack-of-the-fanboy", "url": "https://attackofthefanboy.com/manga/all-chainsaw-man-arcs-in-order/", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "public-safety", "kind": "SAGA", "position": 1, "title": "Public Safety Saga", "range": { "unit": "CHAPTER", "start": "1", "end": "97" }, "sourceIds": ["comingsoon-2024", "attack-of-the-fanboy"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "introduction", "parentKey": "public-safety", "kind": "ARC", "position": 1, "title": "Introduction Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "4" }, "sourceIds": ["comingsoon-2024", "attack-of-the-fanboy"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "bat-devil", "parentKey": "public-safety", "kind": "ARC", "position": 2, "title": "Bat Devil Arc", "range": { "unit": "CHAPTER", "start": "5", "end": "12" }, "sourceIds": ["comingsoon-2024", "attack-of-the-fanboy"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "eternity-devil", "parentKey": "public-safety", "kind": "ARC", "position": 3, "title": "Eternity Devil Arc", "range": { "unit": "CHAPTER", "start": "13", "end": "21" }, "sourceIds": ["comingsoon-2024", "attack-of-the-fanboy"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "katana-man", "parentKey": "public-safety", "kind": "ARC", "position": 4, "title": "Katana Man Arc", "range": { "unit": "CHAPTER", "start": "22", "end": "38" }, "sourceIds": ["comingsoon-2024", "attack-of-the-fanboy"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "bomb-girl", "parentKey": "public-safety", "kind": "ARC", "position": 5, "title": "Bomb Girl Arc", "range": { "unit": "CHAPTER", "start": "39", "end": "52" }, "sourceIds": ["comingsoon-2024", "attack-of-the-fanboy"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "international-assassins", "parentKey": "public-safety", "kind": "ARC", "position": 6, "title": "International Assassins Arc", "range": { "unit": "CHAPTER", "start": "53", "end": "70" }, "sourceIds": ["comingsoon-2024", "attack-of-the-fanboy"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "gun-devil", "parentKey": "public-safety", "kind": "ARC", "position": 7, "title": "Gun Devil Arc", "range": { "unit": "CHAPTER", "start": "71", "end": "79" }, "sourceIds": ["comingsoon-2024", "attack-of-the-fanboy"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "control-devil", "parentKey": "public-safety", "kind": "ARC", "position": 8, "title": "Control Devil Arc", "range": { "unit": "CHAPTER", "start": "80", "end": "97" }, "sourceIds": ["comingsoon-2024", "attack-of-the-fanboy"], "status": "VERIFIED", "confidence": "HIGH" }
+  ],
+  "conflicts": [
+    { "field": "Part 2", "reason": "Fontes atualizadas divergem sobre quantidade, nomes e limites dos arcos após o capítulo 155; não publicar antes de confirmação específica." }
+  ]
+}

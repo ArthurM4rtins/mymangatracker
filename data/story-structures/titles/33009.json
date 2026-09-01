@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 33009,
+    "title": "JoJo's Bizarre Adventure Part 6: Stone Ocean",
+    "titleRomaji": "JoJo no Kimyou na Bouken: Stone Ocean",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 158,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "viz-stone-ocean", "url": "https://www.viz.com/shonenjump/chapters/jojos-bizarre-adventure-part-6", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "jojowiki-story-arcs", "url": "https://jojowiki.com/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "jojo-fandom-stone-ocean-chapters", "url": "https://jojo.fandom.com/wiki/Stone_Ocean/Chapter_List", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "stone-ocean", "kind": "ARC", "position": 1, "title": "Stone Ocean", "range": { "unit": "CHAPTER", "start": "1", "end": "3" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "prisoner-fe40536", "kind": "ARC", "position": 2, "title": "Prisoner FE40536: Jolyne Cujoh", "range": { "unit": "CHAPTER", "start": "4", "end": "6" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "stone-free", "kind": "ARC", "position": 3, "title": "Stone Free", "range": { "unit": "CHAPTER", "start": "7", "end": "9" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "visitor", "kind": "ARC", "position": 4, "title": "The Visitor", "range": { "unit": "CHAPTER", "start": "10", "end": "20" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "ermes-stickers", "kind": "ARC", "position": 5, "title": "Ermes's Stickers", "range": { "unit": "CHAPTER", "start": "21", "end": "25" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "theres-six-of-us", "kind": "ARC", "position": 6, "title": "There's Six of Us!", "range": { "unit": "CHAPTER", "start": "26", "end": "30" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "foo-fighters", "kind": "ARC", "position": 7, "title": "Foo Fighters", "range": { "unit": "CHAPTER", "start": "31", "end": "33" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "marilyn-manson", "kind": "ARC", "position": 8, "title": "Debt Collector Marilyn Manson", "range": { "unit": "CHAPTER", "start": "34", "end": "39" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "operation-savage-garden", "kind": "ARC", "position": 9, "title": "Operation Savage Garden", "range": { "unit": "CHAPTER", "start": "40", "end": "47" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "torrential-downpour", "kind": "ARC", "position": 10, "title": "Torrential Downpour Warning", "range": { "unit": "CHAPTER", "start": "48", "end": "50" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kiss-love-revenge", "kind": "ARC", "position": 11, "title": "Kiss of Love and Revenge", "range": { "unit": "CHAPTER", "start": "51", "end": "57" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "guard-westwood", "kind": "ARC", "position": 12, "title": "The Secret of Guard Westwood", "range": { "unit": "CHAPTER", "start": "58", "end": "66" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "dragons-dream", "kind": "ARC", "position": 13, "title": "Enter the Dragon's Dream", "range": { "unit": "CHAPTER", "start": "67", "end": "74" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "birth-of-green", "kind": "ARC", "position": 14, "title": "Birth of the Green", "range": { "unit": "CHAPTER", "start": "75", "end": "77" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "yoyo-ma", "kind": "ARC", "position": 15, "title": "Yo-Yo Ma is Coming!", "range": { "unit": "CHAPTER", "start": "78", "end": "82" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "ff-witness", "kind": "ARC", "position": 16, "title": "F.F. - The Witness", "range": { "unit": "CHAPTER", "start": "83", "end": "84" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "awaken", "kind": "ARC", "position": 17, "title": "Awaken", "range": { "unit": "CHAPTER", "start": "85", "end": "88" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "whitesnake-pursuer", "kind": "ARC", "position": 18, "title": "Whitesnake - The Pursuer", "range": { "unit": "CHAPTER", "start": "89", "end": "95" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "jail-house-lock", "kind": "ARC", "position": 19, "title": "Jail House Lock!", "range": { "unit": "CHAPTER", "start": "96", "end": "102" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "bohemian-rhapsody", "kind": "ARC", "position": 20, "title": "Bohemian Rhapsody", "range": { "unit": "CHAPTER", "start": "103", "end": "110" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "sky-high", "kind": "ARC", "position": 21, "title": "Sky High", "range": { "unit": "CHAPTER", "start": "111", "end": "117" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "under-world", "kind": "ARC", "position": 22, "title": "Under World", "range": { "unit": "CHAPTER", "start": "118", "end": "124" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "heavy-weather", "kind": "ARC", "position": 23, "title": "Heavy Weather", "range": { "unit": "CHAPTER", "start": "125", "end": "137" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "gravity-new-moon", "kind": "ARC", "position": 24, "title": "Gravity of the New Moon", "range": { "unit": "CHAPTER", "start": "138", "end": "140" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "c-moon", "kind": "ARC", "position": 25, "title": "C-MOON", "range": { "unit": "CHAPTER", "start": "141", "end": "148" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "made-in-heaven", "kind": "ARC", "position": 26, "title": "Made in Heaven", "range": { "unit": "CHAPTER", "start": "149", "end": "158" }, "sourceIds": ["jojowiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A JoJo's Bizarre Encyclopedia organiza os capítulos sequenciais em 26 arcos de combate/narrativa, enquanto a JoJo's Bizarre Wiki lista 27 páginas de arcos para Stone Ocean. Foi adotada a taxonomia detalhada da primeira; todos os segmentos permanecem DRAFT por serem comunitários." }
+  ],
+  "notes": "A VIZ confirma a numeração 1-158 da edição em inglês. Os intervalos foram associados à numeração da Parte 6, e não à numeração cumulativa 595-752 da série JoJo."
+}

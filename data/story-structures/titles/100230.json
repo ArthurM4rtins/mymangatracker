@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 100230,
+    "title": "The Quintessential Quintuplets",
+    "titleRomaji": "Go-toubun no Hanayome",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 122,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "kodansha-quintessential-quintuplets", "url": "https://kodansha.us/series/the-quintessential-quintuplets/", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "quintuplets-wiki-story-arcs", "url": "https://5hanayome.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "quintuplets-wiki-chapter-122", "url": "https://5hanayome.fandom.com/wiki/Chapter_122", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "second-year-saga", "kind": "SAGA", "position": 1, "title": "Second Year Saga", "range": { "unit": "CHAPTER", "start": "1", "end": "68" }, "sourceIds": ["quintuplets-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "third-year-saga", "kind": "SAGA", "position": 2, "title": "Third Year Saga", "range": { "unit": "CHAPTER", "start": "69", "end": "122" }, "sourceIds": ["quintuplets-wiki-story-arcs", "quintuplets-wiki-chapter-122"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A wiki apresenta duas sagas e diversos arcos menores, mas a Kodansha confirma apenas a série concluída em 14 volumes, sem publicar essa taxonomia. As duas macroestruturas permanecem DRAFT." }
+  ]
+}

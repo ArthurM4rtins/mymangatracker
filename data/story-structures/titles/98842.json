@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 98842,
+    "title": "Toilet-Bound Hanako-kun",
+    "titleRomaji": "Jibaku Shounen Hanako-kun",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "yen-press-hanako-kun-serial", "url": "https://yenpress.com/series/toilet-bound-hanako-kun-serial", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "hanako-kun-wiki-story-arcs", "url": "https://hanako-kun.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "hanako-kun-wiki-chapter-list", "url": "https://hanako-kun.fandom.com/wiki/Chapter_List", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "hanako-san-toilet", "kind": "ARC", "position": 1, "title": "Hanako-san of the Toilet Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "3" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "misaki-stairs", "kind": "ARC", "position": 2, "title": "The Misaki Stairs Arc", "range": { "unit": "CHAPTER", "start": "4", "end": "8" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "young-exorcist", "kind": "ARC", "position": 3, "title": "The Young Exorcist Arc", "range": { "unit": "CHAPTER", "start": "9", "end": "10" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "4pm-bookstacks", "kind": "ARC", "position": 4, "title": "The 4pm Bookstacks Arc", "range": { "unit": "CHAPTER", "start": "11", "end": "14" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "little-mermaid", "kind": "ARC", "position": 5, "title": "The Little Mermaid Arc", "range": { "unit": "CHAPTER", "start": "15", "end": "17" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "mitsuba", "kind": "ARC", "position": 6, "title": "Mitsuba Arc", "range": { "unit": "CHAPTER", "start": "18", "end": "20" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "tea-party", "kind": "ARC", "position": 7, "title": "The Tea Party Arc", "range": { "unit": "CHAPTER", "start": "21", "end": "22" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "three-clock-keepers", "kind": "ARC", "position": 8, "title": "The Three Clock Keepers Arc", "range": { "unit": "CHAPTER", "start": "23", "end": "29" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "hell-of-mirrors", "kind": "ARC", "position": 9, "title": "The Hell of Mirrors Arc", "range": { "unit": "CHAPTER", "start": "30", "end": "36" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "summer-lights", "kind": "ARC", "position": 10, "title": "Summer Lights Arc", "range": { "unit": "CHAPTER", "start": "37", "end": "40" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "picture-perfect", "kind": "ARC", "position": 11, "title": "Picture Perfect Arc", "range": { "unit": "CHAPTER", "start": "41", "end": "58" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "sacrifice-grim-reaper", "kind": "ARC", "position": 12, "title": "Sacrifice of the Grim Reaper Arc", "range": { "unit": "CHAPTER", "start": "59", "end": "72" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "red-house", "kind": "ARC", "position": 13, "title": "Red House Arc", "range": { "unit": "CHAPTER", "start": "73", "end": "82" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "far-shore-bound", "kind": "ARC", "position": 14, "title": "Far Shore Bound Arc", "range": { "unit": "CHAPTER", "start": "83", "end": "97" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "nightlife", "kind": "ARC", "position": 15, "title": "The Nightlife Arc", "range": { "unit": "CHAPTER", "start": "98", "end": "100" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "omen", "kind": "ARC", "position": 16, "title": "Omen Arc", "range": { "unit": "CHAPTER", "start": "101", "end": "111" }, "sourceIds": ["hanako-kun-wiki-story-arcs", "hanako-kun-wiki-chapter-list"], "status": "DRAFT", "confidence": "LOW" },
+    { "key": "alteration", "kind": "ARC", "position": 17, "title": "Alteration Arc", "range": { "unit": "CHAPTER", "start": "112", "end": null }, "sourceIds": ["hanako-kun-wiki-story-arcs"], "status": "DRAFT", "confidence": "LOW" }
+  ],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A própria wiki declara que os nomes, limites e capítulos dos arcos são classificação não oficial, arbitrária e sujeita a alteração. Todos os segmentos ficam DRAFT com confiança baixa." },
+    { "field": "current endpoint", "reason": "A Yen Press lista pelo menos o capítulo 134, enquanto a taxonomia comunitária consultada mantém Alteration como arco em curso. O limite final foi deixado aberto." }
+  ]
+}

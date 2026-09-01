@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 37375,
+    "title": "The Climber",
+    "titleRomaji": "Kokou no Hito",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 170,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "shueisha-kokou-no-hito-volume-17", "url": "https://www.shueisha.co.jp/books/items/contents.html?jdcn=08879236877426315501", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "kokou-no-hito-wiki", "url": "https://kokou-no-hito.fandom.com/wiki/Kokou_no_Hito_Wiki", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "highschool-climbing-club", "kind": "ARC", "position": 1, "title": "Highschool Climbing Club Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "20" }, "sourceIds": ["kokou-no-hito-wiki"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "yatsugatake-climb", "kind": "ARC", "position": 2, "title": "Yatsugatake Climb Arc", "range": { "unit": "CHAPTER", "start": "21", "end": "32" }, "sourceIds": ["kokou-no-hito-wiki"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "14-mountain-introduction", "kind": "ARC", "position": 3, "title": "14 Mountain Introduction Arc", "range": { "unit": "CHAPTER", "start": "33", "end": "51" }, "sourceIds": ["kokou-no-hito-wiki"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "north-alps-all-mountain-ridge-traversal", "kind": "ARC", "position": 4, "title": "North Alps All-Mountain Ridge Traversal Arc", "range": { "unit": "CHAPTER", "start": "52", "end": "87" }, "sourceIds": ["kokou-no-hito-wiki"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "work-and-reunion", "kind": "ARC", "position": 5, "title": "Work and Reunion Arc", "range": { "unit": "CHAPTER", "start": "88", "end": "108" }, "sourceIds": ["kokou-no-hito-wiki"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "nanga-parbat-and-katou-family", "kind": "ARC", "position": 6, "title": "Nanga Parbat and Katou Family Arc", "range": { "unit": "CHAPTER", "start": "109", "end": "131" }, "sourceIds": ["kokou-no-hito-wiki"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "k2", "kind": "ARC", "position": 7, "title": "K2 Arc", "range": { "unit": "CHAPTER", "start": "132", "end": "170" }, "sourceIds": ["kokou-no-hito-wiki"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "Os sete nomes e intervalos são uma organização comunitária. A fonte oficial confirma a publicação do volume final, mas não publica uma taxonomia de arcos." }
+  ]
+}

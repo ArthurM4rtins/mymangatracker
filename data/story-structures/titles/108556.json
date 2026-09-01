@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 108556,
+    "title": "SPY x FAMILY",
+    "titleRomaji": "SPY×FAMILY",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "spy-family-wiki-story-arcs", "url": "https://spy-x-family.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "spy-family-wiki-chapters", "url": "https://spy-x-family.fandom.com/wiki/Chapters_and_Volumes", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "viz-spy-family", "url": "https://www.viz.com/shonenjump/chapters/spy-x-family", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "supplemental missions", "reason": "Short e Extra Missions sao auto-contidas e podem conflitar com a linha temporal; a fonte recomenda nao atribui-las por ordem de publicacao sem ancora narrativa." },
+    { "field": "arc taxonomy", "reason": "A maior parte dos nomes de arcos e feita por fas e pode mudar. Apenas alguns arcos possuem nomes explicitamente reconhecidos pela referencia comunitaria." }
+  ],
+  "notes": "O modelo deve suportar tipo de capitulo (MISSION, SHORT_MISSION, EXTRA_MISSION) e ordem narrativa independente da publicacao antes desta obra receber segmentos publicaveis."
+}

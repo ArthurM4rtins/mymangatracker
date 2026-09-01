@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 34632,
+    "title": "Goodnight Punpun",
+    "titleRomaji": "Oyasumi Punpun",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 147,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "NOT_APPLICABLE",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "viz-chapter-147", "url": "https://www.viz.com/vizmanga/goodnight-punpun-chapter-147/chapter/30717", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-08-31" },
+    { "id": "oyasumi-punpun-community-discussion", "url": "https://www.reddit.com/r/OyasumiPunpun/comments/qqe9ee/arcs_in_goodnight_punpun/", "type": "COMMUNITY", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [],
+  "conflicts": [],
+  "notes": "A obra possui 147 capitulos, mas nao apresenta uma taxonomia de arcos consistente para uso como unidade de avaliacao. Divisoes por fase de vida, volume ou interpretacao de leitor nao devem ser publicadas como arcos canonicos."
+}

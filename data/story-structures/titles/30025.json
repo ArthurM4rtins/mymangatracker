@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30025,
+    "title": "Fullmetal Alchemist",
+    "titleRomaji": "Hagane no Renkinjutsushi",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 116,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    {
+      "id": "manga-up-fullmetal-alchemist",
+      "url": "https://global.manga-up.com/manga/126",
+      "type": "OFFICIAL_REFERENCE",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "fullmetal-alchemist-wiki-story-arcs",
+      "url": "https://fma.fandom.com/wiki/Story_Arcs/Manga",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "fullmetal-alchemist-wiki-chapters-volumes",
+      "url": "https://fma.fandom.com/wiki/Chapters_and_Volumes",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [],
+  "conflicts": [
+    {
+      "field": "arc taxonomy",
+      "reason": "A referencia comunitaria especializada declara que Fullmetal Alchemist nunca recebeu arcos oficiais e que seus nomes e divisões são informais e sujeitos a mudança. Não houve uma segunda taxonomia independente com limites compatíveis para confirmar segmentos."
+    },
+    {
+      "field": "chapter total",
+      "reason": "O catálogo AniList registra 116 capítulos, enquanto a referência oficial de leitura e as listas de volumes consultadas enumeram 108 capítulos principais. Os oito capítulos adicionais não puderam ser associados com segurança à serialização principal no contrato atual."
+    }
+  ],
+  "notes": "A Manga UP! confirma a publicação concluída e a numeração dos capítulos principais. Reavaliar somente se surgir uma taxonomia oficial ou convergência independente que explicite limites de arcos da obra."
+}

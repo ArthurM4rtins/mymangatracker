@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 136807,
+    "title": "Look Back",
+    "titleRomaji": "Look Back",
+    "format": "ONE_SHOT",
+    "countryOfOrigin": "JP",
+    "chapters": 1,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

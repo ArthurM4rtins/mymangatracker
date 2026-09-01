@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 101233,
+    "title": "The Way of the Househusband",
+    "titleRomaji": "Gokushufudou",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "NOT_APPLICABLE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "viz-way-of-the-househusband", "url": "https://www.viz.com/the-way-of-the-househusband", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "gokushufudou-official-site", "url": "https://kuragebunch.com/info/gokushufudo", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "househusband-reference", "url": "https://en.wikipedia.org/wiki/The_Way_of_the_Househusband", "type": "REFERENCE", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "narrative structure", "reason": "As fontes descrevem uma comédia de situação episódica, centrada em tarefas domésticas independentes de Tatsu. Não foi localizada uma taxonomia de arcos narrativos recorrentes com limites de capítulos." }
+  ]
+}

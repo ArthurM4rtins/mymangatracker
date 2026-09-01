@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 85849,
+    "title": "ReLIFE",
+    "titleRomaji": "ReLife",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 238,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

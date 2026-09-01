@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 140475,
+    "title": "The Fragrant Flower Blooms With Dignity",
+    "titleRomaji": "Kaoru Hana wa Rin to Saku",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    {
+      "id": "magazine-pocket-kaoru-hana-series",
+      "url": "https://pocket.shonenmagazine.com/title/01524/episode/384650",
+      "type": "OFFICIAL_REFERENCE",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "magazine-pocket-kaoru-hana-chapter-192",
+      "url": "https://pocket.shonenmagazine.com/title/01524/episode/439102",
+      "type": "OFFICIAL_REFERENCE",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "kaoru-hana-wiki-chapters-volumes",
+      "url": "https://kaoruhana.fandom.com/wiki/Chapters_and_Volumes",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [],
+  "conflicts": [
+    {
+      "field": "arc taxonomy",
+      "reason": "A editora disponibiliza a obra como capítulos individuais e não publica nomes ou limites de arcos. A referência comunitária encontrada cataloga capítulos e volumes, sem uma taxonomia de arcos; não foi localizada uma classificação independente e estável para registrar limites."
+    },
+    {
+      "field": "ending range",
+      "reason": "A serialização permanece em andamento; a fonte oficial consultada confirma o capítulo 192, mas um arco aberto não pode ser inferido somente pela publicação sequencial de capítulos."
+    }
+  ],
+  "notes": "Reavaliar se a Kodansha, a autora ou fontes independentes convergentes publicarem uma divisão narrativa explícita."
+}

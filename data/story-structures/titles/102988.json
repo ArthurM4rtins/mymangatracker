@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 102988,
+    "title": "Tokyo Revengers",
+    "titleRomaji": "Tokyo卍Revengers",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 279,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "tokyo-revengers-wiki-arcs", "url": "https://tokyorevengers.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "tokyo-revengers-wegotthiscovered", "url": "https://wegotthiscovered.com/anime/all-tokyo-revengers-arcs-in-order/", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "tokyo-revengers-beebom", "url": "https://beebom.com/tokyo-revengers-arcs-in-order/amp/", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "tokyo-revengers-chapter-list", "url": "https://en.wikipedia.org/wiki/List_of_Tokyo_Revengers_chapters", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "toman", "kind": "ARC", "position": 1, "title": "Toman Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "12" }, "sourceIds": ["tokyo-revengers-wiki-arcs", "tokyo-revengers-wegotthiscovered", "tokyo-revengers-beebom"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "moebius", "kind": "ARC", "position": 2, "title": "Moebius Arc", "range": { "unit": "CHAPTER", "start": "13", "end": "33" }, "sourceIds": ["tokyo-revengers-wiki-arcs", "tokyo-revengers-wegotthiscovered", "tokyo-revengers-beebom"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "valhalla", "kind": "ARC", "position": 3, "title": "Valhalla Arc", "range": { "unit": "CHAPTER", "start": "34", "end": "77" }, "sourceIds": ["tokyo-revengers-wiki-arcs", "tokyo-revengers-wegotthiscovered", "tokyo-revengers-beebom"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "black-dragon", "kind": "ARC", "position": 4, "title": "Black Dragon Arc", "range": { "unit": "CHAPTER", "start": "78", "end": "121" }, "sourceIds": ["tokyo-revengers-wiki-arcs", "tokyo-revengers-wegotthiscovered", "tokyo-revengers-beebom"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "tenjiku", "kind": "ARC", "position": 5, "title": "Tenjiku Arc", "range": { "unit": "CHAPTER", "start": "122", "end": "185" }, "sourceIds": ["tokyo-revengers-wiki-arcs", "tokyo-revengers-wegotthiscovered", "tokyo-revengers-beebom"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "bonten", "kind": "ARC", "position": 6, "title": "Bonten Arc", "range": { "unit": "CHAPTER", "start": "186", "end": "206" }, "sourceIds": ["tokyo-revengers-wiki-arcs", "tokyo-revengers-wegotthiscovered", "tokyo-revengers-beebom"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "final", "kind": "SAGA", "position": 7, "title": "Final Arc", "range": { "unit": "CHAPTER", "start": "207", "end": "278" }, "sourceIds": ["tokyo-revengers-wiki-arcs", "tokyo-revengers-wegotthiscovered", "tokyo-revengers-beebom"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "three-deities", "parentKey": "final", "kind": "ARC", "position": 1, "title": "Three Deities Arc", "range": { "unit": "CHAPTER", "start": "207", "end": "235" }, "sourceIds": ["tokyo-revengers-wiki-arcs", "tokyo-revengers-wegotthiscovered", "tokyo-revengers-beebom"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kanto-manji", "parentKey": "final", "kind": "ARC", "position": 2, "title": "Kanto Manji Arc", "range": { "unit": "CHAPTER", "start": "236", "end": "278" }, "sourceIds": ["tokyo-revengers-wiki-arcs", "tokyo-revengers-wegotthiscovered", "tokyo-revengers-beebom"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "chapter count", "reason": "As fontes consultadas contabilizam 278 capitulos principais, enquanto o AniList informa 279. O capitulo adicional nao foi associado sem uma fonte que o enquadre com seguranca na taxonomia." }
+  ]
+}

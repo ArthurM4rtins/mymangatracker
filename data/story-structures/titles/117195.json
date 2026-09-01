@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 117195,
+    "title": "[Oshi no Ko]",
+    "titleRomaji": "[Oshi no Ko]",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 171,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "oshi-no-ko-wiki-story-arcs", "url": "https://oshinoko.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "oshi-no-ko-wikipedia-chapters", "url": "https://fr.wikipedia.org/wiki/Liste_des_chapitres_de_Oshi_no_ko", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "oshi-no-ko-series-overview", "url": "https://www.otakiva.com/en/manga/oshi-no-ko", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "prologue-childhood", "kind": "ARC", "position": 1, "title": "Prologue: Childhood", "range": { "unit": "CHAPTER", "start": "1", "end": "10" }, "sourceIds": ["oshi-no-ko-wiki-story-arcs", "oshi-no-ko-wikipedia-chapters"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "entertainment-world", "kind": "ARC", "position": 2, "title": "Entertainment World Arc", "range": { "unit": "CHAPTER", "start": "11", "end": "20" }, "sourceIds": ["oshi-no-ko-wiki-story-arcs", "oshi-no-ko-wikipedia-chapters"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "reality-tv-show", "kind": "ARC", "position": 3, "title": "Reality TV Show Arc", "range": { "unit": "CHAPTER", "start": "21", "end": "32" }, "sourceIds": ["oshi-no-ko-wiki-story-arcs", "oshi-no-ko-wikipedia-chapters"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "first-concert", "kind": "ARC", "position": 4, "title": "First Concert Arc", "range": { "unit": "CHAPTER", "start": "33", "end": "40" }, "sourceIds": ["oshi-no-ko-wiki-story-arcs", "oshi-no-ko-wikipedia-chapters"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "tokyo-blade", "kind": "ARC", "position": 5, "title": "Tokyo Blade Arc", "range": { "unit": "CHAPTER", "start": "41", "end": "66" }, "sourceIds": ["oshi-no-ko-wiki-story-arcs", "oshi-no-ko-wikipedia-chapters"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "private", "kind": "ARC", "position": 6, "title": "Private Arc", "range": { "unit": "CHAPTER", "start": "67", "end": "80" }, "sourceIds": ["oshi-no-ko-wiki-story-arcs", "oshi-no-ko-wikipedia-chapters"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "main-story", "kind": "ARC", "position": 7, "title": "The Main Story Arc", "range": { "unit": "CHAPTER", "start": "81", "end": "100" }, "sourceIds": ["oshi-no-ko-wiki-story-arcs", "oshi-no-ko-wikipedia-chapters"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "scandal", "kind": "ARC", "position": 8, "title": "Scandal Arc", "range": { "unit": "CHAPTER", "start": "101", "end": "108" }, "sourceIds": ["oshi-no-ko-wiki-story-arcs", "oshi-no-ko-wikipedia-chapters"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "movie", "kind": "ARC", "position": 9, "title": "Movie Arc", "range": { "unit": "CHAPTER", "start": "109", "end": "147" }, "sourceIds": ["oshi-no-ko-wiki-story-arcs", "oshi-no-ko-wikipedia-chapters"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "end-of-the-play", "kind": "ARC", "position": 10, "title": "The End of the Play Arc", "range": { "unit": "CHAPTER", "start": "148", "end": "152" }, "sourceIds": ["oshi-no-ko-wiki-story-arcs", "oshi-no-ko-wikipedia-chapters"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "toward-the-stars-and-dreams", "kind": "ARC", "position": 11, "title": "Toward the Stars and Dreams Arc", "range": { "unit": "CHAPTER", "start": "153", "end": "166" }, "sourceIds": ["oshi-no-ko-wiki-story-arcs", "oshi-no-ko-wikipedia-chapters", "oshi-no-ko-series-overview"], "status": "DRAFT", "confidence": "HIGH" }
+  ],
+  "conflicts": [
+    { "field": "post-arc chapters", "reason": "A taxonomia oficial encerra o arco final no capitulo 166, enquanto o AniList informa 171 capitulos. Os capitulos 167-171 sao material posterior/extra e ficaram fora da classificacao de arcos." },
+    { "field": "movie and end-of-play grouping", "reason": "A fonte editorial agrupa 109-152 como Film, mas a taxonomia oficial separa The End of the Play em 148-152. Foi adotada a divisao oficial." }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30026,
+    "title": "Hunter x Hunter",
+    "titleRomaji": "HUNTER×HUNTER",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "hunterpedia-story-arcs", "url": "https://hunterxhunter.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "hunterpedia-succession-contest", "url": "https://hunterxhunter.fandom.com/wiki/Succession_Contest_arc", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "hunter-chapter-list", "url": "https://en.wikipedia.org/wiki/List_of_Hunter_%C3%97_Hunter_chapters", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "shonen-jump-hunter", "url": "https://www.shonenjump.com/j/rensai/hunter/", "type": "OFFICIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "hunter-exam", "kind": "ARC", "position": 1, "title": "Hunter Exam Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "38" }, "sourceIds": ["hunterpedia-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "zoldyck-family", "kind": "ARC", "position": 2, "title": "Zoldyck Family Arc", "range": { "unit": "CHAPTER", "start": "39", "end": "43" }, "sourceIds": ["hunterpedia-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "heavens-arena", "kind": "ARC", "position": 3, "title": "Heavens Arena Arc", "range": { "unit": "CHAPTER", "start": "44", "end": "63" }, "sourceIds": ["hunterpedia-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "yorknew-city", "kind": "ARC", "position": 4, "title": "Yorknew City Arc", "range": { "unit": "CHAPTER", "start": "64", "end": "119" }, "sourceIds": ["hunterpedia-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "greed-island", "kind": "ARC", "position": 5, "title": "Greed Island Arc", "range": { "unit": "CHAPTER", "start": "120", "end": "185" }, "sourceIds": ["hunterpedia-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "chimera-ant", "kind": "ARC", "position": 6, "title": "Chimera Ant Arc", "range": { "unit": "CHAPTER", "start": "186", "end": "318" }, "sourceIds": ["hunterpedia-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "13th-hunter-chairman-election", "kind": "ARC", "position": 7, "title": "13th Hunter Chairman Election Arc", "range": { "unit": "CHAPTER", "start": "319", "end": "339" }, "sourceIds": ["hunterpedia-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "dark-continent-expedition", "kind": "ARC", "position": 8, "title": "Dark Continent Expedition Arc", "range": { "unit": "CHAPTER", "start": "340", "end": "348" }, "sourceIds": ["hunterpedia-story-arcs", "hunter-chapter-list"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "succession-contest", "kind": "ARC", "position": 9, "title": "Succession Contest Arc", "range": { "unit": "CHAPTER", "start": "349", "end": null }, "sourceIds": ["hunterpedia-story-arcs", "hunterpedia-succession-contest", "shonen-jump-hunter"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "current arc endpoint", "reason": "Hunter x Hunter continua em publicacao intermitente. Succession Contest permanece aberto desde o capitulo 349, sem fim registrado para evitar congelar uma contagem que muda com novos lotes de capitulos." },
+    { "field": "dark continent relationship", "reason": "Algumas taxonomias tratam Dark Continent Expedition e Succession Contest como uma unica linha narrativa concorrente. Foi adotada a separacao de 340-348 e 349-em aberto usada pela Hunterpedia." }
+  ]
+}

@@ -1,0 +1,907 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-31T19:02:54.070Z",
+  "selection": "AniList MANGA, POPULARITY_DESC, isAdult: false",
+  "works": [
+    {
+      "anilistId": 105778,
+      "title": "Chainsaw Man",
+      "titleRomaji": "Chainsaw Man",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 232,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 105398,
+      "title": "Solo Leveling",
+      "titleRomaji": "Na Honjaman Level Up",
+      "format": "MANGA",
+      "countryOfOrigin": "KR",
+      "chapters": 201,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 101517,
+      "title": "Jujutsu Kaisen",
+      "titleRomaji": "Jujutsu Kaisen",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 272,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 30002,
+      "title": "Berserk",
+      "titleRomaji": "Berserk",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 30013,
+      "title": "One Piece",
+      "titleRomaji": "ONE PIECE",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 53390,
+      "title": "Attack on Titan",
+      "titleRomaji": "Shingeki no Kyojin",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 141,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 87216,
+      "title": "Demon Slayer: Kimetsu no Yaiba",
+      "titleRomaji": "Kimetsu no Yaiba",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 207,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 63327,
+      "title": "Tokyo Ghoul",
+      "titleRomaji": "Tokyo Ghoul",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 144,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 34632,
+      "title": "Goodnight Punpun",
+      "titleRomaji": "Oyasumi Punpun",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 147,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 85486,
+      "title": "My Hero Academia",
+      "titleRomaji": "Boku no Hero Academia",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 432,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 74347,
+      "title": "One-Punch Man",
+      "titleRomaji": "One Punch-Man",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 30656,
+      "title": "Vagabond",
+      "titleRomaji": "Vagabond",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 108556,
+      "title": "SPY x FAMILY",
+      "titleRomaji": "SPY×FAMILY",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 30642,
+      "title": "Vinland Saga",
+      "titleRomaji": "Vinland Saga",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 224,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 87423,
+      "title": "The Promised Neverland",
+      "titleRomaji": "Yakusoku no Neverland",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 181,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 119257,
+      "title": "Omniscient Reader",
+      "titleRomaji": "Jeonjijeok Dokja Sijeom",
+      "format": "MANGA",
+      "countryOfOrigin": "KR",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 106130,
+      "title": "Blue Lock",
+      "titleRomaji": "Blue Lock",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 72451,
+      "title": "Horimiya",
+      "titleRomaji": "Horimiya",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 152,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 30012,
+      "title": "Bleach",
+      "titleRomaji": "BLEACH",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 706,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 86635,
+      "title": "Kaguya-sama: Love is War",
+      "titleRomaji": "Kaguya-sama wa Kokurasetai: Tensaitachi no Renai Zunousen",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 281,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 102988,
+      "title": "Tokyo Revengers",
+      "titleRomaji": "Tokyo卍Revengers",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 279,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 132029,
+      "title": "Dandadan",
+      "titleRomaji": "Dandadan",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 30026,
+      "title": "Hunter x Hunter",
+      "titleRomaji": "HUNTER×HUNTER",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 30003,
+      "title": "20th Century Boys",
+      "titleRomaji": "20 Seiki Shounen",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 249,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 86123,
+      "title": "Black Clover",
+      "titleRomaji": "Black Clover",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 392,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 30001,
+      "title": "Monster",
+      "titleRomaji": "MONSTER",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 162,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 97852,
+      "title": "Komi Can't Communicate",
+      "titleRomaji": "Komi-san wa, Komyushou desu.",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 537,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 117195,
+      "title": "[Oshi no Ko]",
+      "titleRomaji": "[Oshi no Ko]",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 171,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 120760,
+      "title": "Kaiju No.8",
+      "titleRomaji": "Kaijuu 8-gou",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 129,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 31706,
+      "title": "JoJo's Bizarre Adventure: Part 7–Steel Ball Run",
+      "titleRomaji": "JoJo no Kimyou na Bouken: Steel Ball Run",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 95,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 87170,
+      "title": "Fire Punch",
+      "titleRomaji": "Fire Punch",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 83,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 85611,
+      "title": "Tokyo Ghoul:re",
+      "titleRomaji": "Tokyo Ghoul:re",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 181,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 65243,
+      "title": "Haikyu!!",
+      "titleRomaji": "Haikyuu!!",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 404,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 85143,
+      "title": "Tower of God",
+      "titleRomaji": "Sinui Tap",
+      "format": "MANGA",
+      "countryOfOrigin": "KR",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 30021,
+      "title": "Death Note",
+      "titleRomaji": "DEATH NOTE",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 108,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 101583,
+      "title": "My Dress-Up Darling",
+      "titleRomaji": "Sono Bisque Doll wa Koi wo Suru",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 119,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 30011,
+      "title": "Naruto",
+      "titleRomaji": "NARUTO",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 700,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 100994,
+      "title": "Hell’s Paradise: Jigokuraku",
+      "titleRomaji": "Jigokuraku",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 127,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 85135,
+      "title": "A Silent Voice",
+      "titleRomaji": "Koe no Katachi",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 64,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 98416,
+      "title": "Dr. STONE",
+      "titleRomaji": "Dr. STONE",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 236,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 125828,
+      "title": "Sakamoto Days",
+      "titleRomaji": "SAKAMOTO DAYS",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 31133,
+      "title": "Dorohedoro",
+      "titleRomaji": "Dorohedoro",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 191,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 30436,
+      "title": "Uzumaki: Spiral into Horror",
+      "titleRomaji": "Uzumaki",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 20,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 118586,
+      "title": "Frieren: Beyond Journey’s End",
+      "titleRomaji": "Sousou no Frieren",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 146983,
+      "title": "Goodbye, Eri",
+      "titleRomaji": "Sayonara Eri",
+      "format": "ONE_SHOT",
+      "countryOfOrigin": "JP",
+      "chapters": 1,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 97553,
+      "title": "Three Days of Happiness",
+      "titleRomaji": "Jumyou wo Kaitotte Moratta. Ichinen ni Tsuki, Ichimanen de.",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 18,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 74489,
+      "title": "Land of the Lustrous",
+      "titleRomaji": "Houseki no Kuni",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 120,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 98263,
+      "title": "Witch Hat Atelier",
+      "titleRomaji": "Tongari Boushi no Atelier",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 30025,
+      "title": "Fullmetal Alchemist",
+      "titleRomaji": "Hagane no Renkinjutsushi",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 116,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 140475,
+      "title": "The Fragrant Flower Blooms With Dignity",
+      "titleRomaji": "Kaoru Hana wa Rin to Saku",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 107237,
+      "title": "Blue Period",
+      "titleRomaji": "Blue Period",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 86964,
+      "title": "Bastard",
+      "titleRomaji": "Hurejasik",
+      "format": "MANGA",
+      "countryOfOrigin": "KR",
+      "chapters": 94,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 46765,
+      "title": "Kingdom",
+      "titleRomaji": "Kingdom",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 100664,
+      "title": "Don't Toy With Me, Miss Nagatoro",
+      "titleRomaji": "Ijiranaide, Nagatoro-san",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 189,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 30051,
+      "title": "Slam Dunk",
+      "titleRomaji": "SLAM DUNK",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 276,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 54705,
+      "title": "The Flowers of Evil",
+      "titleRomaji": "Aku no Hana",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 58,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 33009,
+      "title": "JoJo's Bizarre Adventure Part 6: Stone Ocean",
+      "titleRomaji": "JoJo no Kimyou na Bouken: Stone Ocean",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 158,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 30936,
+      "title": "Homunculus",
+      "titleRomaji": "Homunculus",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 166,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 105469,
+      "title": "Jujutsu Kaisen 0",
+      "titleRomaji": "Jujutsu Kaisen 0: Tokyo Toritsu Jujutsu Koutou Senmon Gakkou",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 4,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 98842,
+      "title": "Toilet-Bound Hanako-kun",
+      "titleRomaji": "Jibaku Shounen Hanako-kun",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 37375,
+      "title": "The Climber",
+      "titleRomaji": "Kokou no Hito",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 170,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 30564,
+      "title": "Gantz",
+      "titleRomaji": "GANTZ",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 383,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 100230,
+      "title": "The Quintessential Quintuplets",
+      "titleRomaji": "Go-toubun no Hanayome",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 122,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 169355,
+      "title": "Kagurabachi",
+      "titleRomaji": "Kagurabachi",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 30908,
+      "title": "Soul Eater",
+      "titleRomaji": "Soul Eater",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 117,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 101233,
+      "title": "The Way of the Househusband",
+      "titleRomaji": "Gokushufudou",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 107098,
+      "title": "Record of Ragnarok",
+      "titleRomaji": "Shuumatsu no Valkyrie",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 87395,
+      "title": "Grand Blue Dreaming",
+      "titleRomaji": "Grand Blue",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 140407,
+      "title": "The Greatest Estate Developer",
+      "titleRomaji": "Yeokdaegeum Yeongji Seolgyesa",
+      "format": "MANGA",
+      "countryOfOrigin": "KR",
+      "chapters": 222,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 128067,
+      "title": "SSS-Class Revival Hunter",
+      "titleRomaji": "SSS-geup Jugeoya Saneun Hunter",
+      "format": "MANGA",
+      "countryOfOrigin": "KR",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 144946,
+      "title": "Gachiakuta",
+      "titleRomaji": "Gachiakuta",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 30583,
+      "title": "Claymore",
+      "titleRomaji": "CLAYMORE",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 159,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 86310,
+      "title": "Fire Force",
+      "titleRomaji": "Enen no Shouboutai",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 305,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 86218,
+      "title": "Bloom Into You",
+      "titleRomaji": "Yagate Kimi ni Naru",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 53,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 98397,
+      "title": "Blood on the Tracks",
+      "titleRomaji": "Chi no Wadachi",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 153,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 111233,
+      "title": "Call of the Night",
+      "titleRomaji": "Yofukashi no Uta",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 203,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 30149,
+      "title": "BLAME!",
+      "titleRomaji": "BLAME!",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 66,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 86717,
+      "title": "Wotakoi: Love is Hard for Otaku",
+      "titleRomaji": "Wotaku ni Koi wa Muzukashii",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 115,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 100568,
+      "title": "The Horizon",
+      "titleRomaji": "Supyeongseon",
+      "format": "MANGA",
+      "countryOfOrigin": "KR",
+      "chapters": 21,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 136807,
+      "title": "Look Back",
+      "titleRomaji": "Look Back",
+      "format": "ONE_SHOT",
+      "countryOfOrigin": "JP",
+      "chapters": 1,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 30104,
+      "title": "Yotsuba&!",
+      "titleRomaji": "Yotsuba to!",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 79865,
+      "title": "Ajin: Demi-Human",
+      "titleRomaji": "Ajin",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 99,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 54692,
+      "title": "Noragami: Stray God",
+      "titleRomaji": "Noragami",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 109,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 99943,
+      "title": "Rent-A-Girlfriend",
+      "titleRomaji": "Kanojo, Okarishimasu",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 55515,
+      "title": "JoJo no Kimyou na Bouken: JoJolion",
+      "titleRomaji": "JoJo no Kimyou na Bouken: JoJolion",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 110,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 86399,
+      "title": "That Time I Got Reincarnated as a Slime",
+      "titleRomaji": "Tensei Shitara Slime Datta Ken",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 54294,
+      "title": "Ao Haru Ride",
+      "titleRomaji": "Ao Haru Ride",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 53,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 114960,
+      "title": "Mashle: Magic and Muscles",
+      "titleRomaji": "MASHLE",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 162,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 30028,
+      "title": "Nana",
+      "titleRomaji": "NANA",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 116186,
+      "title": "Boy's Abyss",
+      "titleRomaji": "Shounen no Abyss",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 185,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 86551,
+      "title": "Made in Abyss",
+      "titleRomaji": "Made in Abyss",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 33031,
+      "title": "Pandora Hearts",
+      "titleRomaji": "Pandora Hearts",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 107,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 30598,
+      "title": "Fairy Tail",
+      "titleRomaji": "FAIRY TAIL",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 549,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 61499,
+      "title": "Nisekoi: False Love",
+      "titleRomaji": "Nisekoi",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 240,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 126297,
+      "title": "Teenage Mercenary",
+      "titleRomaji": "Iphagyongbyeong",
+      "format": "MANGA",
+      "countryOfOrigin": "KR",
+      "chapters": null,
+      "status": "RELEASING"
+    },
+    {
+      "anilistId": 30336,
+      "title": "GTO: Great Teacher Onizuka",
+      "titleRomaji": "GTO",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 208,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 100954,
+      "title": "Sweet Home",
+      "titleRomaji": "Sweet Home",
+      "format": "MANGA",
+      "countryOfOrigin": "KR",
+      "chapters": 141,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 86082,
+      "title": "Delicious in Dungeon",
+      "titleRomaji": "Dungeon Meshi",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 111,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 85849,
+      "title": "ReLIFE",
+      "titleRomaji": "ReLife",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 238,
+      "status": "FINISHED"
+    },
+    {
+      "anilistId": 74485,
+      "title": "The Seven Deadly Sins",
+      "titleRomaji": "Nanatsu no Taizai",
+      "format": "MANGA",
+      "countryOfOrigin": "JP",
+      "chapters": 367,
+      "status": "FINISHED"
+    }
+  ]
+}

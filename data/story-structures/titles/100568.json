@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 100568,
+    "title": "The Horizon",
+    "titleRomaji": "Supyeongseon",
+    "format": "MANGA",
+    "countryOfOrigin": "KR",
+    "chapters": 21,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}
