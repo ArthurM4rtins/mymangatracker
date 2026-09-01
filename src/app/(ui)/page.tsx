@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { verificarSaudeDoSistema } from "@/server/services/sistema.service";
 import { buscarNoCatalogo } from "@/server/services/catalogo.service";
+import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
 import {
   listarEstanteDoSistema,
   type EntradaDaEstante,
@@ -41,7 +42,7 @@ export default async function Home()
 
   const [saude, populares, leitura] = await Promise.all([
     verificarSaudeDoSistema(),
-    buscarNoCatalogo(""),
+    buscarNoCatalogo(interpretarFiltros({})),
     userId ? dadosDeLeitura(userId) : Promise.resolve(null),
   ]);
 

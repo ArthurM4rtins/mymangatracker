@@ -3,9 +3,11 @@ import Link from "next/link";
 import { buscarNoCatalogo } from "@/server/services/catalogo.service";
 import { anilistIdsNaEstanteDoSistema } from "@/server/services/estante.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
+import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
 import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
 import { BotaoEstante } from "./botao-estante";
 import { BuscaCatalogo } from "./busca-catalogo";
+import { FiltrosCatalogo } from "./filtros-catalogo";
 
 // A busca depende do termo da URL e do AniList: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -19,14 +21,20 @@ const PAIS: Record<string, string> = {
 };
 
 type Props = {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    tipo?: string;
+    genero?: string;
+    decada?: string;
+    ordem?: string;
+  }>;
 };
 
 export default async function Catalogo({ searchParams }: Props)
 {
-  const { q } = await searchParams;
+  const filtro = interpretarFiltros(await searchParams);
   const [resultado, naEstante] = await Promise.all([
-    buscarNoCatalogo(q ?? ""),
+    buscarNoCatalogo(filtro),
     idsNaEstante(),
   ]);
 
@@ -40,6 +48,8 @@ export default async function Catalogo({ searchParams }: Props)
       </header>
 
       <BuscaCatalogo termoInicial={resultado.termo} />
+
+      <FiltrosCatalogo />
 
       {resultado.estado === "indisponivel" && (
         <p className="rounded-md border border-borda bg-superficie p-4 text-sm">

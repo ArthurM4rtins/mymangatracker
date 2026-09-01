@@ -40,13 +40,24 @@ export function BuscaCatalogo({ termoInicial }: { termoInicial: string })
     temporizador.current = setTimeout(function ()
     {
       const limpo = valor.trim();
-      const destino =
-        limpo === "" ? "/catalogo" : `/catalogo?q=${encodeURIComponent(limpo)}`;
+      // Preserva os filtros ativos (issue #37) — só o termo muda.
+      const novos = new URLSearchParams(window.location.search);
+
+      if (limpo === "")
+      {
+        novos.delete("q");
+      }
+      else
+      {
+        novos.set("q", limpo);
+      }
+
+      const consulta = novos.toString();
 
       // `replace` para o histórico não virar uma pilha de termos parciais.
       iniciarTransicao(function ()
       {
-        roteador.replace(destino);
+        roteador.replace(consulta === "" ? "/catalogo" : `/catalogo?${consulta}`);
       });
     }, DEBOUNCE_MS);
   }
