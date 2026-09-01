@@ -506,3 +506,24 @@ autor); front geral segue evoluindo.
 - Branch feature/lists, empilhada na reviews-sociais. PR #42.
 
 Cadeia: ... <- #40 <- #42. Resta do roadmap: E (pagina do autor).
+
+## Sessao 01/09 — continuacao: pagina do autor (#43), bloco E — roadmap completo
+
+- /autor/:staffId com foto, nome nativo, bio (sem HTML nem markdown de link)
+  e grade de obras por popularidade. Autores na pagina da obra viram links.
+- SEM tabela nova — desvio consciente do plano do bloco A: leitura ao vivo do
+  AniList (como similares) responde melhor que cache proprio; autor nao e
+  dado do usuario. Registrado tambem no vault da pagina-obra.
+- PEGADINHA nova de API: Staff(id:) direto responde 404 com errors para id
+  inexistente (indistinguivel de rate limit) — mesma solucao do POR_ID:
+  consultar via Page.staff, que devolve lista vazia. Probe antes de codar.
+- Provas: lint 0, 177 unitarios, build verde. Smoke: /autor/96911 (Inoue)
+  com bio e Slam Dunk/Vagabond na grade; id inexistente = 404; link a partir
+  da obra funciona.
+- Branch feature/pagina-autor, empilhada na lists. PR #44.
+
+ROADMAP A-E COMPLETO. Cadeia final de PRs para o Arthur mergear EM ORDEM:
+#19 <- #20 <- #22 <- #24 <- #26 <- #28 <- #30 <- #32 <- #34 <- #36 <- #38
+<- #40 <- #42 <- #44 (retarget de cada um apos o merge do anterior).
+Proximos candidatos: perfil publico do usuario, feed de atividade, extensao
+(Fase 6), refino visual continuo.
