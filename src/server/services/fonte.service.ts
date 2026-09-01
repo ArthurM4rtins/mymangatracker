@@ -7,7 +7,11 @@
  * preservando o histórico.
  */
 import { derivarCandidatos } from "@/server/domain/url-template";
-import { urlDaLeitura } from "@/server/domain/progresso";
+import {
+  tipoDaFonte,
+  urlDaLeitura,
+  urlDaPagina,
+} from "@/server/domain/progresso";
 import { buscarEntradaDoUsuario } from "@/server/repositories/shelf.repository";
 import { trocarFonteAtiva } from "@/server/repositories/reading-source.repository";
 
@@ -20,10 +24,15 @@ export type CandidatoDeFonte = {
 };
 
 export type ResultadoDeCandidatos =
-  | { estado: "ok"; candidatos: CandidatoDeFonte[] }
+  | { estado: "ok"; candidatos: CandidatoDeFonte[]; paginaDaObra: CandidatoDeFonte }
   | { estado: "url_invalida" };
 
-/** Puro: deriva candidatos da URL colada. URL torta é estado, não exceção. */
+/**
+ * Puro: deriva candidatos da URL colada. URL torta é estado, não exceção.
+ *
+ * `paginaDaObra` sempre vem junto: em site que não carrega o número do
+ * capítulo na URL (MangaFire, MangaDex), é o fallback que o usuário confirma.
+ */
 export function candidatosDeFonte(urlDoCapitulo1: string): ResultadoDeCandidatos
 {
   try
@@ -41,7 +50,17 @@ export function candidatosDeFonte(urlDoCapitulo1: string): ResultadoDeCandidatos
       };
     });
 
-    return { estado: "ok", candidatos };
+    const url = new URL(urlDoCapitulo1);
+
+    return {
+      estado: "ok",
+      candidatos,
+      paginaDaObra: {
+        sourceHost: url.host,
+        urlTemplate: url.pathname,
+        urlExemplo: urlDaPagina(url.host, url.pathname),
+      },
+    };
   }
   catch
   {
@@ -106,17 +125,29 @@ export async function confirmarFonte(
 
 function templateValido(sourceHost: string, urlTemplate: string): boolean
 {
+  if (sourceHost === "" || sourceHost.includes("/") || !urlTemplate.startsWith("/"))
+  {
+    return false;
+  }
+
   try
   {
-    // Monta a URL de exemplo: valida marcador, host e capítulo de uma vez.
-    urlDaLeitura(sourceHost, urlTemplate, CAPITULO_DE_EXEMPLO);
+    // Monta a URL correspondente ao tipo: valida marcador e capítulo de uma vez.
+    if (tipoDaFonte(urlTemplate) === "template")
+    {
+      urlDaLeitura(sourceHost, urlTemplate, CAPITULO_DE_EXEMPLO);
+    }
+    else
+    {
+      urlDaPagina(sourceHost, urlTemplate);
+    }
   }
   catch
   {
     return false;
   }
 
-  return sourceHost !== "" && !sourceHost.includes("/");
+  return true;
 }
 
 /** A composição de produção. */

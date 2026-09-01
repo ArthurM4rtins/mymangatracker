@@ -54,7 +54,7 @@ describe("listarEstante", function ()
         status: "READING",
         progressChapter: "57.5",
         obra: OBRA,
-        fonte: { sourceHost: "mangalivre.blog" },
+        fonte: { sourceHost: "mangalivre.blog", tipo: "template" },
         proximoCapitulo: 58,
       } satisfies EntradaDaEstante,
     ]);

@@ -142,6 +142,31 @@ describe("abrirCapitulo", function ()
     expect(buscarFonte).not.toHaveBeenCalled();
   });
 
+  it("fonte de página da obra abre a página e registra o capítulo igual", async function ()
+  {
+    const { deps, registrarComProgresso } = fakeDeps({
+      maior: 57,
+      fonte: { id: "f2", sourceHost: "mangafire.to", urlTemplate: "/title/4mx-vagabondd" },
+    });
+
+    const resultado = await abrirCapitulo({ userId: "u1", entradaId: "e1" }, deps);
+
+    expect(resultado).toEqual({
+      estado: "ok",
+      capitulo: 58,
+      progresso: 58,
+      url: "https://mangafire.to/title/4mx-vagabondd",
+    });
+    expect(registrarComProgresso).toHaveBeenCalledWith({
+      userId: "u1",
+      mediaId: "m1",
+      readingSourceId: "f2",
+      chapter: 58,
+      resolvedUrl: "https://mangafire.to/title/4mx-vagabondd",
+      novoProgresso: 58,
+    });
+  });
+
   it("capítulo não positivo é recusado sem tocar o banco", async function ()
   {
     const { deps, registrarComProgresso, registrarReleitura } = fakeDeps({});

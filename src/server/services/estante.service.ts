@@ -6,7 +6,7 @@
  * cache alimentado pelo cliente seria dado forjável.
  */
 import { cacheEstaFresco } from "@/server/domain/media-cache";
-import { proximoCapitulo } from "@/server/domain/progresso";
+import { proximoCapitulo, tipoDaFonte } from "@/server/domain/progresso";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId } from "@/server/infra/anilist";
 import {
@@ -118,7 +118,7 @@ export type EntradaDaEstante = {
     chapters: number | null;
   };
   /** A fonte de leitura ativa — só o que a tela mostra, nunca o template. */
-  fonte: { sourceHost: string } | null;
+  fonte: { sourceHost: string; tipo: "template" | "pagina" } | null;
   proximoCapitulo: number;
 };
 
@@ -138,7 +138,7 @@ export type DependenciasDeListagem = {
   ) => Promise<EntradaNoRepositorio[]>;
   listarFontes: (
     userId: string,
-  ) => Promise<Array<{ mediaId: string; sourceHost: string }>>;
+  ) => Promise<Array<{ mediaId: string; sourceHost: string; urlTemplate: string }>>;
 };
 
 /**
@@ -172,7 +172,10 @@ export async function listarEstante(
       status: entrada.status,
       progressChapter: entrada.progressChapter,
       obra: entrada.obra,
-      fonte: fonte === null ? null : { sourceHost: fonte.sourceHost },
+      fonte:
+        fonte === null
+          ? null
+          : { sourceHost: fonte.sourceHost, tipo: tipoDaFonte(fonte.urlTemplate) },
       proximoCapitulo: proximoCapitulo(maior),
     };
   });

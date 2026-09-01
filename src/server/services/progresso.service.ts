@@ -9,7 +9,9 @@
 import {
   progrideEstante,
   proximoCapitulo,
+  tipoDaFonte,
   urlDaLeitura,
+  urlDaPagina,
 } from "@/server/domain/progresso";
 import { buscarEntradaDoUsuario } from "@/server/repositories/shelf.repository";
 import { buscarFonteAtiva } from "@/server/repositories/reading-source.repository";
@@ -81,10 +83,20 @@ export async function abrirCapitulo(
   const maior = await deps.maiorCapitulo(pedido.userId, entrada.mediaId);
   const capitulo = pedido.capitulo ?? proximoCapitulo(maior);
 
+  if (!Number.isFinite(capitulo) || capitulo <= 0)
+  {
+    return { estado: "capitulo_invalido" };
+  }
+
+  // Fonte de página da obra (site sem número na URL): abre a página da série
+  // e o registro do capítulo continua idêntico ao do template.
   let url: string;
   try
   {
-    url = urlDaLeitura(fonte.sourceHost, fonte.urlTemplate, capitulo);
+    url =
+      tipoDaFonte(fonte.urlTemplate) === "template"
+        ? urlDaLeitura(fonte.sourceHost, fonte.urlTemplate, capitulo)
+        : urlDaPagina(fonte.sourceHost, fonte.urlTemplate);
   }
   catch
   {

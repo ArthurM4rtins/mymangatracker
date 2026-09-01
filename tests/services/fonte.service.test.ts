@@ -33,11 +33,36 @@ describe("candidatosDeFonte", function ()
     expect(candidatosDeFonte("nada-de-url")).toEqual({ estado: "url_invalida" });
   });
 
-  it("URL sem segmento 1 devolve lista vazia", function ()
+  it("sempre oferece a própria URL como página da obra — fallback para site sem número no link", function ()
+  {
+    const resultado = candidatosDeFonte(
+      "https://mangafire.to/title/4mx-vagabondd/chapter/4745883",
+    );
+
+    if (resultado.estado !== "ok")
+    {
+      throw new Error("esperava ok");
+    }
+
+    expect(resultado.paginaDaObra).toEqual({
+      sourceHost: "mangafire.to",
+      urlTemplate: "/title/4mx-vagabondd/chapter/4745883",
+      urlExemplo: "https://mangafire.to/title/4mx-vagabondd/chapter/4745883",
+    });
+  });
+
+  it("URL sem segmento 1 devolve lista vazia, mas ainda com a página da obra", function ()
   {
     const resultado = candidatosDeFonte("https://site.com/obra/capitulos");
 
-    expect(resultado).toEqual({ estado: "ok", candidatos: [] });
+    expect(resultado).toMatchObject({
+      estado: "ok",
+      candidatos: [],
+      paginaDaObra: {
+        sourceHost: "site.com",
+        urlTemplate: "/obra/capitulos",
+      },
+    });
   });
 });
 
@@ -95,12 +120,35 @@ describe("confirmarFonte", function ()
     expect(trocarFonte).not.toHaveBeenCalled();
   });
 
-  it("template sem {chapter} é recusado antes de tocar o banco", async function ()
+  it("path sem {chapter} é aceito como página da obra — MangaFire e afins", async function ()
   {
     const { deps, trocarFonte } = fakeDeps({ mediaId: "m1" });
 
     const resultado = await confirmarFonte(
-      { ...PEDIDO, urlTemplate: "/title/Lookism/chapter/2/1" },
+      {
+        ...PEDIDO,
+        sourceHost: "mangafire.to",
+        urlTemplate: "/title/4mx-vagabondd",
+      },
+      deps,
+    );
+
+    expect(resultado).toEqual({ estado: "ok" });
+    expect(trocarFonte).toHaveBeenCalledWith({
+      userId: "u1",
+      mediaId: "m1",
+      sourceHost: "mangafire.to",
+      urlTemplate: "/title/4mx-vagabondd",
+      confirmadaEm: AGORA,
+    });
+  });
+
+  it("host torto continua recusado antes de tocar o banco", async function ()
+  {
+    const { deps, trocarFonte } = fakeDeps({ mediaId: "m1" });
+
+    const resultado = await confirmarFonte(
+      { ...PEDIDO, sourceHost: "https://site.com/x" },
       deps,
     );
 
