@@ -6,8 +6,10 @@
  * no primeiro acesso com movimento. Quem chama e o servidor. Painel 05 do artifact.
  */
 import {
+  mapearAutor,
   mapearBusca,
   mapearRecomendacoes,
+  type AutorDoAniList,
   type MediaDoAniList,
 } from "@/server/domain/anilist-media";
 import type {
@@ -180,6 +182,51 @@ query(${declaracoes.join(", ")}) {
   const resposta = await chamar(query, variables);
 
   return mapearBusca(resposta);
+}
+
+// A página do autor: perfil + obras por popularidade. Via `Page.staff` porque
+// `Staff(id:)` direto responde 404 com errors para id inexistente (probe de
+// 01/09). `type: MANGA` cobre mangá e novel — a distinção deles é format.
+const AUTOR = `
+query($id: Int, $limite: Int) {
+  Page(perPage: 1) {
+    staff(id: $id) {
+      id
+      name { full native }
+      image { large }
+      description(asHtml: false)
+      staffMedia(perPage: $limite, sort: POPULARITY_DESC, type: MANGA) {
+        edges {
+          staffRole
+          node {
+            id
+            title { romaji english }
+            coverImage { large }
+            startDate { year }
+          }
+        }
+      }
+    }
+  }
+}`;
+
+const LIMITE_DE_OBRAS_DO_AUTOR = 24;
+
+/**
+ * O autor pelo id de staff do AniList. `null` quando não existe.
+ *
+ * @throws quando o AniList não responde — indisponibilidade, não ausência.
+ */
+export async function buscarAutor(
+  staffId: number,
+): Promise<AutorDoAniList | null>
+{
+  const resposta = await chamar(AUTOR, {
+    id: staffId,
+    limite: LIMITE_DE_OBRAS_DO_AUTOR,
+  });
+
+  return mapearAutor(resposta);
 }
 
 /**
