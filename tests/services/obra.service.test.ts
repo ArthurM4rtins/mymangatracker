@@ -236,11 +236,15 @@ describe("obraParaPagina", function ()
         tipo: "pagina",
         urlDaObra: "https://mangafire.to/title/4mx-vagabondd",
       },
-      avaliacao: { rating: "4.5", review: null, containsSpoilers: false },
+    });
+    expect(resultado.minhaAvaliacao).toEqual({
+      rating: "4.5",
+      review: null,
+      containsSpoilers: false,
     });
   });
 
-  it("sem entrada na estante, minha traz só o anilistId para o botão de adicionar", async function ()
+  it("sem entrada na estante, a avaliação vem mesmo assim — avaliar não exige estante", async function ()
   {
     const { deps } = fakeDeps({ noCache: NO_CACHE });
     deps.buscarEntrada = vi.fn(async function () { return null; });
@@ -253,5 +257,10 @@ describe("obraParaPagina", function ()
     }
 
     expect(resultado.minha).toBeNull();
+    expect(resultado.minhaAvaliacao).toEqual({
+      rating: "4.5",
+      review: null,
+      containsSpoilers: false,
+    });
   });
 });

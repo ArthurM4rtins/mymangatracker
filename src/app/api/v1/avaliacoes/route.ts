@@ -10,7 +10,7 @@ import { usuarioDaSessao } from "../_shared/sessao";
 export const dynamic = "force-dynamic";
 
 const ESQUEMA = z.object({
-  entradaId: z.string().min(1),
+  anilistId: z.number().int().positive(),
   rating: z.number().nullable(),
   review: z.string().max(20000).nullable(),
   containsSpoilers: z.boolean().default(false),
@@ -55,16 +55,16 @@ export async function POST(request: Request)
   {
     const resultado = await salvarAvaliacaoDoSistema({
       userId,
-      entradaId: analise.data.entradaId,
+      anilistId: analise.data.anilistId,
       rating: analise.data.rating,
       review: analise.data.review,
       containsSpoilers: analise.data.containsSpoilers,
     });
 
-    if (resultado.estado === "nao_encontrada")
+    if (resultado.estado === "obra_desconhecida")
     {
       return NextResponse.json(
-        { erros: { _geral: "entrada não encontrada" } },
+        { erros: { _geral: "obra não encontrada" } },
         { status: 404 },
       );
     }

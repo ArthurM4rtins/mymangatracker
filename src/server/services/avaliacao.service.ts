@@ -1,9 +1,10 @@
 /**
- * Caso de uso: avaliar uma obra da estante — nota e/ou resenha, estilo
- * Letterboxd. Uma avaliação por obra, editável; vazia não existe.
+ * Caso de uso: avaliar uma obra — nota e/ou resenha, estilo Letterboxd.
+ * Uma avaliação por obra, editável; vazia não existe. Desde a issue #45 NÃO
+ * exige a obra na estante: vale ter a obra no cache (a página dela cacheia).
  */
 import { ratingValido } from "@/server/domain/rating";
-import { buscarEntradaDoUsuario } from "@/server/repositories/shelf.repository";
+import { buscarMediaPorAnilistId } from "@/server/repositories/media.repository";
 import {
   removerAvaliacao,
   salvarAvaliacao,
@@ -11,7 +12,7 @@ import {
 
 export type PedidoDeAvaliacao = {
   userId: string;
-  entradaId: string;
+  anilistId: number;
   rating: number | null;
   review: string | null;
   containsSpoilers: boolean;
@@ -19,14 +20,11 @@ export type PedidoDeAvaliacao = {
 
 export type ResultadoDeAvaliacao =
   | { estado: "ok" }
-  | { estado: "nao_encontrada" }
+  | { estado: "obra_desconhecida" }
   | { estado: "avaliacao_invalida" };
 
 export type DependenciasDeAvaliacao = {
-  buscarEntrada: (
-    userId: string,
-    entradaId: string,
-  ) => Promise<{ entradaId: string; mediaId: string; progressChapter: string | null } | null>;
+  buscarMedia: (anilistId: number) => Promise<{ id: string } | null>;
   salvar: (dados: {
     userId: string;
     mediaId: string;
@@ -56,16 +54,16 @@ export async function salvarAvaliacaoDaEntrada(
     return { estado: "avaliacao_invalida" };
   }
 
-  const entrada = await deps.buscarEntrada(pedido.userId, pedido.entradaId);
+  const media = await deps.buscarMedia(pedido.anilistId);
 
-  if (entrada === null)
+  if (media === null)
   {
-    return { estado: "nao_encontrada" };
+    return { estado: "obra_desconhecida" };
   }
 
   await deps.salvar({
     userId: pedido.userId,
-    mediaId: entrada.mediaId,
+    mediaId: media.id,
     rating: pedido.rating,
     review,
     containsSpoilers: pedido.containsSpoilers,
@@ -75,18 +73,22 @@ export async function salvarAvaliacaoDaEntrada(
 }
 
 export async function removerAvaliacaoDaEntrada(
-  pedido: { userId: string; entradaId: string },
+  pedido: { userId: string; anilistId: number },
   deps: DependenciasDeAvaliacao,
-): Promise<{ estado: "ok" } | { estado: "nao_encontrada" }>
+): Promise<
+  | { estado: "ok" }
+  | { estado: "nao_encontrada" }
+  | { estado: "obra_desconhecida" }
+>
 {
-  const entrada = await deps.buscarEntrada(pedido.userId, pedido.entradaId);
+  const media = await deps.buscarMedia(pedido.anilistId);
 
-  if (entrada === null)
+  if (media === null)
   {
-    return { estado: "nao_encontrada" };
+    return { estado: "obra_desconhecida" };
   }
 
-  const removida = await deps.remover(pedido.userId, entrada.mediaId);
+  const removida = await deps.remover(pedido.userId, media.id);
 
   return removida === null ? { estado: "nao_encontrada" } : { estado: "ok" };
 }
@@ -102,14 +104,14 @@ export function salvarAvaliacaoDoSistema(
 /** A composição de produção. */
 export function removerAvaliacaoDoSistema(pedido: {
   userId: string;
-  entradaId: string;
-}): Promise<{ estado: "ok" } | { estado: "nao_encontrada" }>
+  anilistId: number;
+})
 {
   return removerAvaliacaoDaEntrada(pedido, DEPS_DE_PRODUCAO);
 }
 
 const DEPS_DE_PRODUCAO: DependenciasDeAvaliacao = {
-  buscarEntrada: buscarEntradaDoUsuario,
+  buscarMedia: buscarMediaPorAnilistId,
   salvar: salvarAvaliacao,
   remover: removerAvaliacao,
 };

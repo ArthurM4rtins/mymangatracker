@@ -4,27 +4,25 @@ import {
   salvarAvaliacaoDaEntrada,
 } from "@/server/services/avaliacao.service";
 
-// As regras da issue #33: nota 0,5–5,0 em meia estrela (domínio decide);
-// nota e resenha independentes, mas avaliação vazia não existe; entrada
-// alheia responde igual à inexistente.
+// Issues #33 e #45: nota 0,5–5,0 em meia estrela (domínio decide); nota e
+// resenha independentes, mas avaliação vazia não existe; avaliar NÃO exige a
+// obra na estante — vale ter a obra no cache (a página dela já cacheou).
 
-const ENTRADA = { entradaId: "e1", mediaId: "m1", progressChapter: null };
-
-function fakeDeps(entrada: typeof ENTRADA | null = ENTRADA)
+function fakeDeps(media: { id: string } | null = { id: "m1" })
 {
-  const buscarEntrada = vi.fn(async function () { return entrada; });
+  const buscarMedia = vi.fn(async function () { return media; });
   const salvar = vi.fn(async function () { return { id: "a1" }; });
   const remover = vi.fn(async function (): Promise<{ removida: true } | null>
   {
     return { removida: true };
   });
 
-  return { deps: { buscarEntrada, salvar, remover }, buscarEntrada, salvar, remover };
+  return { deps: { buscarMedia, salvar, remover }, buscarMedia, salvar, remover };
 }
 
 const PEDIDO = {
   userId: "u1",
-  entradaId: "e1",
+  anilistId: 30002,
   rating: 4.5 as number | null,
   review: "obra-prima" as string | null,
   containsSpoilers: false,
@@ -32,7 +30,7 @@ const PEDIDO = {
 
 describe("salvarAvaliacaoDaEntrada", function ()
 {
-  it("salva nota e resenha na obra da entrada", async function ()
+  it("salva nota e resenha pela obra, sem exigir estante", async function ()
   {
     const { deps, salvar } = fakeDeps();
 
@@ -101,25 +99,25 @@ describe("salvarAvaliacaoDaEntrada", function ()
     expect(salvar).not.toHaveBeenCalled();
   });
 
-  it("entrada alheia ou inexistente é nao_encontrada", async function ()
+  it("obra fora do cache é obra_desconhecida", async function ()
   {
     const { deps, salvar } = fakeDeps(null);
 
     const resultado = await salvarAvaliacaoDaEntrada(PEDIDO, deps);
 
-    expect(resultado).toEqual({ estado: "nao_encontrada" });
+    expect(resultado).toEqual({ estado: "obra_desconhecida" });
     expect(salvar).not.toHaveBeenCalled();
   });
 });
 
 describe("removerAvaliacaoDaEntrada", function ()
 {
-  it("remove a avaliação da obra da entrada", async function ()
+  it("remove a avaliação da obra", async function ()
   {
     const { deps, remover } = fakeDeps();
 
     const resultado = await removerAvaliacaoDaEntrada(
-      { userId: "u1", entradaId: "e1" },
+      { userId: "u1", anilistId: 30002 },
       deps,
     );
 
@@ -133,7 +131,7 @@ describe("removerAvaliacaoDaEntrada", function ()
     remover.mockResolvedValue(null);
 
     const resultado = await removerAvaliacaoDaEntrada(
-      { userId: "u1", entradaId: "e1" },
+      { userId: "u1", anilistId: 30002 },
       deps,
     );
 

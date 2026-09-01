@@ -1,6 +1,6 @@
 /**
- * DELETE /api/v1/avaliacoes/:entradaId — remover a avaliação da obra daquela
- * entrada. Alheia ou inexistente respondem igual: 404.
+ * DELETE /api/v1/avaliacoes/:anilistId — remover a avaliação da obra.
+ * Inexistente responde 404.
  */
 import { NextResponse } from "next/server";
 import { removerAvaliacaoDoSistema } from "@/server/services/avaliacao.service";
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export async function DELETE(
   _request: Request,
-  contexto: { params: Promise<{ entradaId: string }> },
+  contexto: { params: Promise<{ anilistId: string }> },
 )
 {
   const userId = await usuarioDaSessao();
@@ -23,13 +23,21 @@ export async function DELETE(
     );
   }
 
-  const { entradaId } = await contexto.params;
+  const anilistId = Number((await contexto.params).anilistId);
+
+  if (!Number.isInteger(anilistId) || anilistId <= 0)
+  {
+    return NextResponse.json(
+      { erros: { _geral: "obra inválida" } },
+      { status: 400 },
+    );
+  }
 
   try
   {
-    const resultado = await removerAvaliacaoDoSistema({ userId, entradaId });
+    const resultado = await removerAvaliacaoDoSistema({ userId, anilistId });
 
-    if (resultado.estado === "nao_encontrada")
+    if (resultado.estado !== "ok")
     {
       return NextResponse.json(
         { erros: { _geral: "avaliação não encontrada" } },

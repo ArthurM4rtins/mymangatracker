@@ -61,11 +61,13 @@ export type MinhaRelacao = {
     | { sourceHost: string; tipo: "template" }
     | { sourceHost: string; tipo: "pagina"; urlDaObra: string }
     | null;
-  avaliacao: {
-    rating: string | null;
-    review: string | null;
-    containsSpoilers: boolean;
-  } | null;
+};
+
+/** Avaliar não exige estante (issue #45) — a avaliação anda separada. */
+export type MinhaAvaliacao = {
+  rating: string | null;
+  review: string | null;
+  containsSpoilers: boolean;
 };
 
 export type ResultadoDaObra =
@@ -74,6 +76,7 @@ export type ResultadoDaObra =
       obra: ObraDaPagina;
       similares: ObraSimilar[];
       minha: MinhaRelacao | null;
+      minhaAvaliacao: MinhaAvaliacao | null;
       reviews: ReviewPublica[];
     }
   | { estado: "nao_encontrada" }
@@ -168,9 +171,22 @@ export async function obraParaPagina(
     }
   }
 
-  const [similares, minha, reviews] = await Promise.all([
+  const [similares, minha, minhaAvaliacao, reviews] = await Promise.all([
     similaresSemDerrubar(anilistId, deps),
     userId === null ? Promise.resolve(null) : minhaRelacao(userId, cache.id, deps),
+    // Avaliar não exige estante — a avaliação anda separada do recorte.
+    userId === null
+      ? Promise.resolve(null)
+      : deps.buscarAvaliacao(userId, cache.id).then(function (avaliacao)
+        {
+          return avaliacao === null
+            ? null
+            : {
+                rating: avaliacao.rating,
+                review: avaliacao.review,
+                containsSpoilers: avaliacao.containsSpoilers,
+              };
+        }),
     // Social falhando não derruba a obra — a seção some.
     deps.listarReviews(cache.id, userId).catch(function () { return []; }),
   ]);
@@ -192,7 +208,7 @@ export async function obraParaPagina(
     autores: cache.autores,
   };
 
-  return { estado: "ok", obra, similares, minha, reviews };
+  return { estado: "ok", obra, similares, minha, minhaAvaliacao, reviews };
 }
 
 async function similaresSemDerrubar(
@@ -233,10 +249,7 @@ async function minhaRelacao(
     return null;
   }
 
-  const [fonte, avaliacao] = await Promise.all([
-    deps.buscarFonte(userId, mediaId),
-    deps.buscarAvaliacao(userId, mediaId),
-  ]);
+  const fonte = await deps.buscarFonte(userId, mediaId);
 
   const maior =
     entrada.progressChapter === null ? null : Number(entrada.progressChapter);
@@ -256,14 +269,6 @@ async function minhaRelacao(
               tipo: "pagina",
               urlDaObra: urlDaPagina(fonte.sourceHost, fonte.urlTemplate),
             },
-    avaliacao:
-      avaliacao === null
-        ? null
-        : {
-            rating: avaliacao.rating,
-            review: avaliacao.review,
-            containsSpoilers: avaliacao.containsSpoilers,
-          },
   };
 }
 
