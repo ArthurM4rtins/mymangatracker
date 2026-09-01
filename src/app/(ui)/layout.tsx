@@ -56,6 +56,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             {/* Ordem provisória: o seletor de tema migra para o dropdown de
                 navegação quando ele existir (issue #18). */}
             <div className="flex items-center gap-4">
+              {userId && (
+                <Link
+                  href="/estante"
+                  className="text-sm text-texto-suave transition-colors hover:text-texto"
+                >
+                  Estante
+                </Link>
+              )}
               <SeletorTema />
               {userId ? (
                 <BotaoSair />
