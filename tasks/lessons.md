@@ -155,6 +155,21 @@ para config de lint.
 
 ---
 
+## PowerShell 5.1 quebra argumento multilinha com aspas duplas internas
+
+**01/09/2026.** Duas vezes na mesma sessao: here-string `@'...'@` passado como
+argumento de exe nativo (`gh pr create --body`, `git commit -m`) estourou com
+"unknown arguments" / "pathspec did not match" quando o texto continha aspas
+duplas internas ("Configurar leitura", "Na estante"). O parser de argumentos
+nativos do Windows PowerShell 5.1 recorta no `"` interno mesmo vindo de
+here-string literal.
+
+**Regra:** mensagem/corpo multilinha com aspas duplas vai por arquivo
+(`--body-file`, `git commit -F`) ou perde as aspas. Nao insistir no here-string
+inline — o erro so aparece na execucao.
+
+---
+
 ## Identidade visual — nao ecoar o Letterboxd
 
 **31/08/2026.** Duas correcoes do usuario na primeira rodada de identidade: (1) os temas sumi e

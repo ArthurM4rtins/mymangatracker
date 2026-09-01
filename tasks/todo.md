@@ -348,3 +348,16 @@ Regra de lessons.md respeitada: Letterboxd e benchmark de produto, nao estetica.
 
 Cadeia de PRs: #19 <- #20 <- #22 <- #24 <- #26(home). Mergear em ordem.
 Proximo: continuar o front (catalogo/estante) ou rating.
+
+## Sessao 01/09 — continuacao: front do catalogo (#27)
+
+- Obra ja na estante nasce marcada no catalogo (logado): repo
+  listarAnilistIdsDaEstante (privacidade provada com 2 usuarios no test:db),
+  servico anilistIdsNaEstante (TDD), BotaoEstante com estado inicial do server.
+- Card refinado: capa maior, titulo 2 linhas, descricao 3, hover no acento.
+- Licao nova em lessons.md: here-string PS 5.1 + aspas duplas internas quebra
+  argumento de exe nativo — usar --body-file / commit -F.
+- Branch feature/catalogo-front, empilhada na home-leitura. PR #28.
+
+Cadeia: #19 <- #20 <- #22 <- #24 <- #26 <- #28. Mergear em ordem.
+Proximo: front da estante (refino visual) ou rating/avaliacao.
