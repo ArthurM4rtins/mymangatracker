@@ -7,6 +7,7 @@ import {
   type StatusDaEstante,
 } from "@/server/services/estante.service";
 import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
+import { Avaliar } from "./avaliar";
 import { ConfigurarFonte } from "./configurar-fonte";
 import { ContinuarLeitura } from "./continuar-leitura";
 import { EditarProgresso } from "./editar-progresso";
@@ -187,6 +188,8 @@ function Entrada({ entrada }: { entrada: EntradaDaEstante })
           {entrada.fonte && (
             <p className="text-xs text-texto-suave">lendo em {entrada.fonte.sourceHost}</p>
           )}
+
+          <Avaliar entradaId={entrada.entradaId} avaliacao={entrada.avaliacao} />
         </div>
       </div>
     </li>
