@@ -6,11 +6,12 @@ import {
   type MinhaRelacao,
   type ObraSimilar,
 } from "@/server/services/obra.service";
+import { interpretarDescricao } from "@/server/domain/descricao";
 import { AdicionarALista } from "./adicionar-a-lista";
+import { AvaliacaoDaObra } from "./avaliacao-da-obra";
 import { ReviewSocial } from "./review-social";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "../../catalogo/botao-estante";
-import { Avaliar } from "../../estante/avaliar";
 import { ConfigurarFonte } from "../../estante/configurar-fonte";
 import { ContinuarLeitura } from "../../estante/continuar-leitura";
 import { EditarProgresso } from "../../estante/editar-progresso";
@@ -78,17 +79,21 @@ export default async function PaginaDaObra({ params }: Props)
     );
   }
 
-  const { obra, similares, minha, reviews } = resultado;
+  const { obra, similares, minha, minhaAvaliacao, reviews } = resultado;
+  // Obra sem banner usa a própria capa esticada com blur — todas consistentes.
+  const fundo = obra.bannerImageUrl ?? obra.coverImageUrl;
+  const descricao =
+    obra.description === null ? null : interpretarDescricao(obra.description);
 
   return (
     <main className="flex min-h-screen flex-col">
-      {obra.bannerImageUrl && (
-        <div className="relative h-44 w-full sm:h-64">
+      {fundo && (
+        <div className="relative h-44 w-full overflow-hidden sm:h-64">
           <Image
-            src={obra.bannerImageUrl}
+            src={fundo}
             alt=""
             fill
-            className="object-cover opacity-50"
+            className={`object-cover opacity-50 ${obra.bannerImageUrl ? "" : "scale-110 blur-xl"}`}
             unoptimized
             priority
           />
@@ -104,7 +109,7 @@ export default async function PaginaDaObra({ params }: Props)
               alt=""
               width={192}
               height={288}
-              className={`h-72 w-48 shrink-0 rounded-lg object-cover shadow-lg ${obra.bannerImageUrl ? "-mt-20 sm:-mt-28" : ""}`}
+              className="h-72 w-48 shrink-0 rounded-lg object-cover shadow-lg"
               unoptimized
               priority
             />
@@ -171,15 +176,38 @@ export default async function PaginaDaObra({ params }: Props)
               )}
             </p>
 
-            {obra.description && (
+            {descricao && descricao.sinopse !== "" && (
               <p className="whitespace-pre-line text-sm leading-relaxed text-texto-suave">
-                {obra.description}
+                {descricao.sinopse}
               </p>
             )}
           </div>
         </section>
 
+        {descricao && descricao.notas.length > 0 && (
+          <section className="flex flex-col gap-3 rounded-lg border border-borda bg-superficie p-4">
+            <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
+              Curiosidades
+            </h2>
+            <ul className="flex flex-col gap-1.5">
+              {descricao.notas.map(function (nota)
+              {
+                return (
+                  <li key={nota} className="flex gap-2 text-sm text-texto-suave">
+                    <span aria-hidden className="text-acento">▸</span>
+                    <span className="min-w-0 flex-1">{nota}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
         <PainelDoUsuario anilistId={obra.anilistId} minha={minha} logado={userId !== null} />
+
+        {userId !== null && (
+          <AvaliacaoDaObra anilistId={obra.anilistId} avaliacao={minhaAvaliacao} />
+        )}
 
         <section className="flex flex-col gap-4">
           <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
@@ -286,8 +314,6 @@ function PainelDoUsuario({
           urlDaObra={minha.fonte.tipo === "pagina" ? minha.fonte.urlDaObra : undefined}
         />
       )}
-
-      <Avaliar entradaId={minha.entradaId} avaliacao={minha.avaliacao} />
     </section>
   );
 }

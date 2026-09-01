@@ -1,11 +1,12 @@
 "use client";
 
 /**
- * Nota e resenha estilo Letterboxd: estrelas de meia em meia, resenha com
- * flag de spoiler. Uma avaliação por obra, editável; remover apaga de vez.
+ * Nota e resenha no card da estante. Desde a issue #45 a avaliação é por
+ * obra (anilistId) e não exige entrada — aqui só muda o endereço.
  */
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { SeletorDeEstrelas, estrelasTexto } from "../componentes/estrelas";
 
 type Avaliacao = {
   rating: string | null;
@@ -14,17 +15,17 @@ type Avaliacao = {
 };
 
 export function Avaliar({
-  entradaId,
+  anilistId,
   avaliacao,
 }: {
-  entradaId: string;
+  anilistId: number;
   avaliacao: Avaliacao | null;
 })
 {
   const roteador = useRouter();
   const [aberto, setAberto] = useState(false);
   const [nota, setNota] = useState<number | null>(
-    avaliacao?.rating === null || avaliacao === null ? null : Number(avaliacao.rating),
+    avaliacao?.rating == null ? null : Number(avaliacao.rating),
   );
   const [resenha, setResenha] = useState(avaliacao?.review ?? "");
   const [spoilers, setSpoilers] = useState(avaliacao?.containsSpoilers ?? false);
@@ -49,7 +50,7 @@ export function Avaliar({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          entradaId,
+          anilistId,
           rating: nota,
           review: resenha.trim() === "" ? null : resenha,
           containsSpoilers: spoilers,
@@ -88,7 +89,7 @@ export function Avaliar({
 
     try
     {
-      const resposta = await fetch(`/api/v1/avaliacoes/${entradaId}`, {
+      const resposta = await fetch(`/api/v1/avaliacoes/${anilistId}`, {
         method: "DELETE",
       });
 
@@ -121,7 +122,7 @@ export function Avaliar({
         <div className="flex flex-wrap items-center gap-2">
           {avaliacao?.rating != null && (
             <span aria-label={`Nota ${avaliacao.rating} de 5`} className="text-sm text-acento">
-              {estrelas(Number(avaliacao.rating))}
+              {estrelasTexto(Number(avaliacao.rating))}
             </span>
           )}
           <button
@@ -206,73 +207,4 @@ export function Avaliar({
       </div>
     </div>
   );
-}
-
-/** Meia estrela por clique: cada estrela tem duas metades clicáveis. */
-function SeletorDeEstrelas({
-  nota,
-  aoEscolher,
-}: {
-  nota: number | null;
-  aoEscolher: (nota: number | null) => void;
-})
-{
-  return (
-    <div className="flex items-center gap-2">
-      <div role="group" aria-label="Nota de 0,5 a 5" className="flex">
-        {[1, 2, 3, 4, 5].map(function (estrela)
-        {
-          const cheia = nota !== null && nota >= estrela;
-          const metade = nota !== null && nota === estrela - 0.5;
-
-          return (
-            <span key={estrela} className="relative text-xl leading-none">
-              <span aria-hidden className={cheia ? "text-acento" : "text-borda"}>
-                ★
-              </span>
-              {metade && (
-                <span
-                  aria-hidden
-                  className="absolute inset-0 w-1/2 overflow-hidden text-acento"
-                >
-                  ★
-                </span>
-              )}
-              <button
-                type="button"
-                aria-label={`${estrela - 0.5} estrelas`}
-                onClick={function () { aoEscolher(estrela - 0.5); }}
-                className="absolute inset-y-0 left-0 w-1/2"
-              />
-              <button
-                type="button"
-                aria-label={`${estrela} estrelas`}
-                onClick={function () { aoEscolher(estrela); }}
-                className="absolute inset-y-0 right-0 w-1/2"
-              />
-            </span>
-          );
-        })}
-      </div>
-      <span className="text-xs tabular-nums text-texto-suave">
-        {nota === null ? "sem nota" : nota.toLocaleString("pt-BR")}
-      </span>
-      {nota !== null && (
-        <button
-          type="button"
-          onClick={function () { aoEscolher(null); }}
-          className="text-xs text-texto-suave underline underline-offset-4"
-        >
-          limpar
-        </button>
-      )}
-    </div>
-  );
-}
-
-function estrelas(nota: number): string
-{
-  const cheias = Math.floor(nota);
-
-  return "★".repeat(cheias) + (nota % 1 !== 0 ? "½" : "");
 }

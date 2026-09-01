@@ -193,7 +193,7 @@ function Entrada({ entrada }: { entrada: EntradaDaEstante })
             <p className="text-xs text-texto-suave">lendo em {entrada.fonte.sourceHost}</p>
           )}
 
-          <Avaliar entradaId={entrada.entradaId} avaliacao={entrada.avaliacao} />
+          <Avaliar anilistId={entrada.obra.anilistId} avaliacao={entrada.avaliacao} />
         </div>
       </div>
     </li>
