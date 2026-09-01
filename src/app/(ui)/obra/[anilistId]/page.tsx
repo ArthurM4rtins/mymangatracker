@@ -6,6 +6,7 @@ import {
   type MinhaRelacao,
   type ObraSimilar,
 } from "@/server/services/obra.service";
+import { ReviewSocial } from "./review-social";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "../../catalogo/botao-estante";
 import { Avaliar } from "../../estante/avaliar";
@@ -76,7 +77,7 @@ export default async function PaginaDaObra({ params }: Props)
     );
   }
 
-  const { obra, similares, minha } = resultado;
+  const { obra, similares, minha, reviews } = resultado;
 
   return (
     <main className="flex min-h-screen flex-col">
@@ -167,6 +168,49 @@ export default async function PaginaDaObra({ params }: Props)
         </section>
 
         <PainelDoUsuario anilistId={obra.anilistId} minha={minha} logado={userId !== null} />
+
+        <section className="flex flex-col gap-4">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
+            Resenhas
+          </h2>
+          {reviews.length === 0 ? (
+            <p className="text-sm text-texto-suave">
+              Ainda não tem resenha por aqui — avalie com um texto e a sua
+              aparece para todo mundo.
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-4">
+              {reviews.map(function (review)
+              {
+                return (
+                  <ReviewSocial
+                    key={review.entryId}
+                    review={{
+                      entryId: review.entryId,
+                      username: review.username,
+                      minha: review.minha,
+                      rating: review.rating,
+                      review: review.review,
+                      containsSpoilers: review.containsSpoilers,
+                      curtidas: review.curtidas,
+                      curtiPorMim: review.curtiPorMim,
+                      comentarios: review.comentarios.map(function (comentario)
+                      {
+                        return {
+                          id: comentario.id,
+                          username: comentario.username,
+                          texto: comentario.texto,
+                          meu: comentario.meu,
+                        };
+                      }),
+                    }}
+                    logado={userId !== null}
+                  />
+                );
+              })}
+            </ul>
+          )}
+        </section>
 
         {similares.length > 0 && <Similares similares={similares} />}
       </div>
