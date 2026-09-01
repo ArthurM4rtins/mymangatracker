@@ -1,19 +1,32 @@
+import Image from "next/image";
 import Link from "next/link";
 import { verificarSaudeDoSistema } from "@/server/services/sistema.service";
+import { buscarNoCatalogo } from "@/server/services/catalogo.service";
+import {
+  listarEstanteDoSistema,
+  type EntradaDaEstante,
+} from "@/server/services/estante.service";
+import { perfilDoUsuarioDoSistema } from "@/server/services/usuario.service";
 import type { Dependencia, EstadoGeral } from "@/server/domain/health-status";
+import type { MediaDoAniList } from "@/server/domain/anilist-media";
+import { usuarioDaSessao } from "../api/v1/_shared/sessao";
+import { ContinuarLeitura } from "./estante/continuar-leitura";
 
-// Mede o agora: nunca pré-renderizada, nunca servida de cache.
+// Mede o agora e depende da sessão: nunca pré-renderizada, nunca de cache.
 export const dynamic = "force-dynamic";
 
+const LIMITE_CONTINUAR = 4;
+const LIMITE_POPULARES = 12;
+
 const RESUMO: Record<EstadoGeral, string> = {
-  ok: "Tudo no ar.",
-  degraded: "No ar, com configuração pendente.",
-  down: "Alguma dependência está fora.",
+  ok: "tudo no ar",
+  degraded: "no ar, com configuração pendente",
+  down: "alguma dependência está fora",
 };
 
 const ROTULO_DEPENDENCIA: Record<string, string> = {
-  database: "Banco de dados",
-  anilist: "Catálogo AniList",
+  database: "banco de dados",
+  anilist: "catálogo AniList",
 };
 
 const ESTADO_DEPENDENCIA: Record<Dependencia["status"], string> = {
@@ -22,84 +35,251 @@ const ESTADO_DEPENDENCIA: Record<Dependencia["status"], string> = {
   not_configured: "não configurado",
 };
 
-const COR: Record<Dependencia["status"], string> = {
-  ok: "bg-emerald-500",
-  down: "bg-red-500",
-  not_configured: "bg-amber-500",
-};
-
 export default async function Home()
 {
-  const saude = await verificarSaudeDoSistema();
+  const userId = await usuarioDaSessao();
+
+  const [saude, populares, leitura] = await Promise.all([
+    verificarSaudeDoSistema(),
+    buscarNoCatalogo(""),
+    userId ? dadosDeLeitura(userId) : Promise.resolve(null),
+  ]);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-10 px-6 py-16">
-      <header className="flex flex-col gap-3">
-        <h1 className="text-3xl font-semibold tracking-tight">Kidoku</h1>
-        <p className="text-texto-suave">
-          Um Letterboxd para mangá, manhwa e novel, com progresso de leitura
-          automático e privado.
+    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-12 px-6 py-12">
+      {saude.status !== "ok" && (
+        <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
+          {RESUMO[saude.status]} —{" "}
+          {saude.dependencies
+            .filter(function (dependencia) { return dependencia.status !== "ok"; })
+            .map(function (dependencia)
+            {
+              return `${ROTULO_DEPENDENCIA[dependencia.name] ?? dependencia.name} ${ESTADO_DEPENDENCIA[dependencia.status]}`;
+            })
+            .join(", ")}
+          . O que não depende disso continua funcionando.
         </p>
-      </header>
+      )}
 
-      <section
-        aria-labelledby="titulo-status"
-        className="flex flex-col gap-4 rounded-lg border border-borda bg-superficie p-6"
-      >
-        <div className="flex flex-col gap-1">
-          <h2 id="titulo-status" className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-            Status do sistema
+      {leitura ? (
+        <BoasVindas leitura={leitura} />
+      ) : (
+        <Apresentacao />
+      )}
+
+      <section className="flex flex-col gap-4">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
+            Populares agora
           </h2>
-          <p className="text-lg">{RESUMO[saude.status]}</p>
+          <Link
+            href="/catalogo"
+            className="text-sm text-acento underline underline-offset-4"
+          >
+            ver catálogo →
+          </Link>
         </div>
 
-        <ul className="flex flex-col gap-2">
-          {saude.dependencies.map(function (dependencia)
-          {
-            return (
-              <li key={dependencia.name} className="flex items-center gap-3 text-sm">
-                <span
-                  aria-hidden
-                  className={`size-2 shrink-0 rounded-full ${COR[dependencia.status]}`}
-                />
-                <span className="flex-1">
-                  {ROTULO_DEPENDENCIA[dependencia.name] ?? dependencia.name}
-                </span>
-                <span className="text-texto-suave">
-                  {ESTADO_DEPENDENCIA[dependencia.status]}
-                  {dependencia.latencyMs !== undefined && ` · ${dependencia.latencyMs} ms`}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-
-        {saude.status === "degraded" && (
+        {(populares.estado === "ok" || populares.estado === "destaques") ? (
+          <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+            {populares.obras.slice(0, LIMITE_POPULARES).map(function (obra)
+            {
+              return <CapaPopular key={obra.anilistId} obra={obra} />;
+            })}
+          </ul>
+        ) : (
           <p className="text-sm text-texto-suave">
-            As telas que dependem do banco ficam indisponíveis até a configuração
-            ser concluída. O catálogo continua funcionando.
+            O catálogo não respondeu agora — tente de novo em instantes.
           </p>
         )}
+      </section>
 
-        <p className="text-xs text-texto-suave">
-          Verificado em {saude.checkedAt} ·{" "}
+      <footer className="mt-auto border-t border-borda pt-4 text-xs text-texto-suave">
+        <p>
+          <span aria-hidden>{saude.status === "ok" ? "●" : "○"}</span>{" "}
+          {RESUMO[saude.status]} · verificado em {saude.checkedAt} ·{" "}
           <Link href="/api/v1/health" className="underline underline-offset-4">
             /api/v1/health
           </Link>
         </p>
-      </section>
-
-      <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-          Começar
-        </h2>
-        <Link
-          href="/catalogo"
-          className="w-fit rounded-md border border-acento px-4 py-2 text-sm font-medium text-acento transition-colors hover:bg-acento hover:text-acento-contraste"
-        >
-          Buscar no catálogo
-        </Link>
-      </section>
+      </footer>
     </main>
+  );
+}
+
+type DadosDeLeitura = {
+  username: string;
+  continuar: EntradaDaEstante[];
+  temEstante: boolean;
+};
+
+/** O que a home de quem está logado precisa. Banco fora = home de visitante. */
+async function dadosDeLeitura(userId: string): Promise<DadosDeLeitura | null>
+{
+  try
+  {
+    const [perfil, lendo] = await Promise.all([
+      perfilDoUsuarioDoSistema(userId),
+      listarEstanteDoSistema({ userId, status: "READING" }),
+    ]);
+
+    if (perfil === null)
+    {
+      return null;
+    }
+
+    return {
+      username: perfil.username,
+      continuar: lendo
+        .filter(function (entrada) { return entrada.fonte !== null; })
+        .slice(0, LIMITE_CONTINUAR),
+      temEstante: lendo.length > 0,
+    };
+  }
+  catch
+  {
+    return null;
+  }
+}
+
+function BoasVindas({ leitura }: { leitura: DadosDeLeitura })
+{
+  return (
+    <section className="flex flex-col gap-5">
+      <h1 className="font-marca text-3xl font-bold tracking-tight">
+        Boa leitura, {leitura.username}.
+      </h1>
+
+      {leitura.continuar.length > 0 ? (
+        <div className="flex flex-col gap-3">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
+            Continuar lendo
+          </h2>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {leitura.continuar.map(function (entrada)
+            {
+              return <CardContinuar key={entrada.entradaId} entrada={entrada} />;
+            })}
+          </ul>
+        </div>
+      ) : (
+        <p className="text-texto-suave">
+          {leitura.temEstante ? (
+            <>
+              Configure a fonte de leitura na{" "}
+              <Link href="/estante" className="text-acento underline underline-offset-4">
+                estante
+              </Link>{" "}
+              e o botão de continuar aparece aqui.
+            </>
+          ) : (
+            <>
+              Sua estante está vazia —{" "}
+              <Link href="/catalogo" className="text-acento underline underline-offset-4">
+                busque no catálogo
+              </Link>{" "}
+              e adicione a primeira obra.
+            </>
+          )}
+        </p>
+      )}
+    </section>
+  );
+}
+
+function Apresentacao()
+{
+  return (
+    <section className="flex flex-col gap-5">
+      <h1 className="font-marca text-4xl font-bold tracking-tight">Kidoku</h1>
+      <p className="max-w-xl text-lg text-texto-suave">
+        Registre sua leitura de mangá, manhwa e novel. Progresso automático,
+        histórico privado, estante sua.
+      </p>
+      <div className="flex flex-wrap gap-3">
+        <Link
+          href="/cadastrar"
+          className="rounded-md bg-acento px-4 py-2 text-sm font-medium text-acento-contraste"
+        >
+          Criar conta
+        </Link>
+        <Link
+          href="/entrar"
+          className="rounded-md border border-borda px-4 py-2 text-sm text-texto transition-colors hover:border-acento"
+        >
+          Entrar
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+function CardContinuar({ entrada }: { entrada: EntradaDaEstante })
+{
+  return (
+    <li className="flex flex-col gap-2 rounded-lg border border-borda bg-superficie p-3">
+      {entrada.obra.coverImageUrl ? (
+        <Image
+          src={entrada.obra.coverImageUrl}
+          alt=""
+          width={184}
+          height={276}
+          className="aspect-[2/3] w-full rounded object-cover"
+          unoptimized
+        />
+      ) : (
+        <div
+          aria-hidden
+          className="flex aspect-[2/3] w-full items-center justify-center rounded bg-fundo text-texto-suave"
+        >
+          —
+        </div>
+      )}
+
+      <p className="line-clamp-1 text-sm font-medium">
+        {entrada.obra.titleEnglish ?? entrada.obra.titleRomaji}
+      </p>
+
+      <ContinuarLeitura
+        entradaId={entrada.entradaId}
+        proximoCapitulo={entrada.proximoCapitulo}
+        compacto
+      />
+    </li>
+  );
+}
+
+function CapaPopular({ obra }: { obra: MediaDoAniList })
+{
+  const titulo = obra.titleEnglish ?? obra.titleRomaji;
+
+  return (
+    <li>
+      <Link
+        href={`/catalogo?q=${encodeURIComponent(titulo)}`}
+        className="group flex flex-col gap-1.5"
+      >
+        {obra.coverImageUrl ? (
+          <Image
+            src={obra.coverImageUrl}
+            alt=""
+            width={144}
+            height={216}
+            className="aspect-[2/3] w-full rounded object-cover transition-opacity group-hover:opacity-80"
+            unoptimized
+          />
+        ) : (
+          <div
+            aria-hidden
+            className="flex aspect-[2/3] w-full items-center justify-center rounded bg-superficie text-texto-suave"
+          >
+            —
+          </div>
+        )}
+        <span className="line-clamp-1 text-xs text-texto-suave group-hover:text-texto">
+          {titulo}
+        </span>
+      </Link>
+    </li>
   );
 }

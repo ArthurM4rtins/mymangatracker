@@ -10,9 +10,12 @@ import { useState } from "react";
 export function ContinuarLeitura({
   entradaId,
   proximoCapitulo,
+  compacto = false,
 }: {
   entradaId: string;
   proximoCapitulo: number;
+  /** Na home o card é pequeno: só o botão principal, sem capítulo manual. */
+  compacto?: boolean;
 })
 {
   const roteador = useRouter();
@@ -88,6 +91,7 @@ export function ContinuarLeitura({
           {ocupado ? "Abrindo…" : `Continuar cap. ${proximoCapitulo} →`}
         </button>
 
+        {!compacto && (
         <span className="flex items-center gap-1 text-xs text-texto-suave">
           ou cap.
           <input
@@ -107,6 +111,7 @@ export function ContinuarLeitura({
             abrir
           </button>
         </span>
+        )}
       </div>
 
       {erro && (
