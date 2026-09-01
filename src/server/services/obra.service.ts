@@ -21,6 +21,10 @@ import {
 import { buscarEntradaPorMedia } from "@/server/repositories/shelf.repository";
 import { buscarFonteAtiva } from "@/server/repositories/reading-source.repository";
 import { buscarAvaliacao } from "@/server/repositories/avaliacao.repository";
+import {
+  listarReviewsDaObra,
+  type ReviewPublica,
+} from "@/server/repositories/review-social.repository";
 
 /** O que a página mostra da obra. Contrato — sem id interno, sem syncedAt. */
 export type ObraDaPagina = {
@@ -70,6 +74,7 @@ export type ResultadoDaObra =
       obra: ObraDaPagina;
       similares: ObraSimilar[];
       minha: MinhaRelacao | null;
+      reviews: ReviewPublica[];
     }
   | { estado: "nao_encontrada" }
   | { estado: "indisponivel" };
@@ -103,6 +108,10 @@ export type DependenciasDaObra = {
     review: string | null;
     containsSpoilers: boolean;
   } | null>;
+  listarReviews: (
+    mediaId: string,
+    userId: string | null,
+  ) => Promise<ReviewPublica[]>;
   relogio?: () => Date;
 };
 
@@ -159,9 +168,11 @@ export async function obraParaPagina(
     }
   }
 
-  const [similares, minha] = await Promise.all([
+  const [similares, minha, reviews] = await Promise.all([
     similaresSemDerrubar(anilistId, deps),
     userId === null ? Promise.resolve(null) : minhaRelacao(userId, cache.id, deps),
+    // Social falhando não derruba a obra — a seção some.
+    deps.listarReviews(cache.id, userId).catch(function () { return []; }),
   ]);
 
   const obra: ObraDaPagina = {
@@ -181,7 +192,7 @@ export async function obraParaPagina(
     autores: cache.autores,
   };
 
-  return { estado: "ok", obra, similares, minha };
+  return { estado: "ok", obra, similares, minha, reviews };
 }
 
 async function similaresSemDerrubar(
@@ -270,5 +281,6 @@ export function obraParaPaginaDoSistema(
     buscarEntrada: buscarEntradaPorMedia,
     buscarFonte: buscarFonteAtiva,
     buscarAvaliacao,
+    listarReviews: listarReviewsDaObra,
   });
 }

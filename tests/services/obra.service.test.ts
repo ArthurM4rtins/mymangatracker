@@ -84,6 +84,23 @@ function fakeDeps(cenario: {
   {
     return { mediaId: "m1", rating: "4.5", review: null, containsSpoilers: false };
   });
+  const listarReviews = vi.fn(async function ()
+  {
+    return [
+      {
+        entryId: "r1",
+        username: "leitor",
+        minha: false,
+        rating: "5",
+        review: "obra-prima",
+        containsSpoilers: false,
+        publicadaEm: AGORA,
+        curtidas: 2,
+        curtiPorMim: false,
+        comentarios: [],
+      },
+    ];
+  });
 
   return {
     deps: {
@@ -94,11 +111,13 @@ function fakeDeps(cenario: {
       buscarEntrada,
       buscarFonte,
       buscarAvaliacao,
+      listarReviews,
       relogio: function () { return AGORA; },
     },
     buscarNoAniList,
     salvarMedia,
     buscarEntrada,
+    listarReviews,
   };
 }
 
@@ -119,6 +138,23 @@ describe("obraParaPagina", function ()
     expect(resultado.obra.titleRomaji).toBe("Vagabond");
     expect(resultado.obra.autores[0].nome).toBe("Takehiko Inoue");
     expect(resultado.minha).toBeNull();
+    expect(resultado.reviews).toHaveLength(1);
+    expect(resultado.reviews[0].username).toBe("leitor");
+  });
+
+  it("reviews falhando somem sem derrubar a página", async function ()
+  {
+    const { deps, listarReviews } = fakeDeps({ noCache: NO_CACHE });
+    listarReviews.mockRejectedValue(new Error("fora"));
+
+    const resultado = await obraParaPagina(30656, null, deps);
+
+    if (resultado.estado !== "ok")
+    {
+      throw new Error("esperava ok");
+    }
+
+    expect(resultado.reviews).toEqual([]);
   });
 
   it("cache velho rebusca e regrava", async function ()
