@@ -68,6 +68,15 @@ model Media {
   coverImageUrl   String?
   description     String?
   chapters        Int?
+  // Campos da página da obra (issue #35). Tudo anulável: linha velha continua
+  // válida e é reidratada pelo TTL de 24h.
+  bannerImageUrl  String?
+  startYear       Int?
+  genres          String[] @default([])
+  averageScore    Int?
+  // [{anilistStaffId, nome, papel}] — tabela própria só quando a página do
+  // autor existir; até lá o Json evita entidade sem tela.
+  authors         Json?
   syncedAt        DateTime
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
