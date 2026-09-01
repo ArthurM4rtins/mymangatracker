@@ -466,3 +466,24 @@ Cadeia: ... <- #34 <- #36. Proximo do roadmap: C (filtros do catalogo).
 - Branch feature/catalogo-filtros, empilhada na pagina-obra. PR #38.
 
 Cadeia: ... <- #36 <- #38. Proximo do roadmap: B (reviews sociais publicas).
+
+## Sessao 01/09 — continuacao: reviews sociais (#39), bloco B
+
+Resenha COM TEXTO agora e publica na pagina da obra — primeira consulta do
+sistema sem userId no where, consciente e travada em teste: username sai,
+e-mail e ids de usuario NUNCA. Progresso e fonte seguem 100% privados.
+
+- ReviewLike (unica por entry+user, toggle) e ReviewComment (chat plano,
+  CHECK de nao-vazio provado quebrando), Cascade dos dois lados.
+- Ordenacao: mais curtidas, desempate recente. Nota sem texto fica fora.
+- Rotas: POST reviews/:id/curtida (toggle), POST reviews/:id/comentarios,
+  DELETE comentarios/:id (so o proprio). Leitura e server-side na pagina.
+- UI: card de resenha com estrelas, spoiler escondido, curtida otimista,
+  conversa em details com apagar so do proprio.
+- Provas: lint 0, 166 unitarios, 44 test:db, build verde. E2E com 2 contas:
+  leitor2 curtiu (toggle 1->0->1), comentou, pagina mostra tudo.
+- Usuario de teste novo no dev: leitor2/leitor2@teste.local.
+- Branch feature/reviews-sociais, empilhada na catalogo-filtros. PR #40.
+
+Cadeia: ... <- #38 <- #40. Proximo do roadmap: D (lists) e E (pagina do
+autor); front geral segue evoluindo.
