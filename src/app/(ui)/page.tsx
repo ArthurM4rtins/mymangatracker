@@ -35,8 +35,8 @@ export default async function Home()
   return (
     <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-10 px-6 py-16">
       <header className="flex flex-col gap-3">
-        <h1 className="text-3xl font-semibold tracking-tight">MyMangaTracker</h1>
-        <p className="text-neutral-600 dark:text-neutral-400">
+        <h1 className="text-3xl font-semibold tracking-tight">Kidoku</h1>
+        <p className="text-texto-suave">
           Um Letterboxd para mangá, manhwa e novel, com progresso de leitura
           automático e privado.
         </p>
@@ -44,10 +44,10 @@ export default async function Home()
 
       <section
         aria-labelledby="titulo-status"
-        className="flex flex-col gap-4 rounded-lg border border-neutral-200 p-6 dark:border-neutral-800"
+        className="flex flex-col gap-4 rounded-lg border border-borda bg-superficie p-6"
       >
         <div className="flex flex-col gap-1">
-          <h2 id="titulo-status" className="text-sm font-medium uppercase tracking-wide text-neutral-500">
+          <h2 id="titulo-status" className="text-sm font-medium uppercase tracking-wide text-texto-suave">
             Status do sistema
           </h2>
           <p className="text-lg">{RESUMO[saude.status]}</p>
@@ -65,7 +65,7 @@ export default async function Home()
                 <span className="flex-1">
                   {ROTULO_DEPENDENCIA[dependencia.name] ?? dependencia.name}
                 </span>
-                <span className="text-neutral-600 dark:text-neutral-400">
+                <span className="text-texto-suave">
                   {ESTADO_DEPENDENCIA[dependencia.status]}
                   {dependencia.latencyMs !== undefined && ` · ${dependencia.latencyMs} ms`}
                 </span>
@@ -75,13 +75,13 @@ export default async function Home()
         </ul>
 
         {saude.status === "degraded" && (
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          <p className="text-sm text-texto-suave">
             As telas que dependem do banco ficam indisponíveis até a configuração
             ser concluída. O catálogo continua funcionando.
           </p>
         )}
 
-        <p className="text-xs text-neutral-500">
+        <p className="text-xs text-texto-suave">
           Verificado em {saude.checkedAt} ·{" "}
           <Link href="/api/v1/health" className="underline underline-offset-4">
             /api/v1/health
@@ -90,12 +90,12 @@ export default async function Home()
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-500">
+        <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
           Começar
         </h2>
         <Link
           href="/catalogo"
-          className="w-fit rounded-md border border-neutral-900 px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-900 hover:text-white dark:border-neutral-100 dark:hover:bg-neutral-100 dark:hover:text-neutral-900"
+          className="w-fit rounded-md border border-acento px-4 py-2 text-sm font-medium text-acento transition-colors hover:bg-acento hover:text-acento-contraste"
         >
           Buscar no catálogo
         </Link>
