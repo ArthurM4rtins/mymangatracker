@@ -6,6 +6,7 @@ import {
   type MinhaRelacao,
   type ObraSimilar,
 } from "@/server/services/obra.service";
+import { AdicionarALista } from "./adicionar-a-lista";
 import { ReviewSocial } from "./review-social";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "../../catalogo/botao-estante";
@@ -263,6 +264,7 @@ function PainelDoUsuario({
           />
         </span>
         <ConfigurarFonte entradaId={minha.entradaId} temFonte={minha.fonte !== null} />
+        <AdicionarALista anilistId={anilistId} />
       </div>
 
       {minha.fonte && (

@@ -72,6 +72,9 @@ export function MenuNavegacao({ logado }: { logado: boolean })
             <ItemDeMenu href="/catalogo" aoNavegar={fechar}>
               Catálogo
             </ItemDeMenu>
+            <ItemDeMenu href="/listas" aoNavegar={fechar}>
+              Listas
+            </ItemDeMenu>
             {logado && (
               <ItemDeMenu href="/estante" aoNavegar={fechar}>
                 Estante
