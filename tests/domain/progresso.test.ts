@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   progrideEstante,
   proximoCapitulo,
+  tipoDaFonte,
   urlDaLeitura,
+  urlDaPagina,
 } from "@/server/domain/progresso";
 
 // As regras da issue #23: progresso é o MAIOR capítulo aberto — releitura
@@ -47,6 +49,40 @@ describe("progrideEstante", function ()
   it("abrir o mesmo capítulo não muda nada", function ()
   {
     expect(progrideEstante(57, 57)).toBe(false);
+  });
+});
+
+describe("tipoDaFonte", function ()
+{
+  // Sites como MangaFire/MangaDex não carregam o número do capítulo na URL.
+  // O discriminador é o próprio urlTemplate: com {chapter} abre o capítulo
+  // direto; sem, a fonte é a página da obra.
+  it("com marcador é template", function ()
+  {
+    expect(tipoDaFonte("/title/Lookism/chapter/{chapter}/1")).toBe("template");
+  });
+
+  it("sem marcador é página da obra", function ()
+  {
+    expect(tipoDaFonte("/title/4mx-vagabondd")).toBe("pagina");
+  });
+});
+
+describe("urlDaPagina", function ()
+{
+  it("monta a URL absoluta da página da obra", function ()
+  {
+    expect(urlDaPagina("mangafire.to", "/title/4mx-vagabondd")).toBe(
+      "https://mangafire.to/title/4mx-vagabondd",
+    );
+  });
+
+  it("recusa path com marcador — isso é template, não página", function ()
+  {
+    expect(function ()
+    {
+      urlDaPagina("mangafire.to", "/title/x/{chapter}");
+    }).toThrowError();
   });
 });
 

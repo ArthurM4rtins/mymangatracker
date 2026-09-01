@@ -23,6 +23,34 @@ export function progrideEstante(atual: number | null, aberto: number): boolean
   return aberto > (atual ?? 0);
 }
 
+const MARCADOR = "{chapter}";
+
+/**
+ * O tipo da fonte sai do próprio urlTemplate: com `{chapter}` o site carrega o
+ * número do capítulo na URL; sem, guardamos a página da obra (MangaFire,
+ * MangaDex e afins usam id opaco por capítulo) e quem navega até o capítulo é
+ * o usuário — o registro continua igual.
+ */
+export function tipoDaFonte(urlTemplate: string): "template" | "pagina"
+{
+  return urlTemplate.includes(MARCADOR) ? "template" : "pagina";
+}
+
+/**
+ * A URL absoluta da página da obra — fonte sem template.
+ *
+ * @throws quando o path carrega `{chapter}` (isso é template, não página).
+ */
+export function urlDaPagina(sourceHost: string, path: string): string
+{
+  if (tipoDaFonte(path) === "template")
+  {
+    throw new Error(`página da obra não leva ${MARCADOR}: ${path}`);
+  }
+
+  return `https://${sourceHost}${path}`;
+}
+
 /**
  * A URL absoluta do capítulo na fonte. O template guardado é o path com
  * `{chapter}`; o host vive separado em `sourceHost`.
