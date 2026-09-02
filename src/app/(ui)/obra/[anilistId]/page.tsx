@@ -320,7 +320,51 @@ function PainelDoUsuario({
           urlDaObra={minha.fonte.tipo === "pagina" ? minha.fonte.urlDaObra : undefined}
         />
       )}
+
+      {minha.historico.length > 0 && <HistoricoDeLeitura historico={minha.historico} />}
     </section>
+  );
+}
+
+const FORMATO_ABERTURA = new Intl.DateTimeFormat("pt-BR", {
+  dateStyle: "short",
+  timeStyle: "short",
+});
+
+/** O histórico é do dono (issue #54): só renderiza dentro do painel de quem está logado. */
+function HistoricoDeLeitura({ historico }: { historico: MinhaRelacao["historico"] })
+{
+  return (
+    <details className="group text-sm">
+      <summary className="cursor-pointer select-none text-xs uppercase tracking-wide text-texto-suave hover:text-texto">
+        Histórico de leitura · {historico.length}
+        {historico.length === 20 ? " mais recentes" : historico.length === 1 ? " abertura" : " aberturas"}
+      </summary>
+      <ol className="mt-3 flex flex-col gap-1.5 border-l border-borda pl-3">
+        {historico.map(function (abertura)
+        {
+          return (
+            <li key={abertura.id} className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+              <span className="font-medium tabular-nums">cap. {abertura.chapter}</span>
+              <time
+                dateTime={abertura.abertaEm.toISOString()}
+                className="text-xs text-texto-suave tabular-nums"
+              >
+                {FORMATO_ABERTURA.format(abertura.abertaEm)}
+              </time>
+              <a
+                href={abertura.url}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-xs text-texto-suave underline decoration-dotted underline-offset-4 hover:text-acento"
+              >
+                {abertura.sourceHost ?? "fonte removida"}
+              </a>
+            </li>
+          );
+        })}
+      </ol>
+    </details>
   );
 }
 
