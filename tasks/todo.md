@@ -584,7 +584,30 @@ Cadeia: ... <- #44 <- #46.
   e invalida). Header: link Perfil quando logado.
 - Provas: lint 0, 186 unitarios, 52 test:db, build verde. Smoke:
   /u/smoketest 200 com Berserk e "seinen essencial", /u/naoexiste 404.
-- Pendencias no vault: grade da estante publica, avatar real, bio, Follow.
 - Branch feature/perfil-usuario, empilhada na visual-obra. PR #55.
+
+## Sessao 02/09 — continuacao: redesign do perfil apos print do usuario
+
+Feedback: cards de contagem feios; perfil de outro usuario deve mostrar so o
+que a pessoa FEZ (nota, resenha, lista), meu perfil mostra a estante.
+
+- Status da estante SAIU do publico (nem contagem). Perfil de outro usuario:
+  numeros numa linha do header (avaliadas · resenhas · listas · curtidas
+  dadas), grade de avaliadas (capa + nota) FILTRAVEL pela URL (ordem=
+  recentes|antigas|maior_nota|menor_nota, nota=0.5..5 — whitelist no
+  dominio, ordena em memoria), resenhas recentes, listas.
+- Perfil do DONO: bloco "Minha estante" com abas por status (contagem no
+  chip) e capitulo embaixo da capa — aprovado pelo usuario. Servico so monta
+  quando viewerId === dono; teste de banco prova que A visto por B nao
+  serializa status, capitulo, fonte, e-mail nem id.
+- Componentes client: minha-estante (abas), grade-avaliadas e resenha (os
+  dois por causa do estrelasTexto, que vive em modulo client),
+  filtros-avaliadas (selects -> URL, padrao do catalogo).
+- Provas: lint 0, 194 unitarios, 53 test:db, build verde. Smoke: usuario
+  novo `provadona` (senha no historico da sessao, nao aqui) com 2 obras ve
+  Minha estante + "voce"; anonimo e outro logado nao recebem READING nem
+  progressChapter; ?ordem=maior_nota&nota=5 filtra.
+- Pendencias no vault: grade de "resenhas que curtiu", avatar real, bio,
+  Follow.
 
 Cadeia: ... <- #46 <- #55.
