@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Instrument_Sans, Zen_Kaku_Gothic_New } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import { perfilDoUsuarioDoSistema } from "@/server/services/usuario.service";
 import { usuarioDaSessao } from "../api/v1/_shared/sessao";
 import { BotaoSair } from "./componentes/botao-sair";
 import { Logo } from "./componentes/logo";
@@ -54,10 +55,26 @@ function LinkDoHeader({
   );
 }
 
+/** O username de quem está logado, para o link do perfil. Banco fora = sem link. */
+async function usernameDaSessao(userId: string): Promise<string | null>
+{
+  try
+  {
+    const perfil = await perfilDoUsuarioDoSistema(userId);
+
+    return perfil?.username ?? null;
+  }
+  catch
+  {
+    return null;
+  }
+}
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   // Resolver sessão aqui torna todas as rotas dinâmicas — aceito: as telas que
   // importam já são dinâmicas, e o header precisa saber se há alguém logado.
   const userId = await usuarioDaSessao();
+  const username = userId === null ? null : await usernameDaSessao(userId);
 
   return (
     <html
@@ -75,6 +92,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <LinkDoHeader href="/catalogo">Catálogo</LinkDoHeader>
                 <LinkDoHeader href="/listas">Listas</LinkDoHeader>
                 {userId && <LinkDoHeader href="/estante">Estante</LinkDoHeader>}
+                {username && <LinkDoHeader href={`/u/${username}`}>Perfil</LinkDoHeader>}
               </nav>
 
               <SeletorTema />
