@@ -76,6 +76,51 @@ export function ultimaAbertura(
   });
 }
 
+export type AberturaDoHistorico = {
+  id: string;
+  chapter: string;
+  abertaEm: Date;
+  /** Host da fonte usada; `null` quando a fonte foi removida (SetNull). */
+  sourceHost: string | null;
+  url: string;
+};
+
+/**
+ * O histórico de leitura DO DONO na obra (issue #54): capítulo, quando e por
+ * qual fonte, do mais recente ao mais antigo. Mesma consulta que o índice
+ * `[userId, mediaId, openedAt desc]` serve. Nunca sai para outro usuário.
+ */
+export async function listarAberturas(
+  userId: string,
+  mediaId: string,
+  limite: number,
+): Promise<AberturaDoHistorico[]>
+{
+  const linhas = await getPrisma().readingProgress.findMany({
+    where: { userId, mediaId },
+    orderBy: { openedAt: "desc" },
+    take: limite,
+    select: {
+      id: true,
+      chapter: true,
+      openedAt: true,
+      resolvedUrl: true,
+      readingSource: { select: { sourceHost: true } },
+    },
+  });
+
+  return linhas.map(function (linha)
+  {
+    return {
+      id: linha.id,
+      chapter: linha.chapter.toString(),
+      abertaEm: linha.openedAt,
+      sourceHost: linha.readingSource?.sourceHost ?? null,
+      url: linha.resolvedUrl,
+    };
+  });
+}
+
 /**
  * O progresso na obra: o MAIOR capítulo aberto, não o último nem a contagem de
  * aberturas. Quem pulou capítulos e voltou atrás não perde o progresso.
