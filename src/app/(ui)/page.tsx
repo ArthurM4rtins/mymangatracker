@@ -8,6 +8,11 @@ import {
   type EntradaDaEstante,
 } from "@/server/services/estante.service";
 import { perfilDoUsuarioDoSistema } from "@/server/services/usuario.service";
+import {
+  feedDaComunidadeDoSistema,
+  type AtividadeDaComunidade,
+} from "@/server/services/atividade.service";
+import { FeedDaComunidade, type ItemParaTela } from "./feed-da-comunidade";
 import type { Dependencia, EstadoGeral } from "@/server/domain/health-status";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { usuarioDaSessao } from "../api/v1/_shared/sessao";
@@ -40,10 +45,11 @@ export default async function Home()
 {
   const userId = await usuarioDaSessao();
 
-  const [saude, populares, leitura] = await Promise.all([
+  const [saude, populares, leitura, atividade] = await Promise.all([
     verificarSaudeDoSistema(),
     buscarNoCatalogo(interpretarFiltros({})),
     userId ? dadosDeLeitura(userId) : Promise.resolve(null),
+    feedDaComunidadeDoSistema(),
   ]);
 
   return (
@@ -92,6 +98,25 @@ export default async function Home()
           <p className="text-sm text-texto-suave">
             O catálogo não respondeu agora — tente de novo em instantes.
           </p>
+        )}
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
+            Atividade recente
+          </h2>
+          <Link href="/listas" className="text-sm text-acento underline underline-offset-4">
+            ver listas →
+          </Link>
+        </div>
+
+        {atividade.length === 0 ? (
+          <p className="text-sm text-texto-suave">
+            Ainda não tem resenha nem lista por aqui — a primeira aparece nesta seção.
+          </p>
+        ) : (
+          <FeedDaComunidade itens={atividade.map(itemParaTela)} />
         )}
       </section>
 
@@ -186,6 +211,42 @@ function BoasVindas({ leitura }: { leitura: DadosDeLeitura })
       )}
     </section>
   );
+}
+
+const FORMATO_QUANDO = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" });
+
+/** Achata o item do feed para a tela: datas viram texto, chave única por tipo. */
+function itemParaTela(item: AtividadeDaComunidade): ItemParaTela
+{
+  const quando = FORMATO_QUANDO.format(item.quando);
+
+  if (item.tipo === "resenha")
+  {
+    return {
+      tipo: "resenha",
+      chave: `r-${item.entryId}`,
+      username: item.username,
+      anilistId: item.anilistId,
+      titulo: item.titulo,
+      coverImageUrl: item.coverImageUrl,
+      rating: item.rating,
+      review: item.review,
+      containsSpoilers: item.containsSpoilers,
+      curtidas: item.curtidas,
+      quando,
+    };
+  }
+
+  return {
+    tipo: "lista",
+    chave: `l-${item.listaId}`,
+    username: item.username,
+    listaId: item.listaId,
+    nome: item.nome,
+    totalDeObras: item.totalDeObras,
+    capas: item.capas,
+    quando,
+  };
 }
 
 function Apresentacao()
