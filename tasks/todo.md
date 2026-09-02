@@ -611,3 +611,22 @@ que a pessoa FEZ (nota, resenha, lista), meu perfil mostra a estante.
   Follow.
 
 Cadeia: ... <- #46 <- #55.
+
+## Sessao 02/09 — estudo do logo (#56) e nota media (#48)
+
+- Estudo do nome no logo: `Obsidian/02. Implementacoes/identidade-visual/
+  estudo-fonte-nome-logo.html` (abre no browser) + artifact. Cinco wordmarks
+  em SVG no traco do check (A, A2 do esboco do Nicholas, B, C, D) e oito
+  fontes do Google. Decisao PARADA na issue #56; branch
+  feature/logo-wordmark (so o estudo, empilhada na perfil-usuario).
+- #48 nota media do Kidoku: dominio nota-media (media ponderada com uma
+  casa via Math.round(x*10)/10, histograma com as dez posicoes),
+  avaliacao.repository.contarNotasPorValor (groupBy rating por mediaId, so
+  valor+contagem), obra.service devolve notaDoKidoku (agregado fora = null,
+  pagina segue). Hero: componente client nota-kidoku (SIMBOLO e client)
+  com media, contagem e dez barras.
+- Provas: lint 0, 200 unitarios, 55 test:db, build verde. Smoke:
+  /obra/30002 mostra "Nota do Kidoku 4,8".
+- Branch feature/nota-media, empilhada na perfil-usuario. PR #57.
+
+Cadeia: ... <- #46 <- #55 <- #57. Proximo: #54 (historico de leitura).
