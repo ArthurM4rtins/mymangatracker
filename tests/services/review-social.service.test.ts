@@ -75,7 +75,10 @@ describe("apagarComentarioDaReview", function ()
 {
   it("apaga o próprio; alheio ou inexistente é nao_encontrada", async function ()
   {
-    const apagar = vi.fn(async function () { return { removido: true as const }; });
+    const apagar = vi.fn(async function (): Promise<{ removido: true } | null>
+    {
+      return { removido: true };
+    });
 
     await expect(
       apagarComentarioDaReview({ userId: "u1", comentarioId: "c1" }, { apagar }),
