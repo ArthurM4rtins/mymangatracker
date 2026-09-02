@@ -86,6 +86,29 @@ export async function buscarAvaliacao(
 }
 
 /**
+ * Quantas notas de cada valor a obra tem, de TODOS os usuários (issue #48).
+ * Agregado público consciente: sai só o valor da nota e a contagem — nenhum
+ * userId, nenhuma resenha. O domínio transforma isso em média e histograma.
+ */
+export async function contarNotasPorValor(
+  mediaId: string,
+): Promise<Array<{ rating: number; total: number }>>
+{
+  const grupos = await getPrisma().entry.groupBy({
+    by: ["rating"],
+    where: { mediaId, rating: { not: null } },
+    _count: { _all: true },
+  });
+
+  return grupos.flatMap(function (grupo)
+  {
+    return grupo.rating === null
+      ? []
+      : [{ rating: Number(grupo.rating), total: grupo._count._all }];
+  });
+}
+
+/**
  * Remove a avaliação DO USUÁRIO. `null` quando não existe ou é de outro —
  * iguais de propósito.
  */
