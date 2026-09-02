@@ -647,5 +647,23 @@ Cadeia: ... <- #46 <- #55 <- #57.
   anonimo nao ve.
 - Branch feature/historico-leitura, empilhada na nota-media. PR #58.
 
-Cadeia: ... <- #55 <- #57 <- #58. Restam: #50 feed, #51 lists, #53 MangaDex,
+Cadeia: ... <- #55 <- #57 <- #58.
+
+## Sessao 02/09 — feed de atividade na home (#50)
+
+- Dominio atividade.montarFeed: intercala resenhas e listas por data (sort
+  estavel, empate = resenha primeiro) e corta no limite. Servico pede 10 de
+  cada, mescla, corta em 10; uma consulta fora nao derruba a outra.
+- atividade.repository.listarResenhasDaComunidade (so resenha com texto,
+  username + obra, sem e-mail/ids — teste de banco). ListaPublica ganhou
+  `criadaEm` (SELECT_DO_CARD) pro feed ordenar; fake do perfil.service.test
+  precisou do campo.
+- Home: secao "Atividade recente" pra logado E visitante, componente client
+  feed-da-comunidade (estrelasTexto e client), spoiler em details, username
+  linka pro perfil. Sem paginacao: ultimos 10.
+- Provas: lint 0, 207 unitarios, 59 test:db, build verde. Smoke: home mostra
+  1 resenha (spoiler escondido) + 1 lista.
+- Branch feature/feed-atividade, empilhada na historico-leitura. PR #59.
+
+Cadeia: ... <- #57 <- #58 <- #59. Restam: #51 lists, #53 MangaDex,
 #56 logo (decisao), #16 curadoria.
