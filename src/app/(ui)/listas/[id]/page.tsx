@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import { listaComItensDoSistema } from "@/server/services/lista.service";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { ApagarLista, RemoverDaLista } from "./acoes-da-lista";
+import { CurtirLista } from "./curtir-lista";
+import { EditarLista } from "./editar-lista";
+import { ItensOrdenaveis } from "./itens-ordenaveis";
 
 export const dynamic = "force-dynamic";
 
@@ -45,13 +48,41 @@ export default async function PaginaDaLista({ params }: Props)
         {lista.descricao && (
           <p className="max-w-2xl text-sm text-texto-suave">{lista.descricao}</p>
         )}
-        {lista.minha && <ApagarLista listaId={lista.listaId} />}
+        <div className="flex flex-wrap items-center gap-4">
+          <CurtirLista
+            listaId={lista.listaId}
+            curtidas={lista.curtidas}
+            curtiPorMim={lista.curtiPorMim}
+            logado={userId !== null}
+          />
+          {lista.minha && (
+            <EditarLista
+              listaId={lista.listaId}
+              nome={lista.nome}
+              descricao={lista.descricao}
+            />
+          )}
+          {lista.minha && <ApagarLista listaId={lista.listaId} />}
+        </div>
       </header>
 
       {lista.itens.length === 0 ? (
         <p className="text-sm text-texto-suave">
           Lista vazia — adicione obras pelo botão de lista na página de cada obra.
         </p>
+      ) : lista.minha ? (
+        <ItensOrdenaveis
+          key={lista.itens.map(function (i) { return i.anilistId; }).join(",")}
+          listaId={lista.listaId}
+          itens={lista.itens.map(function (item)
+          {
+            return {
+              anilistId: item.anilistId,
+              titulo: item.titleEnglish ?? item.titleRomaji,
+              coverImageUrl: item.coverImageUrl,
+            };
+          })}
+        />
       ) : (
         <ul className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6">
           {lista.itens.map(function (item)
