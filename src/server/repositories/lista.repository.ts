@@ -12,6 +12,7 @@ export type ListaPublica = {
   username: string;
   totalDeObras: number;
   capas: CapaDePreview[];
+  criadaEm: Date;
 };
 
 export type ItemDaLista = {
@@ -62,6 +63,7 @@ const SELECT_DO_CARD = {
   id: true,
   nome: true,
   descricao: true,
+  createdAt: true,
   user: { select: { username: true } },
   _count: { select: { itens: true } },
   itens: {
@@ -75,6 +77,7 @@ type LinhaDoCard = {
   id: string;
   nome: string;
   descricao: string | null;
+  createdAt: Date;
   user: { username: string };
   _count: { itens: number };
   itens: Array<{ media: { coverImageUrl: string | null } }>;
@@ -89,6 +92,7 @@ function paraCard(linha: LinhaDoCard): ListaPublica
     username: linha.user.username,
     totalDeObras: linha._count.itens,
     capas: linha.itens.map(function (item) { return item.media.coverImageUrl; }),
+    criadaEm: linha.createdAt,
   };
 }
 
