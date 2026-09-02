@@ -665,5 +665,28 @@ Cadeia: ... <- #55 <- #57 <- #58.
   1 resenha (spoiler escondido) + 1 lista.
 - Branch feature/feed-atividade, empilhada na historico-leitura. PR #59.
 
-Cadeia: ... <- #57 <- #58 <- #59. Restam: #51 lists, #53 MangaDex,
-#56 logo (decisao), #16 curadoria.
+Cadeia: ... <- #57 <- #58 <- #59.
+
+## Sessao 02/09 — lists: editar, reordenar, curtir (#51)
+
+- Desenho aprovado antes de codar (vault feature-lists): setas em vez de
+  arrastar; curtida so como numero; /listas segue por recente.
+- Migration `20260902220948_list_like` (ListLike unica por lista+usuario,
+  Cascade) aplicada no dev e no teste. PEGADINHA: `prisma migrate dev` do
+  Prisma 7 nao regenera o client — rodar `pnpm prisma generate` depois, e
+  reiniciar o `pnpm dev`. limparBanco ganhou listLike antes de list.
+- Dominio lista-ordem (mesmoConjunto + mover), repositorio (editarLista,
+  listarItensParaOrdem, reordenarItens em transacao, alternarCurtidaDaLista;
+  ListaPublica.curtidas, ListaComItens.curtidas/curtiPorMim), servico
+  (editar com a regra da criacao, reordenar validado no dominio, curtir),
+  rotas PATCH /listas/:id, PUT /listas/:id/ordem, POST /listas/:id/curtida.
+- Tela: editar-lista (inline), curtir-lista (otimista, anon vai pro /entrar),
+  itens-ordenaveis (grade do dono com ← → e remover; nao-dono ve a grade
+  server). Contagem de curtidas no card de /listas e no feed da home.
+- Provas: lint 0, 218 unitarios, 64 test:db, build verde. Smoke E2E com
+  provadona: PATCH com trim 200, nome vazio 422, PUT ordem 200 e faltando
+  422, curtir toggle, anon 401 e sem controles na pagina.
+- Branch feature/lists-evolucao, empilhada na feed-atividade. PR #60.
+
+Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
+#16 curadoria.
