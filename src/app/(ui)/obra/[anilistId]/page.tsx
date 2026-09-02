@@ -9,6 +9,7 @@ import {
 import { interpretarDescricao } from "@/server/domain/descricao";
 import { AdicionarALista } from "./adicionar-a-lista";
 import { AvaliacaoDaObra } from "./avaliacao-da-obra";
+import { NotaKidoku } from "./nota-kidoku";
 import { ReviewSocial } from "./review-social";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "../../catalogo/botao-estante";
@@ -79,7 +80,7 @@ export default async function PaginaDaObra({ params }: Props)
     );
   }
 
-  const { obra, similares, minha, minhaAvaliacao, reviews } = resultado;
+  const { obra, similares, minha, minhaAvaliacao, reviews, notaDoKidoku } = resultado;
   // Obra sem banner usa a própria capa esticada com blur — todas consistentes.
   const fundo = obra.bannerImageUrl ?? obra.coverImageUrl;
   const descricao =
@@ -170,6 +171,8 @@ export default async function PaginaDaObra({ params }: Props)
                 <span className="tabular-nums">{obra.chapters} capítulos</span>
               )}
             </p>
+
+            {notaDoKidoku !== null && <NotaKidoku nota={notaDoKidoku} />}
 
             {descricao && descricao.sinopse !== "" && (
               <p className="whitespace-pre-line text-sm leading-relaxed text-texto-suave">
