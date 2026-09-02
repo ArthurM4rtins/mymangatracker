@@ -7,6 +7,11 @@
  */
 import { cacheEstaFresco } from "@/server/domain/media-cache";
 import {
+  resumirNotas,
+  type ContagemDeNota,
+  type ResumoDeNotas,
+} from "@/server/domain/nota-media";
+import {
   proximoCapitulo,
   tipoDaFonte,
   urlDaPagina,
@@ -20,7 +25,10 @@ import {
 } from "@/server/repositories/media.repository";
 import { buscarEntradaPorMedia } from "@/server/repositories/shelf.repository";
 import { buscarFonteAtiva } from "@/server/repositories/reading-source.repository";
-import { buscarAvaliacao } from "@/server/repositories/avaliacao.repository";
+import {
+  buscarAvaliacao,
+  contarNotasPorValor,
+} from "@/server/repositories/avaliacao.repository";
 import {
   listarReviewsDaObra,
   type ReviewPublica,
@@ -78,6 +86,8 @@ export type ResultadoDaObra =
       minha: MinhaRelacao | null;
       minhaAvaliacao: MinhaAvaliacao | null;
       reviews: ReviewPublica[];
+      /** A média dos NOSSOS usuários (issue #48). `null` sem nota ou com o agregado fora. */
+      notaDoKidoku: ResumoDeNotas | null;
     }
   | { estado: "nao_encontrada" }
   | { estado: "indisponivel" };
@@ -115,6 +125,7 @@ export type DependenciasDaObra = {
     mediaId: string,
     userId: string | null,
   ) => Promise<ReviewPublica[]>;
+  contarNotas: (mediaId: string) => Promise<ContagemDeNota[]>;
   relogio?: () => Date;
 };
 
@@ -171,7 +182,7 @@ export async function obraParaPagina(
     }
   }
 
-  const [similares, minha, minhaAvaliacao, reviews] = await Promise.all([
+  const [similares, minha, minhaAvaliacao, reviews, contagens] = await Promise.all([
     similaresSemDerrubar(anilistId, deps),
     userId === null ? Promise.resolve(null) : minhaRelacao(userId, cache.id, deps),
     // Avaliar não exige estante — a avaliação anda separada do recorte.
@@ -189,6 +200,8 @@ export async function obraParaPagina(
         }),
     // Social falhando não derruba a obra — a seção some.
     deps.listarReviews(cache.id, userId).catch(function () { return []; }),
+    // Agregado falhando não derruba a obra — a nota some.
+    deps.contarNotas(cache.id).catch(function (): ContagemDeNota[] { return []; }),
   ]);
 
   const obra: ObraDaPagina = {
@@ -208,7 +221,15 @@ export async function obraParaPagina(
     autores: cache.autores,
   };
 
-  return { estado: "ok", obra, similares, minha, minhaAvaliacao, reviews };
+  return {
+    estado: "ok",
+    obra,
+    similares,
+    minha,
+    minhaAvaliacao,
+    reviews,
+    notaDoKidoku: resumirNotas(contagens),
+  };
 }
 
 async function similaresSemDerrubar(
@@ -287,5 +308,6 @@ export function obraParaPaginaDoSistema(
     buscarFonte: buscarFonteAtiva,
     buscarAvaliacao,
     listarReviews: listarReviewsDaObra,
+    contarNotas: contarNotasPorValor,
   });
 }

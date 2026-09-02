@@ -42,6 +42,7 @@ function fakeDeps(cenario: {
   noAniList?: typeof DO_ANILIST | null;
   anilistFora?: boolean;
   similaresFora?: boolean;
+  notasFora?: boolean;
 })
 {
   const buscarCompleta = vi.fn(async function ()
@@ -102,6 +103,18 @@ function fakeDeps(cenario: {
     ];
   });
 
+  const contarNotas = vi.fn(async function ()
+  {
+    if (cenario.notasFora)
+    {
+      throw new Error("fora");
+    }
+    return [
+      { rating: 5, total: 2 },
+      { rating: 4, total: 1 },
+    ];
+  });
+
   return {
     deps: {
       buscarCompleta,
@@ -112,12 +125,14 @@ function fakeDeps(cenario: {
       buscarFonte,
       buscarAvaliacao,
       listarReviews,
+      contarNotas,
       relogio: function () { return AGORA; },
     },
     buscarNoAniList,
     salvarMedia,
     buscarEntrada,
     listarReviews,
+    contarNotas,
   };
 }
 
@@ -140,6 +155,38 @@ describe("obraParaPagina", function ()
     expect(resultado.minha).toBeNull();
     expect(resultado.reviews).toHaveLength(1);
     expect(resultado.reviews[0].username).toBe("leitor");
+  });
+
+  it("a nota do Kidoku vem resumida das contagens por valor (issue #48)", async function ()
+  {
+    const { deps, contarNotas } = fakeDeps({ noCache: NO_CACHE });
+
+    const resultado = await obraParaPagina(30656, null, deps);
+
+    if (resultado.estado !== "ok")
+    {
+      throw new Error("esperava ok");
+    }
+
+    expect(contarNotas).toHaveBeenCalledWith("m1");
+    // (5 + 5 + 4) / 3 = 4.666… → 4.7
+    expect(resultado.notaDoKidoku).toMatchObject({ media: 4.7, total: 3 });
+    expect(resultado.notaDoKidoku?.histograma).toHaveLength(10);
+  });
+
+  it("contagem de notas falhando some sem derrubar a página", async function ()
+  {
+    const { deps } = fakeDeps({ noCache: NO_CACHE, notasFora: true });
+
+    const resultado = await obraParaPagina(30656, null, deps);
+
+    if (resultado.estado !== "ok")
+    {
+      throw new Error("esperava ok");
+    }
+
+    expect(resultado.notaDoKidoku).toBeNull();
+    expect(resultado.obra.titleRomaji).toBe("Vagabond");
   });
 
   it("reviews falhando somem sem derrubar a página", async function ()
