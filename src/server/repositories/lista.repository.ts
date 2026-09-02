@@ -57,37 +57,63 @@ export async function apagarLista(
   return resultado.count === 0 ? null : { removida: true };
 }
 
+/** O select do card de lista pública: o mesmo em /listas e no perfil. */
+const SELECT_DO_CARD = {
+  id: true,
+  nome: true,
+  descricao: true,
+  user: { select: { username: true } },
+  _count: { select: { itens: true } },
+  itens: {
+    orderBy: { position: "asc" as const },
+    take: CAPAS_DE_PREVIEW,
+    select: { media: { select: { coverImageUrl: true } } },
+  },
+} as const;
+
+type LinhaDoCard = {
+  id: string;
+  nome: string;
+  descricao: string | null;
+  user: { username: string };
+  _count: { itens: number };
+  itens: Array<{ media: { coverImageUrl: string | null } }>;
+};
+
+function paraCard(linha: LinhaDoCard): ListaPublica
+{
+  return {
+    listaId: linha.id,
+    nome: linha.nome,
+    descricao: linha.descricao,
+    username: linha.user.username,
+    totalDeObras: linha._count.itens,
+    capas: linha.itens.map(function (item) { return item.media.coverImageUrl; }),
+  };
+}
+
 /** As listas mais recentes de todo mundo, com preview de capas. */
 export async function listarListasPublicas(limite: number): Promise<ListaPublica[]>
 {
   const linhas = await getPrisma().list.findMany({
     orderBy: { createdAt: "desc" },
     take: limite,
-    select: {
-      id: true,
-      nome: true,
-      descricao: true,
-      user: { select: { username: true } },
-      _count: { select: { itens: true } },
-      itens: {
-        orderBy: { position: "asc" },
-        take: CAPAS_DE_PREVIEW,
-        select: { media: { select: { coverImageUrl: true } } },
-      },
-    },
+    select: SELECT_DO_CARD,
   });
 
-  return linhas.map(function (linha)
-  {
-    return {
-      listaId: linha.id,
-      nome: linha.nome,
-      descricao: linha.descricao,
-      username: linha.user.username,
-      totalDeObras: linha._count.itens,
-      capas: linha.itens.map(function (item) { return item.media.coverImageUrl; }),
-    };
+  return linhas.map(paraCard);
+}
+
+/** As listas DE UM usuário, para o perfil público (issue #49). */
+export async function listarListasDoUsuario(userId: string): Promise<ListaPublica[]>
+{
+  const linhas = await getPrisma().list.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    select: SELECT_DO_CARD,
   });
+
+  return linhas.map(paraCard);
 }
 
 /** A lista com as obras, na ordem de inserção. `null` quando não existe. */

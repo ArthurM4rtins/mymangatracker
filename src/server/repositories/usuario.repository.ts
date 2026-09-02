@@ -24,6 +24,16 @@ export type CredenciaisDeLogin = {
   passwordHash: string;
 };
 
+/**
+ * O que a página de perfil (issue #49) vê: sem e-mail. O `id` fica só para o
+ * serviço agregar o resto — não sai no DTO do perfil.
+ */
+export type UsuarioDoPerfil = {
+  id: string;
+  username: string;
+  createdAt: Date;
+};
+
 const SELECT_PUBLICO = { id: true, username: true, email: true } as const;
 
 export async function criarUsuario(dados: NovoUsuario): Promise<UsuarioPublico>
@@ -46,6 +56,16 @@ export function buscarUsuarioPorId(id: string): Promise<UsuarioPublico | null>
   return getPrisma().user.findUnique({
     where: { id },
     select: SELECT_PUBLICO,
+  });
+}
+
+export function buscarUsuarioPorUsername(
+  username: string,
+): Promise<UsuarioDoPerfil | null>
+{
+  return getPrisma().user.findUnique({
+    where: { username },
+    select: { id: true, username: true, createdAt: true },
   });
 }
 
