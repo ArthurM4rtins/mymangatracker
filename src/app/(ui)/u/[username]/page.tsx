@@ -1,25 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { STATUS_DA_ESTANTE, type StatusDaEstante } from "@/server/domain/perfil";
-import { perfilPublicoDoSistema } from "@/server/services/perfil.service";
+import { interpretarFiltroDasAvaliadas } from "@/server/domain/perfil";
+import { perfilDoUsuarioDoSistema } from "@/server/services/perfil.service";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
-import { perfilDoUsuarioDoSistema } from "@/server/services/usuario.service";
+import { FiltrosAvaliadas } from "./filtros-avaliadas";
+import { GradeAvaliadas } from "./grade-avaliadas";
+import { MinhaEstante } from "./minha-estante";
 import { ResenhaDoPerfil } from "./resenha";
 
-// Perfil vem do banco e muda a cada leitura: nada pré-renderizável.
+// Perfil vem do banco e da sessão: nada pré-renderizável.
 export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ username: string }>;
-};
-
-const ROTULO_DO_STATUS: Record<StatusDaEstante, string> = {
-  READING: "Lendo",
-  COMPLETED: "Concluído",
-  PLANNED: "Planejado",
-  PAUSED: "Pausado",
-  DROPPED: "Largado",
+  searchParams: Promise<{ ordem?: string; nota?: string }>;
 };
 
 const FORMATO_MES = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric" });
@@ -30,15 +25,16 @@ export async function generateMetadata({ params }: Props)
   return { title: decodeURIComponent((await params).username) };
 }
 
-export default async function PaginaDoPerfil({ params }: Props)
+export default async function PaginaDoPerfil({ params, searchParams }: Props)
 {
   const username = decodeURIComponent((await params).username);
-  const userId = await usuarioDaSessao();
+  const filtro = interpretarFiltroDasAvaliadas(await searchParams);
+  const viewerId = await usuarioDaSessao();
 
   let perfil;
   try
   {
-    perfil = await perfilPublicoDoSistema(username);
+    perfil = await perfilDoUsuarioDoSistema({ username, viewerId, filtro });
   }
   catch
   {
@@ -56,7 +52,7 @@ export default async function PaginaDoPerfil({ params }: Props)
     notFound();
   }
 
-  const souEu = userId !== null && (await ehMeuPerfil(userId, perfil.username));
+  const temFiltro = filtro.nota !== undefined || filtro.ordem !== "recentes";
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-10 px-6 py-12">
@@ -70,7 +66,7 @@ export default async function PaginaDoPerfil({ params }: Props)
         <div className="flex min-w-0 flex-col gap-1">
           <h1 className="flex flex-wrap items-center gap-2 font-marca text-3xl font-bold tracking-tight">
             {perfil.username}
-            {souEu && (
+            {perfil.souEu && (
               <span className="rounded-full border border-borda px-2 py-0.5 text-xs font-normal text-texto-suave">
                 você
               </span>
@@ -79,38 +75,64 @@ export default async function PaginaDoPerfil({ params }: Props)
           <p className="text-sm text-texto-suave">
             no Kidoku desde {FORMATO_MES.format(perfil.membroDesde)}
           </p>
-          {souEu && (
-            <Link
-              href="/estante"
-              className="text-sm text-acento underline underline-offset-4"
-            >
-              Ir para a minha estante
-            </Link>
-          )}
+          <p className="flex flex-wrap gap-x-3 text-sm text-texto-suave">
+            <Numero valor={perfil.numeros.avaliadas} um="avaliada" varios="avaliadas" />
+            <Numero valor={perfil.numeros.resenhas} um="resenha" varios="resenhas" />
+            <Numero valor={perfil.numeros.listas} um="lista" varios="listas" />
+            <Numero
+              valor={perfil.numeros.curtidasDadas}
+              um="curtida dada"
+              varios="curtidas dadas"
+            />
+          </p>
         </div>
       </header>
 
-      <section aria-label="Números" className="flex flex-col gap-3">
-        <dl className="grid grid-cols-3 gap-3 sm:grid-cols-6">
-          <Numero rotulo="Na estante" valor={perfil.totalNaEstante} destaque />
-          <Numero rotulo="Avaliações" valor={perfil.avaliacoes} destaque />
-          <Numero rotulo="Listas" valor={perfil.listas.length} destaque />
-        </dl>
-        <dl className="grid grid-cols-3 gap-3 sm:grid-cols-5">
-          {STATUS_DA_ESTANTE.map(function (status)
+      {perfil.estante !== null && (
+        <MinhaEstante
+          contagem={perfil.estante.contagem}
+          entradas={perfil.estante.entradas.map(function (entrada)
           {
-            return (
-              <Numero
-                key={status}
-                rotulo={ROTULO_DO_STATUS[status]}
-                valor={perfil.estante[status]}
-              />
-            );
+            return {
+              entradaId: entrada.entradaId,
+              status: entrada.status,
+              progressChapter: entrada.progressChapter,
+              anilistId: entrada.obra.anilistId,
+              titulo: entrada.obra.titleEnglish ?? entrada.obra.titleRomaji,
+              coverImageUrl: entrada.obra.coverImageUrl,
+            };
           })}
-        </dl>
-        <p className="text-xs text-texto-suave">
-          Progresso de leitura e fontes são privados — só contagens aparecem aqui.
-        </p>
+        />
+      )}
+
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
+            Avaliadas
+          </h2>
+          {perfil.numeros.avaliadas > 0 && <FiltrosAvaliadas />}
+        </div>
+        {perfil.avaliadas.length === 0 ? (
+          <p className="text-sm text-texto-suave">
+            {temFiltro
+              ? "Nenhuma obra com esse filtro."
+              : perfil.souEu
+                ? "Você ainda não deu nota. Avalie uma obra e ela aparece aqui."
+                : `${perfil.username} ainda não deu nota a nenhuma obra.`}
+          </p>
+        ) : (
+          <GradeAvaliadas
+            avaliadas={perfil.avaliadas.map(function (obra)
+            {
+              return {
+                anilistId: obra.anilistId,
+                titulo: obra.titleEnglish ?? obra.titleRomaji,
+                coverImageUrl: obra.coverImageUrl,
+                rating: obra.rating,
+              };
+            })}
+          />
+        )}
       </section>
 
       <section className="flex flex-col gap-4">
@@ -119,7 +141,7 @@ export default async function PaginaDoPerfil({ params }: Props)
         </h2>
         {perfil.resenhasRecentes.length === 0 ? (
           <p className="text-sm text-texto-suave">
-            {souEu
+            {perfil.souEu
               ? "Você ainda não escreveu resenha. Avalie uma obra com texto e ela aparece aqui."
               : `${perfil.username} ainda não escreveu resenha.`}
           </p>
@@ -154,7 +176,7 @@ export default async function PaginaDoPerfil({ params }: Props)
         </h2>
         {perfil.listas.length === 0 ? (
           <p className="text-sm text-texto-suave">
-            {souEu ? (
+            {perfil.souEu ? (
               <>
                 Você ainda não criou lista.{" "}
                 <Link href="/listas" className="text-acento underline underline-offset-4">
@@ -228,37 +250,12 @@ export default async function PaginaDoPerfil({ params }: Props)
   );
 }
 
-function Numero({
-  rotulo,
-  valor,
-  destaque = false,
-}: {
-  rotulo: string;
-  valor: number;
-  destaque?: boolean;
-})
+function Numero({ valor, um, varios }: { valor: number; um: string; varios: string })
 {
   return (
-    <div className="flex flex-col rounded-lg border border-borda bg-superficie px-3 py-2">
-      <dt className="text-xs text-texto-suave">{rotulo}</dt>
-      <dd className={`font-marca font-bold ${destaque ? "text-2xl" : "text-lg"}`}>
-        {valor}
-      </dd>
-    </div>
+    <span>
+      <span className="font-marca font-bold text-texto">{valor}</span>{" "}
+      {valor === 1 ? um : varios}
+    </span>
   );
-}
-
-/** O perfil aberto é o de quem está logado? Banco fora = não. */
-async function ehMeuPerfil(userId: string, username: string): Promise<boolean>
-{
-  try
-  {
-    const eu = await perfilDoUsuarioDoSistema(userId);
-
-    return eu !== null && eu.username === username;
-  }
-  catch
-  {
-    return false;
-  }
 }
