@@ -629,4 +629,23 @@ Cadeia: ... <- #46 <- #55.
   /obra/30002 mostra "Nota do Kidoku 4,8".
 - Branch feature/nota-media, empilhada na perfil-usuario. PR #57.
 
-Cadeia: ... <- #46 <- #55 <- #57. Proximo: #54 (historico de leitura).
+Cadeia: ... <- #46 <- #55 <- #57.
+
+## Sessao 02/09 — historico de leitura (#54)
+
+- Historico entra no painel de tracking da pagina da obra (nao na estante):
+  reading-progress.repository.listarAberturas(userId, mediaId, limite) com
+  host da fonte via relacao (SetNull = "fonte removida"); obra.service poe
+  `historico` em MinhaRelacao (limite 20, falha = []); tela em <details>
+  com capitulo, data/hora e link pro host. So renderiza dentro de `minha`,
+  que so existe pra quem esta logado com a obra na estante.
+- PEGADINHA de smoke: POST /api/v1/fontes exige urlTemplate como CAMINHO
+  relativo comecando com "/" e marcador `{chapter}` (nao `{n}`), senao 422
+  "template invalido"; sem fonte, POST /progresso da 409.
+- Provas: lint 0, 201 unitarios, 57 test:db, build verde. Smoke: provadona
+  no Berserk ve "Historico de leitura · 2 aberturas" (3.5 e 1, exemplo.test);
+  anonimo nao ve.
+- Branch feature/historico-leitura, empilhada na nota-media. PR #58.
+
+Cadeia: ... <- #55 <- #57 <- #58. Restam: #50 feed, #51 lists, #53 MangaDex,
+#56 logo (decisao), #16 curadoria.
