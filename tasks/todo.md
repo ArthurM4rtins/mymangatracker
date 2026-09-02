@@ -563,3 +563,28 @@ Cadeia: ... <- #44 <- #46.
   - #52 extensao de navegador (Fase 6, modelo do esboco no vault)
   - #53 fonte MangaDex por API oficial
   - #54 historico de leitura visivel ao dono
+
+## Sessao 02/09 — perfil publico do usuario (#49)
+
+- gh: a conta ativa tinha voltado para `NicholasSchlindwein`; trocada para
+  `NicholasSchlindwein-dev` + `gh auth setup-git` (licao de 01/09).
+- Vercel preview FALHA de #32 em diante (#30 passa). #32 nao mexe em prisma,
+  package.json nem config, e lint/test/build local ficam verdes — causa esta
+  na conta Vercel do Arthur (`arthurm4rtins-projects`), logs so por la.
+- /u/:username SEM tabela nova: dominio perfil.ts (contagem por status com
+  zeros), usuario.repository.buscarUsuarioPorUsername (sem e-mail),
+  perfil.repository (groupBy da estante, count de avaliacoes, resenhas com
+  texto recentes), lista.repository.listarListasDoUsuario (select do card
+  compartilhado com /listas), perfil.service compoe. Invariante travada em
+  teste de banco: e-mail, id, fonte, progresso e capitulo nunca saem.
+- Tela: avatar com inicial, numeros (estante por status, avaliacoes,
+  listas), resenhas recentes (client card por causa do estrelasTexto),
+  listas. Username vira link na resenha, no comentario e no detalhe da
+  lista; na listagem /listas NAO (card inteiro ja e <a>, ancora aninhada
+  e invalida). Header: link Perfil quando logado.
+- Provas: lint 0, 186 unitarios, 52 test:db, build verde. Smoke:
+  /u/smoketest 200 com Berserk e "seinen essencial", /u/naoexiste 404.
+- Pendencias no vault: grade da estante publica, avatar real, bio, Follow.
+- Branch feature/perfil-usuario, empilhada na visual-obra. PR #55.
+
+Cadeia: ... <- #46 <- #55.
