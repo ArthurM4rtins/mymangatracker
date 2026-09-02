@@ -13,6 +13,7 @@ export type ListaPublica = {
   totalDeObras: number;
   capas: CapaDePreview[];
   criadaEm: Date;
+  curtidas: number;
 };
 
 export type ItemDaLista = {
@@ -29,6 +30,8 @@ export type ListaComItens = {
   username: string;
   minha: boolean;
   itens: ItemDaLista[];
+  curtidas: number;
+  curtiPorMim: boolean;
 };
 
 const CAPAS_DE_PREVIEW = 4;
@@ -65,7 +68,7 @@ const SELECT_DO_CARD = {
   descricao: true,
   createdAt: true,
   user: { select: { username: true } },
-  _count: { select: { itens: true } },
+  _count: { select: { itens: true, likes: true } },
   itens: {
     orderBy: { position: "asc" as const },
     take: CAPAS_DE_PREVIEW,
@@ -79,7 +82,7 @@ type LinhaDoCard = {
   descricao: string | null;
   createdAt: Date;
   user: { username: string };
-  _count: { itens: number };
+  _count: { itens: number; likes: number };
   itens: Array<{ media: { coverImageUrl: string | null } }>;
 };
 
@@ -93,6 +96,7 @@ function paraCard(linha: LinhaDoCard): ListaPublica
     totalDeObras: linha._count.itens,
     capas: linha.itens.map(function (item) { return item.media.coverImageUrl; }),
     criadaEm: linha.createdAt,
+    curtidas: linha._count.likes,
   };
 }
 
@@ -134,6 +138,8 @@ export async function buscarListaComItens(
       descricao: true,
       userId: true,
       user: { select: { username: true } },
+      _count: { select: { likes: true } },
+      likes: userId === null ? false : { where: { userId }, select: { id: true } },
       itens: {
         orderBy: [{ position: "asc" }, { createdAt: "asc" }],
         select: {
@@ -162,7 +168,127 @@ export async function buscarListaComItens(
     username: linha.user.username,
     minha: linha.userId === userId,
     itens: linha.itens.map(function (item) { return item.media; }),
+    curtidas: linha._count.likes,
+    curtiPorMim: Array.isArray(linha.likes) && linha.likes.length > 0,
   };
+}
+
+/** Edita nome/descrição da lista DO DONO. Alheia ou inexistente = `null`. */
+export async function editarLista(
+  userId: string,
+  listaId: string,
+  campos: { nome: string; descricao: string | null },
+): Promise<{ editada: true } | null>
+{
+  const resultado = await getPrisma().list.updateMany({
+    where: { id: listaId, userId },
+    data: campos,
+  });
+
+  return resultado.count === 0 ? null : { editada: true };
+}
+
+/**
+ * Os itens da lista DO DONO na ordem atual, com o par anilistId/mediaId que
+ * o serviço usa pra validar e traduzir a proposta. `null` = alheia/inexistente.
+ */
+export async function listarItensParaOrdem(
+  userId: string,
+  listaId: string,
+): Promise<Array<{ anilistId: number; mediaId: string }> | null>
+{
+  const lista = await getPrisma().list.findFirst({
+    where: { id: listaId, userId },
+    select: {
+      itens: {
+        orderBy: [{ position: "asc" }, { createdAt: "asc" }],
+        select: { mediaId: true, media: { select: { anilistId: true } } },
+      },
+    },
+  });
+
+  if (lista === null)
+  {
+    return null;
+  }
+
+  return lista.itens.map(function (item)
+  {
+    return { anilistId: item.media.anilistId, mediaId: item.mediaId };
+  });
+}
+
+/**
+ * Grava a ordem inteira: `position = índice + 1`, numa transação. Quem
+ * garante que `mediaIds` é permutação exata dos itens é o serviço.
+ */
+export async function reordenarItens(
+  userId: string,
+  listaId: string,
+  mediaIds: string[],
+): Promise<{ reordenada: true } | null>
+{
+  const prisma = getPrisma();
+
+  const lista = await prisma.list.findFirst({
+    where: { id: listaId, userId },
+    select: { id: true },
+  });
+
+  if (lista === null)
+  {
+    return null;
+  }
+
+  await prisma.$transaction(
+    mediaIds.map(function (mediaId, indice)
+    {
+      return prisma.listItem.updateMany({
+        where: { listId: listaId, mediaId },
+        data: { position: indice + 1 },
+      });
+    }),
+  );
+
+  return { reordenada: true };
+}
+
+/**
+ * Toggle da curtida na lista (issue #51). `null` quando a lista não existe
+ * (FK estoura no create). Devolve o estado final e o total.
+ */
+export async function alternarCurtidaDaLista(
+  listaId: string,
+  userId: string,
+): Promise<{ curtida: boolean; total: number } | null>
+{
+  const prisma = getPrisma();
+
+  const existente = await prisma.listLike.findUnique({
+    where: { listId_userId: { listId: listaId, userId } },
+    select: { id: true },
+  });
+
+  try
+  {
+    if (existente === null)
+    {
+      await prisma.listLike.create({ data: { listId: listaId, userId } });
+    }
+    else
+    {
+      await prisma.listLike.delete({ where: { id: existente.id } });
+    }
+  }
+  catch
+  {
+    // FK: lista (ou usuário) não existe. Mesma resposta de inexistente.
+    return null;
+  }
+
+  const total = await prisma.listLike.count({ where: { listId: listaId } });
+
+  return { curtida: existente === null, total };
 }
 
 /** As listas DO USUÁRIO, com "já contém" para o dropdown da página da obra. */

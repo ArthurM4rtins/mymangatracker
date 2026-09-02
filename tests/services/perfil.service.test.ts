@@ -61,6 +61,7 @@ function fakeDeps(cenario: { usuario?: typeof USUARIO | null })
           totalDeObras: 2,
           capas: [],
           criadaEm: new Date("2026-08-10T00:00:00Z"),
+          curtidas: 0,
         },
       ];
     }),
