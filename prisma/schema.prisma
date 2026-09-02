@@ -56,6 +56,7 @@ model User {
   reviewLikes     ReviewLike[]
   reviewComments  ReviewComment[]
   lists           List[]
+  listLikes       ListLike[]
 }
 
 // Lista nomeada de obras (painel 06). Pública desde o início — recorte do
@@ -71,6 +72,7 @@ model List {
 
   user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   itens ListItem[]
+  likes ListLike[]
 
   @@index([createdAt(sort: Desc)])
 }
@@ -92,6 +94,18 @@ model ListItem {
 
 // Cache do AniList. Se sumir, é reconstruído da API — nenhum dado do usuário
 // se perde junto, e é por isso que as FKs que apontam para cá são Restrict.
+model ListLike {
+  id        String   @id @default(cuid())
+  listId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  list List @relation(fields: [listId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([listId, userId])
+}
+
 model Media {
   id              String           @id @default(cuid())
   anilistId       Int              @unique

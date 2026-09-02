@@ -12,6 +12,7 @@ export async function limparBanco(): Promise<void>
   await prisma.reviewLike.deleteMany();
   await prisma.reviewComment.deleteMany();
   await prisma.entry.deleteMany();
+  await prisma.listLike.deleteMany();
   await prisma.listItem.deleteMany();
   await prisma.list.deleteMany();
   await prisma.shelfEntry.deleteMany();
