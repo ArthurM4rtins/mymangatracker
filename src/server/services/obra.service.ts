@@ -26,6 +26,10 @@ import {
 import { buscarEntradaPorMedia } from "@/server/repositories/shelf.repository";
 import { buscarFonteAtiva } from "@/server/repositories/reading-source.repository";
 import {
+  listarAberturas,
+  type AberturaDoHistorico,
+} from "@/server/repositories/reading-progress.repository";
+import {
   buscarAvaliacao,
   contarNotasPorValor,
 } from "@/server/repositories/avaliacao.repository";
@@ -69,6 +73,8 @@ export type MinhaRelacao = {
     | { sourceHost: string; tipo: "template" }
     | { sourceHost: string; tipo: "pagina"; urlDaObra: string }
     | null;
+  /** O histórico de aberturas DO DONO (issue #54), do mais recente ao mais antigo. */
+  historico: AberturaDoHistorico[];
 };
 
 /** Avaliar não exige estante (issue #45) — a avaliação anda separada. */
@@ -126,8 +132,16 @@ export type DependenciasDaObra = {
     userId: string | null,
   ) => Promise<ReviewPublica[]>;
   contarNotas: (mediaId: string) => Promise<ContagemDeNota[]>;
+  listarAberturas: (
+    userId: string,
+    mediaId: string,
+    limite: number,
+  ) => Promise<AberturaDoHistorico[]>;
   relogio?: () => Date;
 };
+
+/** Quantas aberturas o painel da obra mostra. O resto fica no banco. */
+const LIMITE_DO_HISTORICO = 20;
 
 export async function obraParaPagina(
   anilistId: number,
@@ -270,7 +284,13 @@ async function minhaRelacao(
     return null;
   }
 
-  const fonte = await deps.buscarFonte(userId, mediaId);
+  const [fonte, historico] = await Promise.all([
+    deps.buscarFonte(userId, mediaId),
+    // Histórico falhando não derruba o painel — a lista some.
+    deps
+      .listarAberturas(userId, mediaId, LIMITE_DO_HISTORICO)
+      .catch(function (): AberturaDoHistorico[] { return []; }),
+  ]);
 
   const maior =
     entrada.progressChapter === null ? null : Number(entrada.progressChapter);
@@ -280,6 +300,7 @@ async function minhaRelacao(
     status: entrada.status,
     progressChapter: entrada.progressChapter,
     proximoCapitulo: proximoCapitulo(maior),
+    historico,
     fonte:
       fonte === null
         ? null
@@ -309,5 +330,6 @@ export function obraParaPaginaDoSistema(
     buscarAvaliacao,
     listarReviews: listarReviewsDaObra,
     contarNotas: contarNotasPorValor,
+    listarAberturas,
   });
 }

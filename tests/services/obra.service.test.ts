@@ -43,6 +43,7 @@ function fakeDeps(cenario: {
   anilistFora?: boolean;
   similaresFora?: boolean;
   notasFora?: boolean;
+  historicoFora?: boolean;
 })
 {
   const buscarCompleta = vi.fn(async function ()
@@ -114,6 +115,29 @@ function fakeDeps(cenario: {
       { rating: 4, total: 1 },
     ];
   });
+  const listarAberturas = vi.fn(async function ()
+  {
+    if (cenario.historicoFora)
+    {
+      throw new Error("fora");
+    }
+    return [
+      {
+        id: "p2",
+        chapter: "57.5",
+        abertaEm: AGORA,
+        sourceHost: "mangafire.to",
+        url: "https://mangafire.to/read/4mx-vagabondd/chapter-57.5",
+      },
+      {
+        id: "p1",
+        chapter: "57",
+        abertaEm: new Date(AGORA.getTime() - 86_400_000),
+        sourceHost: null,
+        url: "https://outro.site/57",
+      },
+    ];
+  });
 
   return {
     deps: {
@@ -126,6 +150,7 @@ function fakeDeps(cenario: {
       buscarAvaliacao,
       listarReviews,
       contarNotas,
+      listarAberturas,
       relogio: function () { return AGORA; },
     },
     buscarNoAniList,
@@ -133,6 +158,7 @@ function fakeDeps(cenario: {
     buscarEntrada,
     listarReviews,
     contarNotas,
+    listarAberturas,
   };
 }
 
@@ -261,9 +287,24 @@ describe("obraParaPagina", function ()
     expect(resultado.similares).toEqual([]);
   });
 
+  it("histórico falhando some sem derrubar o recorte do usuário", async function ()
+  {
+    const { deps } = fakeDeps({ noCache: NO_CACHE, historicoFora: true });
+
+    const resultado = await obraParaPagina(30656, "u1", deps);
+
+    if (resultado.estado !== "ok")
+    {
+      throw new Error("esperava ok");
+    }
+
+    expect(resultado.minha?.entradaId).toBe("e1");
+    expect(resultado.minha?.historico).toEqual([]);
+  });
+
   it("com sessão, compõe o recorte do usuário com fonte e avaliação", async function ()
   {
-    const { deps, buscarEntrada } = fakeDeps({ noCache: NO_CACHE });
+    const { deps, buscarEntrada, listarAberturas } = fakeDeps({ noCache: NO_CACHE });
 
     const resultado = await obraParaPagina(30656, "u1", deps);
 
@@ -273,6 +314,7 @@ describe("obraParaPagina", function ()
     }
 
     expect(buscarEntrada).toHaveBeenCalledWith("u1", "m1");
+    expect(listarAberturas).toHaveBeenCalledWith("u1", "m1", 20);
     expect(resultado.minha).toEqual({
       entradaId: "e1",
       status: "READING",
@@ -283,6 +325,23 @@ describe("obraParaPagina", function ()
         tipo: "pagina",
         urlDaObra: "https://mangafire.to/title/4mx-vagabondd",
       },
+      // O histórico é do dono (issue #54): capítulo, quando e por qual fonte.
+      historico: [
+        {
+          id: "p2",
+          chapter: "57.5",
+          abertaEm: AGORA,
+          sourceHost: "mangafire.to",
+          url: "https://mangafire.to/read/4mx-vagabondd/chapter-57.5",
+        },
+        {
+          id: "p1",
+          chapter: "57",
+          abertaEm: new Date(AGORA.getTime() - 86_400_000),
+          sourceHost: null,
+          url: "https://outro.site/57",
+        },
+      ],
     });
     expect(resultado.minhaAvaliacao).toEqual({
       rating: "4.5",
