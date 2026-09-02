@@ -4,6 +4,7 @@
  * Uma resenha pública: curtir (toggle otimista), comentários tipo chat e
  * spoiler escondido por padrão. Quem escreveu aparece pelo username.
  */
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { estrelasTexto } from "../../componentes/estrelas";
@@ -146,7 +147,9 @@ export function ReviewSocial({
   return (
     <li className="flex flex-col gap-2 rounded-lg border border-borda bg-superficie p-4">
       <p className="flex flex-wrap items-center gap-2 text-sm">
-        <span className="font-medium">{review.username}</span>
+        <Link href={`/u/${review.username}`} className="font-medium hover:text-acento">
+          {review.username}
+        </Link>
         {review.minha && (
           <span className="rounded-full border border-borda px-2 py-0.5 text-xs text-texto-suave">
             você
@@ -196,7 +199,12 @@ export function ReviewSocial({
           {
             return (
               <p key={item.id} className="flex items-start gap-2">
-                <span className="shrink-0 font-medium">{item.username}</span>
+                <Link
+                  href={`/u/${item.username}`}
+                  className="shrink-0 font-medium hover:text-acento"
+                >
+                  {item.username}
+                </Link>
                 <span className="min-w-0 flex-1 whitespace-pre-line text-texto-suave">
                   {item.texto}
                 </span>

@@ -35,7 +35,11 @@ export default async function PaginaDaLista({ params }: Props)
       <header className="flex flex-col gap-2">
         <h1 className="font-marca text-3xl font-bold tracking-tight">{lista.nome}</h1>
         <p className="text-xs text-texto-suave">
-          por {lista.username} · {lista.itens.length}{" "}
+          por{" "}
+          <Link href={`/u/${lista.username}`} className="hover:text-acento hover:underline">
+            {lista.username}
+          </Link>{" "}
+          · {lista.itens.length}{" "}
           {lista.itens.length === 1 ? "obra" : "obras"}
         </p>
         {lista.descricao && (
