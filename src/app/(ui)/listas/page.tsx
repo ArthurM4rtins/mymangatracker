@@ -102,6 +102,14 @@ export default async function Listas()
                     <p className="text-xs text-texto-suave">
                       por {lista.username} · {lista.totalDeObras}{" "}
                       {lista.totalDeObras === 1 ? "obra" : "obras"}
+                      {lista.curtidas > 0 && (
+                        <>
+                          {" "}· <span aria-hidden>♥</span> {lista.curtidas}
+                          <span className="sr-only">
+                            {lista.curtidas === 1 ? "curtida" : "curtidas"}
+                          </span>
+                        </>
+                      )}
                     </p>
                     {lista.descricao && (
                       <p className="line-clamp-2 text-sm text-texto-suave">
