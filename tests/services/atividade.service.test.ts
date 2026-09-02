@@ -24,6 +24,7 @@ const LISTA = {
   nome: "seinen",
   totalDeObras: 3,
   capas: [],
+  curtidas: 0,
   quando: new Date("2026-09-02T11:00:00Z"),
 };
 

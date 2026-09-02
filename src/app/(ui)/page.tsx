@@ -245,6 +245,7 @@ function itemParaTela(item: AtividadeDaComunidade): ItemParaTela
     nome: item.nome,
     totalDeObras: item.totalDeObras,
     capas: item.capas,
+    curtidas: item.curtidas,
     quando,
   };
 }

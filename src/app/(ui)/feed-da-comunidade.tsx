@@ -31,6 +31,7 @@ export type ItemParaTela =
       nome: string;
       totalDeObras: number;
       capas: Array<string | null>;
+      curtidas: number;
       quando: string;
     };
 
@@ -147,6 +148,12 @@ function Lista({ item }: { item: Extract<ItemParaTela, { tipo: "lista" }> })
         </p>
         <span className="text-xs text-texto-suave">
           {item.totalDeObras} {item.totalDeObras === 1 ? "obra" : "obras"}
+          {item.curtidas > 0 && (
+            <>
+              {" "}· <span aria-hidden>♥</span> {item.curtidas}
+              <span className="sr-only">{item.curtidas === 1 ? "curtida" : "curtidas"}</span>
+            </>
+          )}
         </span>
       </div>
     </>

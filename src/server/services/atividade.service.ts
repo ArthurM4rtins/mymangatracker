@@ -18,6 +18,7 @@ export type ListaDoFeed = {
   nome: string;
   totalDeObras: number;
   capas: Array<string | null>;
+  curtidas: number;
   quando: Date;
 };
 
@@ -57,6 +58,7 @@ export function feedDaComunidadeDoSistema(): Promise<AtividadeDaComunidade[]>
           nome: lista.nome,
           totalDeObras: lista.totalDeObras,
           capas: lista.capas,
+          curtidas: lista.curtidas,
           quando: lista.criadaEm,
         };
       });
