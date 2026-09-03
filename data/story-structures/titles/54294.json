@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 54294,
+    "title": "Ao Haru Ride",
+    "titleRomaji": "Ao Haru Ride",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 53,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

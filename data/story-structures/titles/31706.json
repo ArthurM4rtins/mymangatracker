@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "media": { "anilistId": 31706, "title": "JoJo's Bizarre Adventure: Part 7-Steel Ball Run", "titleRomaji": "JoJo no Kimyou na Bouken: Steel Ball Run", "format": "MANGA", "countryOfOrigin": "JP", "chapters": 95, "status": "FINISHED" },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": { "status": "DRAFT", "researchedAt": "2026-08-31" },
+  "sources": [
+    { "id": "jojowiki-steel-ball-run", "url": "https://jojowiki.com/Steel_Ball_Run", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "jojowiki-steel-ball-run-chapters", "url": "https://jojowiki.com/Steel_Ball_Run/Chapter_List", "type": "COMMUNITY", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "san-diego-beach", "kind": "ARC", "position": 1, "title": "San Diego Beach", "range": { "unit": "CHAPTER", "start": "1", "end": "4" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "first-stage", "kind": "ARC", "position": 2, "title": "1st Stage", "range": { "unit": "CHAPTER", "start": "5", "end": "12" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "across-arizona-desert", "kind": "ARC", "position": 3, "title": "Across the Arizona Desert", "range": { "unit": "CHAPTER", "start": "13", "end": "14" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "desert-born-outlaws", "kind": "ARC", "position": 4, "title": "The Desert-Born Outlaws", "range": { "unit": "CHAPTER", "start": "15", "end": "17" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "devils-palm", "kind": "ARC", "position": 5, "title": "The Devil's Palm", "range": { "unit": "CHAPTER", "start": "18", "end": "19" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "gyros-destiny", "kind": "ARC", "position": 6, "title": "Gyro Zeppeli's Destiny", "range": { "unit": "CHAPTER", "start": "20", "end": "21" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "terrorist-faraway-country", "kind": "ARC", "position": 7, "title": "The Terrorist from a Faraway Country", "range": { "unit": "CHAPTER", "start": "22", "end": "24" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "tusk", "kind": "ARC", "position": 8, "title": "Tusk", "range": { "unit": "CHAPTER", "start": "25", "end": "27" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "scary-monsters", "kind": "ARC", "position": 9, "title": "Scary Monsters", "range": { "unit": "CHAPTER", "start": "28", "end": "32" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "world-of-man", "kind": "ARC", "position": 10, "title": "The World of Man", "range": { "unit": "CHAPTER", "start": "33", "end": "35" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "green-tomb", "kind": "ARC", "position": 11, "title": "The Green Tomb", "range": { "unit": "CHAPTER", "start": "36", "end": "37" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "catch-the-rainbow", "kind": "ARC", "position": 12, "title": "Catch the Rainbow (On a Stormy Night...)", "range": { "unit": "CHAPTER", "start": "38", "end": "39" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "silent-way", "kind": "ARC", "position": 13, "title": "Silent Way", "range": { "unit": "CHAPTER", "start": "40", "end": "44" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "promised-land-sugar-mountain", "kind": "ARC", "position": 14, "title": "The Promised Land: Sugar Mountain", "range": { "unit": "CHAPTER", "start": "45", "end": "47" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "tubular-bells", "kind": "ARC", "position": 15, "title": "Tubular Bells", "range": { "unit": "CHAPTER", "start": "48", "end": "50" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "wrecking-ball", "kind": "ARC", "position": 16, "title": "Wrecking Ball", "range": { "unit": "CHAPTER", "start": "51", "end": "55" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "civil-war", "kind": "ARC", "position": 17, "title": "Civil War", "range": { "unit": "CHAPTER", "start": "56", "end": "59" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "both-sides-now", "kind": "ARC", "position": 18, "title": "Both Sides Now", "range": { "unit": "CHAPTER", "start": "60", "end": "62" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "chocolate-disco", "kind": "ARC", "position": 19, "title": "Chocolate Disco", "range": { "unit": "CHAPTER", "start": "63", "end": "65" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "d4c", "kind": "ARC", "position": 20, "title": "D4C", "ranges": [{ "unit": "CHAPTER", "start": "66", "end": "70" }, { "unit": "CHAPTER", "start": "73", "end": "82" }], "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "ticket-to-ride", "kind": "ARC", "position": 21, "title": "Ticket to Ride", "range": { "unit": "CHAPTER", "start": "71", "end": "72" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "ball-breaker", "kind": "ARC", "position": 22, "title": "Ball Breaker", "range": { "unit": "CHAPTER", "start": "83", "end": "87" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "break-my-heart", "kind": "ARC", "position": 23, "title": "Break My Heart, Break Your Heart", "range": { "unit": "CHAPTER", "start": "88", "end": "89" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "high-voltage", "kind": "ARC", "position": 24, "title": "High Voltage", "range": { "unit": "CHAPTER", "start": "90", "end": "93" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" },
+    { "key": "world-stars-stripes", "kind": "ARC", "position": 25, "title": "The World of Stars and Stripes", "range": { "unit": "CHAPTER", "start": "94", "end": "95" }, "sourceIds": ["jojowiki-steel-ball-run"], "status": "DRAFT", "confidence": "HIGH" }
+  ],
+  "conflicts": [
+    { "field": "D4C chapter coverage", "reason": "A taxonomia da JoJo's Bizarre Encyclopedia classifica D4C como um unico arco em dois intervalos (66-70 e 73-82), interrompido por Ticket to Ride (71-72). O campo ranges preserva a classificacao sem criar sobreposicao artificial." }
+  ]
+}

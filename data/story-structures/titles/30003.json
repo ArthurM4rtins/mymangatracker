@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30003,
+    "title": "20th Century Boys",
+    "titleRomaji": "20 Seiki Shounen",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 249,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "NOT_APPLICABLE",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "20th-century-boys-chapters", "url": "https://en.wikipedia.org/wiki/List_of_20th_Century_Boys_chapters", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "20th-century-boys-community-arc-discussion", "url": "https://www.reddit.com/r/20thcbManga/comments/xsaje0/can_someone_tell_me_how_many_arcs_are_in_20th/", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "20th-century-boys-timeline-analysis", "url": "https://www.reddit.com/r/naoki_urasawa/comments/19beb35/20th_century_boys_timeskips/", "type": "COMMUNITY", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "story segmentation", "reason": "20th Century Boys nao possui taxonomia de arcos estavel. A narrativa alterna continuamente entre epocas e as divisoes em 'Bloody New Year's Eve', '2014' ou 'Friend Era' sao interpretacoes de leitores, sem limites consensuais." },
+    { "field": "series conclusion", "reason": "Os 249 capitulos pertencem somente a 20th Century Boys. 21st Century Boys e uma continuacao separada de 16 capitulos e nao deve ser fundida a este AniList ID." }
+  ]
+}

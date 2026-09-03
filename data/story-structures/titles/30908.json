@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30908,
+    "title": "Soul Eater",
+    "titleRomaji": "Soul Eater",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 117,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "square-enix-soul-eater", "url": "https://squareenixmangaandbooks.square-enix-games.com/en-us/series/soul-eater", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "soul-eater-wiki-story-arcs", "url": "https://souleater.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "soul-eater-wiki-chapters", "url": "https://souleater.fandom.com/wiki/Chapters", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "chapter total", "reason": "AniList registra 117 capítulos. A lista comunitária separa três prólogos (0.1-0.3), capítulos numerados e um capítulo final, mas sua taxonomia de arcos termina no 113 e não explica como chega ao total AniList." },
+    { "field": "arc taxonomy", "reason": "A wiki diz que usa títulos do mangá, mas também reconhece que parte dos nomes é conjectural. Sem uma tabela oficial que relacione a numeração completa aos arcos, não é seguro publicar limites." }
+  ]
+}

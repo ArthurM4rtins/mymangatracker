@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 63327,
+    "title": "Tokyo Ghoul",
+    "titleRomaji": "Tokyo Ghoul",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 144,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "fiction-horizon-2023", "url": "https://fictionhorizon.com/tokyo-ghoul-arcs-in-order/", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "fselx-2026", "url": "https://fselx.com/tokyo-ghoul-manga/", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "introduction", "kind": "ARC", "position": 1, "title": "Introduction Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "3" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "nishiki", "kind": "ARC", "position": 2, "title": "Nishiki Arc", "range": { "unit": "CHAPTER", "start": "4", "end": "9" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "doves-emergence", "kind": "ARC", "position": 3, "title": "Doves' Emergence Arc", "range": { "unit": "CHAPTER", "start": "10", "end": "30" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "gourmet", "kind": "ARC", "position": 4, "title": "Gourmet Arc", "range": { "unit": "CHAPTER", "start": "31", "end": "46" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "aogiri-tree-eleventh-ward", "kind": "ARC", "position": 5, "title": "Aogiri Tree/11th Ward Battle Arc", "range": { "unit": "CHAPTER", "start": "47", "end": "79" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "post-aogiri-timeskip", "kind": "ARC", "position": 6, "title": "Post-Aogiri Tree/Timeskip Arc", "range": { "unit": "CHAPTER", "start": "80", "end": "94" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "raid-on-kanous-lab", "kind": "ARC", "position": 7, "title": "Raid on Kanou's Lab Arc", "range": { "unit": "CHAPTER", "start": "95", "end": "107" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "decision", "kind": "ARC", "position": 8, "title": "Decision Arc", "range": { "unit": "CHAPTER", "start": "108", "end": "121" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "owl-suppression", "kind": "ARC", "position": 9, "title": "Owl Suppression Operation Arc", "range": { "unit": "CHAPTER", "start": "122", "end": "143" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "Nao ha taxonomia oficial universal: Fiction Horizon divide o original em nove arcos detalhados, enquanto Fselx usa agrupamentos de navegacao diferentes. Os limites acima seguem a fonte detalhada e permanecem DRAFT." },
+    { "field": "chapter total", "reason": "AniList informa 144 capitulos; as fontes tratam a narrativa principal como 143 capitulos e mencionam epilogo/extras de forma distinta. O capitulo extra nao foi associado a um arco." }
+  ],
+  "notes": "Este arquivo cobre somente Tokyo Ghoul original. Tokyo Ghoul:re deve ser curado em seu proprio AniList ID, sem continuar a numeracao deste registro."
+}

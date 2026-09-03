@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": { "anilistId": 87170, "title": "Fire Punch", "titleRomaji": "Fire Punch", "format": "MANGA", "countryOfOrigin": "JP", "chapters": 83, "status": "FINISHED" },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": { "status": "DRAFT", "researchedAt": "2026-08-31" },
+  "sources": [
+    { "id": "fire-punch-wiki-story-arcs", "url": "https://fire-punch.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "viz-fire-punch-chapters", "url": "https://www.viz.com/shonenjump/chapters/fire-punch", "type": "OFFICIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "behemdorg", "kind": "ARC", "position": 1, "title": "Behemdorg Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "33" }, "sourceIds": ["fire-punch-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "catharsis", "kind": "ARC", "position": 2, "title": "Catharsis Arc", "range": { "unit": "CHAPTER", "start": "34", "end": "52" }, "sourceIds": ["fire-punch-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "amnesia", "kind": "ARC", "position": 3, "title": "Amnesia Arc", "range": { "unit": "CHAPTER", "start": "53", "end": "62" }, "sourceIds": ["fire-punch-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "fire-punch", "kind": "ARC", "position": 4, "title": "Fire Punch Arc", "range": { "unit": "CHAPTER", "start": "63", "end": "80" }, "sourceIds": ["fire-punch-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "final-film", "kind": "ARC", "position": 5, "title": "Final Film Arc", "range": { "unit": "CHAPTER", "start": "81", "end": "83" }, "sourceIds": ["fire-punch-wiki-story-arcs", "viz-fire-punch-chapters"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A unica fonte de divisao declara explicitamente que os nomes e separacoes sao feitos pela comunidade, nao oficiais. Os cinco arcos foram mantidos como DRAFT; a VIZ foi usada apenas para confirmar a serie principal ate o capitulo 83." }
+  ]
+}

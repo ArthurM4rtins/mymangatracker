@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { mapearBusca, mapearMedia } from "@/server/domain/anilist-media";
+import {
+  mapearAutor,
+  mapearBusca,
+  mapearMedia,
+  mapearRecomendacoes,
+} from "@/server/domain/anilist-media";
 
 // Registro real, capturado de graphql.anilist.co em 27/08/2026.
 const LOOKISM = {
@@ -128,5 +133,177 @@ describe("mapearBusca", () =>
     expect(mapearBusca({})).toEqual([]);
     expect(mapearBusca({ errors: [{ message: "rate limited" }] })).toEqual([]);
     expect(mapearBusca(null)).toEqual([]);
+  });
+});
+
+// Os campos que a página da obra usa (issue #35): banner, ano, gêneros, nota
+// média e autores vindos do staff. Ausência vira undefined, nunca chute.
+const VAGABOND_COMPLETO = {
+  id: 30656,
+  title: { romaji: "Vagabond" },
+  format: "MANGA",
+  countryOfOrigin: "JP",
+  bannerImage: "https://s4.anilist.co/file/anilistcdn/media/manga/banner/30656.jpg",
+  startDate: { year: 1998 },
+  genres: ["Action", "Adventure", "Drama"],
+  averageScore: 92,
+  staff: {
+    edges: [
+      { role: "Story & Art", node: { id: 96879, name: { full: "Takehiko Inoue" } } },
+      { role: "Original Story", node: { id: 97197, name: { full: "Eiji Yoshikawa" } } },
+      { role: "Translator", node: { id: 111111, name: { full: "Alguém" } } },
+      { role: "Assistant", node: null },
+    ],
+  },
+};
+
+describe("mapearMedia — campos da página da obra", () =>
+{
+  it("mapeia banner, ano, gêneros e nota média", () =>
+  {
+    const media = mapearMedia(VAGABOND_COMPLETO);
+
+    expect(media).toMatchObject({
+      bannerImageUrl: "https://s4.anilist.co/file/anilistcdn/media/manga/banner/30656.jpg",
+      startYear: 1998,
+      genres: ["Action", "Adventure", "Drama"],
+      averageScore: 92,
+    });
+  });
+
+  it("extrai autores do staff pelos papéis de história e arte, ignorando o resto", () =>
+  {
+    const media = mapearMedia(VAGABOND_COMPLETO);
+
+    expect(media?.autores).toEqual([
+      { anilistStaffId: 96879, nome: "Takehiko Inoue", papel: "Story & Art" },
+      { anilistStaffId: 97197, nome: "Eiji Yoshikawa", papel: "Original Story" },
+    ]);
+  });
+
+  it("sem os campos novos, nada é inventado", () =>
+  {
+    const media = mapearMedia(LOOKISM);
+
+    expect(media).not.toHaveProperty("bannerImageUrl");
+    expect(media).not.toHaveProperty("startYear");
+    expect(media).not.toHaveProperty("genres");
+    expect(media).not.toHaveProperty("averageScore");
+    expect(media).not.toHaveProperty("autores");
+  });
+});
+
+describe("mapearRecomendacoes", () =>
+{
+  it("extrai as obras recomendadas, descartando o que não mapeia", () =>
+  {
+    const resposta = {
+      data: {
+        Page: {
+          media: [
+            {
+              recommendations: {
+                nodes: [
+                  { mediaRecommendation: LOOKISM },
+                  { mediaRecommendation: { id: 1, title: {}, format: "MANGA" } },
+                  { mediaRecommendation: null },
+                  null,
+                ],
+              },
+            },
+          ],
+        },
+      },
+    };
+
+    const obras = mapearRecomendacoes(resposta);
+
+    expect(obras).toHaveLength(1);
+    expect(obras[0].anilistId).toBe(86848);
+  });
+
+  it("resposta torta vira lista vazia, não exceção", () =>
+  {
+    expect(mapearRecomendacoes(null)).toEqual([]);
+    expect(mapearRecomendacoes({ data: { Page: { media: [] } } })).toEqual([]);
+  });
+});
+
+// A página do autor (issue #43): perfil do staff + obras, dedup dos papéis
+// Story/Art (a mesma obra vem duas vezes) e bio sem markdown de link.
+const INOUE = {
+  data: {
+    Page: {
+      staff: [{
+      id: 96911,
+      name: { full: "Takehiko Inoue", native: "井上雄彦" },
+      image: { large: "https://s4.anilist.co/staff/n96911.png" },
+      description: "Autor de [Slam Dunk](https://anilist.co/manga/30051/).<br>Fã de basquete.",
+      staffMedia: {
+        edges: [
+          {
+            staffRole: "Story & Art",
+            node: {
+              id: 30656,
+              title: { romaji: "Vagabond" },
+              coverImage: { large: "https://capa/vagabond.jpg" },
+              startDate: { year: 1998 },
+            },
+          },
+          {
+            staffRole: "Art",
+            node: { id: 30656, title: { romaji: "Vagabond" } },
+          },
+          {
+            staffRole: "Story & Art",
+            node: { id: 30051, title: { romaji: "Slam Dunk" }, startDate: { year: 1990 } },
+          },
+          { staffRole: "Story", node: null },
+          null,
+        ],
+      },
+      }],
+    },
+  },
+};
+
+describe("mapearAutor", () =>
+{
+  it("mapeia o perfil com bio limpa e as obras sem duplicar papéis", () =>
+  {
+    const autor = mapearAutor(INOUE);
+
+    expect(autor).toEqual({
+      staffId: 96911,
+      nome: "Takehiko Inoue",
+      nomeNativo: "井上雄彦",
+      imagemUrl: "https://s4.anilist.co/staff/n96911.png",
+      descricao: "Autor de Slam Dunk.\nFã de basquete.",
+      obras: [
+        {
+          anilistId: 30656,
+          titleRomaji: "Vagabond",
+          titleEnglish: null,
+          coverImageUrl: "https://capa/vagabond.jpg",
+          startYear: 1998,
+          papel: "Story & Art",
+        },
+        {
+          anilistId: 30051,
+          titleRomaji: "Slam Dunk",
+          titleEnglish: null,
+          coverImageUrl: null,
+          startYear: 1990,
+          papel: "Story & Art",
+        },
+      ],
+    });
+  });
+
+  it("staff inexistente ou resposta torta vira null", () =>
+  {
+    expect(mapearAutor(null)).toBeNull();
+    expect(mapearAutor({ data: { Page: { staff: [] } } })).toBeNull();
+    expect(mapearAutor({ data: { Page: { staff: [{ id: 1, name: {} }] } } })).toBeNull();
   });
 });

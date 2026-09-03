@@ -25,6 +25,14 @@ const eslintConfig = defineConfig([
       // Por isso `controller` (src/app/api) vem antes de `ui` (o resto de src/app).
       "boundaries/elements": [
         { type: "prisma", partialMatch: false, pattern: "src/generated/**" },
+        {
+          // Resolucao de sessao (cookie -> userId). Vive na camada de controller,
+          // mas paginas server-side tambem resolvem sessao — e SO isso do lado
+          // de controller que a ui pode importar.
+          type: "sessao",
+          partialMatch: false,
+          pattern: "src/app/api/v1/_shared/**",
+        },
         { type: "controller", partialMatch: false, pattern: "src/app/api/**" },
         { type: "ui", partialMatch: false, pattern: "src/app/**" },
         { type: "domain", partialMatch: false, pattern: "src/server/domain/**" },
@@ -58,12 +66,21 @@ const eslintConfig = defineConfig([
               allow: { to: { module: { origin: "external" } } },
             },
             {
+              // Builtin do Node ("node:crypto" no domain/senha, "node:*" em geral)
+              // nao e pacote externo nem arquivo do projeto — liberar explicito.
+              allow: { to: { module: { source: "node:*" } } },
+            },
+            {
               // A tela chama serviço direto. Server component que fizesse fetch no
               // próprio /api/v1 custaria uma segunda invocação de função por render.
               // O que continua barrado é o que importa: repositório, infra e Prisma.
               from: { element: { type: "ui" } },
               allow: {
-                to: { element: { types: { anyOf: ["ui", "service", "domain"] } } },
+                to: {
+                  element: {
+                    types: { anyOf: ["ui", "service", "domain", "sessao"] },
+                  },
+                },
               },
             },
             {
@@ -71,9 +88,15 @@ const eslintConfig = defineConfig([
               allow: {
                 to: {
                   element: {
-                    types: { anyOf: ["controller", "service", "domain"] },
+                    types: { anyOf: ["controller", "service", "domain", "sessao"] },
                   },
                 },
+              },
+            },
+            {
+              from: { element: { type: "sessao" } },
+              allow: {
+                to: { element: { types: { anyOf: ["sessao", "infra", "domain"] } } },
               },
             },
             {

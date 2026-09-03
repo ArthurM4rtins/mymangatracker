@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 33031,
+    "title": "Pandora Hearts",
+    "titleRomaji": "Pandora Hearts",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 107,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

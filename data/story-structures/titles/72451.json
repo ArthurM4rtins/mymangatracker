@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 72451,
+    "title": "Horimiya",
+    "titleRomaji": "Horimiya",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 152,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "NOT_APPLICABLE",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "horimiya-wiki-manga", "url": "https://horimiya.fandom.com/wiki/Horimiya_(Manga)", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "horimiya-wiki-chapters", "url": "https://horimiya.fandom.com/wiki/Category:Chapters", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "horimiya-reading-order", "url": "https://mostrecommendedbooks.com/series/horimiya-manga-in-order", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "story segmentation", "reason": "As fontes descrevem Horimiya como leitura sequencial de episodios escolares conectados e nao apresentam uma taxonomia de arcos com limites estaveis. A serializacao principal encerra no capitulo 122; o total 152 do AniList inclui capitulos adicionais e numeracao fracionada, que nao devem ser forcados em arcos editoriais." }
+  ]
+}

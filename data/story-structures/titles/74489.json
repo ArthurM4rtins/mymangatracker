@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 74489,
+    "title": "Land of the Lustrous",
+    "titleRomaji": "Houseki no Kuni",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 120,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

@@ -152,3 +152,65 @@ Os dois foram restaurados e a suite voltou a 10 verdes.
 **Regra:** invariante que a nota depende (privacidade do progresso, indice parcial) so conta como
 provado depois de ver o teste falhar com a regra removida. Vale para schema e banco tanto quanto
 para config de lint.
+
+---
+
+## PowerShell 5.1 quebra argumento multilinha com aspas duplas internas
+
+**01/09/2026.** Duas vezes na mesma sessao: here-string `@'...'@` passado como
+argumento de exe nativo (`gh pr create --body`, `git commit -m`) estourou com
+"unknown arguments" / "pathspec did not match" quando o texto continha aspas
+duplas internas ("Configurar leitura", "Na estante"). O parser de argumentos
+nativos do Windows PowerShell 5.1 recorta no `"` interno mesmo vindo de
+here-string literal.
+
+**Regra:** mensagem/corpo multilinha com aspas duplas vai por arquivo
+(`--body-file`, `git commit -F`) ou perde as aspas. Nao insistir no here-string
+inline — o erro so aparece na execucao.
+
+---
+
+## Botao nao promete o que o sistema nao controla
+
+**01/09/2026.** Correcao do usuario: com fonte de pagina da obra, o botao dizia
+"Abrir obra + registrar cap. 2" mas abria sempre a pagina salva (o link colado,
+que era do capitulo 1). O sistema registrava um capitulo que nao tinha como
+saber se foi lido, e abria um lugar que nao era o prometido.
+
+**Regra:** rotulo de acao descreve APENAS o que o codigo faz de verdade. Se o
+sistema nao controla o resultado (nao sabe qual capitulo a pagina vai mostrar,
+nao sabe onde o usuario parou), a acao nao registra nada em silencio — vira
+acao explicita do usuario (edicao manual do capitulo). Registro automatico so
+quando a informacao e real (template resolve o capitulo; extensao le a pagina).
+
+---
+
+## gh com duas contas: a ativa troca sozinha e o push da 403
+
+**01/09/2026.** Duas contas logadas no gh (`NicholasSchlindwein-dev`, com
+permissao no repo, e `NicholasSchlindwein`, sem). Duas vezes na sessao o push
+falhou com 403 porque a conta ativa tinha trocado — e `gh auth setup-git`
+sozinho nao resolve, porque o helper usa a conta ATIVA.
+
+**Regra:** push com 403 inesperado → `gh auth status` primeiro. Se a ativa for
+a errada: `gh auth switch --user NicholasSchlindwein-dev` e so entao
+`gh auth setup-git` + push.
+
+---
+
+## Identidade visual — nao ecoar o Letterboxd
+
+**31/08/2026.** Duas correcoes do usuario na primeira rodada de identidade: (1) os temas sumi e
+matcha eram ambos papel-claro com branco de superficie — na tela, "iguais, so muda a cor do
+logo"; (2) o seletor de tema com tres bolinhas coloridas lado a lado reproduzia a assinatura
+visual do logo do Letterboxd.
+
+**Regra:** o Letterboxd e benchmark de produto, nao de estetica — elemento visual que evoca a
+marca deles (trio de circulos coloridos, em especial) nao entra. E temas so contam como opcoes
+distintas se o **fundo** muda de verdade entre eles; trocar so o acento nao e um tema novo.
+Matcha virou meio-termo real (verde-oliva dim) e o seletor virou controle segmentado com texto.
+
+**Nuance (01/09, decisao do usuario):** bolinhas de tema voltaram por pedido explicito, mas como
+SWATCH funcional — cada uma com as duas metades das cores do PROPRIO tema (fundo + acento),
+nao o trio solido laranja/verde/azul da marca deles. A regra continua valendo para cores/arranjo
+que imitem o logo do Letterboxd.

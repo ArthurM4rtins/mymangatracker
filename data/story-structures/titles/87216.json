@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 87216,
+    "title": "Demon Slayer: Kimetsu no Yaiba",
+    "titleRomaji": "Kimetsu no Yaiba",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 207,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "comingsoon-2024", "url": "https://www.comingsoon.net/guides/news/1786665-demon-slayer-all-manga-arcs-in-order-chapters-list", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "comic-book-treasury-2026", "url": "https://www.comicbooktreasury.com/demon-slayer-manga-order/", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "siliconera-2022", "url": "https://www.siliconera.com/how-to-catch-up-with-demon-slayer-arcs-ahead-of-season-3/", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "final-selection", "kind": "ARC", "position": 1, "title": "Final Selection Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "9" }, "sourceIds": ["comingsoon-2024", "comic-book-treasury-2026", "siliconera-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kidnappers-bog", "kind": "ARC", "position": 2, "title": "Kidnapper's Bog Arc", "range": { "unit": "CHAPTER", "start": "10", "end": "13" }, "sourceIds": ["comingsoon-2024", "comic-book-treasury-2026", "siliconera-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "asakusa", "kind": "ARC", "position": 3, "title": "Asakusa Arc", "range": { "unit": "CHAPTER", "start": "14", "end": "19" }, "sourceIds": ["comingsoon-2024", "comic-book-treasury-2026", "siliconera-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "tsuzumi-mansion", "kind": "ARC", "position": 4, "title": "Tsuzumi Mansion Arc", "range": { "unit": "CHAPTER", "start": "20", "end": "27" }, "sourceIds": ["comingsoon-2024", "comic-book-treasury-2026", "siliconera-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "mount-natagumo", "kind": "ARC", "position": 5, "title": "Mount Natagumo Arc", "range": { "unit": "CHAPTER", "start": "28", "end": "44" }, "sourceIds": ["comingsoon-2024", "comic-book-treasury-2026", "siliconera-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "rehabilitation-training", "kind": "ARC", "position": 6, "title": "Rehabilitation Training Arc", "range": { "unit": "CHAPTER", "start": "45", "end": "53" }, "sourceIds": ["comingsoon-2024", "comic-book-treasury-2026", "siliconera-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "mugen-train", "kind": "ARC", "position": 7, "title": "Mugen Train Arc", "range": { "unit": "CHAPTER", "start": "54", "end": "66" }, "sourceIds": ["comingsoon-2024", "comic-book-treasury-2026"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "entertainment-district", "kind": "ARC", "position": 8, "title": "Entertainment District Arc", "range": { "unit": "CHAPTER", "start": "67", "end": "97" }, "sourceIds": ["comingsoon-2024", "comic-book-treasury-2026"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "swordsmith-village", "kind": "ARC", "position": 9, "title": "Swordsmith Village Arc", "range": { "unit": "CHAPTER", "start": "98", "end": "127" }, "sourceIds": ["comingsoon-2024", "comic-book-treasury-2026", "siliconera-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "hashira-training", "kind": "ARC", "position": 10, "title": "Hashira Training Arc", "range": { "unit": "CHAPTER", "start": "128", "end": "139" }, "sourceIds": ["comingsoon-2024"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "final-battle", "kind": "SAGA", "position": 11, "title": "Final Battle Arc", "range": { "unit": "CHAPTER", "start": "140", "end": "205" }, "sourceIds": ["comingsoon-2024"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "infinity-castle", "parentKey": "final-battle", "kind": "ARC", "position": 1, "title": "Infinity Castle Arc", "range": { "unit": "CHAPTER", "start": "140", "end": "183" }, "sourceIds": ["comingsoon-2024"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "sunrise-countdown", "parentKey": "final-battle", "kind": "ARC", "position": 2, "title": "Sunrise Countdown Arc", "range": { "unit": "CHAPTER", "start": "184", "end": "205" }, "sourceIds": ["comingsoon-2024", "comic-book-treasury-2026", "siliconera-2022"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "chapter boundaries", "reason": "As fontes divergem em Rehabilitation/Mugen/Entertainment (45-53, 54-66, 67-97 versus 45-53, 54-69, 70-97) e em Hashira/Infinity (128-139, 140-183 versus 128-136, 137-183). Este rascunho segue ComingSoon para manter limites contiguos." },
+    { "field": "total chapters", "reason": "AniList informa 207 capitulos, enquanto as tres fontes editoriais encerram a estrutura principal no capitulo 205; os dois capitulos excedentes exigem verificacao antes de serem associados a um arco." }
+  ]
+}

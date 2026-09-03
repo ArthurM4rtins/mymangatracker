@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30598,
+    "title": "Fairy Tail",
+    "titleRomaji": "FAIRY TAIL",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 549,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

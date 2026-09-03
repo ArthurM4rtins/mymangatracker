@@ -5,16 +5,26 @@
  * minuto, e se cada visitante chamasse direto, a cota do projeto inteiro queimaria
  * no primeiro acesso com movimento. Quem chama e o servidor. Painel 05 do artifact.
  */
-import { mapearBusca, type MediaDoAniList } from "@/server/domain/anilist-media";
+import {
+  mapearAutor,
+  mapearBusca,
+  mapearRecomendacoes,
+  type AutorDoAniList,
+  type MediaDoAniList,
+} from "@/server/domain/anilist-media";
+import type {
+  FiltroDoCatalogo,
+  OrdemDoCatalogo,
+} from "@/server/domain/catalogo-filtros";
 import { anilistEndpoint } from "./config";
 
 const TIMEOUT_MS = 5000;
 const LIMITE_PADRAO = 20;
+const LIMITE_SIMILARES = 6;
 
-const BUSCA = `
-query($termo: String, $limite: Int) {
-  Page(perPage: $limite) {
-    media(search: $termo, type: MANGA, sort: SEARCH_MATCH) {
+// O recorte de campos é um só para toda consulta: o cache em `Media` guarda
+// tudo isso, e a página da obra é quem usa os campos além do card.
+const CAMPOS_DE_MEDIA = `
       id
       title { romaji english native }
       format
@@ -22,6 +32,36 @@ query($termo: String, $limite: Int) {
       chapters
       description(asHtml: false)
       coverImage { large }
+      bannerImage
+      startDate { year }
+      genres
+      averageScore
+      staff(perPage: 6, sort: RELEVANCE) {
+        edges { role node { id name { full } } }
+      }`;
+
+// Vitrine do catálogo sem termo. `isAdult: false` porque a tela é pública e
+// sem sessão — não é o lugar de decidir preferência de conteúdo por usuário.
+const POPULARES = `
+query($limite: Int) {
+  Page(perPage: $limite) {
+    media(type: MANGA, sort: POPULARITY_DESC, isAdult: false) {${CAMPOS_DE_MEDIA}
+    }
+  }
+}`;
+
+// Similares = recommendations da própria obra, votadas pela comunidade do
+// AniList. Só a página da obra consulta; não entra no cache do banco.
+const SIMILARES = `
+query($id: Int, $limite: Int) {
+  Page(perPage: 1) {
+    media(id: $id, type: MANGA) {
+      recommendations(perPage: $limite, sort: RATING_DESC) {
+        nodes {
+          mediaRecommendation {${CAMPOS_DE_MEDIA}
+          }
+        }
+      }
     }
   }
 }`;
@@ -31,25 +71,177 @@ query($termo: String, $limite: Int) {
 // provided" quando não há campo de conteúdo dentro de `Page`.
 const PING = `query { Media(id: 1) { id } }`;
 
+// Por id, mas via `Page`: `Media(id:)` direto responde erro de GraphQL quando o
+// id não existe, e não dá para distinguir de rate limit. `Page.media` devolve
+// lista vazia — id inexistente vira `null`, não exceção.
+const POR_ID = `
+query($id: Int) {
+  Page(perPage: 1) {
+    media(id: $id, type: MANGA) {${CAMPOS_DE_MEDIA}
+    }
+  }
+}`;
+
 /**
- * Busca obras por termo. Devolve lista vazia quando o termo é vazio — não gasta
- * requisição da cota para perguntar nada.
+ * As obras mais populares do AniList. É o que o catálogo mostra antes de
+ * qualquer termo ser digitado.
  *
  * @throws quando o AniList não responde ou responde fora do 2xx.
  */
-export async function buscarMedia(
-  termo: string,
+export async function buscarPopulares(
   limite: number = LIMITE_PADRAO,
 ): Promise<MediaDoAniList[]>
 {
-  if (termo.trim() === "")
-  {
-    return [];
-  }
-
-  const resposta = await chamar(BUSCA, { termo: termo.trim(), limite });
+  const resposta = await chamar(POPULARES, { limite });
 
   return mapearBusca(resposta);
+}
+
+/**
+ * Uma obra pelo id do AniList. `null` quando o id não existe ou o formato não
+ * cabe no nosso modelo (o domínio descartou).
+ *
+ * @throws quando o AniList não responde — indisponibilidade, não ausência.
+ */
+export async function buscarMediaPorId(
+  anilistId: number,
+): Promise<MediaDoAniList | null>
+{
+  const resposta = await chamar(POR_ID, { id: anilistId });
+
+  return mapearBusca(resposta)[0] ?? null;
+}
+
+const ORDEM_ANILIST: Record<OrdemDoCatalogo, string> = {
+  popular: "POPULARITY_DESC",
+  nota: "SCORE_DESC",
+  alta: "TRENDING_DESC",
+  recente: "START_DATE_DESC",
+};
+
+/**
+ * Busca filtrada do catálogo. A query é montada só com os argumentos
+ * presentes: o AniList responde 400/500 para variável de filtro com null —
+ * visto no probe de 01/09, não é hipótese. Tudo que entra aqui já passou pela
+ * whitelist do domínio; o termo vai por variável, nunca interpolado.
+ */
+export async function buscarFiltrado(
+  filtro: FiltroDoCatalogo,
+  limite: number = LIMITE_PADRAO,
+): Promise<MediaDoAniList[]>
+{
+  const args: string[] = ["type: MANGA", "isAdult: false"];
+  const declaracoes: string[] = ["$limite: Int"];
+  const variables: Record<string, unknown> = { limite };
+
+  if (filtro.termo !== "")
+  {
+    declaracoes.push("$termo: String");
+    args.push("search: $termo");
+    variables.termo = filtro.termo;
+  }
+
+  if (filtro.genero !== undefined)
+  {
+    args.push(`genre_in: ${JSON.stringify([filtro.genero])}`);
+  }
+
+  if (filtro.tipo === "novel")
+  {
+    args.push("format_in: [NOVEL]");
+  }
+  else if (filtro.tipo !== undefined)
+  {
+    const pais = { manga: "JP", manhwa: "KR", manhua: "CN" }[filtro.tipo];
+    args.push("format_in: [MANGA, ONE_SHOT]", `countryOfOrigin: "${pais}"`);
+  }
+
+  if (filtro.decada !== undefined)
+  {
+    args.push(
+      `startDate_greater: ${(filtro.decada - 1) * 10000 + 1231}`,
+      `startDate_lesser: ${(filtro.decada + 10) * 10000 + 101}`,
+    );
+  }
+
+  // Busca por termo sem ordem escolhida fica na relevância do AniList.
+  const ordem =
+    filtro.termo !== "" && filtro.ordem === "popular"
+      ? "SEARCH_MATCH"
+      : ORDEM_ANILIST[filtro.ordem];
+  args.push(`sort: ${ordem}`);
+
+  const query = `
+query(${declaracoes.join(", ")}) {
+  Page(perPage: $limite) {
+    media(${args.join(", ")}) {${CAMPOS_DE_MEDIA}
+    }
+  }
+}`;
+
+  const resposta = await chamar(query, variables);
+
+  return mapearBusca(resposta);
+}
+
+// A página do autor: perfil + obras por popularidade. Via `Page.staff` porque
+// `Staff(id:)` direto responde 404 com errors para id inexistente (probe de
+// 01/09). `type: MANGA` cobre mangá e novel — a distinção deles é format.
+const AUTOR = `
+query($id: Int, $limite: Int) {
+  Page(perPage: 1) {
+    staff(id: $id) {
+      id
+      name { full native }
+      image { large }
+      description(asHtml: false)
+      staffMedia(perPage: $limite, sort: POPULARITY_DESC, type: MANGA) {
+        edges {
+          staffRole
+          node {
+            id
+            title { romaji english }
+            coverImage { large }
+            startDate { year }
+          }
+        }
+      }
+    }
+  }
+}`;
+
+const LIMITE_DE_OBRAS_DO_AUTOR = 24;
+
+/**
+ * O autor pelo id de staff do AniList. `null` quando não existe.
+ *
+ * @throws quando o AniList não responde — indisponibilidade, não ausência.
+ */
+export async function buscarAutor(
+  staffId: number,
+): Promise<AutorDoAniList | null>
+{
+  const resposta = await chamar(AUTOR, {
+    id: staffId,
+    limite: LIMITE_DE_OBRAS_DO_AUTOR,
+  });
+
+  return mapearAutor(resposta);
+}
+
+/**
+ * Obras similares — as recommendations da comunidade do AniList para a obra.
+ *
+ * @throws quando o AniList não responde; resposta torta vira lista vazia.
+ */
+export async function buscarSimilares(
+  anilistId: number,
+  limite: number = LIMITE_SIMILARES,
+): Promise<MediaDoAniList[]>
+{
+  const resposta = await chamar(SIMILARES, { id: anilistId, limite });
+
+  return mapearRecomendacoes(resposta);
 }
 
 /**

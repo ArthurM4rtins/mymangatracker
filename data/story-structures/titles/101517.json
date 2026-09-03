@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 101517,
+    "title": "Jujutsu Kaisen",
+    "titleRomaji": "Jujutsu Kaisen",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 272,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DISPUTED",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    {
+      "id": "jjk-manga-online-story-arcs",
+      "url": "https://jujutsukaisenmangaonline.online/story-arcs/",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-08-31"
+    }
+  ],
+  "segments": [],
+  "conflicts": [
+    {
+      "field": "segments",
+      "reason": "A fonte encontrada deixa capítulos sem arco e sobrepõe o capítulo 79 entre Gojo's Past e Shibuya Incident; é necessária uma segunda fonte antes de publicar."
+    }
+  ]
+}

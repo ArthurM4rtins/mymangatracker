@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 107237,
+    "title": "Blue Period",
+    "titleRomaji": "Blue Period",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    {
+      "id": "kmanga-blue-period-chapter-80",
+      "url": "https://kmanga.kodansha.com/title/10060/episode/361114",
+      "type": "OFFICIAL_REFERENCE",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "blue-period-wiki-volumes",
+      "url": "https://blue-period.fandom.com/wiki/Volumes",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "blue-period-wiki-chapters",
+      "url": "https://blue-period.fandom.com/wiki/Category:Chapters",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [],
+  "conflicts": [
+    {
+      "field": "arc taxonomy",
+      "reason": "A fonte oficial publica capítulos individuais e não define arcos. As referências comunitárias encontradas organizam capítulos e volumes, mas não apresentam uma taxonomia de arcos com limites; a divisão em fases narrativas aparece apenas como interpretação de leitores."
+    },
+    {
+      "field": "ending range",
+      "reason": "A obra permanece em publicação. O capítulo 80(1) foi confirmado em fonte oficial, mas não é possível inferir um arco aberto a partir da numeração sequencial."
+    }
+  ],
+  "notes": "Reavaliar se a Kodansha, a autora ou fontes independentes convergentes passarem a publicar uma divisão narrativa explícita."
+}

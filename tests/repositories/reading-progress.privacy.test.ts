@@ -1,5 +1,6 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import {
+  listarAberturas,
   maiorCapitulo,
   registrarAbertura,
   ultimaAbertura,
@@ -33,6 +34,58 @@ describe("reading-progress: privacidade do dono", () =>
     });
 
     expect(await ultimaAbertura(alice.id, media.id)).toBeNull();
+  });
+
+  it("histórico (issue #54): não devolve aberturas de outro usuário", async () =>
+  {
+    const alice = await semearUsuario("alice");
+    const bob = await semearUsuario("bob");
+    const media = await semearMedia(1);
+
+    await registrarAbertura({
+      userId: bob.id,
+      mediaId: media.id,
+      chapter: 58,
+      resolvedUrl: "https://site.test/title/Obra/chapter/58/1",
+    });
+
+    expect(await listarAberturas(alice.id, media.id, 20)).toEqual([]);
+  });
+
+  it("histórico sai do mais recente ao mais antigo, com o host da fonte e sem ids de usuário", async () =>
+  {
+    const alice = await semearUsuario("alice");
+    const media = await semearMedia(1);
+    const fonte = await getPrisma().readingSource.create({
+      data: {
+        userId: alice.id,
+        mediaId: media.id,
+        sourceHost: "site.test",
+        urlTemplate: "https://site.test/title/Obra/chapter/{n}/1",
+      },
+    });
+
+    await registrarAbertura({
+      userId: alice.id,
+      mediaId: media.id,
+      chapter: 57,
+      resolvedUrl: "https://site.test/title/Obra/chapter/57/1",
+      readingSourceId: fonte.id,
+    });
+    await registrarAbertura({
+      userId: alice.id,
+      mediaId: media.id,
+      chapter: 57.5,
+      resolvedUrl: "https://outro.test/57.5",
+    });
+
+    const historico = await listarAberturas(alice.id, media.id, 20);
+
+    expect(historico.map((a) => a.chapter)).toEqual(["57.5", "57"]);
+    expect(historico[0]).toMatchObject({ sourceHost: null, url: "https://outro.test/57.5" });
+    expect(historico[1]).toMatchObject({ sourceHost: "site.test" });
+    expect(JSON.stringify(historico)).not.toContain(alice.id);
+    expect(await listarAberturas(alice.id, media.id, 1)).toHaveLength(1);
   });
 
   it("não devolve o maior capítulo de outro usuário", async () =>

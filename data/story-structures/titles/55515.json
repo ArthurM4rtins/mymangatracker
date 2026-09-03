@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 55515,
+    "title": "JoJo no Kimyou na Bouken: JoJolion",
+    "titleRomaji": "JoJo no Kimyou na Bouken: JoJolion",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 110,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

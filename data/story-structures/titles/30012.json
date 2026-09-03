@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30012,
+    "title": "Bleach",
+    "titleRomaji": "BLEACH",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 706,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "bleach-comicbooktreasury-arcs", "url": "https://www.comicbooktreasury.com/bleach-manga-order/", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "bleach-mostrecommendedbooks-arcs", "url": "https://mostrecommendedbooks.com/series/bleach-manga-in-order", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "bleach-chapters-424-686", "url": "https://en.wikipedia.org/wiki/List_of_Bleach_chapters_(424%E2%80%93686)", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "agent-of-the-shinigami", "kind": "ARC", "position": 1, "title": "Agent of the Shinigami Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "70" }, "sourceIds": ["bleach-comicbooktreasury-arcs", "bleach-mostrecommendedbooks-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "soul-society", "kind": "ARC", "position": 2, "title": "Soul Society Arc", "range": { "unit": "CHAPTER", "start": "71", "end": "182" }, "sourceIds": ["bleach-comicbooktreasury-arcs", "bleach-mostrecommendedbooks-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "arrancar", "kind": "ARC", "position": 3, "title": "Arrancar Arc", "range": { "unit": "CHAPTER", "start": "183", "end": "423" }, "sourceIds": ["bleach-comicbooktreasury-arcs", "bleach-mostrecommendedbooks-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "lost-agent", "kind": "ARC", "position": 4, "title": "Lost Agent Arc", "range": { "unit": "CHAPTER", "start": "424", "end": "479" }, "sourceIds": ["bleach-comicbooktreasury-arcs", "bleach-mostrecommendedbooks-arcs", "bleach-chapters-424-686"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "thousand-year-blood-war", "kind": "ARC", "position": 5, "title": "Thousand-Year Blood War Arc", "range": { "unit": "CHAPTER", "start": "480", "end": "686" }, "sourceIds": ["bleach-comicbooktreasury-arcs", "bleach-mostrecommendedbooks-arcs", "bleach-chapters-424-686"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "chapter count", "reason": "As fontes de publicacao e os guias de arcos encerram a historia principal em 686. O AniList informa 706, diferenca atribuida a capitulos de numeracao negativa, extras e material complementar; esses itens permanecem sem arco neste contrato." },
+    { "field": "subdivision depth", "reason": "Ha taxonomias que subdividem Soul Society, Arrancar e Thousand-Year Blood War. Foi adotado o nivel de cinco arcos que tem melhor concordancia entre as fontes consultadas." }
+  ]
+}

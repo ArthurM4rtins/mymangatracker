@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 106130,
+    "title": "Blue Lock",
+    "titleRomaji": "Blue Lock",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "blue-lock-archive-arcs", "url": "https://bluelockarchive.com/arcs", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "blue-lock-wiki-arcs", "url": "https://bluelock.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "blue-lock-archive-reading-guide", "url": "https://bluelockarchive.com/reading-guide", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "introduction", "kind": "ARC", "position": 1, "title": "Introduction Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "4" }, "sourceIds": ["blue-lock-archive-arcs", "blue-lock-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "first-selection", "kind": "ARC", "position": 2, "title": "First Selection Arc", "range": { "unit": "CHAPTER", "start": "5", "end": "38" }, "sourceIds": ["blue-lock-archive-arcs", "blue-lock-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "second-selection", "kind": "ARC", "position": 3, "title": "Second Selection Arc", "range": { "unit": "CHAPTER", "start": "39", "end": "86" }, "sourceIds": ["blue-lock-archive-arcs", "blue-lock-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "third-selection", "kind": "ARC", "position": 4, "title": "Third Selection Arc", "range": { "unit": "CHAPTER", "start": "87", "end": "108" }, "sourceIds": ["blue-lock-archive-arcs", "blue-lock-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "u-20", "kind": "ARC", "position": 5, "title": "U-20 Arc", "range": { "unit": "CHAPTER", "start": "109", "end": "151" }, "sourceIds": ["blue-lock-archive-arcs", "blue-lock-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "neo-egoist-league", "kind": "ARC", "position": 6, "title": "Neo Egoist League Arc", "range": { "unit": "CHAPTER", "start": "152", "end": "302" }, "sourceIds": ["blue-lock-archive-arcs", "blue-lock-wiki-arcs", "blue-lock-archive-reading-guide"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "u-20-world-cup", "kind": "ARC", "position": 7, "title": "U-20 World Cup Arc", "range": { "unit": "CHAPTER", "start": "303", "end": null }, "sourceIds": ["blue-lock-archive-arcs", "blue-lock-archive-reading-guide"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "current arc endpoint", "reason": "Blue Lock esta em publicacao e o AniList nao informa total de capitulos. O U-20 World Cup Arc inicia no capitulo 303, mas permanece sem limite final para evitar congelar um contador de fonte editorial." },
+    { "field": "arc taxonomy", "reason": "Os nomes e limites sao uma taxonomia editorial/comunitaria; ainda nao ha confirmacao de uma classificacao oficial publicada pela Kodansha." }
+  ]
+}

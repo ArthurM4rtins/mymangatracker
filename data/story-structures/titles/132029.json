@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 132029,
+    "title": "Dandadan",
+    "titleRomaji": "Dandadan",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "dandadan-wiki-arcs", "url": "https://dandadan.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "viz-dandadan-chapters", "url": "https://www.viz.com/shonenjump/chapters/dandadan", "type": "OFFICIAL", "accessedAt": "2026-08-31" },
+    { "id": "dandadan-community-arc-discussion", "url": "https://www.reddit.com/r/Dandadan/comments/1tpxoqo/question_about_arcs_as_of_now/", "type": "COMMUNITY", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "Nao ha classificacao oficial de arcos. A taxonomia comunitaria nao e estavel, sobretudo apos Space Globalists: diferentes leitores agrupam ou dividem os mesmos capitulos e os limites mudam durante a serializacao." },
+    { "field": "current endpoint", "reason": "Dandadan esta em publicacao, e as fontes consultadas apontam capitulos recentes diferentes. Sem uma taxonomia estavel, um arco aberto tambem nao seria um dado curatorial confiavel." }
+  ]
+}

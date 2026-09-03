@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30001,
+    "title": "Monster",
+    "titleRomaji": "MONSTER",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 162,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "NOT_APPLICABLE",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "monster-chapter-list", "url": "https://en.wikipedia.org/wiki/List_of_Monster_chapters", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "monster-wiki-chapters", "url": "https://obluda.fandom.com/wiki/List_of_chapters", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "monster-community-arc-discussion", "url": "https://www.reddit.com/r/MonsterAnime/comments/mp0ogo/goals_for_book_club/", "type": "COMMUNITY", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "story segmentation", "reason": "Monster e um thriller continuo de 162 capitulos, com diversos nucleos paralelos. As fontes oferecem volumes, titulos de capitulos e pontos de pausa para o anime, mas nao uma taxonomia de arcos com limites consensuais para o manga." }
+  ]
+}

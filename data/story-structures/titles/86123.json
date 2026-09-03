@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 86123,
+    "title": "Black Clover",
+    "titleRomaji": "Black Clover",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 392,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "black-clover-wiki-story-arcs", "url": "https://blackclover.fandom.com/wiki/List_of_Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "black-clover-wiki-arc-11", "url": "https://blackclover.fandom.com/wiki/Arc_11", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "black-clover-wegotthiscovered", "url": "https://wegotthiscovered.com/anime/all-black-clover-arcs-in-order/", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "black-clover-final-release", "url": "https://comicbook.com/anime/feature/after-11-years-black-clover-officially-ends-with-final-release-crowns-a-new-wizard-king/", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "magic-knights-entrance", "kind": "ARC", "position": 1, "title": "Magic Knights Entrance Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "10" }, "sourceIds": ["black-clover-wiki-story-arcs", "black-clover-wegotthiscovered"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "dungeon-exploration", "kind": "ARC", "position": 2, "title": "Dungeon Exploration Arc", "range": { "unit": "CHAPTER", "start": "11", "end": "21" }, "sourceIds": ["black-clover-wiki-story-arcs", "black-clover-wegotthiscovered"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "royal-capital-assault", "kind": "ARC", "position": 3, "title": "Royal Capital Assault Arc", "range": { "unit": "CHAPTER", "start": "22", "end": "37" }, "sourceIds": ["black-clover-wiki-story-arcs", "black-clover-wegotthiscovered"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "eye-of-the-midnight-sun-encounter", "kind": "ARC", "position": 4, "title": "Eye of the Midnight Sun Encounter Arc", "range": { "unit": "CHAPTER", "start": "38", "end": "56" }, "sourceIds": ["black-clover-wiki-story-arcs", "black-clover-wegotthiscovered"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "seabed-temple", "kind": "ARC", "position": 5, "title": "Seabed Temple Arc", "range": { "unit": "CHAPTER", "start": "57", "end": "74" }, "sourceIds": ["black-clover-wiki-story-arcs", "black-clover-wegotthiscovered"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "witches-forest", "kind": "ARC", "position": 6, "title": "Witches' Forest Arc", "range": { "unit": "CHAPTER", "start": "75", "end": "101" }, "sourceIds": ["black-clover-wiki-story-arcs", "black-clover-wegotthiscovered"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "royal-knights", "kind": "ARC", "position": 7, "title": "Royal Knights Arc", "range": { "unit": "CHAPTER", "start": "102", "end": "149" }, "sourceIds": ["black-clover-wiki-story-arcs", "black-clover-wegotthiscovered"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "elf-reincarnation", "kind": "ARC", "position": 8, "title": "Elf Reincarnation Arc", "range": { "unit": "CHAPTER", "start": "150", "end": "228" }, "sourceIds": ["black-clover-wiki-story-arcs", "black-clover-wegotthiscovered"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "heart-kingdom-joint-struggle", "kind": "ARC", "position": 9, "title": "Heart Kingdom Joint Struggle Arc", "range": { "unit": "CHAPTER", "start": "229", "end": "260" }, "sourceIds": ["black-clover-wiki-story-arcs", "black-clover-wegotthiscovered"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "spade-kingdom-raid", "kind": "ARC", "position": 10, "title": "Spade Kingdom Raid Arc", "range": { "unit": "CHAPTER", "start": "261", "end": "331" }, "sourceIds": ["black-clover-wiki-story-arcs", "black-clover-wegotthiscovered"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "final-arc", "kind": "ARC", "position": 11, "title": "Final Arc (Arc 11)", "range": { "unit": "CHAPTER", "start": "332", "end": "392" }, "sourceIds": ["black-clover-wiki-story-arcs", "black-clover-wiki-arc-11", "black-clover-final-release"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "final arc name", "reason": "A fonte de referencia o identifica somente como Arc 11, apesar de ser o arco final. Foi usado o titulo funcional 'Final Arc (Arc 11)' sem inventar uma denominacao oficial." }
+  ]
+}

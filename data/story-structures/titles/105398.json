@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 105398,
+    "title": "Solo Leveling",
+    "titleRomaji": "Na Honjaman Level Up",
+    "format": "MANGA",
+    "countryOfOrigin": "KR",
+    "chapters": 201,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    {
+      "id": "fiction-horizon-2023",
+      "url": "https://fictionhorizon.com/all-22-solo-leveling-manhwa-arcs-recap-get-ready-for-the-anime/",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-08-31"
+    }
+  ],
+  "segments": [
+    { "key": "d-rank-dungeon", "kind": "ARC", "position": 1, "title": "D-Rank Dungeon Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "10" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "reawakening", "kind": "ARC", "position": 2, "title": "Reawakening Arc", "range": { "unit": "CHAPTER", "start": "11", "end": "12" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "instant-dungeon", "kind": "ARC", "position": 3, "title": "Instant Dungeon Arc", "range": { "unit": "CHAPTER", "start": "13", "end": "17" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "dungeon-and-lizards", "kind": "ARC", "position": 4, "title": "Dungeon & Lizards Arc", "range": { "unit": "CHAPTER", "start": "18", "end": "24" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "dungeon-and-prisoners", "kind": "ARC", "position": 5, "title": "Dungeon & Prisoners Arc", "range": { "unit": "CHAPTER", "start": "25", "end": "34" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "yoo-jinho-raid-party", "kind": "ARC", "position": 6, "title": "Yoo Jinho Raid Party Arc", "range": { "unit": "CHAPTER", "start": "35", "end": "37" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "job-change", "kind": "ARC", "position": 7, "title": "Job Change Arc", "range": { "unit": "CHAPTER", "start": "38", "end": "45" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "red-gate", "kind": "ARC", "position": 8, "title": "Red Gate Arc", "range": { "unit": "CHAPTER", "start": "46", "end": "55" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "demon-castle", "kind": "ARC", "position": 9, "title": "Demon Castle Arc", "range": { "unit": "CHAPTER", "start": "56", "end": "61" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "retesting-rank", "kind": "ARC", "position": 10, "title": "Retesting Rank Arc", "range": { "unit": "CHAPTER", "start": "61", "end": "64" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "hunters-guild-gate", "kind": "ARC", "position": 11, "title": "Hunters Guild Gate Arc", "range": { "unit": "CHAPTER", "start": "65", "end": "75" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "return-to-demon-castle", "kind": "ARC", "position": 12, "title": "Return to Demon Castle Arc", "range": { "unit": "CHAPTER", "start": "76", "end": "89" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "jeju-island", "kind": "ARC", "position": 13, "title": "Jeju Island Arc", "range": { "unit": "CHAPTER", "start": "90", "end": "107" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "recruitment", "kind": "ARC", "position": 14, "title": "Recruitment Arc", "range": { "unit": "CHAPTER", "start": "108", "end": "110" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "ahjin-guild", "kind": "ARC", "position": 15, "title": "Ahjin Guild Arc", "range": { "unit": "CHAPTER", "start": "111", "end": "122" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "double-dungeon", "kind": "ARC", "position": 16, "title": "Double Dungeon Arc", "range": { "unit": "CHAPTER", "start": "123", "end": "131" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "japan-crisis", "kind": "ARC", "position": 17, "title": "Japan Crisis Arc", "range": { "unit": "CHAPTER", "start": "132", "end": "139" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "international-guild-conference", "kind": "ARC", "position": 18, "title": "International Guild Conference Arc", "range": { "unit": "CHAPTER", "start": "140", "end": "149" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "monarchs-war", "kind": "ARC", "position": 19, "title": "Monarchs War Arc", "range": { "unit": "CHAPTER", "start": "150", "end": "166" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "final-battle", "kind": "ARC", "position": 20, "title": "Final Battle Arc", "range": { "unit": "CHAPTER", "start": "167", "end": "177" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "epilogue", "kind": "ARC", "position": 21, "title": "Epilogue", "range": { "unit": "CHAPTER", "start": "178", "end": "179" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "academy", "kind": "ARC", "position": 22, "title": "Academy Arc", "range": { "unit": "CHAPTER", "start": "180", "end": "200" }, "sourceIds": ["fiction-horizon-2023"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": []
+}

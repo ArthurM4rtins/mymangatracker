@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 46765,
+    "title": "Kingdom",
+    "titleRomaji": "Kingdom",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "shueisha-kingdom", "url": "https://youngjump.jp/kingdom/index.html", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "viz-kingdom", "url": "https://www.viz.com/shonenjump/chapters/kingdom", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "subculview-kingdom-arcs", "url": "https://subculview.com/kingdom-manga-anime-guide", "type": "EDITORIAL", "accessedAt": "2026-09-01" },
+    { "id": "kingdom-wiki-story-arcs", "url": "https://kingdom.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "cheng-jiao-rebellion", "kind": "ARC", "position": 1, "title": "Cheng Jiao's Rebellion Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "47" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "dakan-plains", "kind": "ARC", "position": 2, "title": "Battle of Dakan Plains Arc", "range": { "unit": "CHAPTER", "start": "48", "end": "73" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "zheng-past", "kind": "ARC", "position": 3, "title": "Zheng's Past Arc", "range": { "unit": "CHAPTER", "start": "74", "end": "81" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "assassination-plot", "kind": "ARC", "position": 4, "title": "Assassination Plot Arc", "range": { "unit": "CHAPTER", "start": "82", "end": "103" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "bayou", "kind": "ARC", "position": 5, "title": "Battle of Bayou Arc", "range": { "unit": "CHAPTER", "start": "104", "end": "173" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "sanyou-campaign", "kind": "ARC", "position": 6, "title": "Sanyou Campaign Arc", "range": { "unit": "CHAPTER", "start": "174", "end": "243" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "sanyou-aftermath", "kind": "ARC", "position": 7, "title": "Sanyou Aftermath Arc", "range": { "unit": "CHAPTER", "start": "244", "end": "260" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kankoku-pass", "kind": "ARC", "position": 8, "title": "Kankoku Pass Battle Arc", "range": { "unit": "CHAPTER", "start": "261", "end": "319" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "sai", "kind": "ARC", "position": 9, "title": "Battle of Sai Arc", "range": { "unit": "CHAPTER", "start": "320", "end": "355" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kyoukai-revenge", "kind": "ARC", "position": 10, "title": "Kyoukai's Revenge Arc", "range": { "unit": "CHAPTER", "start": "356", "end": "363" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "tunliu", "kind": "ARC", "position": 11, "title": "Tunliu Rebellion Arc", "range": { "unit": "CHAPTER", "start": "364", "end": "378" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "fire-dragons-of-wei", "kind": "ARC", "position": 12, "title": "Fire Dragons of Wei Arc", "range": { "unit": "CHAPTER", "start": "379", "end": "401" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "state-of-ai", "kind": "ARC", "position": 13, "title": "State of Ai Arc", "range": { "unit": "CHAPTER", "start": "402", "end": "440" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kokuyou-hills", "kind": "ARC", "position": 14, "title": "Kokuyou Hills Arc", "range": { "unit": "CHAPTER", "start": "441", "end": "485" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "bureaucrats-job", "kind": "ARC", "position": 15, "title": "Bureaucrats' Job Arc", "range": { "unit": "CHAPTER", "start": "486", "end": "495" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "western-zhao-invasion-setup", "kind": "ARC", "position": 16, "title": "Western Zhao Invasion: Allied Army Arc", "range": { "unit": "CHAPTER", "start": "496", "end": "519" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "shukai-plains-ryouyou", "kind": "ARC", "position": 17, "title": "Battle of Shukai Plains and Ryouyou Arc", "range": { "unit": "CHAPTER", "start": "520", "end": "632" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "gyou-conclusion", "kind": "ARC", "position": 18, "title": "Gyou Conquest Conclusion Arc", "range": { "unit": "CHAPTER", "start": "633", "end": "648" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "juuko", "kind": "ARC", "position": 19, "title": "Juuko Campaign Arc", "range": { "unit": "CHAPTER", "start": "649", "end": "661" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "six-great-generals", "kind": "ARC", "position": 20, "title": "Six Great Generals Revival Arc", "range": { "unit": "CHAPTER", "start": "662", "end": "672" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "wucheng-heiyang", "kind": "ARC", "position": 21, "title": "Wucheng and Heiyang Campaign Arc", "range": { "unit": "CHAPTER", "start": "673", "end": "701" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "gi-an", "kind": "ARC", "position": 22, "title": "Gi'an Campaign Arc", "range": { "unit": "CHAPTER", "start": "702", "end": "755" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "han-feizi", "kind": "ARC", "position": 23, "title": "Han Feizi Recruitment Arc", "range": { "unit": "CHAPTER", "start": "756", "end": "768" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "hango", "kind": "ARC", "position": 24, "title": "Battle of Hango Arc", "range": { "unit": "CHAPTER", "start": "769", "end": "799" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "three-pillars", "kind": "ARC", "position": 25, "title": "Three Pillars Arc", "range": { "unit": "CHAPTER", "start": "800", "end": "812" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "new-zheng", "kind": "ARC", "position": 26, "title": "New Zheng Conquest Arc", "range": { "unit": "CHAPTER", "start": "813", "end": "840" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "tou-resignation", "kind": "ARC", "position": 27, "title": "Tou's Six Great Generals Resignation Arc", "range": { "unit": "CHAPTER", "start": "841", "end": "846" }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "complete-zhao-conquest", "kind": "ARC", "position": 28, "title": "Complete Zhao Conquest Arc", "range": { "unit": "CHAPTER", "start": "847", "end": null }, "sourceIds": ["subculview-kingdom-arcs", "kingdom-wiki-story-arcs"], "status": "DRAFT", "confidence": "LOW" }
+  ],
+  "conflicts": [
+    { "field": "arc boundaries", "reason": "A fonte editorial separa a campanha da Coalizão em três arcos (261-363) e a invasão ocidental de Zhao em três (496-648), enquanto a wiki comunitária a apresenta como macroarcos. Foram mantidos os limites mais granulares da fonte editorial; a classificação inteira permanece DRAFT." }
+  ],
+  "notes": "A Shueisha confirma a serialização em curso e o volume 80; a VIZ confirma autoria e disponibilidade oficial. Os nomes e limites de arcos são de taxonomia editorial/comunitária, não de uma divisão publicada pela editora."
+}

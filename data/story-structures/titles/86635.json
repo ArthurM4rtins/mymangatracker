@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 86635,
+    "title": "Kaguya-sama: Love is War",
+    "titleRomaji": "Kaguya-sama wa Kokurasetai: Tensaitachi no Renai Zunousen",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 281,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "kaguya-wiki-story-arcs", "url": "https://kaguyasama-wa-kokurasetai.fandom.com/wiki/French_Party_Arc", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "kaguya-wiki-chapters", "url": "https://kaguyasama-wa-kokurasetai.fandom.com/wiki/List_of_Chapters_and_Volumes", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "kaguya-reading-order", "url": "https://mostrecommendedbooks.com/series/kaguya-sama-love-is-war-manga-in-order", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "viz-kaguya-chapters", "url": "https://www.viz.com/shonenjump/chapters/kaguya-sama-love-is-war", "type": "OFFICIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "movie-theater", "kind": "ARC", "position": 1, "title": "Movie Theater Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "3" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "french-party", "kind": "ARC", "position": 2, "title": "French Party Arc", "range": { "unit": "CHAPTER", "start": "17", "end": "20" }, "sourceIds": ["kaguya-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "sick-visit", "kind": "ARC", "position": 3, "title": "Sick Visit Arc", "range": { "unit": "CHAPTER", "start": "33", "end": "35" }, "sourceIds": ["kaguya-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "reconciliation", "kind": "ARC", "position": 4, "title": "Reconciliation Arc", "range": { "unit": "CHAPTER", "start": "37", "end": "38" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "summer-vacation", "kind": "ARC", "position": 5, "title": "Summer Vacation Arc", "range": { "unit": "CHAPTER", "start": "40", "end": "43" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "fireworks", "kind": "ARC", "position": 6, "title": "Fireworks Arc", "range": { "unit": "CHAPTER", "start": "44", "end": "45" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "presidents-birthday", "kind": "ARC", "position": 7, "title": "President's Birthday Arc", "range": { "unit": "CHAPTER", "start": "51", "end": "54" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "chaotic-election", "kind": "ARC", "position": 8, "title": "Chaotic Election Arc", "range": { "unit": "CHAPTER", "start": "59", "end": "69" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "sports-festival", "kind": "ARC", "position": 9, "title": "Sports Festival Arc", "range": { "unit": "CHAPTER", "start": "82", "end": "90" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "mixer", "kind": "ARC", "position": 10, "title": "Mixer Arc", "range": { "unit": "CHAPTER", "start": "93", "end": "94" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "cell-phone", "kind": "ARC", "position": 11, "title": "Cell Phone Arc", "range": { "unit": "CHAPTER", "start": "100", "end": "102" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "rap", "kind": "ARC", "position": 12, "title": "Rap Arc", "range": { "unit": "CHAPTER", "start": "107", "end": "108" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "dual-confessions-culture-festival", "kind": "ARC", "position": 13, "title": "Dual Confessions Culture Festival Arc", "range": { "unit": "CHAPTER", "start": "122", "end": "137" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "first-kiss-never-ends", "kind": "ARC", "position": 14, "title": "The First Kiss Never Ends Arc", "range": { "unit": "CHAPTER", "start": "142", "end": "151" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "new-game", "kind": "ARC", "position": 15, "title": "New Game Arc", "range": { "unit": "CHAPTER", "start": "153", "end": "162" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "class-trip", "kind": "ARC", "position": 16, "title": "Class Trip Arc", "range": { "unit": "CHAPTER", "start": "179", "end": "187" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "end-of-secrets", "kind": "ARC", "position": 17, "title": "End of Secrets Arc", "range": { "unit": "CHAPTER", "start": "188", "end": "206" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "home-visit", "kind": "ARC", "position": 18, "title": "Home Visit Arc", "range": { "unit": "CHAPTER", "start": "207", "end": "209" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "abcs-of-men-and-women", "kind": "ARC", "position": 19, "title": "The ABCs of Men and Women Arc", "range": { "unit": "CHAPTER", "start": "215", "end": "220" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "buddhas-stone-begging-bowl", "kind": "ARC", "position": 20, "title": "Buddha's Stone Begging Bowl Arc", "range": { "unit": "CHAPTER", "start": "226", "end": "234" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kaguya-wants-to-be-confessed-to", "kind": "ARC", "position": 21, "title": "Kaguya-sama Wants to be Confessed to Arc", "range": { "unit": "CHAPTER", "start": "240", "end": "261" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "shiroganes-departure", "kind": "ARC", "position": 22, "title": "Shirogane's Departure Arc", "range": { "unit": "CHAPTER", "start": "262", "end": "267" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "everyday-life", "kind": "ARC", "position": 23, "title": "Everyday Life Arc", "range": { "unit": "CHAPTER", "start": "268", "end": "270" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "farewell", "kind": "ARC", "position": 24, "title": "Farewell Arc", "range": { "unit": "CHAPTER", "start": "272", "end": "281" }, "sourceIds": ["kaguya-wiki-story-arcs", "kaguya-reading-order", "viz-kaguya-chapters"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "coverage", "reason": "A taxonomia comunitaria registra somente arcos narrativos, deixando capitulos episodicos entre eles sem atribuicao. Essas lacunas foram preservadas deliberadamente." },
+    { "field": "nested and special chapters", "reason": "Valentine's Day (194-195) e tratado pela fonte como arco dentro de End of Secrets (188-206), e Fireworks inclui o extra 45-01. O contrato atual nao modela sobreposicao entre arcos nem esse identificador especial; ambos ficaram apenas documentados." },
+    { "field": "new game start", "reason": "A pagina do New Game Arc declara inicio em 153, embora liste o capitulo 152 entre seus itens. Foi adotado 153-162, em concordancia com o guia editorial." }
+  ]
+}

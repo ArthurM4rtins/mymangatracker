@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 97852,
+    "title": "Komi Can't Communicate",
+    "titleRomaji": "Komi-san wa, Komyushou desu.",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 537,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "komi-wiki-story-arcs", "url": "https://komisan.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "viz-komi-chapters", "url": "https://www.viz.com/vizmanga/chapters/komi-cant-communicate", "type": "OFFICIAL", "accessedAt": "2026-08-31" },
+    { "id": "komi-final-serialization", "url": "https://www.siliconera.com/komi-cant-communicate-manga-ends/", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A wiki declara explicitamente que seus nomes e limites de arcos nao sao oficiais nem definitivos. Registrar esses intervalos como dados de avaliacao daria uma certeza inexistente." },
+    { "field": "chapter count", "reason": "A serializacao principal encerrou no capitulo 499, com bonus de volume posteriores indicados pela VIZ. O AniList informa 537, diferenca que o contrato atual nao consegue classificar por tipo de capitulo." }
+  ]
+}

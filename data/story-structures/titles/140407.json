@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 140407,
+    "title": "The Greatest Estate Developer",
+    "titleRomaji": "Yeokdaegeum Yeongji Seolgyesa",
+    "format": "MANGA",
+    "countryOfOrigin": "KR",
+    "chapters": 222,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "webtoon-greatest-estate-developer", "url": "https://www.youtube.com/watch?v=VbfWQj-mJOc", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "greatest-estate-developer-wiki", "url": "https://the-greatest-estate-developer.fandom.com/wiki/The_Greatest_Estate_Developer", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "greatest-estate-developer-chapter-reference", "url": "https://www.chapterbrief.net/blog/the-greatest-estate-developer-reading-guide", "type": "EDITORIAL", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "chapter total", "reason": "AniList registra 222 capítulos. A listagem de capítulos identifica o fim da história principal no 210 e itens posteriores como Untold Stories/extra, sem uma tabela oficial de equivalência." },
+    { "field": "arc taxonomy", "reason": "As fontes consultadas descrevem a premissa, temporadas e capítulos, mas não oferecem uma classificação estável de arcos narrativos com limites verificáveis." }
+  ]
+}

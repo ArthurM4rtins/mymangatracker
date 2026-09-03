@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30149,
+    "title": "BLAME!",
+    "titleRomaji": "BLAME!",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 66,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 86964,
+    "title": "Bastard",
+    "titleRomaji": "Hurejasik",
+    "format": "MANGA",
+    "countryOfOrigin": "KR",
+    "chapters": 94,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    {
+      "id": "webtoon-bastard-series",
+      "url": "https://m.webtoons.com/en/thriller/bastard/list?title_no=485&webtoon-platform-redirect=true",
+      "type": "OFFICIAL_REFERENCE",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "bastard-wiki-chapters",
+      "url": "https://bastard-webtoon.fandom.com/wiki/Category:Chapters",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "line-manga-bastard-episodes",
+      "url": "https://manga.line.me/product/periodic?id=Z0000195&t=1667779200035",
+      "type": "OFFICIAL_REFERENCE",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [],
+  "conflicts": [
+    {
+      "field": "arc taxonomy",
+      "reason": "WEBTOON e LINE Manga publicam a obra como episódios, sem nomes ou limites de arcos. Não foi localizada uma taxonomia editorial ou comunitária estável que permita registrar segmentos verificáveis."
+    },
+    {
+      "field": "chapter total",
+      "reason": "AniList informa 94 capítulos, enquanto a categoria comunitária de capítulos lista 72 itens e a edição japonesa oficial mostra 91 episódios, incluindo prólogo. As fontes não explicam uma correspondência única entre esses sistemas."
+    }
+  ],
+  "notes": "Reavaliar se a editora ou referências independentes publicarem uma tabela de equivalência de episódios e uma divisão narrativa explícita."
+}

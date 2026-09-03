@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30011,
+    "title": "Naruto",
+    "titleRomaji": "NARUTO",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 700,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "listfist-2022", "url": "https://listfist.com/list-of-naruto-arcs", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "attack-of-the-fanboy-2023", "url": "https://attackofthefanboy.com/anime/all-naruto-arcs-in-order/", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "part-i", "kind": "SAGA", "position": 1, "title": "Part I", "range": { "unit": "CHAPTER", "start": "1", "end": "244" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "land-of-waves", "parentKey": "part-i", "kind": "ARC", "position": 1, "title": "Prologue — Land of Waves Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "33" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "chunin-exams", "parentKey": "part-i", "kind": "ARC", "position": 2, "title": "Chūnin Exams Arc", "range": { "unit": "CHAPTER", "start": "34", "end": "115" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "konoha-crush", "parentKey": "part-i", "kind": "ARC", "position": 3, "title": "Konoha Crush Arc", "range": { "unit": "CHAPTER", "start": "116", "end": "138" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "search-for-tsunade", "parentKey": "part-i", "kind": "ARC", "position": 4, "title": "Search for Tsunade Arc", "range": { "unit": "CHAPTER", "start": "139", "end": "171" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "sasuke-recovery", "parentKey": "part-i", "kind": "ARC", "position": 5, "title": "Sasuke Recovery Mission Arc", "range": { "unit": "CHAPTER", "start": "172", "end": "238" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "kakashi-gaiden", "parentKey": "part-i", "kind": "ARC", "position": 6, "title": "Kakashi Gaiden Arc", "range": { "unit": "CHAPTER", "start": "239", "end": "244" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "part-ii", "kind": "SAGA", "position": 2, "title": "Part II", "range": { "unit": "CHAPTER", "start": "245", "end": "700" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kazekage-rescue", "parentKey": "part-ii", "kind": "ARC", "position": 1, "title": "Kazekage Rescue Mission Arc", "range": { "unit": "CHAPTER", "start": "245", "end": "281" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "tenchi-bridge", "parentKey": "part-ii", "kind": "ARC", "position": 2, "title": "Tenchi Bridge Reconnaissance Mission Arc", "range": { "unit": "CHAPTER", "start": "282", "end": "310" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "akatsuki-suppression", "parentKey": "part-ii", "kind": "ARC", "position": 3, "title": "Akatsuki Suppression Mission Arc", "range": { "unit": "CHAPTER", "start": "311", "end": "342" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "itachi-pursuit", "parentKey": "part-ii", "kind": "ARC", "position": 4, "title": "Itachi Pursuit Mission Arc", "range": { "unit": "CHAPTER", "start": "343", "end": "367" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "jiraiya-gallant", "parentKey": "part-ii", "kind": "ARC", "position": 5, "title": "Tale of Jiraiya the Gallant Arc", "range": { "unit": "CHAPTER", "start": "368", "end": "383" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "fated-battle-brothers", "parentKey": "part-ii", "kind": "ARC", "position": 6, "title": "Fated Battle Between Brothers Arc", "range": { "unit": "CHAPTER", "start": "384", "end": "412" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "pains-assault", "parentKey": "part-ii", "kind": "ARC", "position": 7, "title": "Pain's Assault Arc", "range": { "unit": "CHAPTER", "start": "413", "end": "453" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "five-kage-summit", "parentKey": "part-ii", "kind": "ARC", "position": 8, "title": "Five Kage Summit Arc", "range": { "unit": "CHAPTER", "start": "454", "end": "483" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "war-countdown", "parentKey": "part-ii", "kind": "ARC", "position": 9, "title": "Fourth Shinobi World War: Countdown Arc", "range": { "unit": "CHAPTER", "start": "484", "end": "515" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "war-confrontation", "parentKey": "part-ii", "kind": "ARC", "position": 10, "title": "Fourth Shinobi World War: Confrontation Arc", "range": { "unit": "CHAPTER", "start": "516", "end": "559" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "war-climax", "parentKey": "part-ii", "kind": "ARC", "position": 11, "title": "Fourth Shinobi World War: Climax Arc", "range": { "unit": "CHAPTER", "start": "560", "end": "639" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "ten-tails-jinchuriki", "parentKey": "part-ii", "kind": "ARC", "position": 12, "title": "Birth of the Ten-Tails' Jinchūriki Arc", "range": { "unit": "CHAPTER", "start": "640", "end": "677" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "kaguya-strikes", "parentKey": "part-ii", "kind": "ARC", "position": 13, "title": "Kaguya Ōtsutsuki Strikes Arc", "range": { "unit": "CHAPTER", "start": "678", "end": "699" }, "sourceIds": ["listfist-2022", "attack-of-the-fanboy-2023"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "special", "parentKey": "part-ii", "kind": "ARC", "position": 14, "title": "Special", "range": { "unit": "CHAPTER", "start": "700", "end": "700" }, "sourceIds": ["listfist-2022"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "Tenchi Bridge start", "reason": "ListFist indica 282-310, enquanto Attack of the Fanboy indica 280-310. O limite 282 foi adotado provisoriamente para nao sobrepor Kazekage Rescue (245-281)." },
+    { "field": "Part I boundary", "reason": "As fontes de arcos tratam Kakashi Gaiden (239-244) separadamente; as sagas Part I e Part II sao uma camada editorial para navegacao, nao nomenclatura oficial de arcos." }
+  ]
+}

@@ -52,10 +52,60 @@ model User {
   shelfEntries    ShelfEntry[]
   readingSources  ReadingSource[]
   readingProgress ReadingProgress[]
+  entries         Entry[]
+  reviewLikes     ReviewLike[]
+  reviewComments  ReviewComment[]
+  lists           List[]
+  listLikes       ListLike[]
+}
+
+// Lista nomeada de obras (painel 06). Pública desde o início — recorte do
+// social: username do dono, nunca e-mail. Nome não é único, como no
+// Letterboxd; o CHECK de não-vazio está à mão na migration.
+model List {
+  id          String   @id @default(cuid())
+  userId      String
+  nome        String
+  descricao   String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itens ListItem[]
+  likes ListLike[]
+
+  @@index([createdAt(sort: Desc)])
+}
+
+// Uma obra por lista; ordem = posição de inserção.
+model ListItem {
+  id        String   @id @default(cuid())
+  listId    String
+  mediaId   String
+  position  Int
+  createdAt DateTime @default(now())
+
+  list  List  @relation(fields: [listId], references: [id], onDelete: Cascade)
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@unique([listId, mediaId])
+  @@index([listId, position])
 }
 
 // Cache do AniList. Se sumir, é reconstruído da API — nenhum dado do usuário
 // se perde junto, e é por isso que as FKs que apontam para cá são Restrict.
+model ListLike {
+  id        String   @id @default(cuid())
+  listId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  list List @relation(fields: [listId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([listId, userId])
+}
+
 model Media {
   id              String           @id @default(cuid())
   anilistId       Int              @unique
@@ -67,6 +117,15 @@ model Media {
   coverImageUrl   String?
   description     String?
   chapters        Int?
+  // Campos da página da obra (issue #35). Tudo anulável: linha velha continua
+  // válida e é reidratada pelo TTL de 24h.
+  bannerImageUrl  String?
+  startYear       Int?
+  genres          String[] @default([])
+  averageScore    Int?
+  // [{anilistStaffId, nome, papel}] — tabela própria só quando a página do
+  // autor existir; até lá o Json evita entidade sem tela.
+  authors         Json?
   syncedAt        DateTime
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -74,6 +133,61 @@ model Media {
   shelfEntries    ShelfEntry[]
   readingSources  ReadingSource[]
   readingProgress ReadingProgress[]
+  entries         Entry[]
+  listItems       ListItem[]
+}
+
+// A avaliação do usuário: nota e/ou resenha, uma por obra (painel 06).
+// Nota 0,5–5,0 em passos de 0,5 — o CHECK está à mão na migration, porque
+// não sai do schema do Prisma. Visível só ao dono até a fase social.
+model Entry {
+  id               String   @id @default(cuid())
+  userId           String
+  mediaId          String
+  rating           Decimal? @db.Decimal(2, 1)
+  review           String?  @db.Text
+  containsSpoilers Boolean  @default(false)
+  reviewedAt       DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  likes      ReviewLike[]
+  comentarios ReviewComment[]
+
+  @@unique([userId, mediaId])
+}
+
+// Curtida numa resenha: uma por (entryId, userId), toggle. Apagar a resenha ou
+// a conta leva as curtidas junto — Cascade dos dois lados.
+model ReviewLike {
+  id        String   @id @default(cuid())
+  entryId   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  entry Entry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([entryId, userId])
+}
+
+// Comentário numa resenha: sequência cronológica plana, tipo chat. O CHECK de
+// texto não-vazio está à mão na migration.
+model ReviewComment {
+  id        String   @id @default(cuid())
+  entryId   String
+  userId    String
+  texto     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  entry Entry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([entryId, createdAt])
 }
 
 // O resumo da linha do tempo: uma linha por obra por usuário.

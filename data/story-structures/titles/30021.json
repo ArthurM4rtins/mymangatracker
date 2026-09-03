@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30021,
+    "title": "Death Note",
+    "titleRomaji": "DEATH NOTE",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 108,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

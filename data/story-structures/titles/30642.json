@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30642,
+    "title": "Vinland Saga",
+    "titleRomaji": "Vinland Saga",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 224,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "vinland-saga-wiki-arcs", "url": "https://vinlandsaga.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "vinland-saga-wikipedia", "url": "https://en.wikipedia.org/wiki/Vinland_Saga_(manga)", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "gamesradar-eastern-expedition", "url": "https://www.gamesradar.com/entertainment/anime-shows/vinland-saga-season-3-release-date-trailer-story-news-eastern-expedition/", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "war", "kind": "ARC", "position": 1, "title": "War Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "54" }, "sourceIds": ["vinland-saga-wiki-arcs", "vinland-saga-wikipedia"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "slave", "kind": "ARC", "position": 2, "title": "Slave Arc", "range": { "unit": "CHAPTER", "start": "55", "end": "99" }, "sourceIds": ["vinland-saga-wiki-arcs", "vinland-saga-wikipedia"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "eastern-expedition", "kind": "ARC", "position": 3, "title": "Eastern Expedition Arc", "range": { "unit": "CHAPTER", "start": "100", "end": "166" }, "sourceIds": ["vinland-saga-wiki-arcs", "gamesradar-eastern-expedition"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "vinland", "kind": "ARC", "position": 4, "title": "Vinland Arc", "range": { "unit": "CHAPTER", "start": "167", "end": "224" }, "sourceIds": ["vinland-saga-wiki-arcs", "vinland-saga-wikipedia"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "final arc name and endpoint", "reason": "A quarta parte e frequentemente chamada de Vinland Arc, mas essa designacao nao e tratada de forma uniforme como titulo oficial. O AniList informa encerramento em 224; a associacao 167-224 deve ser revalidada com a edicao final dos volumes." }
+  ]
+}

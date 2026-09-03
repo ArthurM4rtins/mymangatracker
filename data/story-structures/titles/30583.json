@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30583,
+    "title": "Claymore",
+    "titleRomaji": "CLAYMORE",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 159,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "claymore-wiki-story-arcs", "url": "https://claymore.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "claymore-wiki-final-battle", "url": "https://claymore.fandom.com/wiki/Final_Battle_Arc", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "viz-claymore-chapters", "url": "https://www.viz.com/shonenjump/chapters/claymore", "type": "OFFICIAL", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "arc coverage", "reason": "A taxonomia comunitaria lista 14 arcos de 1 a 155, inclusive o Final Battle Arc (128--155), enquanto o catalogo e a publicacao oficial enumeram 159 capitulos. Os capitulos 156--159 nao recebem classificacao verificavel nessa taxonomia; nao foram inferidos segmentos parciais." }
+  ]
+}

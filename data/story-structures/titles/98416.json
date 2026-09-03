@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 98416,
+    "title": "Dr. STONE",
+    "titleRomaji": "Dr. STONE",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 236,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

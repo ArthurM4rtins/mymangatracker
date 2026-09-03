@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30002,
+    "title": "Berserk",
+    "titleRomaji": "Berserk",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DISPUTED",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    {
+      "id": "berserk-official-story-chart",
+      "url": "https://www.berserk-project.jp/dictionary/storychart.html",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-08-31"
+    },
+    {
+      "id": "listfist-berserk-arcs",
+      "url": "https://listfist.com/list-of-berserk-arcs",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-08-31"
+    }
+  ],
+  "segments": [],
+  "conflicts": [
+    {
+      "field": "range.unit",
+      "reason": "As referências usam episódios iniciais com numeração negativa e/ou intervalos por volume; o contrato inicial só aceita capítulos positivos do tracking."
+    }
+  ],
+  "notes": "A estrutura principal de cinco arcos foi confirmada, mas não foi publicada porque ainda falta uma conversão verificável para a numeração de capítulo usada pelo produto."
+}

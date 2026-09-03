@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 116186,
+    "title": "Boy's Abyss",
+    "titleRomaji": "Shounen no Abyss",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 185,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 74347,
+    "title": "One-Punch Man",
+    "titleRomaji": "One Punch-Man",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "one-punch-man-wiki-numbering", "url": "https://onepunchman.fandom.com/wiki/Chapters_and_Volumes", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "one-punch-man-wiki-arcs", "url": "https://onepunchman.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "viz-one-punch-man", "url": "https://www.viz.com/shonenjump/chapters/one-punch-man?locale=en", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [],
+  "conflicts": [
+    { "field": "chapter numbering", "reason": "A obra possui numeracao por capitulos de volume, capitulos online e atualizacoes Tonari; merges, splits e redraws fazem esses sistemas divergirem. O contrato atual nao possui um identificador de edicao/sistema de numeracao." },
+    { "field": "arc names", "reason": "A principal referencia comunitaria declara que os nomes de sagas e arcos sao organizacoes de fas, nao nomes oficiais." }
+  ],
+  "notes": "Nao publicar arcos de One-Punch Man enquanto o modelo nao suportar uma base de numeracao explicita, por exemplo VOLUME_PUBLISHED ou TONARI_ONLINE. Quando isso existir, a curadoria deve apontar a revisao vigente de cada capitulo redraw." 
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 105469,
+    "title": "Jujutsu Kaisen 0",
+    "titleRomaji": "Jujutsu Kaisen 0: Tokyo Toritsu Jujutsu Koutou Senmon Gakkou",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 4,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-09-01"
+  },
+  "sources": [
+    { "id": "viz-jujutsu-kaisen-chapters", "url": "https://www.viz.com/shonenjump/chapters/jujutsu-kaisen", "type": "OFFICIAL_REFERENCE", "accessedAt": "2026-09-01" },
+    { "id": "jujutsu-kaisen-wiki-story-arcs", "url": "https://jujutsu-kaisen.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "jujutsu-kaisen-wiki-cursed-child", "url": "https://jujutsu-kaisen.fandom.com/wiki/Cursed_Child_Arc", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "cursed-child", "kind": "ARC", "position": 1, "title": "Cursed Child Arc", "range": { "unit": "CHAPTER", "start": "0.1", "end": "0.4" }, "sourceIds": ["jujutsu-kaisen-wiki-story-arcs", "jujutsu-kaisen-wiki-cursed-child"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A VIZ confirma a numeração 0.1-0.4, mas não publica divisão de arcos. O rótulo e o intervalo de Cursed Child Arc são sustentados apenas pela wiki comunitária, portanto o segmento permanece DRAFT." }
+  ],
+  "notes": "A ficha AniList informa quatro capítulos; os pontos da VIZ representam a numeração de prequel (0.1 a 0.4), não frações de capítulo."
+}

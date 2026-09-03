@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 79865,
+    "title": "Ajin: Demi-Human",
+    "titleRomaji": "Ajin",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 99,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}

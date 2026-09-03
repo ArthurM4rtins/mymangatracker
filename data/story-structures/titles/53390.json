@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 53390,
+    "title": "Attack on Titan",
+    "titleRomaji": "Shingeki no Kyojin",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 141,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "VERIFIED",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "slushtimes-2023", "url": "https://slushtimes.com/attack-on-titan-arcs/", "type": "EDITORIAL", "accessedAt": "2026-08-31" },
+    { "id": "listfist-aot", "url": "https://listfist.com/list-of-attack-on-titan-arcs", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "fall-of-shiganshina", "kind": "ARC", "position": 1, "title": "Fall of Shiganshina Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "2" }, "sourceIds": ["slushtimes-2023", "listfist-aot"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "battle-of-trost", "kind": "ARC", "position": 2, "title": "Battle of Trost District Arc", "range": { "unit": "CHAPTER", "start": "3", "end": "14" }, "sourceIds": ["slushtimes-2023", "listfist-aot"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "104th-training-corps", "kind": "ARC", "position": 3, "title": "104th Training Corps Arc", "range": { "unit": "CHAPTER", "start": "15", "end": "18" }, "sourceIds": ["slushtimes-2023", "listfist-aot"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "female-titan", "kind": "ARC", "position": 4, "title": "Female Titan Arc", "range": { "unit": "CHAPTER", "start": "19", "end": "34" }, "sourceIds": ["slushtimes-2023", "listfist-aot"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "clash-of-the-titans", "kind": "ARC", "position": 5, "title": "Clash of the Titans Arc", "range": { "unit": "CHAPTER", "start": "35", "end": "50" }, "sourceIds": ["slushtimes-2023", "listfist-aot"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "royal-government", "kind": "ARC", "position": 6, "title": "Royal Government Arc", "range": { "unit": "CHAPTER", "start": "51", "end": "70" }, "sourceIds": ["slushtimes-2023", "listfist-aot"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "return-to-shiganshina", "kind": "ARC", "position": 7, "title": "Return to Shiganshina Arc", "range": { "unit": "CHAPTER", "start": "71", "end": "90" }, "sourceIds": ["slushtimes-2023", "listfist-aot"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "marley", "kind": "ARC", "position": 8, "title": "Marley Arc", "range": { "unit": "CHAPTER", "start": "91", "end": "106" }, "sourceIds": ["slushtimes-2023", "listfist-aot"], "status": "VERIFIED", "confidence": "HIGH" },
+    { "key": "war-for-paradis", "kind": "ARC", "position": 9, "title": "War for Paradis Arc", "range": { "unit": "CHAPTER", "start": "107", "end": "139" }, "sourceIds": ["slushtimes-2023", "listfist-aot"], "status": "VERIFIED", "confidence": "HIGH" }
+  ],
+  "conflicts": []
+}

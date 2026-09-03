@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 30656,
+    "title": "Vagabond",
+    "titleRomaji": "Vagabond",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": null,
+    "status": "RELEASING"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": "2026-08-31"
+  },
+  "sources": [
+    { "id": "vagabond-wiki-story-arcs", "url": "https://vagabond.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "vagabond-wiki-farming", "url": "https://vagabond.fandom.com/wiki/Farming_arc", "type": "COMMUNITY", "accessedAt": "2026-08-31" },
+    { "id": "wikipedia-latest-chapter", "url": "https://en.wikipedia.org/wiki/List_of_Vagabond_chapters", "type": "EDITORIAL", "accessedAt": "2026-08-31" }
+  ],
+  "segments": [
+    { "key": "takezo", "kind": "ARC", "position": 1, "title": "Takezō Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "21" }, "sourceIds": ["vagabond-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "first-yoshioka", "kind": "ARC", "position": 2, "title": "First Yoshioka Arc", "range": { "unit": "CHAPTER", "start": "22", "end": "35" }, "sourceIds": ["vagabond-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "hozoin", "kind": "ARC", "position": 3, "title": "Hōzōin Arc", "range": { "unit": "CHAPTER", "start": "36", "end": "78" }, "sourceIds": ["vagabond-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "yagyu", "kind": "ARC", "position": 4, "title": "Yagyū Arc", "range": { "unit": "CHAPTER", "start": "79", "end": "105" }, "sourceIds": ["vagabond-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "baiken", "kind": "ARC", "position": 5, "title": "Baiken Arc", "range": { "unit": "CHAPTER", "start": "106", "end": "127" }, "sourceIds": ["vagabond-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kojiro", "kind": "ARC", "position": 6, "title": "Kojirō Arc", "range": { "unit": "CHAPTER", "start": "128", "end": "179" }, "sourceIds": ["vagabond-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "second-yoshioka", "kind": "ARC", "position": 7, "title": "Second Yoshioka Arc", "range": { "unit": "CHAPTER", "start": "180", "end": "242" }, "sourceIds": ["vagabond-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "post-yoshioka", "kind": "ARC", "position": 8, "title": "Post-Yoshioka Arc", "range": { "unit": "CHAPTER", "start": "243", "end": "301" }, "sourceIds": ["vagabond-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "farming", "kind": "ARC", "position": 9, "title": "Farming Arc", "range": { "unit": "CHAPTER", "start": "302", "end": "322" }, "sourceIds": ["vagabond-wiki-story-arcs", "vagabond-wiki-farming"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "hosokawa", "kind": "ARC", "position": 10, "title": "Hosokawa Arc", "range": { "unit": "CHAPTER", "start": "323", "end": "327" }, "sourceIds": ["vagabond-wiki-story-arcs", "wikipedia-latest-chapter"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [],
+  "notes": "A obra esta em hiato indefinido desde o capitulo 327. Os arcos sao uma classificacao comunitaria; nao adicionar uma continuacao ou The Last Manga Exhibition a este registro sem uma entrada editorial separada."
+}

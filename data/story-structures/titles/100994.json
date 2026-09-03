@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "media": {
+    "anilistId": 100994,
+    "title": "Hell’s Paradise: Jigokuraku",
+    "titleRomaji": "Jigokuraku",
+    "format": "MANGA",
+    "countryOfOrigin": "JP",
+    "chapters": 127,
+    "status": "FINISHED"
+  },
+  "numberingBasis": "ORIGINAL_SERIALIZATION",
+  "curation": {
+    "status": "DRAFT",
+    "researchedAt": null
+  },
+  "sources": [],
+  "segments": [],
+  "conflicts": []
+}
