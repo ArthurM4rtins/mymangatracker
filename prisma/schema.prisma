@@ -49,6 +49,12 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  // Foto de perfil (issue #76): 256x256 JPEG recortado no navegador, guardada
+  // aqui porque a Vercel nao tem disco. Os bytes so saem pela rota de imagem.
+  avatar          Bytes?
+  avatarMime      String?
+  avatarUpdatedAt DateTime?
+
   shelfEntries     ShelfEntry[]
   readingSources   ReadingSource[]
   readingProgress  ReadingProgress[]
