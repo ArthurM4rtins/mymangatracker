@@ -42,9 +42,9 @@ atividade recente reorganizados em duas colunas.
 | Tamanho | 256×256 JPEG recortado no navegador, limite 512 KB no servidor | ~30 KB por foto; o servidor não processa imagem |
 | Servir | rota própria com `Cache-Control` e `ETag` = `avatarUpdatedAt` | troca de foto invalida o cache pela versão na URL |
 | Recorte público | `temAvatar` + `avatarVersao` no DTO; bytes só na rota de imagem | e-mail e id continuam fora; bytes não vazam em lista nenhuma |
-| "Mais curtidas" | curtidas dadas nos últimos 7 dias | é o que está quente agora, não o acumulado histórico |
-| Seletor do carrossel | Recentes / Mais curtidas na semana, troca no cliente sem refetch | as quatro listas já vêm no primeiro render |
-| Movimento | `requestAnimationFrame` sobre `scrollLeft`, loop pelo início | funciona com setas e com scroll do dedo; CSS marquee não |
+| Carrossel (v3, 03/09) | "palco": 5 cards, centro em destaque, 2 de cada lado esmaecidos, setas nas bordas, avanço a cada 4 s | pedido do usuário; scrollLeft por frame pesava e fazia a página rolar na horizontal |
+| Seletor do carrossel | **removido** (03/09): só recentes, sem "ver listas" | usuário simplificou; "mais curtidas" foi para `/listas` (#80) |
+| `/listas` (#80) | grade de cards (o `CardLista` da vitrine, fluido) com `?ordem=recentes\|curtidas`, whitelist no domínio | ordena por curtidas acumuladas, empate pela criação |
 
 ## Pendências
 
