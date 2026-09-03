@@ -11,10 +11,16 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "death-note-wiki-chapters", "url": "https://deathnote.fandom.com/wiki/List_of_Death_Note_chapters", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "death-note-wiki-timeline-talk", "url": "https://deathnote.fandom.com/wiki/Talk:Manga_Timeline", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "viz-death-note-chapters", "url": "https://www.viz.com/shonenjump/chapters/death-note", "type": "OFFICIAL", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "As fontes identificam 108 capitulos na serializacao principal, mas nao fornecem uma taxonomia completa com intervalos. A discussao comunitaria sobre Death Note 13 cita apenas Yotsuba e America como nomes editoriais; as divisoes mais amplas e seus limites variam entre fontes. Nao foram inferidos segmentos." }
+  ]
 }

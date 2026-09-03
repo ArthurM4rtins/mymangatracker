@@ -3,6 +3,9 @@
 type Registro = Record<string, unknown>;
 
 const STATUS = ["VERIFIED", "DRAFT", "DISPUTED", "INSUFFICIENT_EVIDENCE", "NOT_APPLICABLE"];
+// INTERLUDE (03/09): trecho que nenhuma fonte põe em arco — interlúdio ou
+// capítulos avulsos — vira segmento explícito, nem lacuna nem limite inventado.
+const KIND = ["SAGA", "ARC", "INTERLUDE"];
 
 export function validarEstruturaNarrativa(estrutura: unknown): string[]
 {
@@ -37,6 +40,11 @@ export function validarEstruturaNarrativa(estrutura: unknown): string[]
     if (!intervalosDoSegmentoSaoValidos(segmento))
     {
       erros.push(`${prefixo}: intervalo inválido`);
+    }
+
+    if (!segmentoTemIdentidade(segmento))
+    {
+      erros.push(`${prefixo}: segmento sem key, kind, title ou status`);
     }
 
     if (typeof segmento.parentKey === "string")
@@ -87,6 +95,24 @@ function idsDeFontes(fontes: unknown): Set<string>
   }));
 }
 
+/** Segmento sem identidade não é importável — o lote 2 chegou com `{name, range}` solto. */
+function segmentoTemIdentidade(segmento: Registro): boolean
+{
+  return (
+    typeof segmento.key === "string" &&
+    typeof segmento.kind === "string" &&
+    KIND.includes(segmento.kind) &&
+    typeof segmento.title === "string" &&
+    typeof segmento.status === "string" &&
+    STATUS.includes(segmento.status)
+  );
+}
+
+/**
+ * Capítulo 0 existe (Fire Force tem o 00). Negativo não: o tracker só
+ * registra capítulo positivo, e o prólogo do Berserk vai como decimal
+ * (0.01–0.09, numeração do MangaDex), não como o "-16" de site editorial.
+ */
 function intervaloValido(intervalo: unknown): boolean
 {
   if (!ehRegistro(intervalo) || intervalo.unit !== "CHAPTER")
@@ -94,8 +120,8 @@ function intervaloValido(intervalo: unknown): boolean
     return false;
   }
 
-  const inicio = numeroPositivo(intervalo.start);
-  const fim = intervalo.end === null ? undefined : numeroPositivo(intervalo.end);
+  const inicio = numeroNaoNegativo(intervalo.start);
+  const fim = intervalo.end === null ? undefined : numeroNaoNegativo(intervalo.end);
 
   return inicio !== undefined && (fim === undefined || inicio <= fim);
 }
@@ -115,7 +141,7 @@ function intervalosDoSegmentoSaoValidos(segmento: Registro): boolean
   return Array.isArray(segmento.ranges) && segmento.ranges.length > 0 && segmento.ranges.every(intervaloValido);
 }
 
-function numeroPositivo(valor: unknown): number | undefined
+function numeroNaoNegativo(valor: unknown): number | undefined
 {
   if (typeof valor !== "string" || !/^\d+(?:\.\d+)?$/.test(valor))
   {
@@ -124,7 +150,7 @@ function numeroPositivo(valor: unknown): number | undefined
 
   const numero = Number(valor);
 
-  return Number.isFinite(numero) && numero > 0 ? numero : undefined;
+  return Number.isFinite(numero) ? numero : undefined;
 }
 
 function ehRegistro(valor: unknown): valor is Registro

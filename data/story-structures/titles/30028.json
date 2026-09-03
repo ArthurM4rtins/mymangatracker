@@ -11,10 +11,28 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    {
+      "id": "nana-wiki-chapters",
+      "url": "https://nana.fandom.com/wiki/Nana/Chapters",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "nana-wikipedia-chapters",
+      "url": "https://en.wikipedia.org/wiki/List_of_Nana_chapters",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-09-01"
+    }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    {
+      "field": "chapter count and arc taxonomy",
+      "reason": "As fontes listam capítulos, 21 volumes e material posterior não compilado durante o hiato, mas não uma taxonomia de arcos ou sagas com limites verificáveis. A numeração e o estado aberto da obra não autorizam inferir segmentos narrativos."
+    }
+  ]
 }

@@ -172,8 +172,6 @@ export default async function PaginaDaObra({ params }: Props)
               )}
             </p>
 
-            {notaDoKidoku !== null && <NotaKidoku nota={notaDoKidoku} />}
-
             {descricao && descricao.sinopse !== "" && (
               <p className="whitespace-pre-line text-sm leading-relaxed text-texto-suave">
                 {descricao.sinopse}
@@ -181,35 +179,60 @@ export default async function PaginaDaObra({ params }: Props)
             )}
           </div>
 
-          {userId !== null && (
-            <div className="shrink-0 sm:w-64">
-              <AvaliacaoDaObra
-                anilistId={obra.anilistId}
-                titulo={obra.titleEnglish ?? obra.titleRomaji}
-                ano={obra.startYear}
-                coverImageUrl={obra.coverImageUrl}
-                avaliacao={minhaAvaliacao}
-              />
+          {(userId !== null || notaDoKidoku !== null) && (
+            <div className="flex shrink-0 flex-col gap-4 sm:w-64">
+              {userId !== null && (
+                <AvaliacaoDaObra
+                  anilistId={obra.anilistId}
+                  titulo={obra.titleEnglish ?? obra.titleRomaji}
+                  ano={obra.startYear}
+                  coverImageUrl={obra.coverImageUrl}
+                  avaliacao={minhaAvaliacao}
+                />
+              )}
+              {/* A média fica embaixo de onde a pessoa avalia (issue #81). */}
+              {notaDoKidoku !== null && <NotaKidoku nota={notaDoKidoku} />}
             </div>
           )}
         </section>
 
         {descricao && descricao.notas.length > 0 && (
-          <section className="flex flex-col gap-3 rounded-lg border border-borda bg-superficie p-4">
-            <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-              Curiosidades
-            </h2>
-            <ul className="flex flex-col gap-1.5">
-              {descricao.notas.map(function (nota)
+          <section className="flex flex-col gap-4">
+            <div className="flex items-baseline gap-3">
+              <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
+                Curiosidades
+              </h2>
+              <span className="text-xs tabular-nums text-texto-suave">
+                {descricao.notas.length}
+              </span>
+            </div>
+            <ol className="grid gap-3 sm:grid-cols-2">
+              {descricao.notas.map(function (nota, indice)
               {
                 return (
-                  <li key={nota} className="flex gap-2 text-sm text-texto-suave">
-                    <span aria-hidden className="text-acento">▸</span>
-                    <span className="min-w-0 flex-1">{nota}</span>
+                  <li
+                    key={nota}
+                    className="group relative flex gap-4 overflow-hidden rounded-xl border border-borda bg-superficie p-4 transition-colors hover:border-acento/60"
+                  >
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute -right-3 -top-4 select-none font-marca text-6xl font-black leading-none text-acento/10 transition-colors group-hover:text-acento/20"
+                    >
+                      {String(indice + 1).padStart(2, "0")}
+                    </span>
+                    <span
+                      aria-hidden
+                      className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-acento/15 text-xs font-semibold tabular-nums text-acento"
+                    >
+                      {indice + 1}
+                    </span>
+                    <p className="relative min-w-0 flex-1 text-sm leading-relaxed text-texto">
+                      {nota}
+                    </p>
                   </li>
                 );
               })}
-            </ul>
+            </ol>
           </section>
         )}
 

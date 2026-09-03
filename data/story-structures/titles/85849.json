@@ -11,10 +11,34 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    {
+      "id": "relife-wikipedia",
+      "url": "https://en.wikipedia.org/wiki/ReLIFE",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "relife-wiki-chapters",
+      "url": "https://relife.fandom.com/wiki/List_of_Chapters",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "relife-wiki-volume-10",
+      "url": "https://relife.fandom.com/wiki/Category:Volume_10",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    {
+      "field": "chapter count and arc taxonomy",
+      "reason": "A serialização original encerra com 222 reports em quinze volumes, e o AniList inclui relatórios bônus, prólogo e epílogo até 238 entradas. A wiki só delimita Hishiro's Past (112–120) e Cultural Festival (121–156), sem uma taxonomia completa e consistente para toda a obra."
+    }
+  ]
 }

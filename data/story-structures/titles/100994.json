@@ -12,9 +12,19 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
+  "sources": [
+    { "id": "viz-jigokuraku-chapters", "url": "https://www.viz.com/shonenjump/chapters/hells-paradise-jigokuraku?locale=en", "type": "OFFICIAL", "accessedAt": "2026-09-01" },
+    { "id": "jigokuraku-wiki-story-arcs", "url": "https://jigokuraku.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "attack-fanboy-jigokuraku-arcs", "url": "https://attackofthefanboy.com/anime/all-hells-paradise-arcs-in-order/", "type": "EDITORIAL", "accessedAt": "2026-09-01" },
+    { "id": "jrfm-jigokuraku-review", "url": "https://www.jrfm.eu/index.php/ojs_jrfm/article/download/321/286", "type": "EDITORIAL", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "island", "kind": "ARC", "position": 1, "title": "Island Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "16" }, "sourceIds": ["jigokuraku-wiki-story-arcs", "attack-fanboy-jigokuraku-arcs", "jrfm-jigokuraku-review"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "lord-tensen", "kind": "ARC", "position": 2, "title": "Lord Tensen Arc", "range": { "unit": "CHAPTER", "start": "17", "end": "59" }, "sourceIds": ["jigokuraku-wiki-story-arcs", "attack-fanboy-jigokuraku-arcs", "jrfm-jigokuraku-review"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "horai", "kind": "ARC", "position": 3, "title": "Horai Arc", "range": { "unit": "CHAPTER", "start": "60", "end": "110" }, "sourceIds": ["jigokuraku-wiki-story-arcs", "attack-fanboy-jigokuraku-arcs", "jrfm-jigokuraku-review"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "departure", "kind": "ARC", "position": 4, "title": "Departure Arc", "range": { "unit": "CHAPTER", "start": "111", "end": "127" }, "sourceIds": ["jigokuraku-wiki-story-arcs", "attack-fanboy-jigokuraku-arcs", "jrfm-jigokuraku-review"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
   "conflicts": []
 }
