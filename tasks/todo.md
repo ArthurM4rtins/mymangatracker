@@ -690,3 +690,24 @@ Cadeia: ... <- #57 <- #58 <- #59.
 
 Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
 #16 curadoria.
+
+## Sessao 03/09 — pagina do autor: so autoria e bio com ver mais (#69)
+
+- Cadeia #19->#60 ja mergeada na main; branch nova feature/autor-papel-e-bio
+  a partir da main. Conta gh ativa trocada para NicholasSchlindwein-dev
+  (unica com push); git local do repo aponta para essa conta.
+- Achado: AniList devolve todo o staffMedia, com papel em staffRole. Hara
+  (Kingdom) vinha com Vagabond e Real como Assistant. Papeis vistos na API:
+  Story & Art, Story, Art, Story & Art (vols 1-41), Original Creator,
+  Original Story, Illustration, Illustration (vol 1), Assistant, Assistant
+  (Former), Assistant (Background), Producer.
+- Decisao do usuario: so autoria entra. Dominio ehPapelDeAutoria (regex com
+  sufixo opcional entre parenteses), filtro antes da dedup em mapearAutor.
+  Teste antes, vermelho, depois verde.
+- Bio: componente client BioDoAutor com ver mais/ver menos; botao so quando
+  scrollHeight > clientHeight.
+- Provas: lint 0, 223 unitarios, build verde, print no browser das paginas
+  do Urasawa (ver mais abre/fecha) e do Hara (so os 3 Kingdom).
+- Pendencia da sessao: 48 arquivos de data/story-structures modificados na
+  arvore, herdados de sessao anterior (#16 curadoria) — nao tocados, nao
+  commitados aqui.
