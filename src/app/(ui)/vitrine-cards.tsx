@@ -104,7 +104,7 @@ export function CardLista({
   return (
     <article
       className={`flex flex-col gap-2 rounded-lg border border-borda bg-superficie p-3 transition-colors hover:border-acento/60 ${
-        fluido ? "h-full w-full" : "h-52 w-60"
+        fluido ? "h-full w-full" : "h-48 w-60"
       }`}
     >
       <Link href={`/listas/${listaId}`} className="flex -space-x-6">
