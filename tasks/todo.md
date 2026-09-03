@@ -711,3 +711,21 @@ Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
 - Pendencia da sessao: 48 arquivos de data/story-structures modificados na
   arvore, herdados de sessao anterior (#16 curadoria) — nao tocados, nao
   commitados aqui.
+
+## Sessao 03/09 — seguir usuarios e curtir perfis (#74)
+
+- Desenho no vault feature-seguir-usuarios (aprovado por pergunta: botao +
+  contagens no perfil, curtida igual a de lista, sem feed nesta rodada).
+- Migration `follow_profile_like` (Follow e ProfileLike, unico por par,
+  Cascade dos dois lados, CHECK de auto-relacao a mao). Aplicada no dev e no
+  teste; `pnpm prisma generate` + reiniciar dev depois (pegadinha do Prisma 7).
+- Dominio social (podeSeRelacionar), repositorio social (toggles + resumo por
+  viewer), servico social (por username; nao_encontrado / a_si_mesmo / ok),
+  perfil.service com bloco `social`, rotas POST /usuarios/:username/seguir e
+  /curtida ({ ativo, total }), tela acoes-sociais no header do perfil.
+- Provas: lint 0, unitarios verdes, test:db 71, build verde, browser: seguir
+  e curtir no /u/leitor2 persistem apos reload; /u/Roca mostra 1 seguindo;
+  anonimo 401, inexistente 404.
+- Ferramenta: para listar usuarios do dev sem expor a URL, script no
+  scratchpad que le o .env (tem BOM — `^DATABASE_URL=` nao casa no grep).
+- Pendente: paginas seguidores/seguindo; aba "Seguindo" no feed (#50).
