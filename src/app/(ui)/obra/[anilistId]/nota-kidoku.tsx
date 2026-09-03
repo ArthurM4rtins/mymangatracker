@@ -43,16 +43,28 @@ export function NotaKidoku({ nota }: { nota: NotaParaTela })
         {
           const altura = maior === 0 ? 0 : Math.max(faixa.total === 0 ? 0 : 8, (faixa.total / maior) * 100);
 
+          const rotulo = `${faixa.rating.toLocaleString("pt-BR")} ${SIMBOLO} · ${faixa.total} ${
+            faixa.total === 1 ? "avaliação" : "avaliações"
+          }`;
+
           return (
+            // Hover (issue #85): a barra cresce a partir da base, fica na cor
+            // cheia e um balão diz a nota e a contagem. Só CSS.
             <li
               key={faixa.rating}
-              title={`${faixa.rating.toLocaleString("pt-BR")} ${SIMBOLO}: ${faixa.total}`}
-              className="flex h-full flex-1 items-end"
+              aria-label={rotulo}
+              className="group relative flex h-full flex-1 items-end"
             >
               <span
-                className="block w-full rounded-t-sm bg-nota/70"
+                className="block w-full origin-bottom rounded-t-sm bg-nota/70 transition-[transform,background-color] duration-200 group-hover:scale-y-[1.18] group-hover:bg-nota"
                 style={{ height: `${altura}%`, minHeight: faixa.total === 0 ? "2px" : undefined }}
               />
+              <span
+                aria-hidden
+                className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-md border border-borda bg-fundo px-2 py-1 text-xs tabular-nums text-texto opacity-0 shadow-lg transition-[opacity,transform] duration-150 group-hover:translate-y-0 group-hover:opacity-100"
+              >
+                {rotulo}
+              </span>
             </li>
           );
         })}
