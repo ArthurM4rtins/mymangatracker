@@ -3,7 +3,9 @@
 type Registro = Record<string, unknown>;
 
 const STATUS = ["VERIFIED", "DRAFT", "DISPUTED", "INSUFFICIENT_EVIDENCE", "NOT_APPLICABLE"];
-const KIND = ["SAGA", "ARC"];
+// INTERLUDE (03/09): trecho que nenhuma fonte põe em arco — interlúdio ou
+// capítulos avulsos — vira segmento explícito, nem lacuna nem limite inventado.
+const KIND = ["SAGA", "ARC", "INTERLUDE"];
 
 export function validarEstruturaNarrativa(estrutura: unknown): string[]
 {

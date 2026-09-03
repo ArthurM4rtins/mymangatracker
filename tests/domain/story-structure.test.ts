@@ -116,7 +116,26 @@ describe("validarEstruturaNarrativa", () => {
     expect(erros).toContain("segments[2]: segmento sem key, kind, title ou status");
   });
 
-  it("recusa kind fora de SAGA/ARC", () => {
+  // Decisão de 03/09 (#16): trecho entre arcos que nenhuma fonte atribui a
+  // arco (interlúdio do Ragnarok, capítulos avulsos do Kaguya) vira segmento
+  // explícito, em vez de lacuna ou de limite inventado.
+  it("aceita INTERLUDE como segmento entre arcos", () => {
+    const valida = structuredClone(ESTRUTURA_VALIDA);
+    valida.segments.push({
+      key: "avulsos-6-10",
+      parentKey: "saga",
+      kind: "INTERLUDE",
+      position: 2,
+      title: "Capítulos avulsos 6–10",
+      range: { unit: "CHAPTER", start: "6", end: "10" },
+      sourceIds: ["fonte-1"],
+      status: "DRAFT",
+    });
+
+    expect(validarEstruturaNarrativa(valida)).toEqual([]);
+  });
+
+  it("recusa kind fora de SAGA/ARC/INTERLUDE", () => {
     const invalida = structuredClone(ESTRUTURA_VALIDA);
     invalida.segments[1].kind = "PARTE";
 
