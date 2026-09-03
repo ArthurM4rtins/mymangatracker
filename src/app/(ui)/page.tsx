@@ -17,7 +17,7 @@ import {
   vitrineDaHomeDoSistema,
   type VitrineDaHome,
 } from "@/server/services/vitrine.service";
-import { Carrossel, type TrilhoDoCarrossel } from "./componentes/carrossel";
+import { Carrossel } from "./componentes/carrossel";
 import { CardLista, CardResenha } from "./vitrine-cards";
 import type { Dependencia, EstadoGeral } from "@/server/domain/health-status";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
@@ -81,12 +81,16 @@ export default async function Home()
         <Apresentacao />
       )}
 
-      <Carrossel titulo="Resenhas" trilhos={trilhosDeResenhas(vitrine)} />
+      <Carrossel
+        titulo="Resenhas"
+        itens={cardsDeResenhas(vitrine)}
+        vazio="Ainda não tem resenha por aqui — a primeira aparece nesta vitrine."
+      />
 
       <Carrossel
         titulo="Listas"
-        trilhos={trilhosDeListas(vitrine)}
-        verMais={{ href: "/listas", rotulo: "ver listas →" }}
+        itens={cardsDeListas(vitrine)}
+        vazio="Ainda não tem lista por aqui — a primeira aparece nesta vitrine."
       />
 
       <div className="grid gap-10 md:grid-cols-3">
@@ -262,80 +266,44 @@ function itemParaTela(item: AtividadeDaComunidade): ItemParaTela
   };
 }
 
-/** Os dois trilhos de cada carrossel (issue #76), já como cards. */
-function trilhosDeResenhas(vitrine: VitrineDaHome): TrilhoDoCarrossel[]
+/** Os cards de cada carrossel (issue #76). */
+function cardsDeResenhas(vitrine: VitrineDaHome)
 {
-  function cards(resenhas: VitrineDaHome["resenhas"]["recentes"])
+  return vitrine.resenhas.map(function (r)
   {
-    return resenhas.map(function (r)
-    {
-      return (
-        <CardResenha
-          key={r.entryId}
-          username={r.username}
-          anilistId={r.anilistId}
-          titulo={r.titulo}
-          coverImageUrl={r.coverImageUrl}
-          rating={r.rating}
-          review={r.review}
-          containsSpoilers={r.containsSpoilers}
-          curtidas={r.curtidas}
-          quando={FORMATO_QUANDO.format(r.quando)}
-        />
-      );
-    });
-  }
-
-  return [
-    {
-      chave: "recentes",
-      rotulo: "Recentes",
-      itens: cards(vitrine.resenhas.recentes),
-      vazio: "Ainda não tem resenha por aqui — a primeira aparece nesta vitrine.",
-    },
-    {
-      chave: "curtidas",
-      rotulo: "Mais curtidas na semana",
-      itens: cards(vitrine.resenhas.maisCurtidas),
-      vazio: "Nenhuma resenha foi curtida nos últimos 7 dias.",
-    },
-  ];
+    return (
+      <CardResenha
+        key={r.entryId}
+        username={r.username}
+        anilistId={r.anilistId}
+        titulo={r.titulo}
+        coverImageUrl={r.coverImageUrl}
+        rating={r.rating}
+        review={r.review}
+        containsSpoilers={r.containsSpoilers}
+        curtidas={r.curtidas}
+        quando={FORMATO_QUANDO.format(r.quando)}
+      />
+    );
+  });
 }
 
-function trilhosDeListas(vitrine: VitrineDaHome): TrilhoDoCarrossel[]
+function cardsDeListas(vitrine: VitrineDaHome)
 {
-  function cards(listas: VitrineDaHome["listas"]["recentes"])
+  return vitrine.listas.map(function (l)
   {
-    return listas.map(function (l)
-    {
-      return (
-        <CardLista
-          key={l.listaId}
-          listaId={l.listaId}
-          username={l.username}
-          nome={l.nome}
-          totalDeObras={l.totalDeObras}
-          capas={l.capas}
-          curtidas={l.curtidas}
-        />
-      );
-    });
-  }
-
-  return [
-    {
-      chave: "recentes",
-      rotulo: "Recentes",
-      itens: cards(vitrine.listas.recentes),
-      vazio: "Ainda não tem lista por aqui — a primeira aparece nesta vitrine.",
-    },
-    {
-      chave: "curtidas",
-      rotulo: "Mais curtidas na semana",
-      itens: cards(vitrine.listas.maisCurtidas),
-      vazio: "Nenhuma lista foi curtida nos últimos 7 dias.",
-    },
-  ];
+    return (
+      <CardLista
+        key={l.listaId}
+        listaId={l.listaId}
+        username={l.username}
+        nome={l.nome}
+        totalDeObras={l.totalDeObras}
+        capas={l.capas}
+        curtidas={l.curtidas}
+      />
+    );
+  });
 }
 
 function Apresentacao()

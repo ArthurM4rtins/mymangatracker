@@ -5,23 +5,16 @@
  * do centro em destaque e os dois de cada lado esmaecendo e encolhendo
  * conforme se afastam. Avança um card a cada poucos segundos, pausa no hover
  * e no foco, setas nas laterais, loop cíclico. `prefers-reduced-motion`
- * desliga o avanço automático; o seletor troca de trilho sem refetch.
+ * desliga o avanço automático. Os cards já vêm renderizados do servidor.
  */
 import {
   useCallback,
   useEffect,
-  useRef,
   useState,
   useSyncExternalStore,
+  type CSSProperties,
   type ReactNode,
 } from "react";
-
-export type TrilhoDoCarrossel = {
-  chave: string;
-  rotulo: string;
-  itens: ReactNode[];
-  vazio: string;
-};
 
 const INTERVALO_MS = 4000;
 const VISIVEIS_DE_CADA_LADO = 2;
@@ -43,7 +36,7 @@ function lerReduzMovimento() { return window.matchMedia(CONSULTA_REDUZ_MOVIMENTO
 function reduzMovimentoNoServidor() { return false; }
 
 /** Aparência por distância do centro: 0 é o destaque, ±2 é a borda do palco. */
-function estiloPorDistancia(distancia: number): React.CSSProperties
+function estiloPorDistancia(distancia: number): CSSProperties
 {
   const longe = Math.abs(distancia);
   const escala = longe === 0 ? 1 : longe === 1 ? 0.9 : 0.8;
@@ -60,15 +53,14 @@ function estiloPorDistancia(distancia: number): React.CSSProperties
 
 export function Carrossel({
   titulo,
-  trilhos,
-  verMais,
+  itens,
+  vazio,
 }: {
   titulo: string;
-  trilhos: TrilhoDoCarrossel[];
-  verMais?: { href: string; rotulo: string };
+  itens: ReactNode[];
+  vazio: string;
 })
 {
-  const [ativo, setAtivo] = useState(trilhos[0]?.chave ?? "");
   const [centro, setCentro] = useState(0);
   const [pausado, setPausado] = useState(false);
   const reduzMovimento = useSyncExternalStore(
@@ -76,10 +68,6 @@ export function Carrossel({
     lerReduzMovimento,
     reduzMovimentoNoServidor,
   );
-  const palco = useRef<HTMLDivElement>(null);
-
-  const trilho = trilhos.find(function (t) { return t.chave === ativo; }) ?? trilhos[0];
-  const itens = trilho?.itens ?? [];
   const total = itens.length;
 
   const avancar = useCallback(function (passos: number)
@@ -89,12 +77,6 @@ export function Carrossel({
       setCentro(function (c) { return (c + passos + total) % total; });
     }
   }, [total]);
-
-  function trocarTrilho(chave: string)
-  {
-    setAtivo(chave);
-    setCentro(0);
-  }
 
   useEffect(function ()
   {
@@ -121,45 +103,12 @@ export function Carrossel({
 
   return (
     <section className="flex min-w-0 flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">{titulo}</h2>
-        <div className="flex items-center gap-3">
-          {trilhos.length > 1 && (
-            <div role="tablist" aria-label={titulo} className="flex rounded-md border border-borda p-0.5 text-xs">
-              {trilhos.map(function (t)
-              {
-                const selecionado = t.chave === trilho?.chave;
-
-                return (
-                  <button
-                    key={t.chave}
-                    type="button"
-                    role="tab"
-                    aria-selected={selecionado}
-                    onClick={function () { trocarTrilho(t.chave); }}
-                    className={`rounded px-2.5 py-1 transition-colors ${
-                      selecionado ? "bg-superficie text-texto" : "text-texto-suave hover:text-texto"
-                    }`}
-                  >
-                    {t.rotulo}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-          {verMais && (
-            <a href={verMais.href} className="text-sm text-acento underline underline-offset-4">
-              {verMais.rotulo}
-            </a>
-          )}
-        </div>
-      </div>
+      <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">{titulo}</h2>
 
       {total === 0 ? (
-        <p className="text-sm text-texto-suave">{trilho?.vazio}</p>
+        <p className="text-sm text-texto-suave">{vazio}</p>
       ) : (
         <div
-          ref={palco}
           className="relative"
           onMouseEnter={function () { setPausado(true); }}
           onMouseLeave={function () { setPausado(false); }}
@@ -195,13 +144,10 @@ export function Carrossel({
             <>
               <Seta lado="esquerda" aoClicar={function () { avancar(-1); }} />
               <Seta lado="direita" aoClicar={function () { avancar(1); }} />
+              <p className="mt-2 text-center text-xs tabular-nums text-texto-suave">
+                {centro + 1} / {total}
+              </p>
             </>
-          )}
-
-          {total > 1 && (
-            <p className="mt-2 text-center text-xs tabular-nums text-texto-suave">
-              {centro + 1} / {total}
-            </p>
           )}
         </div>
       )}
