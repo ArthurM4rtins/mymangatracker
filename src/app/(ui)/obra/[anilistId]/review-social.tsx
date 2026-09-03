@@ -7,11 +7,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Avatar } from "../../componentes/avatar";
 import { estrelasTexto } from "../../componentes/estrelas";
 
 export type ReviewParaTela = {
   entryId: string;
   username: string;
+  avatarVersao: number | null;
   minha: boolean;
   rating: string | null;
   review: string;
@@ -21,6 +23,7 @@ export type ReviewParaTela = {
   comentarios: Array<{
     id: string;
     username: string;
+    avatarVersao: number | null;
     texto: string;
     meu: boolean;
   }>;
@@ -147,7 +150,8 @@ export function ReviewSocial({
   return (
     <li className="flex flex-col gap-2 rounded-lg border border-borda bg-superficie p-4">
       <p className="flex flex-wrap items-center gap-2 text-sm">
-        <Link href={`/u/${review.username}`} className="font-medium hover:text-acento">
+        <Link href={`/u/${review.username}`} className="flex items-center gap-2 font-medium hover:text-acento">
+          <Avatar username={review.username} versao={review.avatarVersao} />
           {review.username}
         </Link>
         {review.minha && (
@@ -201,8 +205,9 @@ export function ReviewSocial({
               <p key={item.id} className="flex items-start gap-2">
                 <Link
                   href={`/u/${item.username}`}
-                  className="shrink-0 font-medium hover:text-acento"
+                  className="flex shrink-0 items-center gap-1.5 font-medium hover:text-acento"
                 >
+                  <Avatar username={item.username} versao={item.avatarVersao} tamanho="sm" />
                   {item.username}
                 </Link>
                 <span className="min-w-0 flex-1 whitespace-pre-line text-texto-suave">
