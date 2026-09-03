@@ -11,10 +11,15 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "koe-no-katachi-wiki-chapters", "url": "https://koenokatachi.fandom.com/wiki/Category:Chapters", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "a-silent-voice-wikipedia", "url": "https://en.wikipedia.org/wiki/A_Silent_Voice_(manga)", "type": "EDITORIAL", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "As fontes identificam uma narrativa contínua em sete volumes e registram capítulos fracionados/extras, mas não apresentam arcos nomeados com limites verificáveis. Não foram inferidos segmentos a partir dos temas ou da progressão dramática." }
+  ]
 }

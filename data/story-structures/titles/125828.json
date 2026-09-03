@@ -12,9 +12,27 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
-  "conflicts": []
+  "sources": [
+    { "id": "viz-sakamoto-days-chapters", "url": "https://www.viz.com/shonenjump/chapters/sakamoto-days?locale=en", "type": "OFFICIAL", "accessedAt": "2026-09-01" },
+    { "id": "sakamoto-days-wiki-story-arcs", "url": "https://sakamoto-days.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "sakamoto-days-wiki-new-jaa", "url": "https://sakamoto-days.fandom.com/wiki/New_JAA_Arc", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "sakamoto-days-wiki-jaa-jail", "url": "https://sakamoto-days.fandom.com/wiki/JAA_Jail_Arc", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "amusement-park", "kind": "ARC", "position": 1, "title": "Amusement Park Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "15" }, "sourceIds": ["sakamoto-days-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "lab", "kind": "ARC", "position": 2, "title": "Lab Arc", "range": { "unit": "CHAPTER", "start": "16", "end": "31" }, "sourceIds": ["sakamoto-days-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "death-row-prisoners", "kind": "ARC", "position": 3, "title": "Death Row Prisoners Arc", "range": { "unit": "CHAPTER", "start": "32", "end": "54" }, "sourceIds": ["sakamoto-days-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "jcc-transfer-exams", "kind": "ARC", "position": 4, "title": "JCC Transfer Exams Arc", "range": { "unit": "CHAPTER", "start": "55", "end": "72" }, "sourceIds": ["sakamoto-days-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "jcc-infiltration", "kind": "ARC", "position": 5, "title": "JCC Infiltration Arc", "range": { "unit": "CHAPTER", "start": "73", "end": "104" }, "sourceIds": ["sakamoto-days-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "taro-sakamoto-past", "kind": "ARC", "position": 6, "title": "Taro Sakamoto's Past Arc", "range": { "unit": "CHAPTER", "start": "105", "end": "120" }, "sourceIds": ["sakamoto-days-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "bangkok", "kind": "ARC", "position": 7, "title": "Bangkok Arc", "range": { "unit": "CHAPTER", "start": "121", "end": "130" }, "sourceIds": ["sakamoto-days-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "assassin-exhibition-century", "kind": "ARC", "position": 8, "title": "Assassin Exhibition of the Century Arc", "range": { "unit": "CHAPTER", "start": "131", "end": "168" }, "sourceIds": ["sakamoto-days-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "jaa-jail", "kind": "ARC", "position": 9, "title": "JAA Jail Arc", "range": { "unit": "CHAPTER", "start": "169", "end": "207" }, "sourceIds": ["sakamoto-days-wiki-story-arcs", "sakamoto-days-wiki-jaa-jail"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "new-jaa", "kind": "ARC", "position": 10, "title": "New JAA Arc", "range": { "unit": "CHAPTER", "start": "208", "end": null }, "sourceIds": ["sakamoto-days-wiki-story-arcs", "sakamoto-days-wiki-new-jaa"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "arc naming", "reason": "A fonte comunitaria identifica Bangkok e New JAA explicitamente como nomes nao oficiais e avisa que nomes comunitarios podem mudar. Os limites foram registrados como DRAFT; a pagina oficial confirma que a serializacao chegou ao capitulo 273 na data de acesso." }
+  ]
 }

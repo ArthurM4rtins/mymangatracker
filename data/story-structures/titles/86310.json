@@ -12,9 +12,41 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
-  "conflicts": []
+  "sources": [
+    { "id": "fire-force-wiki-story-arcs", "url": "https://fire-force.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "fire-force-wiki-epilogue", "url": "https://fire-force.fandom.com/wiki/Epilogue_arc", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "fire-force-wiki-battle-amaterasu", "url": "https://fire-force.fandom.com/wiki/Battle_of_Amaterasu_arc", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "introduction", "kind": "ARC", "position": 1, "title": "Introduction arc", "range": { "unit": "CHAPTER", "start": "0", "end": "12" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "vs-company-5", "kind": "ARC", "position": 2, "title": "VS. Special Fire Force Company 5 arc", "range": { "unit": "CHAPTER", "start": "13", "end": "20" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "vs-company-1", "kind": "ARC", "position": 3, "title": "VS. Special Fire Force Company 1 arc", "range": { "unit": "CHAPTER", "start": "21", "end": "32" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "preacher-pursuit", "kind": "ARC", "position": 4, "title": "Preacher Pursuit arc", "range": { "unit": "CHAPTER", "start": "33", "end": "38" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "asakusa", "kind": "ARC", "position": 5, "title": "Asakusa arc", "range": { "unit": "CHAPTER", "start": "39", "end": "51" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "vulcans-workshop", "kind": "ARC", "position": 6, "title": "Vulcan's Workshop arc", "range": { "unit": "CHAPTER", "start": "52", "end": "66" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "netherworld", "kind": "ARC", "position": 7, "title": "Netherworld arc", "range": { "unit": "CHAPTER", "start": "67", "end": "90" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "vs-company-4", "kind": "ARC", "position": 8, "title": "VS. Special Fire Force Company 4 arc", "range": { "unit": "CHAPTER", "start": "91", "end": "99" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "fifth-pillar", "kind": "ARC", "position": 9, "title": "Fifth Pillar arc", "range": { "unit": "CHAPTER", "start": "100", "end": "111" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "chinese-peninsula", "kind": "ARC", "position": 10, "title": "Chinese Peninsula arc", "range": { "unit": "CHAPTER", "start": "112", "end": "122" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "vs-holy-sol-temple", "kind": "ARC", "position": 11, "title": "VS. Holy Sol Temple arc", "range": { "unit": "CHAPTER", "start": "123", "end": "130" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "haijima-industries", "kind": "ARC", "position": 12, "title": "Haijima Industries arc", "range": { "unit": "CHAPTER", "start": "131", "end": "147" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "iris", "kind": "ARC", "position": 13, "title": "Iris arc", "range": { "unit": "CHAPTER", "start": "148", "end": "151" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "joint-investigation", "kind": "ARC", "position": 14, "title": "Joint Investigation arc", "range": { "unit": "CHAPTER", "start": "152", "end": "166" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "stigma", "kind": "ARC", "position": 15, "title": "Stigma arc", "range": { "unit": "CHAPTER", "start": "167", "end": "174" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "obis-rescue", "kind": "ARC", "position": 16, "title": "Obi's Rescue arc", "range": { "unit": "CHAPTER", "start": "175", "end": "197" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "return-st-raffles", "kind": "ARC", "position": 17, "title": "Return to St. Raffles arc", "range": { "unit": "CHAPTER", "start": "198", "end": "201" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "arthurs-adventure", "kind": "ARC", "position": 18, "title": "Arthur's Adventure arc", "range": { "unit": "CHAPTER", "start": "202", "end": "205" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "stone-pillars", "kind": "ARC", "position": 19, "title": "Stone Pillars arc", "range": { "unit": "CHAPTER", "start": "206", "end": "219" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "asakusa-showdown", "kind": "ARC", "position": 20, "title": "Asakusa Showdown arc", "range": { "unit": "CHAPTER", "start": "220", "end": "229" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kusakabe-history", "kind": "ARC", "position": 21, "title": "Kusakabe History arc", "range": { "unit": "CHAPTER", "start": "230", "end": "233" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "final-pillar", "kind": "ARC", "position": 22, "title": "Final Pillar arc", "range": { "unit": "CHAPTER", "start": "234", "end": "239" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "battle-amaterasu", "kind": "ARC", "position": 23, "title": "Battle of Amaterasu arc", "range": { "unit": "CHAPTER", "start": "240", "end": "250" }, "sourceIds": ["fire-force-wiki-story-arcs", "fire-force-wiki-battle-amaterasu"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "great-cataclysm", "kind": "ARC", "position": 24, "title": "Great Cataclysm arc", "range": { "unit": "CHAPTER", "start": "251", "end": "302" }, "sourceIds": ["fire-force-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "epilogue", "kind": "ARC", "position": 25, "title": "Epilogue arc", "range": { "unit": "CHAPTER", "start": "303", "end": "304" }, "sourceIds": ["fire-force-wiki-story-arcs", "fire-force-wiki-epilogue"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A fonte comunitaria informa que apenas os nomes marcados com asterisco sao oficiais; a classificacao inteira e mantida como DRAFT. O capitulo 00 e contado junto de 1--304, explicando os 305 capitulos do catalogo." }
+  ]
 }

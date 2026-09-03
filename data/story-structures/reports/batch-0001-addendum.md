@@ -31,4 +31,94 @@
 
 | 30583 | Claymore | `INSUFFICIENT_EVIDENCE`; a taxonomia comunitaria cobre 14 arcos ate o capitulo 155, mas a serie tem 159 capitulos e nao classifica os quatro finais. |
 
-Proxima prioridade: Fire Force (86310).
+| 86310 | Fire Force | `DRAFT`; 25 arcos comunitarios cobrem do capitulo 00 ao 304, com epilogo em 303--304; o capitulo 00 explica a contagem AniList de 305. |
+
+| 86218 | Bloom Into You | `INSUFFICIENT_EVIDENCE`; fontes da historia principal listam 45 capitulos, mas o AniList registra 53 entradas e nao ha taxonomia de arcos que explique a equivalencia. |
+
+| 98397 | Blood on the Tracks | `INSUFFICIENT_EVIDENCE`; as referencias descrevem uma narrativa continua de 1--153, sem taxonomia de arcos ou limites narrativos verificaveis. |
+
+| 111233 | Call of the Night | `INSUFFICIENT_EVIDENCE`; a historia principal encerra no 200, mas o AniList lista 203 entradas e especiais/manga posterior nao possuem equivalencia de arcos verificavel. |
+
+| 30149 | BLAME! | `INSUFFICIENT_EVIDENCE`; fontes divergem entre 65 logs, dois EX-LOGs e 66 entradas no AniList, sem taxonomia de arcos que reconcilie a numeracao. |
+
+| 86717 | Wotakoi: Love is Hard for Otaku | `INSUFFICIENT_EVIDENCE`; alterna episodios e subtramas, mas nao ha taxonomia de arcos nem equivalencia verificavel para as 115 entradas do AniList. |
+
+| 100568 | The Horizon | `INSUFFICIENT_EVIDENCE`; fontes divergem entre 21 e 23 capitulos e nao oferecem uma taxonomia de arcos que reconcilie a numeracao. |
+
+| 136807 | Look Back | `NOT_APPLICABLE`; one-shot oficial de capitulo unico, sem estrutura serializada de arcos para segmentar. |
+
+Triagem operacional adicionada em `TRIAGE.md`: priorizar somente `CANDIDATE_ARCS`; interromper a pesquisa de uma candidata se nao houver taxonomia com intervalos verificaveis.
+
+| 85611 | Tokyo Ghoul:re | `DISPUTED`; taxonomias divergem desde Torso/Nutcracker e na fronteira final, alem de 179 capitulos principais contra 181 entradas no AniList. |
+
+| 65243 | Haikyu!! | `DRAFT`; seis arcos comunitarios cobrem 1--402; as duas entradas extras do AniList sao one-shots piloto fora da serializacao principal. |
+
+| 85143 | Tower of God | `DISPUTED`; os arcos possuem limites, mas a numeracao reinicia por parte/temporada e o contrato atual nao tem chave para desambigua-los. |
+
+| 30021 | Death Note | `INSUFFICIENT_EVIDENCE`; ha 108 capitulos confirmados, mas somente Yotsuba e America possuem nomes editoriais citados; as demais divisoes e limites divergem. |
+
+| 100994 | Hell's Paradise: Jigokuraku | `DRAFT`; Island, Lord Tensen, Horai e Departure cobrem consecutivamente 1--127 em fontes independentes; nomes nao oficiais. |
+
+| 98416 | Dr. STONE | `DRAFT`; 14 arcos cobrem 1--232; o AniList totaliza 236 por incluir Terraforming e a minisserie 4D Science. |
+
+| 125828 | Sakamoto Days | `DRAFT`; dez arcos comunitarios, com New JAA aberto desde 208; a publicacao oficial alcancou o capitulo 273. |
+
+| 31133 | Dorohedoro | `INSUFFICIENT_EVIDENCE`; 167 capitulos principais e extras no total AniList de 191, sem taxonomia de arcos verificavel. |
+
+| 118586 | Frieren: Beyond Journey's End | `DISPUTED`; taxonomias nao oficiais divergem nas fronteiras de viagem e do exame de magos. |
+
+| 74489 | Land of the Lustrous | `DRAFT`; 11 subarcos comunitarios cobrem 1--108; o total AniList de 120 inclui entradas nao reconciliadas. |
+
+| 98263 | Witch Hat Atelier | `DISPUTED`; wikis comunitarias divergem nos limites dos arcos posteriores e todos os nomes sao fan-made. |
+
+| 79865 | Ajin: Demi-Human | `INSUFFICIENT_EVIDENCE`; 84 arquivos oficiais versus 99 entradas no AniList, sem taxonomia de arcos verificavel. |
+
+| 54692 | Noragami: Stray God | `DRAFT`; nove arcos cobrem 1--109; titulos e duracoes comunitarios, salvo o anuncio do arco final. |
+
+| 55515 | JoJo's Bizarre Adventure Part 8: JoJolion | `DRAFT`; 22 arcos comunitários encadeiam todos os capítulos 1--110. |
+
+| 86399 | That Time I Got Reincarnated as a Slime | `INSUFFICIENT_EVIDENCE`; os arcos localizados são da web novel, enquanto o mangá não apresenta taxonomia contínua com limites verificáveis. |
+
+| 114960 | Mashle: Magic and Muscles | `DRAFT`; cinco arcos principais comunitários cobrem todos os capítulos 1--162. |
+
+| 86551 | Made in Abyss | `DRAFT`; nove arcos comunitários organizam a descida; Curse Fleet permanece aberto desde o capítulo 62. |
+
+| 33031 | Pandora Hearts | `DRAFT`; nove arcos editoriais cobrem 1--104; AniList registra 107 entradas e os extras não foram segmentados. |
+
+| 30598 | Fairy Tail | `DRAFT`; dezessete arcos comunitários cobrem a série principal 1--545; AniList registra 549 entradas. |
+
+| 126297 | Teenage Mercenary | `INSUFFICIENT_EVIDENCE`; a publicação oficial lista apenas episódios e a wiki não apresenta arcos contínuos verificáveis. |
+
+| 100954 | Sweet Home | `INSUFFICIENT_EVIDENCE`; prólogo e 140 episódios foram confirmados, mas não há taxonomia de arcos com limites verificáveis. |
+
+| 86082 | Delicious in Dungeon | `DRAFT`; quatorze arcos comunitários cobrem os 97 capítulos principais; AniList registra 111 entradas. |
+
+| 74485 | The Seven Deadly Sins | `INSUFFICIENT_EVIDENCE`; a série principal termina no capítulo 346, mas a taxonomia de 20 arcos não tem intervalos contínuos verificáveis. |
+
+| 101583 | My Dress-Up Darling | `DRAFT`; doze arcos comunitários por cosplay cobrem 1--115.5; AniList registra 119 entradas. |
+
+| 85135 | A Silent Voice | `INSUFFICIENT_EVIDENCE`; narrativa contínua em sete volumes, sem taxonomia de arcos verificável. |
+
+| 30436 | Uzumaki: Spiral into Horror | `INSUFFICIENT_EVIDENCE`; capítulos individuais e três volumes, sem taxonomia de arcos verificável. |
+
+| 97553 | Three Days of Happiness | `INSUFFICIENT_EVIDENCE`; 16 capítulos oficiais e três volumes, contra 18 entradas AniList, sem taxonomia de arcos verificável. |
+
+| 99943 | Rent-A-Girlfriend | `INSUFFICIENT_EVIDENCE`; nomes comunitários de arcos não trazem limites verificáveis e macrodivisões independentes conflitam. |
+
+| 54294 | Ao Haru Ride | `INSUFFICIENT_EVIDENCE`; 49 capítulos principais, prólogo e extras em treze volumes, sem taxonomia de arcos verificável. |
+
+| 30028 | Nana | `INSUFFICIENT_EVIDENCE`; capítulos, volumes e material não compilado do hiato, sem taxonomia de arcos verificável. |
+
+| 116186 | Boy's Abyss | `INSUFFICIENT_EVIDENCE`; 183 capítulos principais e capítulos adicionais, sem taxonomia de arcos verificável. |
+
+| 61499 | Nisekoi: False Love | `DRAFT`; três macroarcos comunitários por ano escolar cobrem 1--229; especiais e epílogo ficam fora dessa estrutura. |
+
+| 30336 | GTO: Great Teacher Onizuka | `INSUFFICIENT_EVIDENCE`; 200 lições principais e extras, com casos menores sem taxonomia de arcos verificável. |
+
+| 85849 | ReLIFE | `INSUFFICIENT_EVIDENCE`; 222 reports principais e extras, com taxonomia parcial de dois arcos sem cobertura integral verificável. |
+
+| 146983 | Goodbye, Eri | `NOT_APPLICABLE`; one-shot oficial de capítulo único, sem estrutura serializada de arcos. |
+
+| 30104 | Yotsuba&! | `NOT_APPLICABLE`; comédia slice-of-life episódica, sem arcos narrativos recorrentes com limites verificáveis. |
+
+Fila de 100 títulos concluída.

@@ -11,10 +11,34 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    {
+      "id": "young-jump-boys-abyss",
+      "url": "https://youngjump.jp/manga/boys_abyss/",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "boys-abyss-wikipedia-chapters",
+      "url": "https://en.wikipedia.org/wiki/List_of_Boy%27s_Abyss_chapters",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "boys-abyss-wiki-chapters",
+      "url": "https://boys-abyss.fandom.com/wiki/Chapters",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    {
+      "field": "chapter count and arc taxonomy",
+      "reason": "A editora confirma dezoito volumes e as listas identificam 183 capítulos principais com capítulos adicionais, compatíveis com as 185 entradas AniList. Nenhuma fonte publica arcos ou sagas nomeados com limites verificáveis; mudanças de foco narrativo não foram inferidas como segmentos."
+    }
+  ]
 }

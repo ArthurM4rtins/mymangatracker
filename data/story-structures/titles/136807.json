@@ -11,10 +11,15 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "NOT_APPLICABLE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "viz-look-back-chapter", "url": "https://www.viz.com/shonenjump/chapters/look-back", "type": "OFFICIAL", "accessedAt": "2026-09-01" },
+    { "id": "shonen-jump-plus-look-back", "url": "https://shonenjumpplus.com/volume/4856001361007462167", "type": "OFFICIAL", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "applicability", "reason": "A publicacao oficial identifica Look Back como Special One-Shot, e o catalogo registra formato ONE_SHOT com um unico capitulo. Nao ha estrutura serializada de arcos a curar." }
+  ]
 }

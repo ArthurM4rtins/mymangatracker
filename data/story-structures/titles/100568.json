@@ -11,10 +11,15 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "korean-webtoons-wiki-horizon", "url": "https://koreanwebtoons.fandom.com/wiki/The_Horizon", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "horizon-manhwatop", "url": "https://manhwatop.com/manga/the-horizon-manhwa/?c=1", "type": "SECONDARY", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "numbering and arc taxonomy", "reason": "O catalogo AniList e diversas referencias de leitura apontam 21 capitulos, enquanto uma wiki de webtoons registra 23. Nenhuma fonte localizada fornece uma divisao de arcos ou explica a diferenca de numeracao; nao foram inferidos segmentos." }
+  ]
 }

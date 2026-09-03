@@ -11,10 +11,34 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    {
+      "id": "viz-uzumaki-chapters",
+      "url": "https://www.viz.com/vizmanga/chapters/uzumaki",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "uzumaki-wikipedia-volumes",
+      "url": "https://en.wikipedia.org/wiki/Uzumaki",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "uzumaki-wiki-chapters",
+      "url": "https://uzumaki.fandom.com/wiki/Category:Chapters",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    {
+      "field": "arc taxonomy",
+      "reason": "As fontes organizam a obra por capítulos individuais e três volumes, sem arcos ou sagas nomeados com limites verificáveis. Os episódios conectados e a escalada da maldição não foram convertidos em segmentos inferidos."
+    }
+  ]
 }

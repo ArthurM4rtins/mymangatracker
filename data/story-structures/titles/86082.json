@@ -12,9 +12,252 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
-  "conflicts": []
+  "sources": [
+    {
+      "id": "delicious-in-dungeon-wiki-story-arcs",
+      "url": "https://delicious-in-dungeon.fandom.com/wiki/Story_Arcs",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "delicious-in-dungeon-wiki-chapters",
+      "url": "https://delicious-in-dungeon.fandom.com/wiki/Chapters_and_Volumes",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [
+    {
+      "key": "introduction",
+      "kind": "ARC",
+      "position": 1,
+      "title": "Introduction",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "1",
+        "end": "1"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "second-floor",
+      "kind": "ARC",
+      "position": 2,
+      "title": "Second Floor",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "2",
+        "end": "7"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "third-floor",
+      "kind": "ARC",
+      "position": 3,
+      "title": "Third Floor",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "8",
+        "end": "13"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "fourth-floor",
+      "kind": "ARC",
+      "position": 4,
+      "title": "Fourth Floor",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "14",
+        "end": "22"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "red-dragon",
+      "kind": "ARC",
+      "position": 5,
+      "title": "Red Dragon",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "23",
+        "end": "29"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "fifth-floor",
+      "kind": "ARC",
+      "position": 6,
+      "title": "Fifth Floor",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "30",
+        "end": "38"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "sixth-floor",
+      "kind": "ARC",
+      "position": 7,
+      "title": "Sixth Floor",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "39",
+        "end": "52"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "first-floor-interlude",
+      "kind": "ARC",
+      "position": 8,
+      "title": "First Floor Interlude",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "53",
+        "end": "55"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "dwarf-city-ruins",
+      "kind": "ARC",
+      "position": 9,
+      "title": "Dwarf City Ruins",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "56",
+        "end": "62"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "lunatic-magician-s-house",
+      "kind": "ARC",
+      "position": 10,
+      "title": "Lunatic Magician's House",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "63",
+        "end": "67"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "thistle",
+      "kind": "ARC",
+      "position": 11,
+      "title": "Thistle",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "68",
+        "end": "72"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "new-dungeon-lord",
+      "kind": "ARC",
+      "position": 12,
+      "title": "New Dungeon Lord",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "73",
+        "end": "85"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "winged-lion",
+      "kind": "ARC",
+      "position": 13,
+      "title": "Winged Lion",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "86",
+        "end": "91"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "falin",
+      "kind": "ARC",
+      "position": 14,
+      "title": "Falin",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "92",
+        "end": "97"
+      },
+      "sourceIds": [
+        "delicious-in-dungeon-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    }
+  ],
+  "conflicts": [
+    {
+      "field": "chapter total",
+      "reason": "A taxonomia comunitária cobre os 97 capítulos principais encerrados no capítulo final, enquanto o catálogo AniList registra 111 entradas. Extras e materiais suplementares não receberam limites inferidos."
+    }
+  ]
 }
