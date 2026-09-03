@@ -25,6 +25,10 @@ import {
 } from "@/server/repositories/perfil.repository";
 import { listarEntradasDoUsuario } from "@/server/repositories/shelf.repository";
 import {
+  resumoSocial,
+  type ResumoSocial,
+} from "@/server/repositories/social.repository";
+import {
   buscarUsuarioPorUsername,
   type UsuarioDoPerfil,
 } from "@/server/repositories/usuario.repository";
@@ -65,6 +69,8 @@ export type PerfilDoUsuario = {
   listas: ListaPublica[];
   /** `null` para quem não é o dono. */
   estante: EstanteDoDono | null;
+  /** Seguidores, seguindo, curtidas e o estado de quem olha (issue #74). */
+  social: ResumoSocial;
 };
 
 export type PedidoDePerfil = {
@@ -81,6 +87,7 @@ export type DependenciasDePerfil = {
   listarResenhas: (userId: string, limite: number) => Promise<ResenhaDoPerfil[]>;
   listarListas: (userId: string) => Promise<ListaPublica[]>;
   listarEstante: (userId: string) => Promise<EntradaDaEstanteDoDono[]>;
+  resumoSocial: (userId: string, viewerId: string | null) => Promise<ResumoSocial>;
 };
 
 export async function perfilDoUsuario(
@@ -97,7 +104,7 @@ export async function perfilDoUsuario(
 
   const souEu = pedido.viewerId === usuario.id;
 
-  const [avaliadas, resenhas, curtidasDadas, resenhasRecentes, listas, entradas] =
+  const [avaliadas, resenhas, curtidasDadas, resenhasRecentes, listas, entradas, social] =
     await Promise.all([
       deps.listarAvaliadas(usuario.id),
       deps.contarResenhas(usuario.id),
@@ -105,6 +112,7 @@ export async function perfilDoUsuario(
       deps.listarResenhas(usuario.id, RESENHAS_RECENTES),
       deps.listarListas(usuario.id),
       souEu ? deps.listarEstante(usuario.id) : Promise.resolve(null),
+      deps.resumoSocial(usuario.id, pedido.viewerId),
     ]);
 
   return {
@@ -124,6 +132,7 @@ export async function perfilDoUsuario(
       entradas === null
         ? null
         : { contagem: contarPorStatus(entradas), entradas },
+    social,
   };
 }
 
@@ -139,6 +148,7 @@ export function perfilDoUsuarioDoSistema(
     contarCurtidasDadas,
     listarResenhas: listarResenhasRecentes,
     listarListas: listarListasDoUsuario,
+    resumoSocial,
     listarEstante: async function (userId)
     {
       const entradas = await listarEntradasDoUsuario(userId);
