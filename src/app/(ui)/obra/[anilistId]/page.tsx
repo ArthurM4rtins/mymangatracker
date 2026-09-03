@@ -172,8 +172,6 @@ export default async function PaginaDaObra({ params }: Props)
               )}
             </p>
 
-            {notaDoKidoku !== null && <NotaKidoku nota={notaDoKidoku} />}
-
             {descricao && descricao.sinopse !== "" && (
               <p className="whitespace-pre-line text-sm leading-relaxed text-texto-suave">
                 {descricao.sinopse}
@@ -181,15 +179,19 @@ export default async function PaginaDaObra({ params }: Props)
             )}
           </div>
 
-          {userId !== null && (
-            <div className="shrink-0 sm:w-64">
-              <AvaliacaoDaObra
-                anilistId={obra.anilistId}
-                titulo={obra.titleEnglish ?? obra.titleRomaji}
-                ano={obra.startYear}
-                coverImageUrl={obra.coverImageUrl}
-                avaliacao={minhaAvaliacao}
-              />
+          {(userId !== null || notaDoKidoku !== null) && (
+            <div className="flex shrink-0 flex-col gap-4 sm:w-64">
+              {userId !== null && (
+                <AvaliacaoDaObra
+                  anilistId={obra.anilistId}
+                  titulo={obra.titleEnglish ?? obra.titleRomaji}
+                  ano={obra.startYear}
+                  coverImageUrl={obra.coverImageUrl}
+                  avaliacao={minhaAvaliacao}
+                />
+              )}
+              {/* A média fica embaixo de onde a pessoa avalia (issue #81). */}
+              {notaDoKidoku !== null && <NotaKidoku nota={notaDoKidoku} />}
             </div>
           )}
         </section>
