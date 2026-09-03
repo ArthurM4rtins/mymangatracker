@@ -89,7 +89,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <div className="absolute left-4 top-1/2 -translate-y-1/2">
             <BotaoVoltar />
           </div>
-          <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 py-4">
+          {/* Mesma largura da home (max-w-5xl): o logo alinha com o conteúdo. */}
+          <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
             <Logo />
             <div className="flex items-center gap-4">
               <nav aria-label="Navegação" className="flex items-center gap-3">
