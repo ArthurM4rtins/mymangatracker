@@ -29,6 +29,8 @@ Fora do escopo:
 | Chave da obra | `anilistId` | identidade estável já usada no `Media` |
 | Unidade inicial | `CHAPTER` | coincide com o tracking atual |
 | Hierarquia | `SAGA` contém `ARC` por `parentKey` | evita tabelas duplicadas |
+| Trecho sem arco | `INTERLUDE` explícito (03/09) | interlúdio ou capítulos avulsos que nenhuma fonte põe em arco viram segmento próprio; nem lacuna, nem limite inventado |
+| Capítulo de fronteira | vai para um arco só, decidido por evidência do capítulo (infobox, título) | Solo Leveling 61 é Demon Castle; Ragnarok 7/13/20/84 abrem o round seguinte |
 | Capítulos | strings decimais | preserva `57.5` sem perda de precisão JSON |
 | Publicação | só `VERIFIED` é importável | rascunho não pode vazar como fato |
 | Falta de fonte | `INSUFFICIENT_EVIDENCE` | cobertura não autoriza inventar limites |
@@ -67,6 +69,8 @@ data/story-structures/
 - JSON válido contra o contrato.
 - `anilistId` único na fila.
 - `parentKey` aponta para segmento existente e de tipo `SAGA`.
+- `kind` é `SAGA`, `ARC` ou `INTERLUDE`; segmento sem `key`, `kind`, `title` ou `status` reprova.
+- Irmãos (mesmo `parentKey`) não se sobrepõem nem deixam lacuna; lacuna real vira `INTERLUDE`.
 - início não é negativo (capítulo 0 existe: Fire Force) e não passa do fim. Prólogo antes do 1 vai como decimal (Berserk 0.01–0.09, numeração do MangaDex); negativo de site editorial não entra.
 - toda referência de fonte existe no documento.
 - `VERIFIED` tem ao menos uma fonte por segmento.
