@@ -86,3 +86,10 @@ body {
   color: var(--texto);
   font-family: var(--font-ui), system-ui, sans-serif;
 }
+
+/* Vitrine da home (#76): o trilho anda por transform (só compositor), com a
+   segunda cópia dos cards emendada no fim — -50% fecha o loop sem salto. */
+@keyframes deslizar-vitrine {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}

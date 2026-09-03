@@ -1,13 +1,33 @@
 "use client";
 
 /**
- * Vitrine em carrossel (issue #76): trilho que anda sozinho devagar, para
- * quando o mouse ou o foco está em cima, setas pulam uma tela, e o seletor
- * troca de trilho sem refetch — todos já vêm renderizados do servidor.
- * `prefers-reduced-motion` desliga o movimento; trilho que cabe inteiro na
- * tela também não anda.
+ * Vitrine em carrossel (issue #76). Dois modos:
+ *
+ * - AUTO (inicial): o trilho anda sozinho por `transform` em CSS — só
+ *   compositor, sem layout por frame — com uma segunda cópia dos cards
+ *   emendada no fim para o loop fechar sem salto. Pausa no hover e no foco
+ *   pelo `animation-play-state`. Trilho que cabe inteiro não anda, e
+ *   `prefers-reduced-motion` também desliga.
+ * - MANUAL: a primeira seta desliga a animação e o trilho vira um scroll
+ *   normal, com snap e rolagem pelas setas ou pelo dedo.
+ *
+ * O seletor troca de trilho sem refetch — todos já vêm do servidor.
  */
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+
+const CONSULTA_REDUZ_MOVIMENTO = "(prefers-reduced-motion: reduce)";
+
+function assinarReduzMovimento(aoMudar: () => void)
+{
+  const consulta = window.matchMedia(CONSULTA_REDUZ_MOVIMENTO);
+  consulta.addEventListener("change", aoMudar);
+
+  return function () { consulta.removeEventListener("change", aoMudar); };
+}
+
+function lerReduzMovimento() { return window.matchMedia(CONSULTA_REDUZ_MOVIMENTO).matches; }
+
+function reduzMovimentoNoServidor() { return false; }
 
 export type TrilhoDoCarrossel = {
   chave: string;
@@ -16,7 +36,8 @@ export type TrilhoDoCarrossel = {
   vazio: string;
 };
 
-const PIXELS_POR_SEGUNDO = 24;
+/** Segundos por card: 12 cards levam ~70 s para dar a volta. */
+const SEGUNDOS_POR_CARD = 6;
 
 export function Carrossel({
   titulo,
@@ -29,70 +50,91 @@ export function Carrossel({
 })
 {
   const [ativo, setAtivo] = useState(trilhos[0]?.chave ?? "");
-  const trilho = trilhos.find(function (t) { return t.chave === ativo; }) ?? trilhos[0];
-  const faixa = useRef<HTMLDivElement>(null);
-  const pausado = useRef(false);
+  const [modo, setModo] = useState<"auto" | "manual">("auto");
+  const [transborda, setTransborda] = useState(false);
+  const reduzMovimento = useSyncExternalStore(
+    assinarReduzMovimento,
+    lerReduzMovimento,
+    reduzMovimentoNoServidor,
+  );
+  const janela = useRef<HTMLDivElement>(null);
+  const copia = useRef<HTMLDivElement>(null);
 
+  const trilho = trilhos.find(function (t) { return t.chave === ativo; }) ?? trilhos[0];
+  const totalDeItens = (trilho?.itens.length ?? 0) + (verMais ? 1 : 0);
+
+  // Só anda o que não cabe. O ResizeObserver mede depois do layout, fora do
+  // render, e acompanha a janela mudando de largura.
   useEffect(function ()
   {
-    const elemento = faixa.current;
+    const alvo = janela.current;
 
-    if (elemento === null || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+    if (alvo === null)
     {
       return;
     }
 
-    let quadro = 0;
-    let antes = performance.now();
-
-    function passo(agora: number)
+    const observador = new ResizeObserver(function ()
     {
-      const dt = (agora - antes) / 1000;
-      antes = agora;
-
-      if (elemento !== null && !pausado.current && !document.hidden)
+      if (copia.current !== null)
       {
-        const maximo = elemento.scrollWidth - elemento.clientWidth;
-
-        if (maximo > 0)
-        {
-          if (elemento.scrollLeft >= maximo - 1)
-          {
-            elemento.scrollLeft = 0;
-          }
-          else
-          {
-            elemento.scrollLeft += PIXELS_POR_SEGUNDO * dt;
-          }
-        }
+        setTransborda(copia.current.scrollWidth > alvo.clientWidth);
       }
+    });
 
-      quadro = requestAnimationFrame(passo);
-    }
+    observador.observe(alvo);
 
-    quadro = requestAnimationFrame(passo);
-
-    return function () { cancelAnimationFrame(quadro); };
+    return function () { observador.disconnect(); };
   }, [ativo]);
+
+  const anima = modo === "auto" && transborda && !reduzMovimento;
 
   function pular(direcao: -1 | 1)
   {
-    const elemento = faixa.current;
+    setModo("manual");
 
-    if (elemento !== null)
+    requestAnimationFrame(function ()
     {
-      elemento.scrollBy({ left: direcao * elemento.clientWidth * 0.8, behavior: "smooth" });
-    }
+      const elemento = janela.current;
+
+      if (elemento !== null)
+      {
+        elemento.scrollBy({ left: direcao * elemento.clientWidth * 0.8, behavior: "smooth" });
+      }
+    });
+  }
+
+  function cards(escondido: boolean)
+  {
+    return (
+      <div
+        ref={escondido ? undefined : copia}
+        aria-hidden={escondido || undefined}
+        className="flex shrink-0 gap-3 pr-3"
+      >
+        {trilho?.itens.map(function (item, indice)
+        {
+          return (
+            <div key={indice} className="snap-start shrink-0">
+              {item}
+            </div>
+          );
+        })}
+        {verMais && (
+          <a
+            href={verMais.href}
+            tabIndex={escondido ? -1 : undefined}
+            className="flex w-40 shrink-0 snap-start items-center justify-center rounded-lg border border-dashed border-borda text-sm text-acento hover:border-acento"
+          >
+            {verMais.rotulo}
+          </a>
+        )}
+      </div>
+    );
   }
 
   return (
-    <section
-      className="flex flex-col gap-3"
-      onMouseEnter={function () { pausado.current = true; }}
-      onMouseLeave={function () { pausado.current = false; }}
-      onFocus={function () { pausado.current = true; }}
-      onBlur={function () { pausado.current = false; }}
-    >
+    <section className="group flex min-w-0 flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">{titulo}</h2>
         <div className="flex items-center gap-3">
@@ -130,25 +172,24 @@ export function Carrossel({
         <p className="text-sm text-texto-suave">{trilho?.vazio}</p>
       ) : (
         <div
-          ref={faixa}
-          className="flex snap-x gap-3 overflow-x-auto pb-2 [scrollbar-width:thin]"
+          ref={janela}
+          // contain:layout — sem isso o Chrome soma a largura do trilho ao
+          // documento e a página inteira ganha rolagem horizontal.
+          className={`min-w-0 max-w-full pb-2 [contain:layout] ${
+            modo === "auto"
+              ? "overflow-hidden"
+              : "snap-x overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          }`}
         >
-          {trilho.itens.map(function (item, indice)
-          {
-            return (
-              <div key={indice} className="snap-start shrink-0">
-                {item}
-              </div>
-            );
-          })}
-          {verMais && (
-            <a
-              href={verMais.href}
-              className="flex w-40 shrink-0 snap-start items-center justify-center rounded-lg border border-dashed border-borda text-sm text-acento hover:border-acento"
-            >
-              {verMais.rotulo}
-            </a>
-          )}
+          <div
+            className={`flex w-max ${
+              anima ? "group-hover:[animation-play-state:paused] group-focus-within:[animation-play-state:paused]" : ""
+            }`}
+            style={anima ? { animation: `deslizar-vitrine ${totalDeItens * SEGUNDOS_POR_CARD}s linear infinite` } : undefined}
+          >
+            {cards(false)}
+            {anima && cards(true)}
+          </div>
         </div>
       )}
     </section>
