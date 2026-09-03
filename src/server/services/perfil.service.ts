@@ -57,6 +57,8 @@ export type PerfilDoUsuario = {
   username: string;
   membroDesde: Date;
   souEu: boolean;
+  /** Timestamp da última troca da foto (issue #76); `null` sem foto. */
+  avatarVersao: number | null;
   numeros: {
     avaliadas: number;
     resenhas: number;
@@ -119,6 +121,7 @@ export async function perfilDoUsuario(
     username: usuario.username,
     membroDesde: usuario.createdAt,
     souEu,
+    avatarVersao: usuario.avatarUpdatedAt?.getTime() ?? null,
     numeros: {
       avaliadas: avaliadas.length,
       resenhas,

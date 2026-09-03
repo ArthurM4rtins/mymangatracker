@@ -10,6 +10,7 @@ const USUARIO = {
   id: "u1",
   username: "leitora",
   createdAt: new Date("2026-08-01T00:00:00Z"),
+  avatarUpdatedAt: new Date("2026-09-03T10:00:00Z"),
 };
 
 const OBRA = {
@@ -107,6 +108,7 @@ describe("perfilDoUsuario", function ()
       username: "leitora",
       membroDesde: USUARIO.createdAt,
       souEu: false,
+      avatarVersao: new Date("2026-09-03T10:00:00Z").getTime(),
       estante: null,
       numeros: { avaliadas: 3, resenhas: 1, listas: 1, curtidasDadas: 7 },
     });

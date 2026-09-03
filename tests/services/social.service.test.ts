@@ -6,7 +6,12 @@ import { curtirPerfil, seguirUsuario } from "@/server/services/social.service";
 // mesmo = a_si_mesmo, decidido no domínio antes do banco; senão toggle e
 // estado final.
 
-const ALVO = { id: "u2", username: "leitora", createdAt: new Date("2026-08-01T00:00:00Z") };
+const ALVO = {
+  id: "u2",
+  username: "leitora",
+  createdAt: new Date("2026-08-01T00:00:00Z"),
+  avatarUpdatedAt: null,
+};
 
 function fakeDeps(cenario: { alvo?: typeof ALVO | null } = {})
 {
