@@ -31,7 +31,9 @@ export function CardResenha({
 })
 {
   return (
-    <article className="flex h-full w-72 flex-col gap-2 rounded-lg border border-borda bg-superficie p-3">
+    // Altura fixa: no carrossel os cards são absolutos e não têm referência de
+    // altura; sem isso cada um fica do tamanho do próprio texto.
+    <article className="flex h-56 w-72 flex-col gap-2 rounded-lg border border-borda bg-superficie p-3">
       <div className="flex gap-3">
         <Link href={`/obra/${anilistId}`} className="shrink-0">
           {coverImageUrl ? (
@@ -101,8 +103,8 @@ export function CardLista({
 {
   return (
     <article
-      className={`flex h-full flex-col gap-2 rounded-lg border border-borda bg-superficie p-3 transition-colors hover:border-acento/60 ${
-        fluido ? "w-full" : "w-60"
+      className={`flex flex-col gap-2 rounded-lg border border-borda bg-superficie p-3 transition-colors hover:border-acento/60 ${
+        fluido ? "h-full w-full" : "h-52 w-60"
       }`}
     >
       <Link href={`/listas/${listaId}`} className="flex -space-x-6">
