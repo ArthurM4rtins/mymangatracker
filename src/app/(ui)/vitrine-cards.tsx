@@ -84,6 +84,8 @@ export function CardLista({
   totalDeObras,
   capas,
   curtidas,
+  descricao,
+  fluido = false,
 }: {
   listaId: string;
   username: string;
@@ -91,10 +93,18 @@ export function CardLista({
   totalDeObras: number;
   capas: Array<string | null>;
   curtidas: number;
+  /** Só na grade de /listas (issue #80); o carrossel não tem espaço. */
+  descricao?: string | null;
+  /** Largura da célula da grade em vez da fixa do carrossel. */
+  fluido?: boolean;
 })
 {
   return (
-    <article className="flex h-full w-60 flex-col gap-2 rounded-lg border border-borda bg-superficie p-3">
+    <article
+      className={`flex h-full flex-col gap-2 rounded-lg border border-borda bg-superficie p-3 transition-colors hover:border-acento/60 ${
+        fluido ? "w-full" : "w-60"
+      }`}
+    >
       <Link href={`/listas/${listaId}`} className="flex -space-x-6">
         {capas.length === 0 ? (
           <div aria-hidden className="h-[96px] w-16 rounded border border-borda bg-fundo" />
@@ -120,6 +130,7 @@ export function CardLista({
       <Link href={`/listas/${listaId}`} className="line-clamp-2 text-sm font-medium hover:text-acento">
         {nome}
       </Link>
+      {descricao && <p className="line-clamp-2 text-xs text-texto-suave">{descricao}</p>}
       <span className="mt-auto text-xs text-texto-suave">
         <Link href={`/u/${username}`} className="font-medium text-texto hover:text-acento">
           {username}
