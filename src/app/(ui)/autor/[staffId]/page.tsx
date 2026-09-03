@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { autorParaPaginaDoSistema } from "@/server/services/autor.service";
+import { BioDoAutor } from "./bio-do-autor";
 
 // AniList ao vivo: nada pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -85,11 +86,7 @@ export default async function PaginaDoAutor({ params }: Props)
             )}
           </div>
 
-          {autor.descricao && (
-            <p className="line-clamp-6 max-w-2xl whitespace-pre-line text-sm leading-relaxed text-texto-suave">
-              {autor.descricao}
-            </p>
-          )}
+          {autor.descricao && <BioDoAutor texto={autor.descricao} />}
         </div>
       </section>
 

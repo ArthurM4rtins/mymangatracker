@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  ehPapelDeAutoria,
   mapearAutor,
   mapearBusca,
   mapearMedia,
@@ -305,5 +306,76 @@ describe("mapearAutor", () =>
     expect(mapearAutor(null)).toBeNull();
     expect(mapearAutor({ data: { Page: { staff: [] } } })).toBeNull();
     expect(mapearAutor({ data: { Page: { staff: [{ id: 1, name: {} }] } } })).toBeNull();
+  });
+});
+
+// Issue #69: só autoria entra na grade do autor. O AniList lista todo o
+// staffMedia, inclusive assistência — Yasuhisa Hara (Kingdom) vinha com
+// Vagabond e Real, onde foi assistente do Inoue (probe de 03/09/2026).
+describe("ehPapelDeAutoria", () =>
+{
+  it("aceita os papéis de autoria, com ou sem sufixo entre parênteses", () =>
+  {
+    expect(ehPapelDeAutoria("Story & Art")).toBe(true);
+    expect(ehPapelDeAutoria("Story")).toBe(true);
+    expect(ehPapelDeAutoria("Art")).toBe(true);
+    expect(ehPapelDeAutoria("Original Creator")).toBe(true);
+    expect(ehPapelDeAutoria("Original Story")).toBe(true);
+    expect(ehPapelDeAutoria("Story & Art (vols 1-41)")).toBe(true);
+  });
+
+  it("recusa papel secundário", () =>
+  {
+    expect(ehPapelDeAutoria("Assistant")).toBe(false);
+    expect(ehPapelDeAutoria("Assistant (Former)")).toBe(false);
+    expect(ehPapelDeAutoria("Assistant (Background)")).toBe(false);
+    expect(ehPapelDeAutoria("Illustration")).toBe(false);
+    expect(ehPapelDeAutoria("Illustration (vol 1)")).toBe(false);
+    expect(ehPapelDeAutoria("Producer")).toBe(false);
+    expect(ehPapelDeAutoria("Translator")).toBe(false);
+    expect(ehPapelDeAutoria("")).toBe(false);
+  });
+
+  it("não deixa prefixo passar por autoria", () =>
+  {
+    expect(ehPapelDeAutoria("Art Assistant")).toBe(false);
+    expect(ehPapelDeAutoria("Story Supervisor")).toBe(false);
+  });
+});
+
+const HARA = {
+  data: {
+    Page: {
+      staff: [{
+        id: 109715,
+        name: { full: "Yasuhisa Hara", native: "原泰久" },
+        staffMedia: {
+          edges: [
+            { staffRole: "Assistant (Background)", node: { id: 30656, title: { romaji: "Vagabond" } } },
+            { staffRole: "Story & Art", node: { id: 46765, title: { romaji: "Kingdom" } } },
+            { staffRole: "Assistant (Former)", node: { id: 30657, title: { romaji: "Real" } } },
+            { staffRole: "Assistant", node: { id: 99999, title: { romaji: "Obra mista" } } },
+            { staffRole: "Story", node: { id: 99999, title: { romaji: "Obra mista" } } },
+          ],
+        },
+      }],
+    },
+  },
+};
+
+describe("mapearAutor — só autoria", () =>
+{
+  it("deixa de fora a obra onde o staff foi só assistente", () =>
+  {
+    const ids = mapearAutor(HARA)?.obras.map((obra) => obra.anilistId);
+
+    expect(ids).toEqual([46765, 99999]);
+  });
+
+  it("obra com edge de assistência e de autoria fica, com o papel de autoria", () =>
+  {
+    const mista = mapearAutor(HARA)?.obras.find((obra) => obra.anilistId === 99999);
+
+    expect(mista?.papel).toBe("Story");
   });
 });

@@ -293,10 +293,25 @@ export type AutorDoAniList = {
 };
 
 /**
+ * Papéis de autoria no `staffRole` do AniList (issue #69): Story, Art,
+ * Story & Art, Original Creator, Original Story — com ou sem sufixo entre
+ * parênteses ("Story & Art (vols 1-41)"). Assistência, ilustração de novel,
+ * produção e afins ficam de fora da página do autor.
+ */
+const PAPEL_DE_AUTORIA = /^(Story & Art|Story|Art|Original Creator|Original Story)(\s*\(.*\))?$/;
+
+export function ehPapelDeAutoria(papel: string): boolean
+{
+  return PAPEL_DE_AUTORIA.test(papel.trim());
+}
+
+/**
  * O perfil do autor a partir de `Page.staff` (issue #43) — por `Page` porque
  * `Staff(id:)` direto responde 404 com `errors` para id inexistente,
  * indistinguível de rate limit (mesmo caso do POR_ID; probe de 01/09).
- * A mesma obra chega uma vez por papel (Story, Art) — fica a primeira. Bio
+ * A mesma obra chega uma vez por papel (Story, Art) — fica a primeira de
+ * autoria; papel secundário (assistente etc.) não entra, e o filtro roda
+ * antes da dedup para a obra com edge Assistant + edge Story não sumir. Bio
  * perde HTML e o markdown de link; `null` quando o staff não existe.
  */
 export function mapearAutor(resposta: unknown): AutorDoAniList | null
@@ -349,10 +364,12 @@ export function mapearAutor(resposta: unknown): AutorDoAniList | null
       const node = edge.node;
       const anilistId = node.id;
       const titulo = ehObjeto(node.title) ? node.title : {};
+      const papel = typeof edge.staffRole === "string" ? edge.staffRole : "";
 
       if (
         typeof anilistId !== "number" ||
         typeof titulo.romaji !== "string" ||
+        !ehPapelDeAutoria(papel) ||
         vistos.has(anilistId)
       )
       {
@@ -370,7 +387,7 @@ export function mapearAutor(resposta: unknown): AutorDoAniList | null
         titleEnglish: typeof titulo.english === "string" ? titulo.english : null,
         coverImageUrl: typeof capa === "string" ? capa : null,
         startYear: typeof inicio === "number" ? inicio : null,
-        papel: typeof edge.staffRole === "string" ? edge.staffRole : "",
+        papel,
       });
     });
   }
