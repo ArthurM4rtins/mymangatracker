@@ -1,6 +1,7 @@
 // Listas de obras (issue #41). LEITURA É PÚBLICA — recorte do social:
 // username do dono, e-mail e ids de usuário nunca saem. ESCRITA é sempre do
 // dono: toda mutação carrega userId no where ou verifica a posse antes.
+import type { OrdemDasListas } from "@/server/domain/lista-listagem";
 import { getPrisma } from "./prisma";
 
 export type CapaDePreview = string | null;
@@ -100,55 +101,25 @@ function paraCard(linha: LinhaDoCard): ListaPublica
   };
 }
 
-/** As listas mais recentes de todo mundo, com preview de capas. */
-export async function listarListasPublicas(limite: number): Promise<ListaPublica[]>
+/**
+ * As listas de todo mundo, com preview de capas. "recentes" pela criação;
+ * "curtidas" pelo total de curtidas, empate pela criação (issue #80).
+ */
+export async function listarListasPublicas(
+  limite: number,
+  ordem: OrdemDasListas = "recentes",
+): Promise<ListaPublica[]>
 {
   const linhas = await getPrisma().list.findMany({
-    orderBy: { createdAt: "desc" },
+    orderBy:
+      ordem === "curtidas"
+        ? [{ likes: { _count: "desc" } }, { createdAt: "desc" }]
+        : { createdAt: "desc" },
     take: limite,
     select: SELECT_DO_CARD,
   });
 
   return linhas.map(paraCard);
-}
-
-/**
- * As listas que mais receberam curtidas DESDE uma data (issue #76), na ordem
- * do agrupamento. Sem curtida na janela = vazio.
- */
-export async function listarListasMaisCurtidas(
-  desde: Date,
-  limite: number,
-): Promise<ListaPublica[]>
-{
-  const prisma = getPrisma();
-
-  const grupos = await prisma.listLike.groupBy({
-    by: ["listId"],
-    where: { createdAt: { gte: desde } },
-    _count: { listId: true },
-    orderBy: { _count: { listId: "desc" } },
-    take: limite,
-  });
-
-  if (grupos.length === 0)
-  {
-    return [];
-  }
-
-  const linhas = await prisma.list.findMany({
-    where: { id: { in: grupos.map(function (g) { return g.listId; }) } },
-    select: SELECT_DO_CARD,
-  });
-
-  const porId = new Map(linhas.map(function (linha) { return [linha.id, linha]; }));
-
-  return grupos.flatMap(function (g)
-  {
-    const linha = porId.get(g.listId);
-
-    return linha === undefined ? [] : [paraCard(linha)];
-  });
 }
 
 /** As listas DE UM usuário, para o perfil público (issue #49). */
