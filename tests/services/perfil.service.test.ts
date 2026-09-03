@@ -72,6 +72,10 @@ function fakeDeps(cenario: { usuario?: typeof USUARIO | null })
         { entradaId: "s2", status: "COMPLETED" as const, progressChapter: null, obra: OBRA },
       ];
     }),
+    resumoSocial: vi.fn(async function ()
+    {
+      return { seguidores: 2, seguindo: 1, curtidas: 3, sigo: true, curti: false };
+    }),
   };
 }
 
@@ -132,6 +136,27 @@ describe("perfilDoUsuario", function ()
       status: "READING",
       progressChapter: "57.5",
     });
+  });
+
+  // Issue #74: o bloco social vem por id do dono e pelo id de quem olha —
+  // anônimo passa null e o repositório devolve sigo/curti false.
+  it("traz o bloco social, consultado com o id do dono e de quem olha", async function ()
+  {
+    const deps = fakeDeps({});
+
+    const perfil = await perfilDoUsuario(
+      { username: "leitora", viewerId: "u2", filtro: SEM_FILTRO },
+      deps,
+    );
+
+    expect(perfil?.social).toEqual({
+      seguidores: 2,
+      seguindo: 1,
+      curtidas: 3,
+      sigo: true,
+      curti: false,
+    });
+    expect(deps.resumoSocial).toHaveBeenCalledWith("u1", "u2");
   });
 
   it("aplica o filtro da URL na grade de avaliadas", async function ()
