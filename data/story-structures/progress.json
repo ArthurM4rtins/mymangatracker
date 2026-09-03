@@ -3,12 +3,12 @@
   "generatedAt": "2026-09-01T00:00:00.000Z",
   "targetCount": 100,
   "counts": {
-    "pending": 44,
+    "pending": 0,
     "verified": 1,
-    "draft": 29,
-    "disputed": 2,
-    "insufficientEvidence": 19,
-    "notApplicable": 5
+    "draft": 44,
+    "disputed": 6,
+    "insufficientEvidence": 41,
+    "notApplicable": 8
   },
-  "nextAnilistId": 86310
+  "nextAnilistId": null
 }

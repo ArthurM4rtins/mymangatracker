@@ -11,10 +11,16 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "DISPUTED",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "viz-frieren-chapters", "url": "https://www.viz.com/vizmanga/chapters/frieren-the-journeys-end", "type": "OFFICIAL", "accessedAt": "2026-09-01" },
+    { "id": "frieren-wiki-story-arcs", "url": "https://frieren.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "fiction-horizon-frieren-arcs", "url": "https://fictionhorizon.com/frieren-beyond-journeys-end-all-arcs-reading-order/", "type": "EDITORIAL", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "As duas taxonomias nao oficiais divergem em limites importantes: a wiki agrupa 24--36 como Travels to Ausserst e 37--60 como First-Class Mage Exam, enquanto a fonte editorial divide ambos em subarcos com fronteiras diferentes. A fonte comunitaria tambem declara que os nomes e classificacoes sao nao oficiais. Nao foi escolhida uma versao sem evidencia editorial suficiente." }
+  ]
 }

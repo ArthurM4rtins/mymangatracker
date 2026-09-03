@@ -12,9 +12,32 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
-  "conflicts": []
+  "sources": [
+    { "id": "viz-dr-stone-chapter-232", "url": "https://www.viz.com/shonenjump/dr-stone-chapter-232/chapter/24104", "type": "OFFICIAL", "accessedAt": "2026-09-01" },
+    { "id": "viz-dr-stone-4d-science", "url": "https://www.viz.com/shonenjump/chapters/dr-stone-4d-science", "type": "OFFICIAL", "accessedAt": "2026-09-01" },
+    { "id": "dr-stone-wiki-story-arcs", "url": "https://dr-stone.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "wegotthiscovered-dr-stone-arcs", "url": "https://wegotthiscovered.com/anime/all-dr-stone-arcs-in-order/", "type": "EDITORIAL", "accessedAt": "2026-09-01" },
+    { "id": "french-wikipedia-dr-stone-chapters", "url": "https://fr.wikipedia.org/wiki/Liste_des_chapitres_de_Dr._Stone", "type": "EDITORIAL", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "stone-formula", "kind": "ARC", "position": 1, "title": "Stone Formula Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "4" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "vs-tsukasa", "kind": "ARC", "position": 2, "title": "Vs. Tsukasa Arc", "range": { "unit": "CHAPTER", "start": "5", "end": "12" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "kingdom-of-science", "kind": "ARC", "position": 3, "title": "Kingdom of Science Arc", "range": { "unit": "CHAPTER", "start": "13", "end": "33" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "village-games", "kind": "ARC", "position": 4, "title": "Village Games Arc", "range": { "unit": "CHAPTER", "start": "34", "end": "40" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "village-origins", "kind": "ARC", "position": 5, "title": "Village Origins Arc", "range": { "unit": "CHAPTER", "start": "41", "end": "45" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "vs-hyoga", "kind": "ARC", "position": 6, "title": "Vs. Hyoga Arc", "range": { "unit": "CHAPTER", "start": "46", "end": "50" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "communications", "kind": "ARC", "position": 7, "title": "Communications Arc", "range": { "unit": "CHAPTER", "start": "51", "end": "82" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "age-of-exploration", "kind": "ARC", "position": 8, "title": "Age of Exploration Arc", "range": { "unit": "CHAPTER", "start": "83", "end": "100" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "treasure-island", "kind": "ARC", "position": 9, "title": "Treasure Island Arc", "range": { "unit": "CHAPTER", "start": "101", "end": "138" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "new-america-city", "kind": "ARC", "position": 10, "title": "New America City Arc", "range": { "unit": "CHAPTER", "start": "139", "end": "169" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "south-america", "kind": "ARC", "position": 11, "title": "South America Arc", "range": { "unit": "CHAPTER", "start": "170", "end": "193" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "new-stone-world", "kind": "ARC", "position": 12, "title": "New Stone World Arc", "range": { "unit": "CHAPTER", "start": "194", "end": "200" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "globetrotting", "kind": "ARC", "position": 13, "title": "Globetrotting Arc", "range": { "unit": "CHAPTER", "start": "201", "end": "212" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "moon-mission", "kind": "ARC", "position": 14, "title": "Moon Mission Arc", "range": { "unit": "CHAPTER", "start": "213", "end": "232" }, "sourceIds": ["dr-stone-wiki-story-arcs", "wegotthiscovered-dr-stone-arcs"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "numbering and arc taxonomy", "reason": "O catalogo AniList totaliza 236 entradas porque o volume 27 inclui o extra Terraforming e os tres capitulos da minisserie Dr. STONE: 4D Science; a serializacao principal e a lista de arcos convergente terminam no capitulo 232. Uma lista francofona ainda separa 13--19 de Kingdom of Science, enquanto as fontes adotadas usam 13--33; como os nomes dos arcos sao definidos por fas, a estrutura permanece DRAFT." }
+  ]
 }

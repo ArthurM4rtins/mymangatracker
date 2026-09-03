@@ -11,10 +11,16 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "tensura-wiki-manga-chapters", "url": "https://tensura.fandom.com/wiki/Chapters", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "tensura-wiki-web-novel", "url": "https://tensura.fandom.com/wiki/Web_novel", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "tensura-wiki-monster-city", "url": "https://tensura.fandom.com/wiki/Opening_of_the_Monster_City", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A lista de arcos encontrada pertence explicitamente à web novel, não à adaptação em mangá. As páginas do mangá registram rótulos de arco por volumes isolados, mas não fornecem uma taxonomia contínua com limites verificáveis para a série em publicação. Não foram transportados nem inferidos segmentos da novel." }
+  ]
 }

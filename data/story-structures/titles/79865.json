@@ -11,10 +11,16 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "inkr-ajin-chapters", "url": "https://comics.inkr.com/title/1121-ajin-demi-human/chapters", "type": "OFFICIAL", "accessedAt": "2026-09-01" },
+    { "id": "ajin-wiki-chapters-volumes", "url": "https://ajin.fandom.com/wiki/Chapters_and_Volumes", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "ajin-reddit-arcs", "url": "https://www.reddit.com/r/AjinManga/comments/x8zipc/what_are_the_arcs_of_ajin_i_only_remember_the_one/", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "numbering and arc taxonomy", "reason": "A leitura oficial lista 84 arquivos, enquanto o catalogo AniList registra 99 capitulos e a wiki inclui um capitulo 0 e diversos arquivos fracionados. Nao foi localizada uma taxonomia de arcos com intervalos verificaveis; a discussao comunitaria tambem aponta que a serie nao possui arcos nomeados de forma estabelecida. Nao foram inferidos segmentos." }
+  ]
 }

@@ -11,10 +11,17 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "viz-dorohedoro-chapters", "url": "https://www.viz.com/vizmanga/chapters/dorohedoro", "type": "OFFICIAL", "accessedAt": "2026-09-01" },
+    { "id": "wikipedia-dorohedoro-chapters", "url": "https://en.wikipedia.org/wiki/List_of_Dorohedoro_chapters", "type": "EDITORIAL", "accessedAt": "2026-09-01" },
+    { "id": "dorohedoro-episode-guide", "url": "https://mangaepisodeguide.com/dorohedoro.html", "type": "EDITORIAL", "accessedAt": "2026-09-01" },
+    { "id": "dorohedoro-reddit-arcs", "url": "https://www.reddit.com/r/Dorohedoro/comments/zivom9/is_there_a_list_of_manga_arcs/", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "numbering and arc taxonomy", "reason": "A serie principal terminou no capitulo 167, mas o catalogo AniList registra 191 entradas, incluindo extras e bonus. Nao foi localizada taxonomia de arcos com limites publicaveis: o guia de adaptacao descreve suas faixas como aproximacoes e a discussao comunitaria trata a obra como uma narrativa continua. Nao foram inferidos segmentos." }
+  ]
 }

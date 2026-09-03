@@ -11,10 +11,34 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    {
+      "id": "kanojo-okarishimasu-wiki-story-arcs",
+      "url": "https://kanojo-okarishimasu.fandom.com/wiki/Story_Arcs",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "rent-a-girlfriend-wikipedia-chapters",
+      "url": "https://en.wikipedia.org/wiki/List_of_Rent-A-Girlfriend_chapters",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "kodansha-rent-a-girlfriend-volume-47",
+      "url": "https://www.kodansha.co.jp/comic/products/0000429950",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    {
+      "field": "arc taxonomy",
+      "reason": "A wiki comunitária nomeia arcos, mas não publica limites de capítulos verificáveis. Outras listas tratam os mesmos eventos como macroarcos com fronteiras diferentes; a editora disponibiliza volumes e capítulos, não uma taxonomia de arcos. Não foram inferidos segmentos para a serialização em curso."
+    }
+  ]
 }

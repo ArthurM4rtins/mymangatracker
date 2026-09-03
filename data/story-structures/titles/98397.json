@@ -11,10 +11,15 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "blood-tracks-mrb-reading-order", "url": "https://mostrecommendedbooks.com/series/blood-on-the-tracks-manga-in-order", "type": "SECONDARY", "accessedAt": "2026-09-01" },
+    { "id": "blood-tracks-series-overview", "url": "https://en.wikipedia.org/wiki/Blood_on_the_Tracks_(manga)", "type": "SECONDARY", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A referencia de leitura descreve a obra como uma narrativa continua de 1 a 153, sem arcos nomeados, e nao foi localizada uma taxonomia alternativa com limites verificaveis. A obra nao e episodica, portanto nao se aplica NOT_APPLICABLE." }
+  ]
 }
