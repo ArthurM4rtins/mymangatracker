@@ -50,6 +50,7 @@ describe("listarReviewsDaObra", function ()
     expect(reviews[0]).toEqual({
       entryId: expect.any(String),
       username: "rankine",
+      avatarVersao: null,
       minha: false,
       rating: "4.5",
       review: "obra-prima",

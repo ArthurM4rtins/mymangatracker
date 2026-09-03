@@ -92,6 +92,7 @@ function fakeDeps(cenario: {
       {
         entryId: "r1",
         username: "leitor",
+        avatarVersao: null,
         minha: false,
         rating: "5",
         review: "obra-prima",
