@@ -86,7 +86,8 @@ export async function salvarAvatar(
 {
   const linha = await getPrisma().user.update({
     where: { id: userId },
-    data: { avatar: bytes, avatarMime: mime, avatarUpdatedAt: new Date() },
+    // O client do Prisma exige Uint8Array sobre ArrayBuffer; a cópia garante isso.
+    data: { avatar: new Uint8Array(bytes), avatarMime: mime, avatarUpdatedAt: new Date() },
     select: { avatarUpdatedAt: true },
   });
 
