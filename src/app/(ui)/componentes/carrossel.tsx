@@ -117,7 +117,9 @@ export function Carrossel({
         >
           {/* O palco: os cards ficam absolutos sobre o centro; a altura vem de
               um card invisível no fluxo, para o bloco não colapsar. */}
-          <div className="relative overflow-hidden px-8">
+          {/* mx-14 reserva a faixa das setas: elas ficam fora do palco,
+              nunca em cima do card da borda. */}
+          <div className="relative mx-14 overflow-hidden">
             <div aria-hidden className="invisible mx-auto w-max">{itens[0]}</div>
             {itens.map(function (item, indice)
             {
@@ -162,7 +164,9 @@ function Seta({ lado, aoClicar }: { lado: "esquerda" | "direita"; aoClicar: () =
       type="button"
       onClick={aoClicar}
       aria-label={lado === "esquerda" ? "Anterior" : "Próximo"}
-      className={`absolute top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-borda bg-fundo/80 text-texto shadow-lg backdrop-blur transition-colors hover:border-acento hover:text-acento ${
+      // "Liquid glass": vidro translúcido com blur do que passa atrás, borda
+      // clara fina e um fio de luz na parte de cima.
+      className={`absolute top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-texto shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(0,0,0,0.15),0_8px_24px_rgba(0,0,0,0.35)] backdrop-blur-md backdrop-saturate-150 transition-all hover:scale-105 hover:border-white/40 hover:bg-white/20 hover:text-acento active:scale-95 ${
         lado === "esquerda" ? "left-0" : "right-0"
       }`}
     >
