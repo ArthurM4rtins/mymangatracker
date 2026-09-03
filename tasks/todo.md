@@ -735,3 +735,18 @@ Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
 - PENDENTE de produto: capitulo 0 e 0.01 passam no validador, mas a API de
   progresso ainda exige positivo — quando a estrutura for pro banco, decidir
   se o tracker aceita 0.
+
+## Sessao 03/09 — continuacao: lacunas e sobreposicoes (#16)
+
+- Decisao do usuario: trecho entre arcos vira segmento explicito. Kind novo
+  INTERLUDE no validador (teste antes) e no vault.
+- Solo Leveling: cap. 61 so no Demon Castle (infobox da wiki: 61 = Demon
+  Castle, 62 = Retesting). Ragnarok: 7/13/20/84 abrem o round seguinte
+  (titulos dos capitulos sao do proximo round); 85 e 97 viram INTERLUDE;
+  round 10 = 84 + 86-96. Kaguya: 18 INTERLUDE "Capitulos avulsos N-M".
+- Teste dos 100 JSON ganhou contiguidade entre irmaos (mesmo parentKey):
+  sem sobreposicao, sem lacuna, fim aberto so no ultimo. Quebrado de
+  proposito: vermelho.
+- Fandom bloqueia WebFetch (402); a API MediaWiki
+  (/api.php?action=parse&prop=wikitext) responde ao curl com User-Agent.
+- PR #71 atualizado com esses commits. Nao mergeado por decisao do usuario.
