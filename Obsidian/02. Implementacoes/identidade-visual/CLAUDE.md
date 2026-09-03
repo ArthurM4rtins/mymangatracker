@@ -67,5 +67,10 @@ Definir a marca do site: nome, logo, paleta de cores e tipografia, e aplicar no 
   artifact: https://claude.ai/code/artifact/79ca3363-bbb0-42d1-8b66-8325eae18f47
   - Logos: 1. Hanko (carimbo 読) · 2. Double-check · 3. Shiori (marcador no painel)
   - Paletas: A. Sumi & Hanko (papel/tinta/vermelho) · B. Leitura noturna (índigo/âmbar) · C. Matcha & papel
+- Estudo do nome no logo (02/09/2026): `estudo-fonte-nome-logo.html` (nesta pasta) —
+  artifact: https://claude.ai/code/artifact/0d843f32-7288-465c-a463-60aca6e4e17c
+  - Wordmarks desenhados em SVG no traço do check: A. check é o k · A2. check com a
+    ponta pra baixo (esboço do Nicholas) · B. monolinha + ícone · C. cortado e inclinado ·
+    D. com 既読 · E. oito fontes do Google. Em aberto: qual entra em `logo.tsx`.
   - Tipografia sugerida: Zen Kaku Gothic New (marca) + Instrument Sans (UI), via next/font
   - Recomendação do assistente: Conceito 1 + Direção A
