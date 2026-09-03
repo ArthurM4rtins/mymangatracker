@@ -214,3 +214,30 @@ Matcha virou meio-termo real (verde-oliva dim) e o seletor virou controle segmen
 SWATCH funcional — cada uma com as duas metades das cores do PROPRIO tema (fundo + acento),
 nao o trio solido laranja/verde/azul da marca deles. A regra continua valendo para cores/arranjo
 que imitem o logo do Letterboxd.
+
+---
+
+## "Fecha #NN" em portugues nao fecha issue no GitHub
+
+**03/09/2026.** Cinco PRs mergeados com "Fecha #NN" no corpo; nenhuma issue
+fechou sozinha. O GitHub so reconhece as palavras-chave em ingles (close,
+closes, fixes, resolves...). Foi preciso fechar as cinco a mao depois.
+
+**Regra:** no corpo do PR usar `Closes #NN` (a frase pode continuar em
+portugues em volta). Ou fechar a issue com `gh issue close` no fim, com o
+comentario-resumo que o workflow ja pede.
+
+---
+
+## PR empilhado morre quando a base e apagada
+
+**03/09/2026.** O #77 tinha base em `feature/seguir-usuarios` (empilhado no
+#75). O merge do #75 com `--delete-branch` apagou a base e o GitHub FECHOU o
+#77 em vez de reapontar para `main` — e PR fechado nao aceita `gh pr edit
+--base`. Precisou de PR novo (#83) da mesma branch.
+
+**Regra:** antes de mergear a base de uma pilha, reapontar os PRs de cima
+(`gh pr edit N --base main`) — ou mergear a base SEM `--delete-branch` e
+apagar a branch so depois que a pilha inteira entrou. Conflito em
+`tasks/todo.md` entre branches paralelas e esperado: as duas anexam secoes
+no fim; resolver mantendo os dois lados em ordem cronologica.
