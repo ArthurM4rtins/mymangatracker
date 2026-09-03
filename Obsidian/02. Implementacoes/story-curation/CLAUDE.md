@@ -67,7 +67,7 @@ data/story-structures/
 - JSON válido contra o contrato.
 - `anilistId` único na fila.
 - `parentKey` aponta para segmento existente e de tipo `SAGA`.
-- início é positivo e não passa do fim.
+- início não é negativo (capítulo 0 existe: Fire Force) e não passa do fim. Prólogo antes do 1 vai como decimal (Berserk 0.01–0.09, numeração do MangaDex); negativo de site editorial não entra.
 - toda referência de fonte existe no documento.
 - `VERIFIED` tem ao menos uma fonte por segmento.
 
