@@ -5,6 +5,7 @@ import "./globals.css";
 import { perfilDoUsuarioDoSistema } from "@/server/services/usuario.service";
 import { usuarioDaSessao } from "../api/v1/_shared/sessao";
 import { BotaoSair } from "./componentes/botao-sair";
+import { BotaoVoltar } from "./componentes/botao-voltar";
 import { Logo } from "./componentes/logo";
 import { SeletorTema } from "./componentes/seletor-tema";
 
@@ -86,7 +87,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA }} />
         <header className="border-b border-borda">
           <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 py-4">
-            <Logo />
+            <div className="flex items-center gap-2">
+              <BotaoVoltar />
+              <Logo />
+            </div>
             <div className="flex items-center gap-4">
               <nav aria-label="Navegação" className="flex items-center gap-3">
                 <LinkDoHeader href="/catalogo">Catálogo</LinkDoHeader>
