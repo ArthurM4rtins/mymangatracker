@@ -13,6 +13,12 @@ import {
   type AtividadeDaComunidade,
 } from "@/server/services/atividade.service";
 import { FeedDaComunidade, type ItemParaTela } from "./feed-da-comunidade";
+import {
+  vitrineDaHomeDoSistema,
+  type VitrineDaHome,
+} from "@/server/services/vitrine.service";
+import { Carrossel } from "./componentes/carrossel";
+import { CardLista, CardResenha } from "./vitrine-cards";
 import type { Dependencia, EstadoGeral } from "@/server/domain/health-status";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { usuarioDaSessao } from "../api/v1/_shared/sessao";
@@ -45,11 +51,12 @@ export default async function Home()
 {
   const userId = await usuarioDaSessao();
 
-  const [saude, populares, leitura, atividade] = await Promise.all([
+  const [saude, populares, leitura, atividade, vitrine] = await Promise.all([
     verificarSaudeDoSistema(),
     buscarNoCatalogo(interpretarFiltros({})),
     userId ? dadosDeLeitura(userId) : Promise.resolve(null),
     feedDaComunidadeDoSistema(),
+    vitrineDaHomeDoSistema(),
   ]);
 
   return (
@@ -74,51 +81,60 @@ export default async function Home()
         <Apresentacao />
       )}
 
-      <section className="flex flex-col gap-4">
-        <div className="flex items-baseline justify-between gap-4">
+      <Carrossel
+        titulo="Resenhas"
+        itens={cardsDeResenhas(vitrine)}
+        vazio="Ainda não tem resenha por aqui — a primeira aparece nesta vitrine."
+      />
+
+      <Carrossel
+        titulo="Listas"
+        itens={cardsDeListas(vitrine)}
+        vazio="Ainda não tem lista por aqui — a primeira aparece nesta vitrine."
+      />
+
+      <div className="grid gap-10 md:grid-cols-3">
+        <section className="flex flex-col gap-4 md:col-span-2">
           <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
             Populares agora
           </h2>
-          <Link
-            href="/catalogo"
-            className="text-sm text-acento underline underline-offset-4"
-          >
-            ver catálogo →
-          </Link>
-        </div>
 
-        {(populares.estado === "ok" || populares.estado === "destaques") ? (
-          <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
-            {populares.obras.slice(0, LIMITE_POPULARES).map(function (obra)
-            {
-              return <CapaPopular key={obra.anilistId} obra={obra} />;
-            })}
-          </ul>
-        ) : (
-          <p className="text-sm text-texto-suave">
-            O catálogo não respondeu agora — tente de novo em instantes.
-          </p>
-        )}
-      </section>
+          {(populares.estado === "ok" || populares.estado === "destaques") ? (
+            <>
+              <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+                {populares.obras.slice(0, LIMITE_POPULARES).map(function (obra)
+                {
+                  return <CapaPopular key={obra.anilistId} obra={obra} />;
+                })}
+              </ul>
+              <Link
+                href="/catalogo"
+                className="self-end text-sm text-acento underline underline-offset-4"
+              >
+                ver mais →
+              </Link>
+            </>
+          ) : (
+            <p className="text-sm text-texto-suave">
+              O catálogo não respondeu agora — tente de novo em instantes.
+            </p>
+          )}
+        </section>
 
-      <section className="flex flex-col gap-4">
-        <div className="flex items-baseline justify-between gap-4">
+        <section className="flex flex-col gap-4">
           <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
             Atividade recente
           </h2>
-          <Link href="/listas" className="text-sm text-acento underline underline-offset-4">
-            ver listas →
-          </Link>
-        </div>
 
-        {atividade.length === 0 ? (
-          <p className="text-sm text-texto-suave">
-            Ainda não tem resenha nem lista por aqui — a primeira aparece nesta seção.
-          </p>
-        ) : (
-          <FeedDaComunidade itens={atividade.map(itemParaTela)} />
-        )}
-      </section>
+          {atividade.length === 0 ? (
+            <p className="text-sm text-texto-suave">
+              Ainda não tem resenha nem lista por aqui — a primeira aparece nesta seção.
+            </p>
+          ) : (
+            <FeedDaComunidade itens={atividade.map(itemParaTela)} />
+          )}
+        </section>
+      </div>
 
       <footer className="mt-auto border-t border-borda pt-4 text-xs text-texto-suave">
         <p>
@@ -248,6 +264,46 @@ function itemParaTela(item: AtividadeDaComunidade): ItemParaTela
     curtidas: item.curtidas,
     quando,
   };
+}
+
+/** Os cards de cada carrossel (issue #76). */
+function cardsDeResenhas(vitrine: VitrineDaHome)
+{
+  return vitrine.resenhas.map(function (r)
+  {
+    return (
+      <CardResenha
+        key={r.entryId}
+        username={r.username}
+        anilistId={r.anilistId}
+        titulo={r.titulo}
+        coverImageUrl={r.coverImageUrl}
+        rating={r.rating}
+        review={r.review}
+        containsSpoilers={r.containsSpoilers}
+        curtidas={r.curtidas}
+        quando={FORMATO_QUANDO.format(r.quando)}
+      />
+    );
+  });
+}
+
+function cardsDeListas(vitrine: VitrineDaHome)
+{
+  return vitrine.listas.map(function (l)
+  {
+    return (
+      <CardLista
+        key={l.listaId}
+        listaId={l.listaId}
+        username={l.username}
+        nome={l.nome}
+        totalDeObras={l.totalDeObras}
+        capas={l.capas}
+        curtidas={l.curtidas}
+      />
+    );
+  });
 }
 
 function Apresentacao()

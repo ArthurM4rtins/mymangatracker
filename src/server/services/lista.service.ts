@@ -20,6 +20,8 @@ import {
   type ListaPublica,
 } from "@/server/repositories/lista.repository";
 
+import type { OrdemDasListas } from "@/server/domain/lista-listagem";
+
 const NOME_MAXIMO = 100;
 
 export type DependenciasDeCriacao = {
@@ -125,10 +127,10 @@ export function alternarObraNaListaDoSistema(pedido: {
 
 const LIMITE_DE_LISTAS_PUBLICAS = 30;
 
-/** A composição de produção. As listas recentes de todo mundo. */
-export function listasPublicasDoSistema(): Promise<ListaPublica[]>
+/** A composição de produção. As listas de todo mundo, na ordem pedida (issue #80). */
+export function listasPublicasDoSistema(ordem: OrdemDasListas = "recentes"): Promise<ListaPublica[]>
 {
-  return listarListasPublicas(LIMITE_DE_LISTAS_PUBLICAS);
+  return listarListasPublicas(LIMITE_DE_LISTAS_PUBLICAS, ordem);
 }
 
 /** A composição de produção. A lista com as obras, para a página dela. */

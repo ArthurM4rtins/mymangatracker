@@ -767,3 +767,32 @@ Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
 - Ferramenta: para listar usuarios do dev sem expor a URL, script no
   scratchpad que le o .env (tem BOM — `^DATABASE_URL=` nao casa no grep).
 - Pendente: paginas seguidores/seguindo; aba "Seguindo" no feed (#50).
+- Pendente: paginas seguidores/seguindo; aba "Seguindo" no feed (#50).
+
+## Sessao 03/09 — foto de perfil e vitrine da home (#76)
+
+- Branch feature/home-vitrine-avatar EMPILHADA em feature/seguir-usuarios
+  (o banco dev ja tinha a migration do Follow; sair da main quebrava o
+  migrate dev com "migration missing"). PR com base em feature/seguir-usuarios;
+  depois do merge do #75, rebase/retarget para main.
+- Foto: migration user_avatar (bytes, mime, data no User). Dominio validarAvatar
+  (jpeg/png/webp ate 512 KB), repositorio (bytes so em buscarAvatarPorUsername;
+  teste trava), servico, rotas PUT/DELETE /perfil/avatar e GET
+  /usuarios/:username/avatar (ETag = versao, 304, 404 sem foto, cache
+  imutavel com ?v= na URL). Tela foto-de-perfil: recorte 256x256 JPEG no
+  navegador (canvas), trocar/remover so para o dono.
+  PEGADINHA: Prisma Bytes exige Uint8Array<ArrayBuffer> — copiar com
+  new Uint8Array(bytes) antes do update.
+- Vitrine: repositorios "mais curtidas desde" (groupBy nas curtidas da
+  janela; acumulado antigo nao conta), servico vitrineDaHome (4 trilhos,
+  janela 7 dias, fonte que falha vira vazio), componente Carrossel (rAF sobre
+  scrollLeft, pausa hover/foco, setas, seletor, reduced-motion), cards, home
+  reorganizada: Continuar lendo -> Resenhas -> Listas -> grade 2/3 catalogo
+  (ver mais no fim) + 1/3 atividade recente.
+- Provas: lint 0, unitarios, test:db 77, tsc, build, browser (upload via
+  componente, remover, GET com 304/404/401, home com os dois carrosseis e a
+  grade, aba Mais curtidas).
+- Ferramenta: file_upload do Chrome so aceita arquivo compartilhado com a
+  sessao; para testar upload, DataTransfer + dispatchEvent(change) via JS.
+- Pendente: avatar nos cards do feed/resenhas; ajustar janela quando a
+  comunidade crescer.

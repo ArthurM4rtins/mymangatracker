@@ -16,6 +16,51 @@ export type ResenhaDaComunidade = {
   quando: Date;
 };
 
+const SELECT_DA_RESENHA = {
+  id: true,
+  rating: true,
+  review: true,
+  containsSpoilers: true,
+  reviewedAt: true,
+  user: { select: { username: true } },
+  media: {
+    select: { anilistId: true, titleRomaji: true, titleEnglish: true, coverImageUrl: true },
+  },
+  _count: { select: { likes: true } },
+} as const;
+
+type LinhaDaResenha = {
+  id: string;
+  rating: { toString(): string } | null;
+  review: string | null;
+  containsSpoilers: boolean;
+  reviewedAt: Date;
+  user: { username: string };
+  media: {
+    anilistId: number;
+    titleRomaji: string;
+    titleEnglish: string | null;
+    coverImageUrl: string | null;
+  };
+  _count: { likes: number };
+};
+
+function paraResenha(linha: LinhaDaResenha): ResenhaDaComunidade
+{
+  return {
+    entryId: linha.id,
+    username: linha.user.username,
+    anilistId: linha.media.anilistId,
+    titulo: linha.media.titleEnglish ?? linha.media.titleRomaji,
+    coverImageUrl: linha.media.coverImageUrl,
+    rating: linha.rating?.toString() ?? null,
+    review: linha.review ?? "",
+    containsSpoilers: linha.containsSpoilers,
+    curtidas: linha._count.likes,
+    quando: linha.reviewedAt,
+  };
+}
+
 /** As resenhas com texto mais recentes de todo mundo. */
 export async function listarResenhasDaComunidade(
   limite: number,
@@ -25,33 +70,8 @@ export async function listarResenhasDaComunidade(
     where: { review: { not: null } },
     orderBy: { reviewedAt: "desc" },
     take: limite,
-    select: {
-      id: true,
-      rating: true,
-      review: true,
-      containsSpoilers: true,
-      reviewedAt: true,
-      user: { select: { username: true } },
-      media: {
-        select: { anilistId: true, titleRomaji: true, titleEnglish: true, coverImageUrl: true },
-      },
-      _count: { select: { likes: true } },
-    },
+    select: SELECT_DA_RESENHA,
   });
 
-  return linhas.map(function (linha)
-  {
-    return {
-      entryId: linha.id,
-      username: linha.user.username,
-      anilistId: linha.media.anilistId,
-      titulo: linha.media.titleEnglish ?? linha.media.titleRomaji,
-      coverImageUrl: linha.media.coverImageUrl,
-      rating: linha.rating?.toString() ?? null,
-      review: linha.review ?? "",
-      containsSpoilers: linha.containsSpoilers,
-      curtidas: linha._count.likes,
-      quando: linha.reviewedAt,
-    };
-  });
+  return linhas.map(paraResenha);
 }
