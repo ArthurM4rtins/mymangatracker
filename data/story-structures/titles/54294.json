@@ -11,10 +11,34 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    {
+      "id": "viz-ao-haru-ride-chapters",
+      "url": "https://www.viz.com/vizmanga/chapters/ao-haru-ride",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "ao-haru-ride-wiki-chapters-volumes",
+      "url": "https://ao-haru-ride.fandom.com/wiki/List_of_Chapters_and_Volumes",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "ao-haru-ride-wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Ao_Haru_Ride",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-09-01"
+    }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    {
+      "field": "arc taxonomy",
+      "reason": "As fontes listam 49 capítulos principais, um prólogo e histórias extras em treze volumes, compondo as 53 entradas AniList, mas não apresentam arcos ou sagas nomeados com limites verificáveis. A progressão do romance não foi inferida como segmentação."
+    }
+  ]
 }

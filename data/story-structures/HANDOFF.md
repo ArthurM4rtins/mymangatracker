@@ -5,11 +5,11 @@ Atualizado em 2026-09-01. Leia este arquivo antes de continuar a curadoria.
 ## Estado atual
 
 - Catálogo-alvo: 100 mangás populares do AniList, sem conteúdo adulto, em `catalog-snapshot.json`.
-- Obras curadas: 56.
-- Restantes: 44.
-- Próxima obra: **Fire Force** (AniList `86310`).
-- Checkpoint em `progress.json`: 1 `VERIFIED`, 29 `DRAFT`, 2 `DISPUTED`, 19 `INSUFFICIENT_EVIDENCE` e 5 `NOT_APPLICABLE`.
-- O campo `nextAnilistId` aponta para `86310` e deve ser atualizado a cada nova obra concluída.
+- Obras curadas: 100.
+- Restantes: 0.
+- Não há próxima obra: a fila de 100 títulos foi concluída.
+- Checkpoint em `progress.json`: 1 `VERIFIED`, 44 `DRAFT`, 6 `DISPUTED`, 41 `INSUFFICIENT_EVIDENCE` e 8 `NOT_APPLICABLE`.
+- O campo `nextAnilistId` está `null`, pois não restam obras pendentes.
 
 Correção de identidade: o handoff anterior chamava Fullmetal Alchemist de AniList `30004`, mas o catálogo e o arquivo da obra confirmam `30025`.
 
@@ -99,6 +99,50 @@ O contador foi reconciliado neste handoff: uma linha duplicada de One Piece em `
 | 128067 | SSS-Class Revival Hunter | INSUFFICIENT_EVIDENCE | 0 |
 | 144946 | Gachiakuta | DRAFT | 10 |
 | 30583 | Claymore | INSUFFICIENT_EVIDENCE | 0 |
+| 86310 | Fire Force | DRAFT | 25 |
+| 86218 | Bloom Into You | INSUFFICIENT_EVIDENCE | 0 |
+| 98397 | Blood on the Tracks | INSUFFICIENT_EVIDENCE | 0 |
+| 111233 | Call of the Night | INSUFFICIENT_EVIDENCE | 0 |
+| 30149 | BLAME! | INSUFFICIENT_EVIDENCE | 0 |
+| 86717 | Wotakoi: Love is Hard for Otaku | INSUFFICIENT_EVIDENCE | 0 |
+| 100568 | The Horizon | INSUFFICIENT_EVIDENCE | 0 |
+| 136807 | Look Back | NOT_APPLICABLE | 0 |
+| 85611 | Tokyo Ghoul:re | DISPUTED | 0 |
+| 65243 | Haikyu!! | DRAFT | 6 |
+| 85143 | Tower of God | DISPUTED | 0 |
+| 30021 | Death Note | INSUFFICIENT_EVIDENCE | 0 |
+| 100994 | Hell's Paradise: Jigokuraku | DRAFT | 4 |
+| 98416 | Dr. STONE | DRAFT | 14 |
+| 125828 | Sakamoto Days | DRAFT | 10 |
+| 31133 | Dorohedoro | INSUFFICIENT_EVIDENCE | 0 |
+| 118586 | Frieren: Beyond Journey's End | DISPUTED | 0 |
+| 74489 | Land of the Lustrous | DRAFT | 11 |
+| 98263 | Witch Hat Atelier | DISPUTED | 0 |
+| 79865 | Ajin: Demi-Human | INSUFFICIENT_EVIDENCE | 0 |
+| 54692 | Noragami: Stray God | DRAFT | 9 |
+| 55515 | JoJo's Bizarre Adventure Part 8: JoJolion | DRAFT | 22 |
+| 86399 | That Time I Got Reincarnated as a Slime | INSUFFICIENT_EVIDENCE | 0 |
+| 114960 | Mashle: Magic and Muscles | DRAFT | 5 |
+| 86551 | Made in Abyss | DRAFT | 9 |
+| 33031 | Pandora Hearts | DRAFT | 9 |
+| 30598 | Fairy Tail | DRAFT | 17 |
+| 126297 | Teenage Mercenary | INSUFFICIENT_EVIDENCE | 0 |
+| 100954 | Sweet Home | INSUFFICIENT_EVIDENCE | 0 |
+| 86082 | Delicious in Dungeon | DRAFT | 14 |
+| 74485 | The Seven Deadly Sins | INSUFFICIENT_EVIDENCE | 0 |
+| 101583 | My Dress-Up Darling | DRAFT | 12 |
+| 85135 | A Silent Voice | INSUFFICIENT_EVIDENCE | 0 |
+| 30436 | Uzumaki: Spiral into Horror | INSUFFICIENT_EVIDENCE | 0 |
+| 97553 | Three Days of Happiness | INSUFFICIENT_EVIDENCE | 0 |
+| 99943 | Rent-A-Girlfriend | INSUFFICIENT_EVIDENCE | 0 |
+| 54294 | Ao Haru Ride | INSUFFICIENT_EVIDENCE | 0 |
+| 30028 | Nana | INSUFFICIENT_EVIDENCE | 0 |
+| 116186 | Boy's Abyss | INSUFFICIENT_EVIDENCE | 0 |
+| 61499 | Nisekoi: False Love | DRAFT | 3 |
+| 30336 | GTO: Great Teacher Onizuka | INSUFFICIENT_EVIDENCE | 0 |
+| 85849 | ReLIFE | INSUFFICIENT_EVIDENCE | 0 |
+| 146983 | Goodbye, Eri | NOT_APPLICABLE | 0 |
+| 30104 | Yotsuba&! | NOT_APPLICABLE | 0 |
 
 ## Observações importantes
 

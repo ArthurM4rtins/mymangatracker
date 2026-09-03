@@ -12,9 +12,25 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
-  "conflicts": []
+  "sources": [
+    { "id": "noragami-wiki-story-arcs", "url": "https://noragami.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "noragami-wiki-chapters", "url": "https://noragami.fandom.com/wiki/List_of_Chapters", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "wikipedia-noragami-chapters", "url": "https://en.wikipedia.org/wiki/List_of_Noragami_chapters", "type": "EDITORIAL", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "yukine", "kind": "ARC", "position": 1, "title": "Yukine Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "11" }, "sourceIds": ["noragami-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "bishamonten", "kind": "ARC", "position": 2, "title": "Bishamonten Arc", "range": { "unit": "CHAPTER", "start": "12", "end": "24" }, "sourceIds": ["noragami-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "yomi", "kind": "ARC", "position": 3, "title": "Yomi Arc", "range": { "unit": "CHAPTER", "start": "25", "end": "39" }, "sourceIds": ["noragami-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "sakura", "kind": "ARC", "position": 4, "title": "Sakura Arc", "range": { "unit": "CHAPTER", "start": "40", "end": "48" }, "sourceIds": ["noragami-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "hospital", "kind": "ARC", "position": 5, "title": "Hospital Arc", "range": { "unit": "CHAPTER", "start": "49", "end": "54" }, "sourceIds": ["noragami-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "heaven", "kind": "ARC", "position": 6, "title": "Heaven Arc", "range": { "unit": "CHAPTER", "start": "55", "end": "72" }, "sourceIds": ["noragami-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "stray", "kind": "ARC", "position": 7, "title": "Stray Arc", "range": { "unit": "CHAPTER", "start": "73", "end": "91" }, "sourceIds": ["noragami-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "ooharai", "kind": "ARC", "position": 8, "title": "Ooharai Arc", "range": { "unit": "CHAPTER", "start": "92", "end": "99" }, "sourceIds": ["noragami-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "final", "kind": "ARC", "position": 9, "title": "Final Arc", "range": { "unit": "CHAPTER", "start": "100", "end": "109" }, "sourceIds": ["noragami-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "arc naming", "reason": "A fonte comunitaria informa que titulos e duracoes dos arcos sao nao oficiais, com excecao do Final Arc, anunciado na publicacao do capitulo 100. A estrutura inteira permanece DRAFT; o arco Rabou, exclusivo do anime, nao foi incluido." }
+  ]
 }

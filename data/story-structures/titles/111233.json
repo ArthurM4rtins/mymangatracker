@@ -11,10 +11,16 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "call-night-wiki-chapters", "url": "https://call-of-the-night.fandom.com/wiki/Category:Chapters", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "call-night-series-overview", "url": "https://en.wikipedia.org/wiki/Call_of_the_Night", "type": "SECONDARY", "accessedAt": "2026-09-01" },
+    { "id": "call-night-wiki-volumes", "url": "https://call-of-the-night.fandom.com/wiki/Chapters_and_Volumes", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "numbering and arc taxonomy", "reason": "A serie principal e reportada como encerrada no capitulo 200, mas o catalogo possui 203 entradas; fontes tambem registram um manga curto posterior, Paradise Arc. A listagem de capitulos inclui especiais fracionarios e nao ha taxonomia de arcos que reconcilie de forma verificavel essas entradas." }
+  ]
 }

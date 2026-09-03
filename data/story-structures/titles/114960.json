@@ -12,9 +12,112 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
+  "sources": [
+    {
+      "id": "viz-mashle-chapters",
+      "url": "https://www.viz.com/shonenjump/chapters/mashle?locale=en",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "mashle-wiki-story-arcs",
+      "url": "https://mashle.fandom.com/wiki/Story_Arcs",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "mashle-wiki-tri-magic-arc",
+      "url": "https://mashle.fandom.com/wiki/Tri-Magic-Athalon_Divine_Visionary_Final_Exam_Arc",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [
+    {
+      "key": "easton-enrollment",
+      "kind": "ARC",
+      "position": 1,
+      "title": "Easton Enrollment",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "1",
+        "end": "15"
+      },
+      "sourceIds": [
+        "mashle-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "magia-lupus",
+      "kind": "ARC",
+      "position": 2,
+      "title": "Magia Lupus",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "16",
+        "end": "43"
+      },
+      "sourceIds": [
+        "mashle-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "divine-visionary-selection-exam",
+      "kind": "ARC",
+      "position": 3,
+      "title": "Divine Visionary Selection Exam",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "44",
+        "end": "74"
+      },
+      "sourceIds": [
+        "mashle-wiki-story-arcs",
+        "mashle-wiki-tri-magic-arc"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "tri-magic-athalon-divine-visionary-final-exam",
+      "kind": "ARC",
+      "position": 4,
+      "title": "Tri-Magic-Athalon Divine Visionary Final Exam",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "75",
+        "end": "102"
+      },
+      "sourceIds": [
+        "mashle-wiki-story-arcs",
+        "mashle-wiki-tri-magic-arc"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "eclipse",
+      "kind": "ARC",
+      "position": 5,
+      "title": "Eclipse",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "103",
+        "end": "162"
+      },
+      "sourceIds": [
+        "mashle-wiki-story-arcs",
+        "mashle-wiki-tri-magic-arc"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    }
+  ],
   "conflicts": []
 }

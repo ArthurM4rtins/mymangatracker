@@ -11,10 +11,34 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    {
+      "id": "kodansha-gto-series",
+      "url": "https://kodansha.us/series/gto-great-teacher-onizuka/",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "gto-wikipedia-chapters",
+      "url": "https://en.wikipedia.org/wiki/List_of_Great_Teacher_Onizuka_chapters",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "gto-academic-structure",
+      "url": "https://jyx.jyu.fi/bitstreams/b0117603-1dc6-4b93-a853-df4de6a197aa/download",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-09-01"
+    }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    {
+      "field": "arc taxonomy",
+      "reason": "A publicação é listada em 25 volumes e 200 lições principais, com extras explicando as 208 entradas AniList. Uma análise reconhece casos menores de dois a quatro volumes, mas não estabelece nomes ou limites reproduzíveis; não há taxonomia de arcos verificável para registrar."
+    }
+  ]
 }
