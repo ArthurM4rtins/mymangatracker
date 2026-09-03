@@ -6,6 +6,7 @@ import { perfilDoUsuarioDoSistema } from "@/server/services/perfil.service";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { AcoesSociais } from "./acoes-sociais";
 import { FiltrosAvaliadas } from "./filtros-avaliadas";
+import { FotoDePerfil } from "./foto-de-perfil";
 import { GradeAvaliadas } from "./grade-avaliadas";
 import { MinhaEstante } from "./minha-estante";
 import { ResenhaDoPerfil } from "./resenha";
@@ -58,12 +59,11 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-10 px-6 py-12">
       <header className="flex items-center gap-5">
-        <div
-          aria-hidden
-          className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-borda bg-superficie font-marca text-3xl font-bold text-acento"
-        >
-          {perfil.username.charAt(0).toUpperCase()}
-        </div>
+        <FotoDePerfil
+          username={perfil.username}
+          versao={perfil.avatarVersao}
+          souEu={perfil.souEu}
+        />
         <div className="flex min-w-0 flex-col gap-1">
           <h1 className="flex flex-wrap items-center gap-2 font-marca text-3xl font-bold tracking-tight">
             {perfil.username}
