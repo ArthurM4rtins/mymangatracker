@@ -7,6 +7,8 @@ import { getPrisma } from "./prisma";
 export type ComentarioDaReview = {
   id: string;
   username: string;
+  /** Versão da foto de quem escreveu (issue #87); `null` sem foto. */
+  avatarVersao: number | null;
   texto: string;
   criadoEm: Date;
   meu: boolean;
@@ -15,6 +17,7 @@ export type ComentarioDaReview = {
 export type ReviewPublica = {
   entryId: string;
   username: string;
+  avatarVersao: number | null;
   minha: boolean;
   rating: string | null;
   review: string;
@@ -44,7 +47,7 @@ export async function listarReviewsDaObra(
       review: true,
       containsSpoilers: true,
       reviewedAt: true,
-      user: { select: { username: true } },
+      user: { select: { username: true, avatarUpdatedAt: true } },
       _count: { select: { likes: true } },
       likes:
         userId === null
@@ -57,7 +60,7 @@ export async function listarReviewsDaObra(
           userId: true,
           texto: true,
           createdAt: true,
-          user: { select: { username: true } },
+          user: { select: { username: true, avatarUpdatedAt: true } },
         },
       },
     },
@@ -68,6 +71,7 @@ export async function listarReviewsDaObra(
     return {
       entryId: linha.id,
       username: linha.user.username,
+      avatarVersao: linha.user.avatarUpdatedAt?.getTime() ?? null,
       minha: linha.userId === userId,
       rating: linha.rating?.toString() ?? null,
       review: linha.review ?? "",
@@ -80,6 +84,7 @@ export async function listarReviewsDaObra(
         return {
           id: comentario.id,
           username: comentario.user.username,
+          avatarVersao: comentario.user.avatarUpdatedAt?.getTime() ?? null,
           texto: comentario.texto,
           criadoEm: comentario.createdAt,
           meu: comentario.userId === userId,

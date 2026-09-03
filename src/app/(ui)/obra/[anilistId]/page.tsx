@@ -257,6 +257,7 @@ export default async function PaginaDaObra({ params }: Props)
                     review={{
                       entryId: review.entryId,
                       username: review.username,
+                      avatarVersao: review.avatarVersao,
                       minha: review.minha,
                       rating: review.rating,
                       review: review.review,
@@ -268,6 +269,7 @@ export default async function PaginaDaObra({ params }: Props)
                         return {
                           id: comentario.id,
                           username: comentario.username,
+                          avatarVersao: comentario.avatarVersao,
                           texto: comentario.texto,
                           meu: comentario.meu,
                         };
