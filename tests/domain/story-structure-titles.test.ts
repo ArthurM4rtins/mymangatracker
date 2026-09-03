@@ -8,6 +8,9 @@ import { validarEstruturaNarrativa } from "@/server/domain/story-structure";
 const DIRETORIO = "data/story-structures/titles";
 const PROGRESSO = "data/story-structures/progress.json";
 
+type Intervalo = { start: string; end: string | null };
+type Segmento = { key: string; parentKey?: string; range?: Intervalo; ranges?: Intervalo[] };
+
 type Titulo = {
   media: { anilistId: number; title: string };
   curation: { status: string; researchedAt: string | null };
@@ -53,6 +56,60 @@ describe("base curada em data/story-structures/titles", () =>
     );
 
     expect(errados.map(({ nome, titulo }) => `${nome} ${titulo.curation.status}`)).toEqual([]);
+  });
+
+  // Decisão de 03/09: irmãos (mesmo parentKey) cobrem o trecho sem sobrepor
+  // nem deixar lacuna — lacuna real é INTERLUDE explícito. Fim aberto (null)
+  // só no último irmão.
+  it("irmãos não se sobrepõem nem deixam lacuna", () =>
+  {
+    const problemas: string[] = [];
+
+    for (const { nome, titulo } of titulos)
+    {
+      const grupos = new Map<string, Array<[number, number | null, string]>>();
+
+      for (const bruto of titulo.segments)
+      {
+        const s = bruto as Segmento;
+        const intervalos = s.ranges ?? (s.range ? [s.range] : []);
+        const grupo = grupos.get(s.parentKey ?? "") ?? [];
+
+        for (const r of intervalos)
+        {
+          grupo.push([Number(r.start), r.end === null ? null : Number(r.end), s.key]);
+        }
+
+        grupos.set(s.parentKey ?? "", grupo);
+      }
+
+      for (const [pai, intervalos] of grupos)
+      {
+        intervalos.sort((a, b) => a[0] - b[0]);
+
+        for (let i = 1; i < intervalos.length; i++)
+        {
+          const [, fimAnterior, chaveAnterior] = intervalos[i - 1];
+          const [inicio, , chave] = intervalos[i];
+          const onde = `${nome}${pai ? ` (${pai})` : ""}: ${chaveAnterior} → ${chave}`;
+
+          if (fimAnterior === null)
+          {
+            problemas.push(`${onde}: fim aberto antes do último`);
+          }
+          else if (inicio <= fimAnterior)
+          {
+            problemas.push(`${onde}: sobreposição no capítulo ${inicio}`);
+          }
+          else if (inicio !== fimAnterior + 1)
+          {
+            problemas.push(`${onde}: lacuna ${fimAnterior + 1}–${inicio - 1}`);
+          }
+        }
+      }
+    }
+
+    expect(problemas).toEqual([]);
   });
 
   it("progress.json bate com a contagem dos arquivos", () =>
