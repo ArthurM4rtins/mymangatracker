@@ -1,19 +1,32 @@
 "use client";
 
 /**
- * Vitrine em carrossel (issue #76). Dois modos:
- *
- * - AUTO (inicial): o trilho anda sozinho por `transform` em CSS — só
- *   compositor, sem layout por frame — com uma segunda cópia dos cards
- *   emendada no fim para o loop fechar sem salto. Pausa no hover e no foco
- *   pelo `animation-play-state`. Trilho que cabe inteiro não anda, e
- *   `prefers-reduced-motion` também desliga.
- * - MANUAL: a primeira seta desliga a animação e o trilho vira um scroll
- *   normal, com snap e rolagem pelas setas ou pelo dedo.
- *
- * O seletor troca de trilho sem refetch — todos já vêm do servidor.
+ * Vitrine em carrossel (issue #76), versão "palco": cinco cards visíveis, o
+ * do centro em destaque e os dois de cada lado esmaecendo e encolhendo
+ * conforme se afastam. Avança um card a cada poucos segundos, pausa no hover
+ * e no foco, setas nas laterais, loop cíclico. `prefers-reduced-motion`
+ * desliga o avanço automático; o seletor troca de trilho sem refetch.
  */
-import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
+
+export type TrilhoDoCarrossel = {
+  chave: string;
+  rotulo: string;
+  itens: ReactNode[];
+  vazio: string;
+};
+
+const INTERVALO_MS = 4000;
+const VISIVEIS_DE_CADA_LADO = 2;
+/** Distância entre centros de cards vizinhos, em % da largura do card. */
+const PASSO = 78;
 
 const CONSULTA_REDUZ_MOVIMENTO = "(prefers-reduced-motion: reduce)";
 
@@ -29,15 +42,21 @@ function lerReduzMovimento() { return window.matchMedia(CONSULTA_REDUZ_MOVIMENTO
 
 function reduzMovimentoNoServidor() { return false; }
 
-export type TrilhoDoCarrossel = {
-  chave: string;
-  rotulo: string;
-  itens: ReactNode[];
-  vazio: string;
-};
+/** Aparência por distância do centro: 0 é o destaque, ±2 é a borda do palco. */
+function estiloPorDistancia(distancia: number): React.CSSProperties
+{
+  const longe = Math.abs(distancia);
+  const escala = longe === 0 ? 1 : longe === 1 ? 0.9 : 0.8;
+  const opacidade = longe === 0 ? 1 : longe === 1 ? 0.55 : 0.22;
 
-/** Segundos por card: 12 cards levam ~70 s para dar a volta. */
-const SEGUNDOS_POR_CARD = 6;
+  return {
+    transform: `translateX(calc(-50% + ${distancia * PASSO}%)) scale(${escala})`,
+    opacity: longe > VISIVEIS_DE_CADA_LADO ? 0 : opacidade,
+    zIndex: 10 - longe,
+    pointerEvents: longe > VISIVEIS_DE_CADA_LADO ? "none" : undefined,
+    filter: longe === 0 ? undefined : `blur(${longe * 0.6}px)`,
+  };
+}
 
 export function Carrossel({
   titulo,
@@ -50,91 +69,58 @@ export function Carrossel({
 })
 {
   const [ativo, setAtivo] = useState(trilhos[0]?.chave ?? "");
-  const [modo, setModo] = useState<"auto" | "manual">("auto");
-  const [transborda, setTransborda] = useState(false);
+  const [centro, setCentro] = useState(0);
+  const [pausado, setPausado] = useState(false);
   const reduzMovimento = useSyncExternalStore(
     assinarReduzMovimento,
     lerReduzMovimento,
     reduzMovimentoNoServidor,
   );
-  const janela = useRef<HTMLDivElement>(null);
-  const copia = useRef<HTMLDivElement>(null);
+  const palco = useRef<HTMLDivElement>(null);
 
   const trilho = trilhos.find(function (t) { return t.chave === ativo; }) ?? trilhos[0];
-  const totalDeItens = (trilho?.itens.length ?? 0) + (verMais ? 1 : 0);
+  const itens = trilho?.itens ?? [];
+  const total = itens.length;
 
-  // Só anda o que não cabe. O ResizeObserver mede depois do layout, fora do
-  // render, e acompanha a janela mudando de largura.
+  const avancar = useCallback(function (passos: number)
+  {
+    if (total > 0)
+    {
+      setCentro(function (c) { return (c + passos + total) % total; });
+    }
+  }, [total]);
+
+  function trocarTrilho(chave: string)
+  {
+    setAtivo(chave);
+    setCentro(0);
+  }
+
   useEffect(function ()
   {
-    const alvo = janela.current;
-
-    if (alvo === null)
+    if (pausado || reduzMovimento || total <= 1)
     {
       return;
     }
 
-    const observador = new ResizeObserver(function ()
-    {
-      if (copia.current !== null)
-      {
-        setTransborda(copia.current.scrollWidth > alvo.clientWidth);
-      }
-    });
+    const temporizador = window.setInterval(function () { avancar(1); }, INTERVALO_MS);
 
-    observador.observe(alvo);
+    return function () { window.clearInterval(temporizador); };
+  }, [pausado, reduzMovimento, total, avancar]);
 
-    return function () { observador.disconnect(); };
-  }, [ativo]);
-
-  const anima = modo === "auto" && transborda && !reduzMovimento;
-
-  function pular(direcao: -1 | 1)
+  // Distância cíclica: com 12 cards, o item 11 fica a -1 do item 0.
+  function distanciaDe(indice: number): number
   {
-    setModo("manual");
+    let d = indice - centro;
 
-    requestAnimationFrame(function ()
-    {
-      const elemento = janela.current;
+    if (d > total / 2) d -= total;
+    if (d < -total / 2) d += total;
 
-      if (elemento !== null)
-      {
-        elemento.scrollBy({ left: direcao * elemento.clientWidth * 0.8, behavior: "smooth" });
-      }
-    });
-  }
-
-  function cards(escondido: boolean)
-  {
-    return (
-      <div
-        ref={escondido ? undefined : copia}
-        aria-hidden={escondido || undefined}
-        className="flex shrink-0 gap-3 pr-3"
-      >
-        {trilho?.itens.map(function (item, indice)
-        {
-          return (
-            <div key={indice} className="snap-start shrink-0">
-              {item}
-            </div>
-          );
-        })}
-        {verMais && (
-          <a
-            href={verMais.href}
-            tabIndex={escondido ? -1 : undefined}
-            className="flex w-40 shrink-0 snap-start items-center justify-center rounded-lg border border-dashed border-borda text-sm text-acento hover:border-acento"
-          >
-            {verMais.rotulo}
-          </a>
-        )}
-      </div>
-    );
+    return d;
   }
 
   return (
-    <section className="group flex min-w-0 flex-col gap-3">
+    <section className="flex min-w-0 flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">{titulo}</h2>
         <div className="flex items-center gap-3">
@@ -150,7 +136,7 @@ export function Carrossel({
                     type="button"
                     role="tab"
                     aria-selected={selecionado}
-                    onClick={function () { setAtivo(t.chave); }}
+                    onClick={function () { trocarTrilho(t.chave); }}
                     className={`rounded px-2.5 py-1 transition-colors ${
                       selecionado ? "bg-superficie text-texto" : "text-texto-suave hover:text-texto"
                     }`}
@@ -161,52 +147,81 @@ export function Carrossel({
               })}
             </div>
           )}
-          <div className="flex gap-1">
-            <Seta direcao={-1} aoClicar={function () { pular(-1); }} />
-            <Seta direcao={1} aoClicar={function () { pular(1); }} />
-          </div>
+          {verMais && (
+            <a href={verMais.href} className="text-sm text-acento underline underline-offset-4">
+              {verMais.rotulo}
+            </a>
+          )}
         </div>
       </div>
 
-      {trilho === undefined || trilho.itens.length === 0 ? (
+      {total === 0 ? (
         <p className="text-sm text-texto-suave">{trilho?.vazio}</p>
       ) : (
         <div
-          ref={janela}
-          // contain:layout — sem isso o Chrome soma a largura do trilho ao
-          // documento e a página inteira ganha rolagem horizontal.
-          className={`min-w-0 max-w-full pb-2 [contain:layout] ${
-            modo === "auto"
-              ? "overflow-hidden"
-              : "snap-x overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          }`}
+          ref={palco}
+          className="relative"
+          onMouseEnter={function () { setPausado(true); }}
+          onMouseLeave={function () { setPausado(false); }}
+          onFocus={function () { setPausado(true); }}
+          onBlur={function () { setPausado(false); }}
         >
-          <div
-            className={`flex w-max ${
-              anima ? "group-hover:[animation-play-state:paused] group-focus-within:[animation-play-state:paused]" : ""
-            }`}
-            style={anima ? { animation: `deslizar-vitrine ${totalDeItens * SEGUNDOS_POR_CARD}s linear infinite` } : undefined}
-          >
-            {cards(false)}
-            {anima && cards(true)}
+          {/* O palco: os cards ficam absolutos sobre o centro; a altura vem de
+              um card invisível no fluxo, para o bloco não colapsar. */}
+          <div className="relative overflow-hidden px-8">
+            <div aria-hidden className="invisible mx-auto w-max">{itens[0]}</div>
+            {itens.map(function (item, indice)
+            {
+              const distancia = distanciaDe(indice);
+              const visivel = Math.abs(distancia) <= VISIVEIS_DE_CADA_LADO;
+
+              return (
+                <div
+                  key={indice}
+                  aria-hidden={distancia !== 0 || undefined}
+                  className="absolute left-1/2 top-0 transition-[transform,opacity,filter] duration-500 ease-out"
+                  style={estiloPorDistancia(distancia)}
+                  onClick={visivel && distancia !== 0 ? function () { avancar(distancia); } : undefined}
+                >
+                  <div className={distancia === 0 ? "" : "cursor-pointer"} inert={distancia !== 0 || undefined}>
+                    {item}
+                  </div>
+                </div>
+              );
+            })}
           </div>
+
+          {total > 1 && (
+            <>
+              <Seta lado="esquerda" aoClicar={function () { avancar(-1); }} />
+              <Seta lado="direita" aoClicar={function () { avancar(1); }} />
+            </>
+          )}
+
+          {total > 1 && (
+            <p className="mt-2 text-center text-xs tabular-nums text-texto-suave">
+              {centro + 1} / {total}
+            </p>
+          )}
         </div>
       )}
     </section>
   );
 }
 
-function Seta({ direcao, aoClicar }: { direcao: -1 | 1; aoClicar: () => void })
+function Seta({ lado, aoClicar }: { lado: "esquerda" | "direita"; aoClicar: () => void })
 {
   return (
     <button
       type="button"
       onClick={aoClicar}
-      aria-label={direcao === -1 ? "Anterior" : "Próximo"}
-      className="flex h-7 w-7 items-center justify-center rounded-md border border-borda text-texto-suave transition-colors hover:border-acento hover:text-acento"
+      aria-label={lado === "esquerda" ? "Anterior" : "Próximo"}
+      className={`absolute top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-borda bg-fundo/80 text-texto shadow-lg backdrop-blur transition-colors hover:border-acento hover:text-acento ${
+        lado === "esquerda" ? "left-0" : "right-0"
+      }`}
     >
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        {direcao === -1 ? <polyline points="15 18 9 12 15 6" /> : <polyline points="9 18 15 12 9 6" />}
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        {lado === "esquerda" ? <polyline points="15 18 9 12 15 6" /> : <polyline points="9 18 15 12 9 6" />}
       </svg>
     </button>
   );
