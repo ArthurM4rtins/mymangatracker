@@ -197,7 +197,7 @@ function BoasVindas({ leitura }: { leitura: DadosDeLeitura })
           <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
             Continuar lendo
           </h2>
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="flex flex-wrap gap-4">
             {leitura.continuar.map(function (entrada)
             {
               return <CardContinuar key={entrada.entradaId} entrada={entrada} />;
@@ -336,13 +336,13 @@ function Apresentacao()
 function CardContinuar({ entrada }: { entrada: EntradaDaEstante })
 {
   return (
-    <li className="flex flex-col gap-2 rounded-lg border border-borda bg-superficie p-3">
+    <li className="flex w-44 flex-col gap-2 rounded-lg border border-borda bg-superficie p-3">
       {entrada.obra.coverImageUrl ? (
         <Image
           src={entrada.obra.coverImageUrl}
           alt=""
-          width={184}
-          height={276}
+          width={152}
+          height={228}
           className="aspect-[2/3] w-full rounded object-cover"
           unoptimized
         />
