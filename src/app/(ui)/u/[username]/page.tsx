@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { interpretarFiltroDasAvaliadas } from "@/server/domain/perfil";
 import { perfilDoUsuarioDoSistema } from "@/server/services/perfil.service";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
+import { AcoesSociais } from "./acoes-sociais";
 import { FiltrosAvaliadas } from "./filtros-avaliadas";
 import { GradeAvaliadas } from "./grade-avaliadas";
 import { MinhaEstante } from "./minha-estante";
@@ -84,7 +85,30 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
               um="curtida dada"
               varios="curtidas dadas"
             />
+            <Numero valor={perfil.social.seguindo} um="seguindo" varios="seguindo" />
+            {perfil.souEu && (
+              <>
+                <Numero valor={perfil.social.seguidores} um="seguidor" varios="seguidores" />
+                <Numero
+                  valor={perfil.social.curtidas}
+                  um="curtida no perfil"
+                  varios="curtidas no perfil"
+                />
+              </>
+            )}
           </p>
+          {!perfil.souEu && (
+            <div className="mt-1">
+              <AcoesSociais
+                username={perfil.username}
+                seguidores={perfil.social.seguidores}
+                sigo={perfil.social.sigo}
+                curtidas={perfil.social.curtidas}
+                curti={perfil.social.curti}
+                logado={viewerId !== null}
+              />
+            </div>
+          )}
         </div>
       </header>
 
