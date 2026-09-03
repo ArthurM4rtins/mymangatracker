@@ -711,3 +711,27 @@ Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
 - Pendencia da sessao: 48 arquivos de data/story-structures modificados na
   arvore, herdados de sessao anterior (#16 curadoria) — nao tocados, nao
   commitados aqui.
+
+## Sessao 03/09 — lote 2 da curadoria narrativa (#16)
+
+- Lote de 44 obras (01/09) estava na arvore sem commit. Contadores batiam,
+  mas 8 arquivos reprovavam no validador do dominio: 7 em formato proprio
+  ({name, range sem unit}) e Fire Force comecando no capitulo 0.
+- Decisoes do usuario: aceitar capitulo 0; Berserk como caso de teste.
+  Achado do Berserk: prologo sem numero na serializacao; listfist numera
+  -16, MangaDex 0.01-0.09, Golden Age no cap. 1. Tracker so registra
+  positivo (zod positive, Decimal(8,2)) -> base e o decimal do MangaDex;
+  negativo segue recusado, com teste nomeando o caso.
+- Validador ganhou: start >= 0, identidade obrigatoria do segmento (key,
+  kind SAGA|ARC, title, status). Teste novo roda o validador nos 100 JSON
+  reais e confere progress.json (quebrado de proposito: ficou vermelho).
+- Os 7 arquivos foram normalizados por script (key slug do nome, kind ARC,
+  position sequencial, unit CHAPTER, status DRAFT); intervalos e fontes
+  intactos.
+- Branch feature/curadoria-lote-2, 6 commits, PR aberto.
+- PENDENTE (nao mexido, ja estava na main): Solo Leveling cap. 61 em dois
+  arcos; Record of Ragnarok 4 sobreposicoes + 2 lacunas; Kaguya 18 lacunas
+  sem registro de intencao. Abrir issue separada.
+- PENDENTE de produto: capitulo 0 e 0.01 passam no validador, mas a API de
+  progresso ainda exige positivo — quando a estrutura for pro banco, decidir
+  se o tracker aceita 0.
