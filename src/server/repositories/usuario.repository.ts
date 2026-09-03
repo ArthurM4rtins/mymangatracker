@@ -32,6 +32,15 @@ export type UsuarioDoPerfil = {
   id: string;
   username: string;
   createdAt: Date;
+  /** Versão da foto (issue #76); `null` sem foto. Bytes nunca vêm aqui. */
+  avatarUpdatedAt: Date | null;
+};
+
+/** A foto em si (issue #76) — só sai pela rota de imagem. */
+export type AvatarDoUsuario = {
+  bytes: Uint8Array;
+  mime: string;
+  avatarUpdatedAt: Date;
 };
 
 const SELECT_PUBLICO = { id: true, username: true, email: true } as const;
@@ -65,8 +74,50 @@ export function buscarUsuarioPorUsername(
 {
   return getPrisma().user.findUnique({
     where: { username },
-    select: { id: true, username: true, createdAt: true },
+    select: { id: true, username: true, createdAt: true, avatarUpdatedAt: true },
   });
+}
+
+export async function salvarAvatar(
+  userId: string,
+  mime: string,
+  bytes: Uint8Array,
+): Promise<{ avatarUpdatedAt: Date }>
+{
+  const linha = await getPrisma().user.update({
+    where: { id: userId },
+    data: { avatar: bytes, avatarMime: mime, avatarUpdatedAt: new Date() },
+    select: { avatarUpdatedAt: true },
+  });
+
+  return { avatarUpdatedAt: linha.avatarUpdatedAt as Date };
+}
+
+export async function apagarAvatar(userId: string): Promise<void>
+{
+  await getPrisma().user.update({
+    where: { id: userId },
+    data: { avatar: null, avatarMime: null, avatarUpdatedAt: null },
+    select: { id: true },
+  });
+}
+
+/** `null` quando o usuário não existe ou não tem foto. */
+export async function buscarAvatarPorUsername(
+  username: string,
+): Promise<AvatarDoUsuario | null>
+{
+  const linha = await getPrisma().user.findUnique({
+    where: { username },
+    select: { avatar: true, avatarMime: true, avatarUpdatedAt: true },
+  });
+
+  if (linha === null || linha.avatar === null || linha.avatarMime === null || linha.avatarUpdatedAt === null)
+  {
+    return null;
+  }
+
+  return { bytes: linha.avatar, mime: linha.avatarMime, avatarUpdatedAt: linha.avatarUpdatedAt };
 }
 
 export function buscarCredenciaisPorEmail(
