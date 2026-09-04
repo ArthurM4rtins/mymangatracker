@@ -12,6 +12,7 @@
  * gravaria progresso errado. Ausência de capítulo é resposta legítima — o popup
  * mostra o campo vazio e o usuário digita.
  */
+import { normalizarCapitulo } from "./capitulo";
 
 /**
  * Marcadores que anunciam o número, do mais longo para o mais curto: a
@@ -19,10 +20,6 @@
  * marcador longo nunca casar.
  */
 const CAPITULO = /\b(?:chapters?|chap|cap[íi]tulos?|caps?|ch)\b\.?\s*#?\s*(\d+(?:[.,]\d+)?)/i;
-
-/** `ReadingProgress.chapter` é `Decimal(8, 2)`. */
-const CASAS_DECIMAIS = 2;
-const CAPITULO_MAXIMO = 999999.99;
 
 /**
  * O capítulo anunciado no título, ou `null` quando o título não diz qual é.
@@ -38,26 +35,5 @@ export function capituloDoTitulo(titulo: string): number | null
     return null;
   }
 
-  const numero = Number(encontrado[1].replace(",", "."));
-
-  if (!Number.isFinite(numero))
-  {
-    return null;
-  }
-
-  const capitulo = arredondar(numero);
-
-  if (capitulo <= 0 || capitulo > CAPITULO_MAXIMO)
-  {
-    return null;
-  }
-
-  return capitulo;
-}
-
-function arredondar(valor: number): number
-{
-  const fator = 10 ** CASAS_DECIMAIS;
-
-  return Math.round(valor * fator) / fator;
+  return normalizarCapitulo(Number(encontrado[1].replace(",", ".")));
 }
