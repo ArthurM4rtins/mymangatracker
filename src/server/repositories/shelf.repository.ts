@@ -71,12 +71,17 @@ export async function listarEntradasDoUsuario(
 export function buscarEntradaDoUsuario(
   userId: string,
   entradaId: string,
-): Promise<{ entradaId: string; mediaId: string; progressChapter: string | null } | null>
+): Promise<{
+  entradaId: string;
+  mediaId: string;
+  progressChapter: string | null;
+  status: ShelfStatus;
+} | null>
 {
   return getPrisma()
     .shelfEntry.findFirst({
       where: { id: entradaId, userId },
-      select: { id: true, mediaId: true, progressChapter: true },
+      select: { id: true, mediaId: true, progressChapter: true, status: true },
     })
     .then(function (linha)
     {
@@ -89,6 +94,7 @@ export function buscarEntradaDoUsuario(
         entradaId: linha.id,
         mediaId: linha.mediaId,
         progressChapter: linha.progressChapter?.toString() ?? null,
+        status: linha.status,
       };
     });
 }

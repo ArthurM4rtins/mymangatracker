@@ -2,7 +2,7 @@
 // para dentro do `where`. Não existe consulta que devolva progresso sem dono —
 // é invariante do sistema, não preferência do usuário, e os testes em
 // `tests/repositories/reading-progress.privacy.test.ts` travam isso.
-import type { ReadingProgress } from "@/generated/prisma/client";
+import type { ReadingProgress, ShelfStatus } from "@/generated/prisma/client";
 import { getPrisma } from "./prisma";
 
 export type NovaAbertura = {
@@ -11,12 +11,25 @@ export type NovaAbertura = {
   chapter: number;
   resolvedUrl: string;
   readingSourceId?: string;
+  /**
+   * Status que a entrada passa a ter — quem decide é o domínio
+   * (`statusAposLeitura`). Ausente quando não há o que mudar.
+   */
+  novoStatus?: ShelfStatus;
 };
 
-/** Grava a abertura de um capítulo. Uma linha por clique — o histórico. */
-export function registrarAbertura(dados: NovaAbertura): Promise<ReadingProgress>
+/**
+ * Grava a abertura de um capítulo. Uma linha por clique — o histórico.
+ *
+ * Releitura não mexe no progresso, mas ainda pode mexer no status: quem volta à
+ * obra que tinha pausado voltou a ler. Quando isso acontece, histórico e status
+ * vão na MESMA transação.
+ */
+export async function registrarAbertura(dados: NovaAbertura): Promise<{ id: string }>
 {
-  return getPrisma().readingProgress.create({
+  const prisma = getPrisma();
+
+  const criacao = {
     data: {
       userId: dados.userId,
       mediaId: dados.mediaId,
@@ -24,7 +37,23 @@ export function registrarAbertura(dados: NovaAbertura): Promise<ReadingProgress>
       chapter: dados.chapter,
       resolvedUrl: dados.resolvedUrl,
     },
-  });
+    select: { id: true },
+  };
+
+  if (dados.novoStatus === undefined)
+  {
+    return prisma.readingProgress.create(criacao);
+  }
+
+  const [registro] = await prisma.$transaction([
+    prisma.readingProgress.create(criacao),
+    prisma.shelfEntry.updateMany({
+      where: { userId: dados.userId, mediaId: dados.mediaId },
+      data: { status: dados.novoStatus },
+    }),
+  ]);
+
+  return registro;
 }
 
 /**
@@ -54,7 +83,10 @@ export async function registrarAberturaComProgresso(
     }),
     prisma.shelfEntry.updateMany({
       where: { userId: dados.userId, mediaId: dados.mediaId },
-      data: { progressChapter: dados.novoProgresso },
+      data: {
+        progressChapter: dados.novoProgresso,
+        ...(dados.novoStatus !== undefined && { status: dados.novoStatus }),
+      },
     }),
   ]);
 
