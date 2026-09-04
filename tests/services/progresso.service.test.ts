@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import type { StatusDaEstante } from "@/server/domain/perfil";
 import { abrirCapitulo } from "@/server/services/progresso.service";
 
 // As regras da issue #23: sem capítulo pedido, abre o próximo (inteiro seguinte
@@ -17,6 +18,7 @@ function fakeDeps(cenario: {
   maior?: number | null;
   /** O capítulo marcado à mão na estante (#31); ausente = nunca editado. */
   progressChapter?: string;
+  status?: StatusDaEstante;
 })
 {
   const buscarEntrada = vi.fn(async function ()
@@ -28,6 +30,7 @@ function fakeDeps(cenario: {
           entradaId: "e1",
           mediaId: entrada.mediaId,
           progressChapter: cenario.progressChapter ?? null,
+          status: cenario.status ?? ("READING" as StatusDaEstante),
         };
   });
   const buscarFonte = vi.fn(async function ()
@@ -59,6 +62,42 @@ function fakeDeps(cenario: {
 
 describe("abrirCapitulo", function ()
 {
+  // A mesma regra do domínio que a extensão usa (issue #52): abrir capítulo diz
+  // que a pessoa está lendo. A divergência entre os dois caminhos seria pior que
+  // o problema, então a promoção vale aqui também.
+  it("obra planejada passa a lendo ao abrir o capítulo", async function ()
+  {
+    const { deps, registrarComProgresso } = fakeDeps({ status: "PLANNED", maior: null });
+
+    await abrirCapitulo({ userId: "u1", entradaId: "e1" }, deps);
+
+    expect(registrarComProgresso).toHaveBeenCalledWith(
+      expect.objectContaining({ novoStatus: "READING" }),
+    );
+  });
+
+  it("releitura de obra pausada volta a lendo", async function ()
+  {
+    const { deps, registrarReleitura } = fakeDeps({ status: "PAUSED", maior: 57.5 });
+
+    await abrirCapitulo({ userId: "u1", entradaId: "e1", capitulo: 12 }, deps);
+
+    expect(registrarReleitura).toHaveBeenCalledWith(
+      expect.objectContaining({ novoStatus: "READING" }),
+    );
+  });
+
+  it("abrir capítulo de obra concluída não a desmarca", async function ()
+  {
+    const { deps, registrarReleitura } = fakeDeps({ status: "COMPLETED", maior: 100 });
+
+    await abrirCapitulo({ userId: "u1", entradaId: "e1", capitulo: 12 }, deps);
+
+    expect(registrarReleitura).toHaveBeenCalledWith(
+      expect.not.objectContaining({ novoStatus: expect.anything() }),
+    );
+  });
+
   it("sem capítulo pedido, abre o próximo e avança o progresso", async function ()
   {
     const { deps, registrarComProgresso, registrarReleitura } = fakeDeps({ maior: 57.5 });

@@ -6,6 +6,7 @@
  * progresso da estante só avança quando o capítulo aberto é o maior (regra no
  * domínio); releitura vira histórico e nada mais.
  */
+import type { StatusDaEstante } from "@/server/domain/perfil";
 import {
   capituloValido,
   progressoAtual,
@@ -15,6 +16,7 @@ import {
   urlDaLeitura,
   urlDaPagina,
 } from "@/server/domain/progresso";
+import { statusAposLeitura } from "@/server/domain/status-de-leitura";
 import { buscarEntradaDoUsuario } from "@/server/repositories/shelf.repository";
 import { buscarFonteAtiva } from "@/server/repositories/reading-source.repository";
 import {
@@ -40,7 +42,12 @@ export type DependenciasDeAbertura = {
   buscarEntrada: (
     userId: string,
     entradaId: string,
-  ) => Promise<{ entradaId: string; mediaId: string; progressChapter: string | null } | null>;
+  ) => Promise<{
+    entradaId: string;
+    mediaId: string;
+    progressChapter: string | null;
+    status: StatusDaEstante;
+  } | null>;
   buscarFonte: (
     userId: string,
     mediaId: string,
@@ -53,6 +60,7 @@ export type DependenciasDeAbertura = {
     chapter: number;
     resolvedUrl: string;
     novoProgresso: number;
+    novoStatus?: StatusDaEstante;
   }) => Promise<{ id: string }>;
   registrarReleitura: (dados: {
     userId: string;
@@ -60,6 +68,7 @@ export type DependenciasDeAbertura = {
     readingSourceId: string;
     chapter: number;
     resolvedUrl: string;
+    novoStatus?: StatusDaEstante;
   }) => Promise<{ id: string }>;
 };
 
@@ -110,12 +119,18 @@ export async function abrirCapitulo(
     return { estado: "capitulo_invalido" };
   }
 
+  // Abrir capítulo diz que a pessoa está lendo: obra Planejada, pausada ou
+  // largada volta a Lendo; concluída não é desmarcada. Mesma regra do domínio
+  // que a extensão usa, para os dois caminhos não divergirem.
+  const novoStatus = statusAposLeitura(entrada.status);
+
   const registro = {
     userId: pedido.userId,
     mediaId: entrada.mediaId,
     readingSourceId: fonte.id,
     chapter: capitulo,
     resolvedUrl: url,
+    ...(novoStatus !== null && { novoStatus }),
   };
 
   if (progrideEstante(atual, capitulo))
