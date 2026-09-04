@@ -12,7 +12,9 @@
  * capítulo manda, releitura é histórico e não regride a estante.
  */
 import { normalizarCapitulo } from "@/server/domain/capitulo";
+import type { StatusDaEstante } from "@/server/domain/perfil";
 import { progrideEstante } from "@/server/domain/progresso";
+import { statusAposLeitura } from "@/server/domain/status-de-leitura";
 import { normalizarUrlVisitada } from "@/server/domain/url-visitada";
 import { buscarEntradaDoUsuario } from "@/server/repositories/shelf.repository";
 import {
@@ -40,7 +42,12 @@ export type DependenciasDeLeituraExterna = {
   buscarEntrada: (
     userId: string,
     entradaId: string,
-  ) => Promise<{ entradaId: string; mediaId: string; progressChapter: string | null } | null>;
+  ) => Promise<{
+    entradaId: string;
+    mediaId: string;
+    progressChapter: string | null;
+    status: StatusDaEstante;
+  } | null>;
   maiorCapitulo: (userId: string, mediaId: string) => Promise<number | null>;
   registrarComProgresso: (dados: {
     userId: string;
@@ -48,12 +55,14 @@ export type DependenciasDeLeituraExterna = {
     chapter: number;
     resolvedUrl: string;
     novoProgresso: number;
+    novoStatus?: StatusDaEstante;
   }) => Promise<{ id: string }>;
   registrarReleitura: (dados: {
     userId: string;
     mediaId: string;
     chapter: number;
     resolvedUrl: string;
+    novoStatus?: StatusDaEstante;
   }) => Promise<{ id: string }>;
 };
 
@@ -86,6 +95,10 @@ export async function registrarLeituraExterna(
 
   const maior = await deps.maiorCapitulo(pedido.userId, entrada.mediaId);
 
+  // Quem começou a obra que estava Planejada está lendo; quem concluiu não é
+  // desmarcado. A regra é do domínio e vale igual no caminho do site.
+  const novoStatus = statusAposLeitura(entrada.status);
+
   // Sem `readingSourceId`: a leitura externa é justamente o caso sem fonte
   // configurada. O progresso pertence à obra, não ao site.
   const registro = {
@@ -93,6 +106,7 @@ export async function registrarLeituraExterna(
     mediaId: entrada.mediaId,
     chapter: capitulo,
     resolvedUrl: url,
+    ...(novoStatus !== null && { novoStatus }),
   };
 
   if (progrideEstante(maior, capitulo))

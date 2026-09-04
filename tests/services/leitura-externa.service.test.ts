@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import type { StatusDaEstante } from "@/server/domain/perfil";
 import { registrarLeituraExterna } from "@/server/services/leitura-externa.service";
 
 // A leitura que a extensão (issue #52) registra: o usuário está NA página do
@@ -11,6 +12,7 @@ const URL_REAL = "https://mangafire.to/title/4mx-vagabondd/chapter/4745884";
 
 function fakeDeps(cenario: {
   entrada?: { mediaId: string } | null;
+  status?: StatusDaEstante;
   maior?: number | null;
 })
 {
@@ -19,7 +21,12 @@ function fakeDeps(cenario: {
     const entrada = cenario.entrada === undefined ? { mediaId: "m1" } : cenario.entrada;
     return entrada === null
       ? null
-      : { entradaId: "e1", mediaId: entrada.mediaId, progressChapter: null };
+      : {
+          entradaId: "e1",
+          mediaId: entrada.mediaId,
+          progressChapter: null,
+          status: cenario.status ?? ("READING" as StatusDaEstante),
+        };
   });
   const maiorCapitulo = vi.fn(async function ()
   {
@@ -113,6 +120,51 @@ describe("registrarLeituraExterna", function ()
     expect(resultado).toMatchObject({ estado: "ok", capitulo: 57.57 });
     expect(registrarComProgresso).toHaveBeenCalledWith(
       expect.objectContaining({ chapter: 57.57 }),
+    );
+  });
+
+  it("obra planejada passa a lendo: é o caso de começar pela extensão", async function ()
+  {
+    const { deps, registrarComProgresso } = fakeDeps({ status: "PLANNED", maior: null });
+
+    await registrarLeituraExterna(pedido({ capitulo: 1 }), deps);
+
+    expect(registrarComProgresso).toHaveBeenCalledWith(
+      expect.objectContaining({ novoStatus: "READING" }),
+    );
+  });
+
+  it("obra pausada volta a lendo mesmo quando é releitura", async function ()
+  {
+    // O status muda porque a pessoa voltou a ler, não porque o progresso andou.
+    const { deps, registrarReleitura } = fakeDeps({ status: "PAUSED", maior: 57.5 });
+
+    await registrarLeituraExterna(pedido({ capitulo: 12 }), deps);
+
+    expect(registrarReleitura).toHaveBeenCalledWith(
+      expect.objectContaining({ novoStatus: "READING" }),
+    );
+  });
+
+  it("quem já está lendo não recebe mudança de status", async function ()
+  {
+    const { deps, registrarComProgresso } = fakeDeps({ status: "READING", maior: null });
+
+    await registrarLeituraExterna(pedido({ capitulo: 1 }), deps);
+
+    expect(registrarComProgresso).toHaveBeenCalledWith(
+      expect.not.objectContaining({ novoStatus: expect.anything() }),
+    );
+  });
+
+  it("registrar em obra concluída não a desmarca", async function ()
+  {
+    const { deps, registrarReleitura } = fakeDeps({ status: "COMPLETED", maior: 100 });
+
+    await registrarLeituraExterna(pedido({ capitulo: 12 }), deps);
+
+    expect(registrarReleitura).toHaveBeenCalledWith(
+      expect.not.objectContaining({ novoStatus: expect.anything() }),
     );
   });
 
