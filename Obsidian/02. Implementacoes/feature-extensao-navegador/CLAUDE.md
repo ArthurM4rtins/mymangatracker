@@ -49,6 +49,22 @@ Fora:
    (ver Achados): o título é o extrator mais barato e mais estável, não o fallback.
 6. **Sem schema novo.** `ReadingProgress.resolvedUrl` guarda a URL real da aba;
    `ReadingSource` guarda o pareamento host+slug.
+7. **Registrar leitura promove o status.** `PLANNED`, `PAUSED` e `DROPPED` viram `READING`;
+   `COMPLETED` não é desmarcada. A regra vale nos DOIS caminhos — a extensão e o clique no
+   site —, porque aplicar só no caminho novo criaria divergência de comportamento pior que o
+   problema. A incoerência já existia no site antes da extensão. O select do popup não lista
+   obras concluídas.
+8. **Permissão `tabs`: observar sempre, gravar só no clique.** Vigiar e escrever são coisas
+   separadas. A extensão acompanha as abas para reconhecer a obra pareada e acender o badge
+   antes do clique; o registro continua acontecendo só quando o usuário clica. Custo: o aviso
+   de "ler seu histórico de navegação" na instalação.
+9. **Um clique por sessão de leitura, não por capítulo.** Progresso é o MAIOR capítulo aberto,
+   então quem leu do 3 ao 10 clica uma vez no 10 e a estante vai a 10. O que se perde é
+   granularidade do histórico: os capítulos pulados nunca existiram para a tela de histórico.
+10. **Sem auto-registro enquanto não houver como desfazer.** Progresso é o maior capítulo e
+   não existe rota que apague uma abertura: extração errada para cima gruda para sempre.
+   Erro para baixo é inofensivo. Por isso badge chamando + um clique confirmando, e registro
+   cego só depois que existir o desfazer.
 
 ## Achados do teste em navegador (04/09/2026)
 
@@ -93,6 +109,19 @@ Conclusões:
       enxerga essa pasta.
 - [ ] Fixar o ID da extensão (`key` no manifest) se a API for validar a origem.
 - [ ] Lista final de sites do teste manual.
+- [ ] Domínio do app em produção, para o `host_permissions` (em dev é `http://localhost:3000/*`).
+- [ ] Confirmar se `POST /api/v1/estante` devolve o `entradaId` — a issue de adicionar obra
+      nova pela extensão vai precisar dele para registrar o capítulo logo em seguida.
+
+## Fora do escopo, com issue própria
+
+**Adicionar obra que não está na estante.** O usuário começou uma obra nova num site e quer
+cadastrar dali mesmo. Falta: extrair o NOME da obra do título (mais bagunçado que o número),
+uma rota de busca no catálogo — nenhuma existe hoje, `buscarNoCatalogo` só é chamado por
+server component — e a tela de escolha no popup. O casamento nome→`anilistId` é ambíguo
+(romanização, título de fã, outro idioma), então a extensão pré-preenche a busca e QUEM
+escolhe é o usuário: casar errado em silêncio suja a estante e manda progresso para a obra
+errada. Fica para depois do MVP rodar de ponta a ponta.
 
 ## Referências
 
