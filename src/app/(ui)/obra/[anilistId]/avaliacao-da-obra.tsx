@@ -33,12 +33,15 @@ export function AvaliacaoDaObra({
   ano,
   coverImageUrl,
   avaliacao,
+  social,
 }: {
   anilistId: number;
   titulo: string;
   ano: number | null;
   coverImageUrl: string | null;
   avaliacao: Avaliacao | null;
+  /** Curtidas e comentários que a resenha salva já recebeu; `null` sem resenha. */
+  social: { curtidas: number; comentarios: number } | null;
 })
 {
   const roteador = useRouter();
@@ -132,6 +135,15 @@ export function AvaliacaoDaObra({
 
   async function salvarDoModal(rascunho: Rascunho)
   {
+    // Apagar o texto leva curtidas e comentários junto (#112): avisar antes.
+    const apagaTexto = resenhaSalva !== "" && rascunho.resenha.trim() === "";
+    const temSocial = social !== null && (social.curtidas > 0 || social.comentarios > 0);
+
+    if (apagaTexto && temSocial && !window.confirm(avisoDeApagar(social)))
+    {
+      return;
+    }
+
     const salvou = await persistir({
       rating: rascunho.nota,
       review: rascunho.resenha,
@@ -184,6 +196,23 @@ export function AvaliacaoDaObra({
       )}
     </section>
   );
+}
+
+function avisoDeApagar(social: { curtidas: number; comentarios: number }): string
+{
+  const partes = [];
+
+  if (social.curtidas > 0)
+  {
+    partes.push(`${social.curtidas} ${social.curtidas === 1 ? "curtida" : "curtidas"}`);
+  }
+
+  if (social.comentarios > 0)
+  {
+    partes.push(`${social.comentarios} ${social.comentarios === 1 ? "comentário" : "comentários"}`);
+  }
+
+  return `Apagar o texto da resenha também apaga ${partes.join(" e ")}. Continuar?`;
 }
 
 function ModalDeResenha({

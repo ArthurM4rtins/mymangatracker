@@ -88,6 +88,13 @@ export default async function PaginaDaObra({ params }: Props)
   }
 
   const { obra, similares, minha, minhaAvaliacao, reviews, notaDoKidoku } = resultado;
+  // O que a minha resenha já recebeu: apagar o texto leva isso junto (#112),
+  // então a tela pede confirmação antes.
+  const minhaReview = reviews.find(function (review) { return review.minha; });
+  const socialDaMinha =
+    minhaReview === undefined
+      ? null
+      : { curtidas: minhaReview.curtidas, comentarios: minhaReview.comentarios.length };
   // Obra sem banner usa a própria capa esticada com blur — todas consistentes.
   const fundo = obra.bannerImageUrl ?? obra.coverImageUrl;
   const descricao =
@@ -195,6 +202,7 @@ export default async function PaginaDaObra({ params }: Props)
                   ano={obra.startYear}
                   coverImageUrl={obra.coverImageUrl}
                   avaliacao={minhaAvaliacao}
+                  social={socialDaMinha}
                 />
               )}
               {/* A média fica embaixo de onde a pessoa avalia (issue #81). */}

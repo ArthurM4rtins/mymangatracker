@@ -17,6 +17,10 @@ export type AvaliacaoDaObra = {
  * o feed, o perfil e a página da obra ordenam e exibem por esse campo, e uma
  * edição não pode trazer resenha velha de volta ao topo. `updatedAt` conta as
  * edições.
+ *
+ * Curtidas e comentários são sobre o TEXTO (#112): quando `review` passa de
+ * texto a vazio, saem na mesma transação. Senão ressurgiam colados num texto
+ * novo e diferente. Editar o texto mantém.
  */
 export async function salvarAvaliacao(dados: {
   userId: string;
@@ -37,10 +41,22 @@ export async function salvarAvaliacao(dados: {
 
   const existente = await prisma.entry.findUnique({
     where: chave,
-    select: { review: true },
+    select: { id: true, review: true },
   });
 
   const resenhaNasceu = existente !== null && existente.review === null && dados.review !== null;
+  const textoApagado = existente !== null && existente.review !== null && dados.review === null;
+
+  if (textoApagado)
+  {
+    const [, , atualizada] = await prisma.$transaction([
+      prisma.reviewLike.deleteMany({ where: { entryId: existente.id } }),
+      prisma.reviewComment.deleteMany({ where: { entryId: existente.id } }),
+      prisma.entry.update({ where: chave, data: campos, select: { id: true } }),
+    ]);
+
+    return atualizada;
+  }
 
   return prisma.entry.upsert({
     where: chave,
