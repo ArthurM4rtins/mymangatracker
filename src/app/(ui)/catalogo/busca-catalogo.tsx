@@ -30,40 +30,62 @@ export function BuscaCatalogo({ termoInicial }: { termoInicial: string })
     };
   }, []);
 
-  function aoDigitar(valor: string)
+  function cancelarDebounce()
   {
     if (temporizador.current !== null)
     {
       clearTimeout(temporizador.current);
+      temporizador.current = null;
+    }
+  }
+
+  /** Navega com o termo novo, preservando os filtros ativos (issue #37) — só o termo muda. */
+  function buscar(valor: string)
+  {
+    const limpo = valor.trim();
+    const novos = new URLSearchParams(window.location.search);
+
+    if (limpo === "")
+    {
+      novos.delete("q");
+    }
+    else
+    {
+      novos.set("q", limpo);
     }
 
-    temporizador.current = setTimeout(function ()
+    const consulta = novos.toString();
+
+    // `replace` para o histórico não virar uma pilha de termos parciais.
+    iniciarTransicao(function ()
     {
-      const limpo = valor.trim();
-      // Preserva os filtros ativos (issue #37) — só o termo muda.
-      const novos = new URLSearchParams(window.location.search);
+      roteador.replace(consulta === "" ? "/catalogo" : `/catalogo?${consulta}`);
+    });
+  }
 
-      if (limpo === "")
-      {
-        novos.delete("q");
-      }
-      else
-      {
-        novos.set("q", limpo);
-      }
+  function aoDigitar(valor: string)
+  {
+    cancelarDebounce();
+    temporizador.current = setTimeout(function () { buscar(valor); }, DEBOUNCE_MS);
+  }
 
-      const consulta = novos.toString();
-
-      // `replace` para o histórico não virar uma pilha de termos parciais.
-      iniciarTransicao(function ()
-      {
-        roteador.replace(consulta === "" ? "/catalogo" : `/catalogo?${consulta}`);
-      });
-    }, DEBOUNCE_MS);
+  // Enter: o GET nativo do form só levaria `q` e descartaria os filtros da
+  // URL (#65, item 4). Intercepta e usa o mesmo caminho do debounce.
+  function aoSubmeter(evento: React.FormEvent<HTMLFormElement>)
+  {
+    evento.preventDefault();
+    cancelarDebounce();
+    const termo = new FormData(evento.currentTarget).get("q");
+    buscar(typeof termo === "string" ? termo : "");
   }
 
   return (
-    <form action="/catalogo" method="get" className="flex items-center gap-2">
+    <form
+      action="/catalogo"
+      method="get"
+      onSubmit={aoSubmeter}
+      className="flex items-center gap-2"
+    >
       <input
         type="search"
         name="q"
