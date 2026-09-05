@@ -4,6 +4,11 @@
  * A avaliação na página da obra, no jeito Letterboxd (issue #45): estrelas
  * soltas que SALVAM no clique, e a resenha num modal aberto pelo botão
  * "Resenhar…" — com capa, título e a nota já puxada.
+ *
+ * O modal é uma edição transacional (issue #62): nota, texto e spoiler
+ * editados lá vivem num rascunho próprio e só chegam ao servidor (e às
+ * estrelas de fora) no "Salvar". Fechar descarta tudo. A estrela de fora
+ * persiste sempre a resenha JÁ SALVA, nunca um rascunho abandonado.
  */
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -14,6 +19,12 @@ type Avaliacao = {
   rating: string | null;
   review: string | null;
   containsSpoilers: boolean;
+};
+
+type Rascunho = {
+  nota: number | null;
+  resenha: string;
+  spoilers: boolean;
 };
 
 export function AvaliacaoDaObra({
@@ -34,11 +45,13 @@ export function AvaliacaoDaObra({
   const [nota, setNota] = useState<number | null>(
     avaliacao?.rating == null ? null : Number(avaliacao.rating),
   );
-  const [resenha, setResenha] = useState(avaliacao?.review ?? "");
-  const [spoilers, setSpoilers] = useState(avaliacao?.containsSpoilers ?? false);
   const [modalAberto, setModalAberto] = useState(false);
   const [ocupado, setOcupado] = useState(false);
   const [aviso, setAviso] = useState<string | null>(null);
+
+  // O que está no servidor. Vem das props: o refresh depois de salvar atualiza.
+  const resenhaSalva = avaliacao?.review ?? "";
+  const spoilersSalvos = avaliacao?.containsSpoilers ?? false;
 
   async function persistir(dados: {
     rating: number | null;
@@ -99,7 +112,11 @@ export function AvaliacaoDaObra({
     const anterior = nota;
     setNota(nova);
 
-    const salvou = await persistir({ rating: nova, review: resenha, containsSpoilers: spoilers });
+    const salvou = await persistir({
+      rating: nova,
+      review: resenhaSalva,
+      containsSpoilers: spoilersSalvos,
+    });
 
     if (!salvou)
     {
@@ -107,12 +124,17 @@ export function AvaliacaoDaObra({
     }
   }
 
-  async function salvarDoModal()
+  async function salvarDoModal(rascunho: Rascunho)
   {
-    const salvou = await persistir({ rating: nota, review: resenha, containsSpoilers: spoilers });
+    const salvou = await persistir({
+      rating: rascunho.nota,
+      review: rascunho.resenha,
+      containsSpoilers: rascunho.spoilers,
+    });
 
     if (salvou)
     {
+      setNota(rascunho.nota);
       setModalAberto(false);
     }
   }
@@ -148,14 +170,9 @@ export function AvaliacaoDaObra({
           titulo={titulo}
           ano={ano}
           coverImageUrl={coverImageUrl}
-          nota={nota}
-          resenha={resenha}
-          spoilers={spoilers}
+          inicial={{ nota, resenha: resenhaSalva, spoilers: spoilersSalvos }}
           ocupado={ocupado}
-          aoMudarNota={setNota}
-          aoMudarResenha={setResenha}
-          aoMudarSpoilers={setSpoilers}
-          aoSalvar={function () { void salvarDoModal(); }}
+          aoSalvar={function (rascunho) { void salvarDoModal(rascunho); }}
           aoFechar={function () { setModalAberto(false); }}
         />
       )}
@@ -167,30 +184,25 @@ function ModalDeResenha({
   titulo,
   ano,
   coverImageUrl,
-  nota,
-  resenha,
-  spoilers,
+  inicial,
   ocupado,
-  aoMudarNota,
-  aoMudarResenha,
-  aoMudarSpoilers,
   aoSalvar,
   aoFechar,
 }: {
   titulo: string;
   ano: number | null;
   coverImageUrl: string | null;
-  nota: number | null;
-  resenha: string;
-  spoilers: boolean;
+  inicial: Rascunho;
   ocupado: boolean;
-  aoMudarNota: (nota: number | null) => void;
-  aoMudarResenha: (texto: string) => void;
-  aoMudarSpoilers: (valor: boolean) => void;
-  aoSalvar: () => void;
+  aoSalvar: (rascunho: Rascunho) => void;
   aoFechar: () => void;
 })
 {
+  // Rascunho local: nasce do que está salvo quando o modal abre e morre com ele.
+  const [nota, setNota] = useState<number | null>(inicial.nota);
+  const [resenha, setResenha] = useState(inicial.resenha);
+  const [spoilers, setSpoilers] = useState(inicial.spoilers);
+
   useEffect(function ()
   {
     function aoTeclar(evento: KeyboardEvent)
@@ -242,7 +254,7 @@ function ModalDeResenha({
                   <span className="ml-2 font-normal text-texto-suave">{ano}</span>
                 )}
               </p>
-              <SeletorDeEstrelas nota={nota} aoEscolher={aoMudarNota} />
+              <SeletorDeEstrelas nota={nota} aoEscolher={setNota} />
             </div>
           </div>
 
@@ -258,7 +270,7 @@ function ModalDeResenha({
 
         <textarea
           value={resenha}
-          onChange={function (evento) { aoMudarResenha(evento.target.value); }}
+          onChange={function (evento) { setResenha(evento.target.value); }}
           placeholder="Escreva a resenha — ela fica pública para outros leitores"
           rows={6}
           autoFocus
@@ -270,14 +282,14 @@ function ModalDeResenha({
             <input
               type="checkbox"
               checked={spoilers}
-              onChange={function (evento) { aoMudarSpoilers(evento.target.checked); }}
+              onChange={function (evento) { setSpoilers(evento.target.checked); }}
             />
             contém spoiler
           </label>
 
           <button
             type="button"
-            onClick={aoSalvar}
+            onClick={function () { aoSalvar({ nota, resenha, spoilers }); }}
             disabled={ocupado}
             className="rounded-md bg-acento px-4 py-1.5 text-sm font-medium text-acento-contraste disabled:opacity-60"
           >
