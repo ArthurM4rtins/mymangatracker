@@ -23,6 +23,30 @@ export function progrideEstante(atual: number | null, aberto: number): boolean
   return aberto > (atual ?? 0);
 }
 
+/**
+ * O progresso atual da obra quando a estante foi editada à mão (#31) e o
+ * histórico de aberturas diz outra coisa (#61): vale o MAIOR dos dois. Nenhum
+ * dos lados regride o outro — marcar 100 à mão sem nunca ter aberto nada
+ * continua sendo 100, e abrir o 58 depois de marcar 50 continua sendo 58.
+ */
+export function progressoAtual(
+  marcadoNaEstante: number | null,
+  maiorAberto: number | null,
+): number | null
+{
+  if (marcadoNaEstante === null)
+  {
+    return maiorAberto;
+  }
+
+  if (maiorAberto === null)
+  {
+    return marcadoNaEstante;
+  }
+
+  return Math.max(marcadoNaEstante, maiorAberto);
+}
+
 const MARCADOR = "{chapter}";
 
 /**

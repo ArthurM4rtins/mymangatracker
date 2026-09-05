@@ -15,6 +15,8 @@ function fakeDeps(cenario: {
   entrada?: { mediaId: string } | null;
   fonte?: typeof FONTE | null;
   maior?: number | null;
+  /** O capítulo marcado à mão na estante (#31); ausente = nunca editado. */
+  progressChapter?: string;
 })
 {
   const buscarEntrada = vi.fn(async function ()
@@ -22,7 +24,11 @@ function fakeDeps(cenario: {
     const entrada = cenario.entrada === undefined ? { mediaId: "m1" } : cenario.entrada;
     return entrada === null
       ? null
-      : { entradaId: "e1", mediaId: entrada.mediaId, progressChapter: null };
+      : {
+          entradaId: "e1",
+          mediaId: entrada.mediaId,
+          progressChapter: cenario.progressChapter ?? null,
+        };
   });
   const buscarFonte = vi.fn(async function ()
   {
@@ -179,5 +185,72 @@ describe("abrirCapitulo", function ()
     expect(resultado).toEqual({ estado: "capitulo_invalido" });
     expect(registrarComProgresso).not.toHaveBeenCalled();
     expect(registrarReleitura).not.toHaveBeenCalled();
+  });
+
+  // Issue #61: o capítulo marcado à mão na estante conta como progresso. O
+  // card promete "Continuar cap. 101" a partir dele — o clique tem que abrir
+  // o 101, e nunca regredir a estante para o que o histórico diz.
+  describe("estante editada à mão", function ()
+  {
+    it("sem histórico, abre o seguinte ao marcado e não regride", async function ()
+    {
+      const { deps, registrarComProgresso } = fakeDeps({ maior: null, progressChapter: "100" });
+
+      const resultado = await abrirCapitulo({ userId: "u1", entradaId: "e1" }, deps);
+
+      expect(resultado).toEqual({
+        estado: "ok",
+        capitulo: 101,
+        progresso: 101,
+        url: "https://mangalivre.blog/title/Lookism/chapter/101/1",
+      });
+      expect(registrarComProgresso).toHaveBeenCalledWith(
+        expect.objectContaining({ chapter: 101, novoProgresso: 101 }),
+      );
+    });
+
+    it("histórico menor que o marcado à mão não manda", async function ()
+    {
+      const { deps } = fakeDeps({ maior: 50, progressChapter: "100" });
+
+      const resultado = await abrirCapitulo({ userId: "u1", entradaId: "e1" }, deps);
+
+      expect(resultado).toMatchObject({ estado: "ok", capitulo: 101, progresso: 101 });
+    });
+
+    it("histórico maior que o marcado à mão continua mandando", async function ()
+    {
+      const { deps } = fakeDeps({ maior: 100, progressChapter: "50" });
+
+      const resultado = await abrirCapitulo({ userId: "u1", entradaId: "e1" }, deps);
+
+      expect(resultado).toMatchObject({ estado: "ok", capitulo: 101, progresso: 101 });
+    });
+
+    it("marcado 57.5 à mão abre o 58", async function ()
+    {
+      const { deps } = fakeDeps({ maior: null, progressChapter: "57.5" });
+
+      const resultado = await abrirCapitulo({ userId: "u1", entradaId: "e1" }, deps);
+
+      expect(resultado).toMatchObject({ estado: "ok", capitulo: 58, progresso: 58 });
+    });
+
+    it("releitura abaixo do marcado à mão vira histórico sem regredir", async function ()
+    {
+      const { deps, registrarComProgresso, registrarReleitura } = fakeDeps({
+        maior: null,
+        progressChapter: "100",
+      });
+
+      const resultado = await abrirCapitulo(
+        { userId: "u1", entradaId: "e1", capitulo: 3 },
+        deps,
+      );
+
+      expect(resultado).toMatchObject({ estado: "ok", capitulo: 3, progresso: 100 });
+      expect(registrarReleitura).toHaveBeenCalledOnce();
+      expect(registrarComProgresso).not.toHaveBeenCalled();
+    });
   });
 });

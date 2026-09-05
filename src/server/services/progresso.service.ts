@@ -7,6 +7,7 @@
  * domínio); releitura vira histórico e nada mais.
  */
 import {
+  progressoAtual,
   progrideEstante,
   proximoCapitulo,
   tipoDaFonte,
@@ -80,8 +81,13 @@ export async function abrirCapitulo(
     return { estado: "sem_fonte" };
   }
 
+  // O progresso vale o maior entre o capítulo marcado à mão na estante e o
+  // maior aberto no histórico (#61) — a tela promete "Continuar cap. N+1" a
+  // partir do marcado, e o clique tem que cumprir sem regredir a estante.
   const maior = await deps.maiorCapitulo(pedido.userId, entrada.mediaId);
-  const capitulo = pedido.capitulo ?? proximoCapitulo(maior);
+  const marcado = entrada.progressChapter === null ? null : Number(entrada.progressChapter);
+  const atual = progressoAtual(marcado, maior);
+  const capitulo = pedido.capitulo ?? proximoCapitulo(atual);
 
   if (!Number.isFinite(capitulo) || capitulo <= 0)
   {
@@ -111,7 +117,7 @@ export async function abrirCapitulo(
     resolvedUrl: url,
   };
 
-  if (progrideEstante(maior, capitulo))
+  if (progrideEstante(atual, capitulo))
   {
     await deps.registrarComProgresso({ ...registro, novoProgresso: capitulo });
 
@@ -120,7 +126,7 @@ export async function abrirCapitulo(
 
   await deps.registrarReleitura(registro);
 
-  return { estado: "ok", url, capitulo, progresso: maior ?? capitulo };
+  return { estado: "ok", url, capitulo, progresso: atual ?? capitulo };
 }
 
 /** A composição de produção. */
