@@ -9,6 +9,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { ErroCampoDuplicado } from "@/server/domain/erros";
 import { cadastrarUsuarioNoSistema } from "@/server/services/cadastro.service";
+import { limitarCadastro } from "@/server/services/limite.service";
+import { ipDoPedido } from "../_shared/ip";
 
 export const dynamic = "force-dynamic";
 
@@ -52,6 +54,17 @@ export async function POST(request: Request)
 
   try
   {
+    // Cadastro em massa (#108) e enumeração de e-mail por 409 (#113) param aqui.
+    const limite = await limitarCadastro({ ip: ipDoPedido(request) });
+
+    if (limite.bloqueado)
+    {
+      return NextResponse.json(
+        { erros: { _geral: "muitas tentativas — aguarde para tentar de novo" } },
+        { status: 429, headers: { "Retry-After": String(limite.esperarSegundos) } },
+      );
+    }
+
     const usuario = await cadastrarUsuarioNoSistema(analise.data);
     return NextResponse.json({ usuario }, { status: 201 });
   }
