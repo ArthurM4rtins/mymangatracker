@@ -23,8 +23,9 @@ export function RemoverDaLista({
 
     try
     {
+      // DELETE, não o toggle: numa página desatualizada o toggle ADICIONAVA (#65, item 9).
       await fetch(`/api/v1/listas/${listaId}/itens`, {
-        method: "POST",
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ anilistId }),
       });
