@@ -3,6 +3,7 @@ import { ErroCampoDuplicado } from "@/server/domain/erros";
 import {
   buscarCredenciaisPorEmail,
   buscarUsuarioPorId,
+  buscarUsuarioPorUsername,
   criarUsuario,
 } from "@/server/repositories/usuario.repository";
 import { limparBanco } from "./apoio";
@@ -13,6 +14,7 @@ import { limparBanco } from "./apoio";
 
 const NOVO = {
   username: "rankine",
+  usernameNormalizado: "rankine",
   email: "rankine@exemplo.test",
   passwordHash: "scrypt$16384$8$1$saltsalt$hashhash",
 };
@@ -51,6 +53,28 @@ describe("criarUsuario", function ()
     await expect(
       criarUsuario({ ...NOVO, email: "outro@exemplo.test" }),
     ).rejects.toMatchObject({ campo: "username" });
+  });
+});
+
+// #114: identidade do username é a forma normalizada.
+describe("username sem distinção de caixa", function ()
+{
+  it("username em caixa diferente é duplicado", async function ()
+  {
+    await criarUsuario({ ...NOVO, username: "Leitor", usernameNormalizado: "leitor", email: "a@x.test" });
+
+    await expect(
+      criarUsuario({ ...NOVO, username: "LEITOR", usernameNormalizado: "leitor", email: "b@x.test" }),
+    ).rejects.toMatchObject({ campo: "username" });
+  });
+
+  it("perfil e foto resolvem o username em qualquer caixa, exibindo o digitado", async function ()
+  {
+    await criarUsuario({ ...NOVO, username: "Leitor", usernameNormalizado: "leitor", email: "a@x.test" });
+
+    const perfil = await buscarUsuarioPorUsername("leitor");
+    expect(perfil?.username).toBe("Leitor");
+    expect(await buscarUsuarioPorUsername("LEITOR")).not.toBeNull();
   });
 });
 

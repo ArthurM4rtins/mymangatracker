@@ -27,6 +27,7 @@ export async function semearUsuario(username: string)
   return getPrisma().user.create({
     data: {
       username,
+      usernameNormalizado: username.toLowerCase(),
       email: `${username}@exemplo.test`,
       passwordHash: "hash-de-teste",
     },

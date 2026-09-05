@@ -43,6 +43,9 @@ enum ShelfStatus {
 model User {
   id           String   @id @default(cuid())
   username     String   @unique
+  // A identidade do username (#114): minúsculas, sem espaços nas pontas.
+  // `username` fica como digitado, só para exibição. Backfill na migration.
+  usernameNormalizado String @unique
   email        String   @unique
   passwordHash String
   role         Role     @default(USER)
