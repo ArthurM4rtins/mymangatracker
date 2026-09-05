@@ -6,6 +6,10 @@ import {
   removerAvaliacao,
   salvarAvaliacao,
 } from "@/server/repositories/avaliacao.repository";
+import {
+  alternarCurtida,
+  comentarNaReview,
+} from "@/server/repositories/review-social.repository";
 import { limparBanco, semearUsuario } from "./apoio";
 
 // As regras de banco da issue #33: uma avaliação por (userId, mediaId) —
@@ -132,6 +136,56 @@ describe("salvarAvaliacao", function ()
       await salvarAvaliacao({ ...base, rating: 5, review: "novo texto" });
 
       expect((await reviewedAtDe(id)).getTime()).toBeGreaterThan(ANTIGO.getTime());
+    });
+  });
+
+  // #112: curtida e comentario sao sobre o TEXTO da resenha. Apagar o texto
+  // (mantendo a nota) leva o social junto; senao ele ressurgia colado num
+  // texto novo e diferente. Editar o texto mantem.
+  describe("social morre com o texto", function ()
+  {
+    async function contarSocial(entryId: string)
+    {
+      const prisma = getPrisma();
+      return {
+        curtidas: await prisma.reviewLike.count({ where: { entryId } }),
+        comentarios: await prisma.reviewComment.count({ where: { entryId } }),
+      };
+    }
+
+    it("apagar o texto apaga curtidas e comentarios, e a nota fica", async function ()
+    {
+      const dono = await semearUsuario("dono");
+      const leitor = await semearUsuario("leitor");
+      const media = await salvarMediaDoAniList(OBRA, new Date());
+      const base = { userId: dono.id, mediaId: media.id, containsSpoilers: false };
+
+      const { id } = await salvarAvaliacao({ ...base, rating: 5, review: "texto" });
+      await alternarCurtida(id, leitor.id);
+      await comentarNaReview(id, leitor.id, "concordo");
+      expect(await contarSocial(id)).toEqual({ curtidas: 1, comentarios: 1 });
+
+      await salvarAvaliacao({ ...base, rating: 5, review: null });
+
+      expect(await contarSocial(id)).toEqual({ curtidas: 0, comentarios: 0 });
+      const [avaliacao] = await listarAvaliacoes(dono.id);
+      expect(avaliacao).toMatchObject({ rating: "5", review: null });
+    });
+
+    it("editar o texto mantem curtidas e comentarios", async function ()
+    {
+      const dono = await semearUsuario("dono");
+      const leitor = await semearUsuario("leitor");
+      const media = await salvarMediaDoAniList(OBRA, new Date());
+      const base = { userId: dono.id, mediaId: media.id, containsSpoilers: false };
+
+      const { id } = await salvarAvaliacao({ ...base, rating: 5, review: "texto" });
+      await alternarCurtida(id, leitor.id);
+      await comentarNaReview(id, leitor.id, "concordo");
+
+      await salvarAvaliacao({ ...base, rating: 4, review: "texto corrigido" });
+
+      expect(await contarSocial(id)).toEqual({ curtidas: 1, comentarios: 1 });
     });
   });
 
