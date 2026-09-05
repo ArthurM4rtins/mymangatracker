@@ -33,9 +33,12 @@ Definir a marca do site: nome, logo, paleta de cores e tipografia, e aplicar no 
   - `matcha` — meio-termo real: verde-oliva dim (fundo `#343a2f`), não outro tema claro.
     Correção de 31/08: a primeira versão era papel-claro e ficava igual ao sumi na tela.
   - Sem escolha salva, segue o sistema: claro → sumi, escuro → noturno.
-- **Seletor de tema: controle segmentado com texto** (Sumi · Noturno · Matcha), pill no acento
-  pro ativo. Correção de 31/08: as três bolinhas coloridas lembravam o logo do Letterboxd —
-  regra registrada em `tasks/lessons.md`: não ecoar a estética do Letterboxd.
+- **Seletor de tema: três bolinhas-swatch de duas metades** (fundo à esquerda, acento à direita,
+  cores do PRÓPRIO tema), anel no acento pro ativo. Histórico em duas decisões: em 31/08 as
+  bolinhas sólidas viraram controle segmentado com texto porque lembravam o logo do Letterboxd
+  (regra em `tasks/lessons.md`: não ecoar a estética deles); em 01/09, por pedido do usuário, a
+  bolinha voltou como swatch funcional — o que está em `seletor-tema.tsx`. A regra continua
+  valendo para cores/arranjo que imitem o logo do Letterboxd.
 - **Tipografia:** Zen Kaku Gothic New (marca, `--font-marca`) + Instrument Sans (UI, `--font-ui`),
   via `next/font/google`.
 
