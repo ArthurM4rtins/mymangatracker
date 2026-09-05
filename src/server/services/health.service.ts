@@ -17,6 +17,8 @@ export type Sonda = () => Promise<"ok" | "not_configured">;
 export type DependenciasDoHealth = {
   database: Sonda;
   anilist: Sonda;
+  /** Só configuração: `ok` ou `not_configured`, nunca mede nada. */
+  sessionSecret: Sonda;
   relogio?: () => Date;
   timeoutMs?: number;
 };
@@ -41,6 +43,7 @@ export async function verificarSaude(
   const dependencies = await Promise.all([
     medir("database", deps.database, timeoutMs),
     medir("anilist", deps.anilist, timeoutMs),
+    medir("session_secret", deps.sessionSecret, timeoutMs),
   ]);
 
   return {
