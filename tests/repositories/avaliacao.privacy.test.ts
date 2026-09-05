@@ -55,6 +55,86 @@ describe("salvarAvaliacao", function ()
     });
   });
 
+  // #111: as tres superficies publicas ordenam e exibem a resenha por
+  // reviewedAt. Resenha escrita depois da nota ficava com a data da NOTA e
+  // afundava no feed. reviewedAt avanca quando o texto NASCE; editar so a
+  // nota, ou editar o texto, nao mexe.
+  describe("reviewedAt", function ()
+  {
+    const ANTIGO = new Date("2026-01-05T12:00:00.000Z");
+
+    async function retroagir(entryId: string)
+    {
+      await getPrisma().entry.update({ where: { id: entryId }, data: { reviewedAt: ANTIGO } });
+    }
+
+    async function reviewedAtDe(entryId: string)
+    {
+      const linha = await getPrisma().entry.findUniqueOrThrow({
+        where: { id: entryId },
+        select: { reviewedAt: true },
+      });
+      return linha.reviewedAt;
+    }
+
+    it("avanca quando a resenha nasce depois da nota", async function ()
+    {
+      const usuario = await semearUsuario("rankine");
+      const media = await salvarMediaDoAniList(OBRA, new Date());
+      const base = { userId: usuario.id, mediaId: media.id, containsSpoilers: false };
+
+      const { id } = await salvarAvaliacao({ ...base, rating: 5, review: null });
+      await retroagir(id);
+
+      await salvarAvaliacao({ ...base, rating: 5, review: "escrita hoje" });
+
+      expect((await reviewedAtDe(id)).getTime()).toBeGreaterThan(ANTIGO.getTime());
+    });
+
+    it("nao mexe quando so a nota muda", async function ()
+    {
+      const usuario = await semearUsuario("rankine");
+      const media = await salvarMediaDoAniList(OBRA, new Date());
+      const base = { userId: usuario.id, mediaId: media.id, containsSpoilers: false };
+
+      const { id } = await salvarAvaliacao({ ...base, rating: 5, review: "texto" });
+      await retroagir(id);
+
+      await salvarAvaliacao({ ...base, rating: 3, review: "texto" });
+
+      expect(await reviewedAtDe(id)).toEqual(ANTIGO);
+    });
+
+    it("nao mexe quando o texto e editado — so quando nasce", async function ()
+    {
+      const usuario = await semearUsuario("rankine");
+      const media = await salvarMediaDoAniList(OBRA, new Date());
+      const base = { userId: usuario.id, mediaId: media.id, containsSpoilers: false };
+
+      const { id } = await salvarAvaliacao({ ...base, rating: 5, review: "texto" });
+      await retroagir(id);
+
+      await salvarAvaliacao({ ...base, rating: 5, review: "texto corrigido" });
+
+      expect(await reviewedAtDe(id)).toEqual(ANTIGO);
+    });
+
+    it("apagar o texto e escrever de novo conta como nascer de novo", async function ()
+    {
+      const usuario = await semearUsuario("rankine");
+      const media = await salvarMediaDoAniList(OBRA, new Date());
+      const base = { userId: usuario.id, mediaId: media.id, containsSpoilers: false };
+
+      const { id } = await salvarAvaliacao({ ...base, rating: 5, review: "texto" });
+      await salvarAvaliacao({ ...base, rating: 5, review: null });
+      await retroagir(id);
+
+      await salvarAvaliacao({ ...base, rating: 5, review: "novo texto" });
+
+      expect((await reviewedAtDe(id)).getTime()).toBeGreaterThan(ANTIGO.getTime());
+    });
+  });
+
   it("o CHECK do banco recusa nota fora da meia estrela", async function ()
   {
     const usuario = await semearUsuario("rankine");

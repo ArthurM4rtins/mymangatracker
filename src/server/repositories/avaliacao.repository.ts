@@ -11,7 +11,12 @@ export type AvaliacaoDaObra = {
 
 /**
  * Upsert por (userId, mediaId) — avaliar de novo edita, nunca duplica.
- * `reviewedAt` fica o da primeira avaliação; `updatedAt` conta as edições.
+ *
+ * `reviewedAt` é a data em que a RESENHA nasceu (#111): avança quando `review`
+ * passa de vazio a texto, e só aí. Mudar a nota ou editar o texto não mexe —
+ * o feed, o perfil e a página da obra ordenam e exibem por esse campo, e uma
+ * edição não pode trazer resenha velha de volta ao topo. `updatedAt` conta as
+ * edições.
  */
 export async function salvarAvaliacao(dados: {
   userId: string;
@@ -21,18 +26,26 @@ export async function salvarAvaliacao(dados: {
   containsSpoilers: boolean;
 }): Promise<{ id: string }>
 {
+  const prisma = getPrisma();
+  const chave = { userId_mediaId: { userId: dados.userId, mediaId: dados.mediaId } };
+
   const campos = {
     rating: dados.rating,
     review: dados.review,
     containsSpoilers: dados.containsSpoilers,
   };
 
-  return getPrisma().entry.upsert({
-    where: {
-      userId_mediaId: { userId: dados.userId, mediaId: dados.mediaId },
-    },
+  const existente = await prisma.entry.findUnique({
+    where: chave,
+    select: { review: true },
+  });
+
+  const resenhaNasceu = existente !== null && existente.review === null && dados.review !== null;
+
+  return prisma.entry.upsert({
+    where: chave,
     create: { userId: dados.userId, mediaId: dados.mediaId, ...campos },
-    update: campos,
+    update: resenhaNasceu ? { ...campos, reviewedAt: new Date() } : campos,
     select: { id: true },
   });
 }
