@@ -44,10 +44,15 @@ function fakeDeps(cenario: {
   similaresFora?: boolean;
   notasFora?: boolean;
   historicoFora?: boolean;
+  bancoFora?: boolean;
 })
 {
   const buscarCompleta = vi.fn(async function ()
   {
+    if (cenario.bancoFora)
+    {
+      throw new Error("DATABASE_URL ausente");
+    }
     return cenario.noCache ?? null;
   });
   const buscarNoAniList = vi.fn(async function ()
@@ -272,6 +277,18 @@ describe("obraParaPagina", function ()
     await expect(obraParaPagina(30656, null, deps)).resolves.toEqual({
       estado: "indisponivel",
     });
+  });
+
+  // Issue #63: banco fora (primeiro deploy sem Neon, ou Neon caído) tem que
+  // degradar como as outras páginas, não estourar 500.
+  it("banco fora é indisponivel, sem nem ir ao AniList", async function ()
+  {
+    const { deps, buscarNoAniList } = fakeDeps({ bancoFora: true });
+
+    await expect(obraParaPagina(30656, null, deps)).resolves.toEqual({
+      estado: "indisponivel",
+    });
+    expect(buscarNoAniList).not.toHaveBeenCalled();
   });
 
   it("similares falhando somem sem derrubar a página", async function ()
