@@ -252,9 +252,13 @@ no fim; resolver mantendo os dois lados em ordem cronologica.
 o `merge` nao dependia do resultado do `checks`. Codigo com teste vermelho no CI
 entrou na main (#124).
 
-**Regra:** `gh pr checks <ref> --watch` tem exit code != 0 quando algum check
-falha. O merge SEMPRE vem atras de `&&` desse comando, ou de um `if` explicito.
-Nunca `checks; merge`. E ler a saida antes de dizer "mergeado".
+**Regra:** o merge so roda depois de ler o estado do JOB "lint, testes e
+build", nao do conjunto: o check "Vercel" (preview) falha em todo PR, entao o
+exit code de `gh pr checks` e sempre != 0 e nao serve de portao. Forma que
+funciona: laco em `gh pr checks <ref> --json name,state`, esperar o job sair
+de PENDING, mergear so em SUCCESS. Logo apos o push o job ainda nao existe
+("no checks reported") — esperar, nao tratar como vermelho. Nunca
+`checks; merge`.
 
 ## Ordenar por `createdAt` sozinho e flaky (05/09)
 
