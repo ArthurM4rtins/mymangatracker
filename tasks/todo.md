@@ -816,3 +816,18 @@ Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
   persistiu; texto apagado no modal + fechar + "limpar" fora -> nota null,
   resenha salva sobreviveu (era o ramo DELETE destrutivo da #62).
 - Pendente: commit + PR; fechar #62 depois de aprovado.
+
+## Sessao 05/09 — continuacao: #67 (doc do seletor) e #61 (progresso manual)
+
+- #67: uma linha em identidade-visual/CLAUDE.md, agora com as duas decisoes
+  (31/08 segmentado, 01/09 swatch). PR #93 mergeado.
+- #61 (TDD): dominio progressoAtual(marcado, maiorAberto) = maior dos dois,
+  null so quando ambos null. abrirCapitulo usa esse valor em proximoCapitulo e
+  progrideEstante (antes so olhava maiorCapitulo e ignorava progressChapter
+  que ja carregava). Fake do teste do servico ganhou progressChapter — era o
+  gap que deixou passar. Desenho no vault (feature-progresso-leitura) corrigido:
+  "nunca divergem" virou "podem divergir, vale o maior".
+- Provas: 8 testes novos vermelhos antes, 363 verdes depois; lint 0; tsc 0.
+- ATENCAO: feature/extensao-navegador (12 commits, sem PR) tambem mexe em
+  progresso.service.ts (promover para Lendo). Vai conflitar no rebase — a
+  resolucao e manter `atual` no lugar de `maior`.
