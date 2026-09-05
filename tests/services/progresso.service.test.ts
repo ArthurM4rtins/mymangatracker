@@ -187,6 +187,20 @@ describe("abrirCapitulo", function ()
     expect(registrarReleitura).not.toHaveBeenCalled();
   });
 
+  it("capítulo com mais de duas casas é recusado sem tocar o banco", async function ()
+  {
+    const { deps, registrarComProgresso, registrarReleitura } = fakeDeps({});
+
+    const resultado = await abrirCapitulo(
+      { userId: "u1", entradaId: "e1", capitulo: 57.555 },
+      deps,
+    );
+
+    expect(resultado).toEqual({ estado: "capitulo_invalido" });
+    expect(registrarComProgresso).not.toHaveBeenCalled();
+    expect(registrarReleitura).not.toHaveBeenCalled();
+  });
+
   // Issue #61: o capítulo marcado à mão na estante conta como progresso. O
   // card promete "Continuar cap. 101" a partir dele — o clique tem que abrir
   // o 101, e nunca regredir a estante para o que o histórico diz.
