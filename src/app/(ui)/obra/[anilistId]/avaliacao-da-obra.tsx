@@ -109,6 +109,12 @@ export function AvaliacaoDaObra({
 
   async function mudarNota(nova: number | null)
   {
+    // Um POST por vez: dois cliques em voo iam ao mesmo upsert sem ordem garantida.
+    if (ocupado)
+    {
+      return;
+    }
+
     const anterior = nota;
     setNota(nova);
 

@@ -160,6 +160,8 @@ function mapearAutores(staff: unknown): AutorDaObra[]
   }
 
   const autores: AutorDaObra[] = [];
+  // Mesmo autor em dois papéis (história e arte) entra uma vez, com o primeiro.
+  const vistos = new Set<number>();
 
   staff.edges.forEach(function (edge)
   {
@@ -178,8 +180,9 @@ function mapearAutores(staff: unknown): AutorDaObra[]
     const id = edge.node.id;
     const nome = ehObjeto(edge.node.name) ? edge.node.name.full : undefined;
 
-    if (typeof id === "number" && typeof nome === "string")
+    if (typeof id === "number" && typeof nome === "string" && !vistos.has(id))
     {
+      vistos.add(id);
       autores.push({ anilistStaffId: id, nome, papel });
     }
   });

@@ -160,9 +160,9 @@ async function dadosDeLeitura(userId: string): Promise<DadosDeLeitura | null>
 {
   try
   {
-    const [perfil, lendo] = await Promise.all([
+    const [perfil, estante] = await Promise.all([
       perfilDoUsuarioDoSistema(userId),
-      listarEstanteDoSistema({ userId, status: "READING" }),
+      listarEstanteDoSistema({ userId }),
     ]);
 
     if (perfil === null)
@@ -170,12 +170,16 @@ async function dadosDeLeitura(userId: string): Promise<DadosDeLeitura | null>
       return null;
     }
 
+    // "Estante vazia" olha a estante inteira, não só o que está em leitura
+    // (#65, item 1): quem tem 12 obras planejadas não é mandado adicionar a primeira.
+    const lendo = estante.filter(function (entrada) { return entrada.status === "READING"; });
+
     return {
       username: perfil.username,
       continuar: lendo
         .filter(function (entrada) { return entrada.fonte !== null; })
         .slice(0, LIMITE_CONTINUAR),
-      temEstante: lendo.length > 0,
+      temEstante: estante.length > 0,
     };
   }
   catch
@@ -208,7 +212,8 @@ function BoasVindas({ leitura }: { leitura: DadosDeLeitura })
         <p className="text-texto-suave">
           {leitura.temEstante ? (
             <>
-              Configure a fonte de leitura na{" "}
+              Nada em leitura com fonte configurada agora — marque uma obra como Lendo e
+              configure a fonte na{" "}
               <Link href="/estante" className="text-acento underline underline-offset-4">
                 estante
               </Link>{" "}

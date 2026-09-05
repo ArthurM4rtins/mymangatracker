@@ -182,6 +182,25 @@ describe("mapearMedia — campos da página da obra", () =>
     ]);
   });
 
+  // #65, item 12: o mesmo autor em dois papéis virava duas entradas com a
+  // mesma key na tela. Fica o primeiro papel.
+  it("autor repetido em dois papéis entra uma vez, com o primeiro papel", () =>
+  {
+    const media = mapearMedia({
+      ...VAGABOND_COMPLETO,
+      staff: {
+        edges: [
+          { role: "Story", node: { id: 96879, name: { full: "Takehiko Inoue" } } },
+          { role: "Art", node: { id: 96879, name: { full: "Takehiko Inoue" } } },
+        ],
+      },
+    });
+
+    expect(media?.autores).toEqual([
+      { anilistStaffId: 96879, nome: "Takehiko Inoue", papel: "Story" },
+    ]);
+  });
+
   it("sem os campos novos, nada é inventado", () =>
   {
     const media = mapearMedia(LOOKISM);
