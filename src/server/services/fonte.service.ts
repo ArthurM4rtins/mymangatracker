@@ -51,14 +51,17 @@ export function candidatosDeFonte(urlDoCapitulo1: string): ResultadoDeCandidatos
     });
 
     const url = new URL(urlDoCapitulo1);
+    // A query entra: há site que identifica a obra nela (#65, item 2). O hash
+    // não — é posição dentro da página, não identidade.
+    const caminho = url.pathname + url.search;
 
     return {
       estado: "ok",
       candidatos,
       paginaDaObra: {
         sourceHost: url.host,
-        urlTemplate: url.pathname,
-        urlExemplo: urlDaPagina(url.host, url.pathname),
+        urlTemplate: caminho,
+        urlExemplo: urlDaPagina(url.host, caminho),
       },
     };
   }

@@ -101,6 +101,32 @@ export async function alternarObraNaLista(
   return { estado: "ok", contem: false };
 }
 
+/**
+ * Remover é um verbo próprio, idempotente na intenção: numa página
+ * desatualizada, "remover" nunca pode virar "adicionar" (#65, item 9).
+ * `nao_encontrada` cobre lista alheia/inexistente e obra que já não estava.
+ */
+export async function removerObraDaLista(
+  pedido: { userId: string; listaId: string; anilistId: number },
+  deps: Pick<DependenciasDeToggle, "buscarMedia" | "remover">,
+): Promise<
+  | { estado: "ok" }
+  | { estado: "nao_encontrada" }
+  | { estado: "obra_desconhecida" }
+>
+{
+  const media = await deps.buscarMedia(pedido.anilistId);
+
+  if (media === null)
+  {
+    return { estado: "obra_desconhecida" };
+  }
+
+  const removido = await deps.remover(pedido.userId, pedido.listaId, media.id);
+
+  return removido === null ? { estado: "nao_encontrada" } : { estado: "ok" };
+}
+
 /** A composição de produção. */
 export function criarListaDoSistema(pedido: {
   userId: string;
@@ -121,6 +147,19 @@ export function alternarObraNaListaDoSistema(pedido: {
   return alternarObraNaLista(pedido, {
     buscarMedia: buscarMediaPorAnilistId,
     adicionar: adicionarItem,
+    remover: removerItem,
+  });
+}
+
+/** A composição de produção. */
+export function removerObraDaListaDoSistema(pedido: {
+  userId: string;
+  listaId: string;
+  anilistId: number;
+})
+{
+  return removerObraDaLista(pedido, {
+    buscarMedia: buscarMediaPorAnilistId,
     remover: removerItem,
   });
 }
