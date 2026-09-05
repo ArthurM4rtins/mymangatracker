@@ -1,5 +1,5 @@
 /**
- * GET  /api/v1/reviews/:entryId/comentarios?antesDe=<ISO> — página anterior da conversa.
+ * GET  /api/v1/reviews/:entryId/comentarios?antesDe=<id do comentário> — página anterior da conversa.
  * POST /api/v1/reviews/:entryId/comentarios — comentar na resenha.
  */
 import { NextResponse } from "next/server";
@@ -101,7 +101,9 @@ export async function POST(
 }
 
 const ESQUEMA_DA_PAGINA = z.object({
-  antesDe: z.iso.datetime(),
+  // Cursor: o id do comentário mais antigo já carregado. Id, não data — data
+  // tem milissegundo e empata.
+  antesDe: z.string().min(1).max(64),
 });
 
 export async function GET(
@@ -116,7 +118,7 @@ export async function GET(
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "informe antesDe em ISO 8601" } },
+      { erros: { _geral: "informe antesDe com o id do comentário" } },
       { status: 400 },
     );
   }
@@ -129,7 +131,7 @@ export async function GET(
   {
     const comentarios = await comentariosAnterioresDaReviewDoSistema({
       entryId,
-      antesDe: new Date(analise.data.antesDe),
+      antesDoId: analise.data.antesDe,
       userId,
     });
 

@@ -871,3 +871,30 @@ Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
 - Heredoc do bash com script Python grande quebra no parser da ferramenta;
   escrever o script em arquivo no scratchpad e rodar.
 - Testes: 376 unitarios, 76 test:db.
+
+
+## Sessao 05/09 — continuacao: i18n desenhada, 8 decisoes da auditoria resolvidas
+
+- #116 i18n: desenho em Obsidian/02. Implementacoes/feature-i18n/CLAUDE.md,
+  APROVADO (D1 fallback en, D2 prefixo sempre, D3 next-intl 4.14, D4 messages
+  por tela, D5 erros por codigo, D6 formatos, D7 titulo, D8 lint em duas
+  regras, D9 extensao). Proximo: branch feature/i18n-infra (fase 1).
+- Decisoes da auditoria, todas fechadas: #110 manter ordem migrate->build
+  (registrado); #115 README em data/story-structures; #111 reviewedAt avanca
+  quando a resenha nasce (repositorio, TDD); #112 apagar texto leva
+  curtidas/comentarios na transacao + confirm na tela; #108 AuthAttempt +
+  limite.service (login 5/15min por ip+email, 30/h por ip; cadastro 5/h por
+  ip; 429 + Retry-After; provado ao vivo); #113 fechada pela mitigacao do
+  #108; #109 comentarios: 20 por resenha + total + GET paginado por cursor de
+  id + teto 30/h por usuario; #114 User.usernameNormalizado unico com
+  backfill, perfil/foto resolvem em qualquer caixa.
+- ERRO MEU: mergeei #124 (#114) com o CI vermelho — encadeei checks e merge
+  sem condicionar. O vermelho era teste flaky da #109 (ordem por createdAt no
+  mesmo ms). Hotfix: desempate por id + cursor por id. Licao em lessons.md.
+- Migration username_normalizado tem timestamp local (1415) e ordena antes
+  das de UTC (1525, 1701). Inofensivo; nao renomear (mexeria em
+  _prisma_migrations dos bancos locais).
+- ANTES DO PROXIMO DEPLOY conferir no Neon: SELECT lower(username), count(*)
+  FROM "User" GROUP BY 1 HAVING count(*) > 1; — colisao faz a migration
+  falhar de proposito.
+- Abertas: #116 (i18n), #91/#52 (extensao), #16 (curadoria).

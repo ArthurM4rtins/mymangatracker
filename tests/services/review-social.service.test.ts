@@ -107,17 +107,16 @@ describe("comentarReview — teto por usuário (#109)", function ()
 
 describe("comentariosAnterioresDaReview", function ()
 {
-  it("pede ao repositório os anteriores à data, com o userId para marcar os meus", async function ()
+  it("pede ao repositório os anteriores ao comentário, com o userId para marcar os meus", async function ()
   {
     const listar = vi.fn(async function () { return []; });
-    const antesDe = new Date("2026-09-05T12:00:00.000Z");
 
     const resultado = await comentariosAnterioresDaReview(
-      { entryId: "e1", antesDe, userId: "u1" },
+      { entryId: "e1", antesDoId: "c6", userId: "u1" },
       { listar },
     );
 
-    expect(listar).toHaveBeenCalledWith("e1", antesDe, "u1");
+    expect(listar).toHaveBeenCalledWith("e1", "c6", "u1");
     expect(resultado).toEqual([]);
   });
 });

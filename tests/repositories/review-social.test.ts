@@ -176,7 +176,7 @@ describe("comentarNaReview e apagarComentario", function ()
     expect(review.comentarios[0].texto).toBe("c6");
     expect(review.comentarios[19].texto).toBe("c25");
 
-    const anteriores = await listarComentariosAnteriores(id, review.comentarios[0].criadoEm, leitor.id);
+    const anteriores = await listarComentariosAnteriores(id, review.comentarios[0].id, leitor.id);
     expect(anteriores.map(function (c) { return c.texto; })).toEqual(["c1", "c2", "c3", "c4", "c5"]);
     expect(anteriores[0].meu).toBe(true);
   });

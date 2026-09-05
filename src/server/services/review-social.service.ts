@@ -81,24 +81,24 @@ export async function comentarReview(
 export type DependenciasDePaginacao = {
   listar: (
     entryId: string,
-    antesDe: Date,
+    antesDoId: string,
     userId: string | null,
   ) => Promise<ComentarioDaReview[]>;
 };
 
-/** A página anterior da conversa de uma resenha (#109). */
+/** A página anterior da conversa de uma resenha (#109): antes do comentário dado. */
 export function comentariosAnterioresDaReview(
-  pedido: { entryId: string; antesDe: Date; userId: string | null },
+  pedido: { entryId: string; antesDoId: string; userId: string | null },
   deps: DependenciasDePaginacao,
 ): Promise<ComentarioDaReview[]>
 {
-  return deps.listar(pedido.entryId, pedido.antesDe, pedido.userId);
+  return deps.listar(pedido.entryId, pedido.antesDoId, pedido.userId);
 }
 
 /** A composição de produção. */
 export function comentariosAnterioresDaReviewDoSistema(pedido: {
   entryId: string;
-  antesDe: Date;
+  antesDoId: string;
   userId: string | null;
 }): Promise<ComentarioDaReview[]>
 {
