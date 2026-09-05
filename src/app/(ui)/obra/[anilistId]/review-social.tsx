@@ -53,6 +53,14 @@ export function ReviewSocial({
       return;
     }
 
+    // Um toggle por vez: dois cliques em voo desfaziam um ao outro (#65, item 5).
+    if (ocupado)
+    {
+      return;
+    }
+
+    setOcupado(true);
+
     // Otimista: inverte já; a resposta corrige se divergir.
     setCurtida(!curtida);
     setTotal(curtida ? total - 1 : total + 1);
@@ -85,6 +93,10 @@ export function ReviewSocial({
     {
       setCurtida(curtida);
       setTotal(total);
+    }
+    finally
+    {
+      setOcupado(false);
     }
   }
 
