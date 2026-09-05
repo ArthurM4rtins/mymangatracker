@@ -796,3 +796,23 @@ Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
   sessao; para testar upload, DataTransfer + dispatchEvent(change) via JS.
 - Pendente: avatar nos cards do feed/resenhas; ajustar janela quando a
   comunidade crescer.
+## Sessao 05/09 — modal de resenha transacional (#62)
+
+- Branch feature/resenha-transacional saiu da main (arquivo identico nas duas).
+- #53 (MangaDex por API) FECHADA sem implementar: a extensao (#52/#91) grava a
+  URL real em resolvedUrl, o adapter perdeu razao de existir.
+- Causa raiz da #62 e do sintoma novo (nota mudada no modal + cancelar ficava
+  nas estrelas de fora): ModalDeResenha escrevia direto no estado do pai
+  (setNota/setResenha/setSpoilers). Fechar nao desfazia nada.
+- Fix em avaliacao-da-obra.tsx: modal com rascunho proprio (nota, resenha,
+  spoilers) iniciado do salvo; so Salvar entrega ao pai. Pai nao guarda mais
+  resenha/spoilers em estado — deriva das props (refresh atualiza). Estrela de
+  fora persiste sempre a resenha JA SALVA.
+- Provas: lint 0, 354 unitarios, next build verde (tsc so passou depois de
+  apagar .next/dev/types, lixo do next dev da branch da extensao — rota
+  leitura nao existe na main). Browser com usuario novo teste62: nota 4 no
+  modal + Esc -> fora "sem nota"; rascunho digitado + Esc + estrela 4,5 fora
+  -> 4,5 salva, botao "Resenhar…", texto nao foi; nota 3 + texto + Salvar ->
+  persistiu; texto apagado no modal + fechar + "limpar" fora -> nota null,
+  resenha salva sobreviveu (era o ramo DELETE destrutivo da #62).
+- Pendente: commit + PR; fechar #62 depois de aprovado.
