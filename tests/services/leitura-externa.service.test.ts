@@ -14,6 +14,8 @@ function fakeDeps(cenario: {
   entrada?: { mediaId: string } | null;
   status?: StatusDaEstante;
   maior?: number | null;
+  /** O capítulo marcado à mão na estante (#31/#61); ausente = nunca editado. */
+  progressChapter?: string;
 })
 {
   const buscarEntrada = vi.fn(async function ()
@@ -24,7 +26,7 @@ function fakeDeps(cenario: {
       : {
           entradaId: "e1",
           mediaId: entrada.mediaId,
-          progressChapter: null,
+          progressChapter: cenario.progressChapter ?? null,
           status: cenario.status ?? ("READING" as StatusDaEstante),
         };
   });
@@ -54,6 +56,38 @@ function pedido(extra: Partial<{ capitulo: number; urlVisitada: string }> = {})
     ...extra,
   };
 }
+
+// #61 vale aqui também: o progresso atual é o maior entre o capítulo marcado à
+// mão e o histórico. Registrar pela extensão um capítulo abaixo do marcado não
+// pode regredir a estante.
+describe("registrarLeituraExterna — estante editada à mão", function ()
+{
+  it("capítulo abaixo do marcado vira histórico e o progresso fica no marcado", async function ()
+  {
+    const { deps, registrarComProgresso, registrarReleitura } = fakeDeps({
+      maior: null,
+      progressChapter: "100",
+    });
+
+    const resultado = await registrarLeituraExterna(pedido({ capitulo: 3 }), deps);
+
+    expect(resultado).toMatchObject({ estado: "ok", capitulo: 3, progresso: 100 });
+    expect(registrarReleitura).toHaveBeenCalledOnce();
+    expect(registrarComProgresso).not.toHaveBeenCalled();
+  });
+
+  it("capítulo acima do marcado avança, mesmo com histórico menor", async function ()
+  {
+    const { deps, registrarComProgresso } = fakeDeps({ maior: 50, progressChapter: "100" });
+
+    const resultado = await registrarLeituraExterna(pedido({ capitulo: 101 }), deps);
+
+    expect(resultado).toMatchObject({ estado: "ok", capitulo: 101, progresso: 101 });
+    expect(registrarComProgresso).toHaveBeenCalledWith(
+      expect.objectContaining({ chapter: 101, novoProgresso: 101 }),
+    );
+  });
+});
 
 describe("registrarLeituraExterna", function ()
 {

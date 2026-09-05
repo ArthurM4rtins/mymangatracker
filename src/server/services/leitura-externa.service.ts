@@ -13,7 +13,7 @@
  */
 import { normalizarCapitulo } from "@/server/domain/capitulo";
 import type { StatusDaEstante } from "@/server/domain/perfil";
-import { progrideEstante } from "@/server/domain/progresso";
+import { progressoAtual, progrideEstante } from "@/server/domain/progresso";
 import { statusAposLeitura } from "@/server/domain/status-de-leitura";
 import { normalizarUrlVisitada } from "@/server/domain/url-visitada";
 import { buscarEntradaDoUsuario } from "@/server/repositories/shelf.repository";
@@ -93,7 +93,11 @@ export async function registrarLeituraExterna(
     return { estado: "nao_encontrada" };
   }
 
+  // O progresso vale o maior entre o marcado à mão na estante e o histórico
+  // (#61) — a mesma regra do caminho do site.
   const maior = await deps.maiorCapitulo(pedido.userId, entrada.mediaId);
+  const marcado = entrada.progressChapter === null ? null : Number(entrada.progressChapter);
+  const atual = progressoAtual(marcado, maior);
 
   // Quem começou a obra que estava Planejada está lendo; quem concluiu não é
   // desmarcado. A regra é do domínio e vale igual no caminho do site.
@@ -109,7 +113,7 @@ export async function registrarLeituraExterna(
     ...(novoStatus !== null && { novoStatus }),
   };
 
-  if (progrideEstante(maior, capitulo))
+  if (progrideEstante(atual, capitulo))
   {
     await deps.registrarComProgresso({ ...registro, novoProgresso: capitulo });
 
@@ -118,7 +122,7 @@ export async function registrarLeituraExterna(
 
   await deps.registrarReleitura(registro);
 
-  return { estado: "ok", capitulo, progresso: maior ?? capitulo, url };
+  return { estado: "ok", capitulo, progresso: atual ?? capitulo, url };
 }
 
 /** A composição de produção. */
