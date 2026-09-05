@@ -1,3 +1,5 @@
+// PROVA DO PORTAO (#64): import proibido de proposito, PR sera fechado sem merge.
+import "@/server/repositories/shelf.repository";
 import Link from "next/link";
 
 // Marca do Kidoku: o double-check do "visualizado" (primeiro visto no acento do
