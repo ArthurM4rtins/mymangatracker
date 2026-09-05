@@ -2,10 +2,14 @@
  * Casos de uso do social das resenhas (issue #39): curtir (toggle), comentar
  * e apagar o próprio comentário. Quem resolve a sessão é o controller.
  */
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import { limitarComentario } from "./limite.service";
 import {
   alternarCurtida,
   apagarComentario,
   comentarNaReview,
+  listarComentariosAnteriores,
+  type ComentarioDaReview,
 } from "@/server/repositories/review-social.repository";
 
 const TAMANHO_MAXIMO_DO_COMENTARIO = 2000;
@@ -41,6 +45,8 @@ export type DependenciasDeComentario = {
     userId: string,
     texto: string,
   ) => Promise<{ id: string } | null>;
+  /** Teto de comentários por usuário na janela (#109). */
+  limitar: (userId: string) => Promise<Veredito>;
 };
 
 export async function comentarReview(
@@ -50,6 +56,7 @@ export async function comentarReview(
   | { estado: "ok" }
   | { estado: "nao_encontrada" }
   | { estado: "comentario_invalido" }
+  | { estado: "muitos_comentarios"; esperarSegundos: number }
 >
 {
   const texto = pedido.texto.trim();
@@ -59,9 +66,43 @@ export async function comentarReview(
     return { estado: "comentario_invalido" };
   }
 
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "muitos_comentarios", esperarSegundos: limite.esperarSegundos };
+  }
+
   const criado = await deps.comentar(pedido.entryId, pedido.userId, texto);
 
   return criado === null ? { estado: "nao_encontrada" } : { estado: "ok" };
+}
+
+export type DependenciasDePaginacao = {
+  listar: (
+    entryId: string,
+    antesDe: Date,
+    userId: string | null,
+  ) => Promise<ComentarioDaReview[]>;
+};
+
+/** A página anterior da conversa de uma resenha (#109). */
+export function comentariosAnterioresDaReview(
+  pedido: { entryId: string; antesDe: Date; userId: string | null },
+  deps: DependenciasDePaginacao,
+): Promise<ComentarioDaReview[]>
+{
+  return deps.listar(pedido.entryId, pedido.antesDe, pedido.userId);
+}
+
+/** A composição de produção. */
+export function comentariosAnterioresDaReviewDoSistema(pedido: {
+  entryId: string;
+  antesDe: Date;
+  userId: string | null;
+}): Promise<ComentarioDaReview[]>
+{
+  return comentariosAnterioresDaReview(pedido, { listar: listarComentariosAnteriores });
 }
 
 export type DependenciasDeRemocao = {
@@ -94,7 +135,10 @@ export function comentarReviewDoSistema(pedido: {
   texto: string;
 })
 {
-  return comentarReview(pedido, { comentar: comentarNaReview });
+  return comentarReview(pedido, {
+    comentar: comentarNaReview,
+    limitar: function (userId) { return limitarComentario({ userId }); },
+  });
 }
 
 /** A composição de produção. */

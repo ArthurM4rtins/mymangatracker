@@ -106,6 +106,7 @@ function fakeDeps(cenario: {
         curtidas: 2,
         curtiPorMim: false,
         comentarios: [],
+        totalDeComentarios: 0,
       },
     ];
   });

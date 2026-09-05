@@ -286,9 +286,11 @@ export default async function PaginaDaObra({ params }: Props)
                           username: comentario.username,
                           avatarVersao: comentario.avatarVersao,
                           texto: comentario.texto,
+                          criadoEm: comentario.criadoEm,
                           meu: comentario.meu,
                         };
                       }),
+                      totalDeComentarios: review.totalDeComentarios,
                     }}
                     logado={userId !== null}
                   />

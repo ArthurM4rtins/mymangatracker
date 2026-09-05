@@ -87,6 +87,8 @@ export async function zerar(
 const LOGIN_POR_PAR: RegraDeLimite = { maximo: 5, janelaMs: 15 * 60_000 };
 const LOGIN_POR_IP: RegraDeLimite = { maximo: 30, janelaMs: 60 * 60_000 };
 const CADASTRO_POR_IP: RegraDeLimite = { maximo: 5, janelaMs: 60 * 60_000 };
+// Comentário (#109): escrita autenticada sem teto era negação de serviço barata.
+const COMENTARIOS_POR_USUARIO: RegraDeLimite = { maximo: 30, janelaMs: 60 * 60_000 };
 
 const DEPS_DE_PRODUCAO: DependenciasDeLimite = {
   contar: contarTentativas,
@@ -119,6 +121,18 @@ export function liberarLogin(pedido: { ip: string; email: string }): Promise<voi
   const { par, ip } = chavesDoLogin(pedido.ip, pedido.email);
 
   return zerar({ escopo: "login", chaves: [par, ip] }, DEPS_DE_PRODUCAO);
+}
+
+/** A composição de produção. Antes de gravar um comentário. */
+export function limitarComentario(pedido: { userId: string }): Promise<Veredito>
+{
+  return verificarERegistrar(
+    {
+      escopo: "comentario",
+      chaves: [{ chave: chaveDeTentativa([pedido.userId]), regra: COMENTARIOS_POR_USUARIO }],
+    },
+    DEPS_DE_PRODUCAO,
+  );
 }
 
 /** A composição de produção. Antes de cadastrar. */

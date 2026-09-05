@@ -26,8 +26,45 @@ export type ReviewPublica = {
   publicadaEm: Date;
   curtidas: number;
   curtiPorMim: boolean;
+  /** Os mais recentes, em ordem cronológica — no máximo `PAGINA_DE_COMENTARIOS`. */
   comentarios: ComentarioDaReview[];
+  totalDeComentarios: number;
 };
+
+/**
+ * Quantos comentários a página da obra carrega por resenha (#109). O resto sai
+ * por `listarComentariosAnteriores`. Sem isto, comentário em massa numa obra
+ * popular virava megabytes por render para todo visitante.
+ */
+export const PAGINA_DE_COMENTARIOS = 20;
+
+const SELECT_DO_COMENTARIO = {
+  id: true,
+  userId: true,
+  texto: true,
+  createdAt: true,
+  user: { select: { username: true, avatarUpdatedAt: true } },
+} as const;
+
+type LinhaDeComentario = {
+  id: string;
+  userId: string;
+  texto: string;
+  createdAt: Date;
+  user: { username: string; avatarUpdatedAt: Date | null };
+};
+
+function comentarioParaDto(linha: LinhaDeComentario, userId: string | null): ComentarioDaReview
+{
+  return {
+    id: linha.id,
+    username: linha.user.username,
+    avatarVersao: linha.user.avatarUpdatedAt?.getTime() ?? null,
+    texto: linha.texto,
+    criadoEm: linha.createdAt,
+    meu: linha.userId === userId,
+  };
+}
 
 /**
  * As resenhas públicas da obra: mais curtidas primeiro, desempate recente.
@@ -49,20 +86,16 @@ export async function listarReviewsDaObra(
       containsSpoilers: true,
       reviewedAt: true,
       user: { select: { username: true, avatarUpdatedAt: true } },
-      _count: { select: { likes: true } },
+      _count: { select: { likes: true, comentarios: true } },
       likes:
         userId === null
           ? false
           : { where: { userId }, select: { id: true } },
+      // Os mais recentes primeiro para o `take`; a ordem cronológica volta no map.
       comentarios: {
-        orderBy: { createdAt: "asc" },
-        select: {
-          id: true,
-          userId: true,
-          texto: true,
-          createdAt: true,
-          user: { select: { username: true, avatarUpdatedAt: true } },
-        },
+        orderBy: { createdAt: "desc" },
+        take: PAGINA_DE_COMENTARIOS,
+        select: SELECT_DO_COMENTARIO,
       },
     },
   });
@@ -80,19 +113,35 @@ export async function listarReviewsDaObra(
       publicadaEm: linha.reviewedAt,
       curtidas: linha._count.likes,
       curtiPorMim: Array.isArray(linha.likes) && linha.likes.length > 0,
-      comentarios: linha.comentarios.map(function (comentario)
-      {
-        return {
-          id: comentario.id,
-          username: comentario.user.username,
-          avatarVersao: comentario.user.avatarUpdatedAt?.getTime() ?? null,
-          texto: comentario.texto,
-          criadoEm: comentario.createdAt,
-          meu: comentario.userId === userId,
-        };
-      }),
+      comentarios: linha.comentarios
+        .map(function (comentario) { return comentarioParaDto(comentario, userId); })
+        .reverse(),
+      totalDeComentarios: linha._count.comentarios,
     };
   });
+}
+
+/**
+ * A página anterior da conversa: os `PAGINA_DE_COMENTARIOS` comentários
+ * imediatamente antes de `antesDe`, em ordem cronológica. `userId` só marca
+ * "meu" — não filtra nada; comentário é público como a resenha.
+ */
+export async function listarComentariosAnteriores(
+  entryId: string,
+  antesDe: Date,
+  userId: string | null,
+): Promise<ComentarioDaReview[]>
+{
+  const linhas = await getPrisma().reviewComment.findMany({
+    where: { entryId, createdAt: { lt: antesDe } },
+    orderBy: { createdAt: "desc" },
+    take: PAGINA_DE_COMENTARIOS,
+    select: SELECT_DO_COMENTARIO,
+  });
+
+  return linhas
+    .map(function (linha) { return comentarioParaDto(linha, userId); })
+    .reverse();
 }
 
 /**
