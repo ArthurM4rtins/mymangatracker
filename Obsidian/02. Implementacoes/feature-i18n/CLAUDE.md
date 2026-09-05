@@ -1,6 +1,6 @@
 # feature-i18n — o site em mais de um idioma
 
-Issue: #116. Desenho de 05/09/2026. **Aguardando aprovação** (ver Pendências).
+Issue: #116. Desenho de 05/09/2026. **Aprovado em 05/09** (decisões do usuário registradas em cada D).
 
 ## Objetivo
 
@@ -49,13 +49,19 @@ de um provider que leve as mensagens ao cliente — é o que o next-intl faz.
 
 ## Decisões tomadas
 
-### D1. Idiomas: `pt-BR` e `en`. Fallback `en`.
+### D1. Idiomas: `pt-BR` e `en`. Fallback `en`. (aprovado 05/09: inglês é a língua universal)
 
 - Visitante sem cookie: `Accept-Language` negociado contra `["pt-BR", "en"]`.
   `pt`, `pt-PT` → `pt-BR`; qualquer outra coisa → `en`.
 - Terceiro idioma (es, ja) só quando houver quem revise a tradução.
 
-### D2. Idioma na URL, prefixo sempre. Preferência na conta quando logado.
+### D2. Idioma na URL, prefixo sempre. Preferência na conta quando logado. (aprovado 05/09, por recomendação)
+
+Por que `always` e não `as-needed`: com `as-needed` o idioma padrão fica sem
+prefixo e o outro com — duas formas de URL para a mesma tela, cache e
+`alternates` mais confusos, e trocar o padrão no futuro quebra links. Com
+`always` toda URL de tela declara o idioma; o custo é um redirect 307 nos
+links antigos, uma vez.
 
 - `localePrefix: "always"`: `/pt-BR/obra/30002`, `/en/obra/30002`. Link
   compartilhado carrega o idioma; cache e SEO não misturam.
@@ -111,7 +117,12 @@ quebrando, como manda o CLAUDE.md.
 - Teste unitário `tests/i18n/mensagens.test.ts`: todo caminho de chave de
   `pt-BR` existe em `en` e vice-versa; nenhum valor vazio. Roda no CI.
 
-### D5. Erros da API viram código. A tela traduz.
+### D5. Erros da API viram código. A tela traduz. (aprovado 05/09, por recomendação)
+
+Em uma frase: hoje o servidor responde a frase pronta em português
+(`"lista não encontrada"`); passa a responder um código
+(`"lista_nao_encontrada"`) e quem mostra a mensagem (tela, extensão) escolhe
+a frase no idioma de quem está lendo. O servidor não precisa saber idioma.
 
 Hoje: `{ erros: { _geral: "lista não encontrada" } }`. Passa a:
 `{ erros: { _geral: "lista_nao_encontrada" } }` e, por campo,
@@ -144,14 +155,25 @@ Hoje: `{ erros: { _geral: "lista não encontrada" } }`. Passa a:
 `en`: `titleEnglish ?? titleRomaji`. `pt-BR`: idem (AniList não tem
 português). `titleNative` continua secundário nos dois. Sem mudança de dado.
 
-### D8. Lint contra texto solto.
+### D8. Lint contra texto solto, sem furo e sem falso positivo. (aprovado 05/09)
 
-`react/jsx-no-literals` (já vem no eslint-config-next) só em
-`src/app/(ui)/**`, com `noStrings: true, ignoreProps: true` e
-`allowedStrings` para pontuação/símbolo (`·`, `—`, `✦`, `/`, `%`). Liga no
-fim da fase 1, quando o pt-BR estiver todo extraído. `ignoreProps: true`
-deixa `aria-label`/`placeholder` passar — revisar à mão na fase 2 (grep por
-`aria-label="` e `placeholder="` com letra).
+Duas regras, cada uma cobrindo o que a outra não cobre:
+
+1. `react/jsx-no-literals` (já vem no eslint-config-next) em
+   `src/app/(ui)/**`, `noStrings: true, ignoreProps: true`,
+   `allowedStrings` para pontuação/símbolo (`·`, `—`, `✦`, `/`, `%`).
+   Pega texto solto entre tags. `ignoreProps: true` evita centenas de falsos
+   positivos em `className`.
+2. `no-restricted-syntax` com seletor nas props que carregam texto para o
+   usuário — o furo da regra 1:
+   `JSXAttribute[name.name=/^(aria-label|aria-description|placeholder|title|alt)$/] > Literal`
+   e o mesmo para `JSXExpressionContainer > Literal` e `TemplateLiteral`.
+   Mensagem: "texto em prop: use t()". Regex só nessas props, então
+   `className`, `href`, `type` etc. passam.
+
+Liga no fim da fase 1, quando o pt-BR estiver todo extraído. Provar as duas
+quebrando de propósito (texto solto e `aria-label="Fechar"`), como manda o
+CLAUDE.md para regra de lint.
 
 ### D9. Extensão (#91).
 
@@ -168,9 +190,13 @@ Idioma vem do navegador; não lê o cookie do site.
    ao lado do tema, elements `i18n`/`proxy` no lint. Prova: todas as telas
    idênticas em `/pt-BR/...`, `/obra/30002` redireciona, lint quebrando com
    import proibido de propósito.
-2. **`en` de verdade, tela a tela.** Ordem: comum/header → entrar/cadastrar →
-   catálogo → obra → estante → listas → perfil (`/u`) → autor → home.
-   Um PR por tela; liga `jsx-no-literals` no primeiro e corrige o resto.
+2. **`en` de verdade, tela a tela.** Ordem (aprovado 05/09: "organize
+   como achar melhor") — primeiro o que todo visitante vê, depois o que só
+   quem entrou vê, por último o que depende de tudo:
+   comum/header/rodapé → home → catálogo → obra (a tela mais densa) →
+   entrar/cadastrar → estante → listas → perfil (`/u`) → autor.
+   Um PR por tela; liga as duas regras de lint (D8) no primeiro PR e
+   corrige o resto conforme avança.
 3. **API por código.** Catálogo `erros.ts`, Zod com `customError`, 22 rotas,
    telas consumindo código, extensão junto. Um PR encadeado.
 4. **Formatos.** `useFormatter` nas 7 datas e na nota; `alternates.languages`
@@ -183,18 +209,13 @@ TDD onde há regra: teste de paridade das messages (fase 1), `customError`
 do Zod (fase 3), negociação de `Accept-Language` no domínio se sair do
 next-intl (fase 1). Componente de tela e JSON de mensagem não precisam.
 
-## Pendências (aprovar antes de abrir branch)
+## Pendências
 
-- [ ] **D1 fallback `en`.** Alternativa: `pt-BR` (público do trabalho). Muda
-      só uma linha, mas define o que o professor vê sem cookie.
-- [ ] **D2 prefixo sempre.** Alternativa `as-needed` (pt-BR sem prefixo, `en`
-      com): URLs atuais continuam válidas sem redirect, mas o idioma padrão
-      fica "invisível" na URL e o cache por URL mistura menos limpo.
-- [ ] **D5 virada de contrato da API.** Confirmar que pode quebrar
-      `erros._geral` como frase (só a tela e a extensão consomem hoje).
-- [ ] **D8 rigor do lint.** `ignoreProps: true` deixa passar `aria-label`;
-      alternativa `false` gera centenas de falsos positivos em `className`.
-- [ ] Ordem das telas na fase 2.
+Nenhuma de desenho. As cinco de 05/09 foram decididas (D1, D2, D5, D8, ordem
+da fase 2). Pode abrir `feature/i18n-infra` para a fase 1.
+
+- [ ] Ao abrir a fase 3, confirmar com quem estiver na extensão (#91) que o
+      popup lê o código de erro, não a frase.
 
 ## Referências
 
