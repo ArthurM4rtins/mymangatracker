@@ -38,7 +38,10 @@ export type ReviewPublica = {
  */
 export const PAGINA_DE_COMENTARIOS = 20;
 
-const ORDEM_DOS_COMENTARIOS = [{ createdAt: "desc" }, { id: "desc" }] as const;
+const ORDEM_DOS_COMENTARIOS: Prisma.ReviewCommentOrderByWithRelationInput[] = [
+  { createdAt: "desc" },
+  { id: "desc" },
+];
 
 const SELECT_DO_COMENTARIO = {
   id: true,
