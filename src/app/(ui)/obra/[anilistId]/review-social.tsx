@@ -81,9 +81,7 @@ export function ReviewSocial({
     try
     {
       const resposta = await fetch(
-        `/api/v1/reviews/${review.entryId}/comentarios?antesDe=${encodeURIComponent(
-          new Date(primeiro.criadoEm).toISOString(),
-        )}`,
+        `/api/v1/reviews/${review.entryId}/comentarios?antesDe=${encodeURIComponent(primeiro.id)}`,
       );
 
       if (!resposta.ok)

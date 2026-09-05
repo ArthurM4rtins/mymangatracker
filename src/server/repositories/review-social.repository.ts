@@ -38,6 +38,8 @@ export type ReviewPublica = {
  */
 export const PAGINA_DE_COMENTARIOS = 20;
 
+const ORDEM_DOS_COMENTARIOS = [{ createdAt: "desc" }, { id: "desc" }] as const;
+
 const SELECT_DO_COMENTARIO = {
   id: true,
   userId: true,
@@ -92,8 +94,11 @@ export async function listarReviewsDaObra(
           ? false
           : { where: { userId }, select: { id: true } },
       // Os mais recentes primeiro para o `take`; a ordem cronológica volta no map.
+      // Desempate por id: createdAt tem milissegundo, e dois comentários no
+      // mesmo ms deixavam a ordem ao acaso (teste flaky no CI). O cuid é
+      // monotônico dentro do processo, então id desempata na ordem de inserção.
       comentarios: {
-        orderBy: { createdAt: "desc" },
+        orderBy: ORDEM_DOS_COMENTARIOS,
         take: PAGINA_DE_COMENTARIOS,
         select: SELECT_DO_COMENTARIO,
       },
@@ -123,18 +128,21 @@ export async function listarReviewsDaObra(
 
 /**
  * A página anterior da conversa: os `PAGINA_DE_COMENTARIOS` comentários
- * imediatamente antes de `antesDe`, em ordem cronológica. `userId` só marca
+ * imediatamente antes do comentário `antesDoId`, em ordem cronológica. Cursor
+ * por id, não por data: data tem milissegundo e empata. `userId` só marca
  * "meu" — não filtra nada; comentário é público como a resenha.
  */
 export async function listarComentariosAnteriores(
   entryId: string,
-  antesDe: Date,
+  antesDoId: string,
   userId: string | null,
 ): Promise<ComentarioDaReview[]>
 {
   const linhas = await getPrisma().reviewComment.findMany({
-    where: { entryId, createdAt: { lt: antesDe } },
-    orderBy: { createdAt: "desc" },
+    where: { entryId },
+    orderBy: ORDEM_DOS_COMENTARIOS,
+    cursor: { id: antesDoId },
+    skip: 1,
     take: PAGINA_DE_COMENTARIOS,
     select: SELECT_DO_COMENTARIO,
   });
