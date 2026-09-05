@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  capituloValido,
   progressoAtual,
   progrideEstante,
   proximoCapitulo,
@@ -110,6 +111,35 @@ describe("urlDaLeitura", function ()
     {
       urlDaLeitura("mangalivre.blog", "/c/{chapter}", 0);
     }).toThrowError();
+  });
+});
+
+// #65, itens 1/24: a coluna é Decimal(8,2). Capítulo com três casas era
+// arredondado em silêncio no banco enquanto URL e resposta usavam o número
+// original; abaixo de 0,005 virava 0.00 e estourava o CHECK como 500.
+describe("capituloValido", function ()
+{
+  it("aceita inteiro, meio e centésimo", function ()
+  {
+    expect(capituloValido(1)).toBe(true);
+    expect(capituloValido(57.5)).toBe(true);
+    expect(capituloValido(0.01)).toBe(true);
+    expect(capituloValido(999999.99)).toBe(true);
+  });
+
+  it("recusa zero, negativo e não finito", function ()
+  {
+    expect(capituloValido(0)).toBe(false);
+    expect(capituloValido(-1)).toBe(false);
+    expect(capituloValido(Number.NaN)).toBe(false);
+    expect(capituloValido(Number.POSITIVE_INFINITY)).toBe(false);
+  });
+
+  it("recusa mais de duas casas decimais", function ()
+  {
+    expect(capituloValido(57.555)).toBe(false);
+    expect(capituloValido(0.004)).toBe(false);
+    expect(capituloValido(1.001)).toBe(false);
   });
 });
 

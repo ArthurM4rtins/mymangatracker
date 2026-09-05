@@ -17,6 +17,23 @@ export function proximoCapitulo(maiorLido: number | null): number
   return Math.floor(maiorLido) + 1;
 }
 
+/**
+ * Capítulo que o banco consegue guardar: finito, positivo e com no máximo
+ * duas casas — a coluna é Decimal(8,2). Sem isto, 57.555 virava 57.56 em
+ * silêncio no banco enquanto URL e resposta diziam 57.555.
+ */
+export function capituloValido(valor: number): boolean
+{
+  if (!Number.isFinite(valor) || valor <= 0)
+  {
+    return false;
+  }
+
+  const centesimos = valor * 100;
+
+  return Math.abs(centesimos - Math.round(centesimos)) < 1e-6;
+}
+
 /** Abrir `aberto` deve avançar o progresso da estante? Só quando é maior. */
 export function progrideEstante(atual: number | null, aberto: number): boolean
 {

@@ -7,6 +7,7 @@
  * domínio); releitura vira histórico e nada mais.
  */
 import {
+  capituloValido,
   progressoAtual,
   progrideEstante,
   proximoCapitulo,
@@ -89,7 +90,7 @@ export async function abrirCapitulo(
   const atual = progressoAtual(marcado, maior);
   const capitulo = pedido.capitulo ?? proximoCapitulo(atual);
 
-  if (!Number.isFinite(capitulo) || capitulo <= 0)
+  if (!capituloValido(capitulo))
   {
     return { estado: "capitulo_invalido" };
   }

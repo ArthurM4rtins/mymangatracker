@@ -159,6 +159,19 @@ describe("definirProgresso", function ()
     expect(resultado).toEqual({ estado: "capitulo_invalido" });
     expect(atualizarProgresso).not.toHaveBeenCalled();
   });
+
+  it("capítulo com mais de duas casas é recusado — a coluna é Decimal(8,2)", async function ()
+  {
+    const atualizarProgresso = vi.fn(async function () { return { id: "e1" }; });
+
+    const resultado = await definirProgresso(
+      { userId: "u1", entradaId: "e1", capitulo: 12.345 },
+      { atualizarProgresso },
+    );
+
+    expect(resultado).toEqual({ estado: "capitulo_invalido" });
+    expect(atualizarProgresso).not.toHaveBeenCalled();
+  });
 });
 
 describe("anilistIdsNaEstante", function ()

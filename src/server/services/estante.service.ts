@@ -7,6 +7,7 @@
  */
 import { cacheEstaFresco } from "@/server/domain/media-cache";
 import {
+  capituloValido,
   proximoCapitulo,
   tipoDaFonte,
   urlDaPagina,
@@ -269,7 +270,7 @@ export async function definirProgresso(
   deps: DependenciasDeProgresso,
 ): Promise<ResultadoDeProgresso>
 {
-  if (!Number.isFinite(pedido.capitulo) || pedido.capitulo <= 0)
+  if (!capituloValido(pedido.capitulo))
   {
     return { estado: "capitulo_invalido" };
   }
