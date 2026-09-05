@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   alternarObraNaLista,
+  removerObraDaLista,
   criarListaDoUsuario,
 } from "@/server/services/lista.service";
 
@@ -116,5 +117,65 @@ describe("alternarObraNaLista", function ()
     );
 
     expect(resultado).toEqual({ estado: "nao_encontrada" });
+  });
+});
+
+// #65, item 9: o botão "remover" da página da lista chamava o TOGGLE — numa
+// página desatualizada ele ADICIONAVA a obra. Remover é um verbo próprio.
+describe("removerObraDaLista", function ()
+{
+  function fakeDeps(cenario: {
+    media?: { id: string } | null;
+    remover?: { removido: true } | null;
+  })
+  {
+    const buscarMedia = vi.fn(async function ()
+    {
+      return cenario.media === undefined ? { id: "m1" } : cenario.media;
+    });
+    const remover = vi.fn(async function ()
+    {
+      return cenario.remover === undefined ? { removido: true as const } : cenario.remover;
+    });
+
+    return { deps: { buscarMedia, remover }, buscarMedia, remover };
+  }
+
+  it("remove a obra da lista do dono", async function ()
+  {
+    const { deps, remover } = fakeDeps({});
+
+    const resultado = await removerObraDaLista(
+      { userId: "u1", listaId: "l1", anilistId: 30656 },
+      deps,
+    );
+
+    expect(resultado).toEqual({ estado: "ok" });
+    expect(remover).toHaveBeenCalledWith("u1", "l1", "m1");
+  });
+
+  it("lista alheia, inexistente ou obra já fora é nao_encontrada — nunca adiciona", async function ()
+  {
+    const { deps } = fakeDeps({ remover: null });
+
+    const resultado = await removerObraDaLista(
+      { userId: "u1", listaId: "l1", anilistId: 30656 },
+      deps,
+    );
+
+    expect(resultado).toEqual({ estado: "nao_encontrada" });
+  });
+
+  it("obra fora do cache é obra_desconhecida, sem tocar a lista", async function ()
+  {
+    const { deps, remover } = fakeDeps({ media: null });
+
+    const resultado = await removerObraDaLista(
+      { userId: "u1", listaId: "l1", anilistId: 30656 },
+      deps,
+    );
+
+    expect(resultado).toEqual({ estado: "obra_desconhecida" });
+    expect(remover).not.toHaveBeenCalled();
   });
 });
