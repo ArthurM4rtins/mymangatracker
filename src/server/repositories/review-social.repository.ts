@@ -2,6 +2,7 @@
 // esta é a única leitura do sistema sem userId no where, consciente e
 // restrita a Entry com review não nulo. De quem escreveu sai o username e
 // NADA além — e-mail nunca. Progresso e fonte seguem privados.
+import { Prisma } from "@/generated/prisma/client";
 import { getPrisma } from "./prisma";
 
 export type ComentarioDaReview = {
@@ -97,6 +98,10 @@ export async function listarReviewsDaObra(
 /**
  * Toggle da curtida. `null` quando a resenha não existe (FK estoura no
  * create). Devolve o estado final e o total.
+ *
+ * Atômico (#65, item 5): tenta apagar; se não havia, cria. Dois cliques
+ * concorrentes não viram 404 — o segundo `create` bate no unique (P2002) e é
+ * lido como "já curtida". Qualquer outro erro sobe para a rota responder 500.
  */
 export async function alternarCurtida(
   entryId: string,
@@ -105,34 +110,41 @@ export async function alternarCurtida(
 {
   const prisma = getPrisma();
 
-  const existente = await prisma.reviewLike.findUnique({
-    where: { entryId_userId: { entryId, userId } },
-    select: { id: true },
-  });
+  const apagadas = await prisma.reviewLike.deleteMany({ where: { entryId, userId } });
+  let curtida = false;
 
-  try
+  if (apagadas.count === 0)
   {
-    if (existente === null)
+    try
     {
       await prisma.reviewLike.create({ data: { entryId, userId } });
     }
-    else
+    catch (erro)
     {
-      await prisma.reviewLike.delete({ where: { id: existente.id } });
+      if (eErroDoPrisma(erro, "P2003"))
+      {
+        // FK: resenha (ou usuário) não existe. Mesma resposta de inexistente.
+        return null;
+      }
+
+      if (!eErroDoPrisma(erro, "P2002"))
+      {
+        throw erro;
+      }
     }
-  }
-  catch
-  {
-    // FK: resenha (ou usuário) não existe. Mesma resposta de inexistente.
-    return null;
+
+    curtida = true;
   }
 
   const total = await prisma.reviewLike.count({ where: { entryId } });
 
-  return { curtida: existente === null, total };
+  return { curtida, total };
 }
 
-/** Comenta na resenha. `null` quando ela não existe (FK). */
+/**
+ * Comenta na resenha. `null` só quando ela não existe (FK, P2003); banco fora
+ * e afins sobem para a rota logar e responder 500 (#65, item 6).
+ */
 export async function comentarNaReview(
   entryId: string,
   userId: string,
@@ -146,10 +158,20 @@ export async function comentarNaReview(
       select: { id: true },
     });
   }
-  catch
+  catch (erro)
   {
-    return null;
+    if (eErroDoPrisma(erro, "P2003"))
+    {
+      return null;
+    }
+
+    throw erro;
   }
+}
+
+function eErroDoPrisma(erro: unknown, codigo: "P2002" | "P2003"): boolean
+{
+  return erro instanceof Prisma.PrismaClientKnownRequestError && erro.code === codigo;
 }
 
 /**
