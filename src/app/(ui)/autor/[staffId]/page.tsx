@@ -1,11 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { autorParaPaginaDoSistema } from "@/server/services/autor.service";
 import { BioDoAutor } from "./bio-do-autor";
 
 // AniList ao vivo: nada pré-renderizável.
 export const dynamic = "force-dynamic";
+
+// generateMetadata e a página no mesmo request: sem memoizar eram dois POSTs
+// ao AniList por visita, sem cache nenhum no caminho do autor (#65, item 6).
+const carregarAutor = cache(autorParaPaginaDoSistema);
 
 type Props = {
   params: Promise<{ staffId: string }>;
@@ -20,7 +25,7 @@ export async function generateMetadata({ params }: Props)
     return { title: "Autor" };
   }
 
-  const resultado = await autorParaPaginaDoSistema(id);
+  const resultado = await carregarAutor(id);
 
   return { title: resultado.estado === "ok" ? resultado.autor.nome : "Autor" };
 }
@@ -34,7 +39,7 @@ export default async function PaginaDoAutor({ params }: Props)
     notFound();
   }
 
-  const resultado = await autorParaPaginaDoSistema(id);
+  const resultado = await carregarAutor(id);
 
   if (resultado.estado === "nao_encontrado")
   {
