@@ -151,7 +151,18 @@ export async function obraParaPagina(
 {
   const agora = deps.relogio?.() ?? new Date();
 
-  let cache = await deps.buscarCompleta(anilistId);
+  let cache: MediaCompleta | null;
+
+  try
+  {
+    cache = await deps.buscarCompleta(anilistId);
+  }
+  catch
+  {
+    // Banco fora (primeiro deploy sem Neon, ou Neon caído): degrada como as
+    // outras páginas, em vez de ser a única que estoura (#63).
+    return { estado: "indisponivel" };
+  }
 
   if (cache === null || !cacheEstaFresco(cache.syncedAt, agora))
   {
