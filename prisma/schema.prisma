@@ -115,7 +115,9 @@ model List {
   itens ListItem[]
   likes ListLike[]
 
+  // /listas (públicas, mais recentes) e as listas do dono, na mesma direção.
   @@index([createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
 }
 
 // Uma obra por lista; ordem = posição de inserção.
@@ -133,8 +135,8 @@ model ListItem {
   @@index([listId, position])
 }
 
-// Cache do AniList. Se sumir, é reconstruído da API — nenhum dado do usuário
-// se perde junto, e é por isso que as FKs que apontam para cá são Restrict.
+// Curtida numa lista (issue #51): uma por (listId, userId), toggle. Cascade
+// dos dois lados; só a contagem é pública.
 model ListLike {
   id        String   @id @default(cuid())
   listId    String
@@ -145,8 +147,12 @@ model ListLike {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([listId, userId])
+  // O perfil conta curtidas dadas por usuário.
+  @@index([userId])
 }
 
+// Cache do AniList. Se sumir, é reconstruído da API — nenhum dado do usuário
+// se perde junto, e é por isso que as FKs que apontam para cá são Restrict.
 model Media {
   id              String           @id @default(cuid())
   anilistId       Int              @unique
@@ -199,6 +205,10 @@ model Entry {
   comentarios ReviewComment[]
 
   @@unique([userId, mediaId])
+  // Página da obra: resenhas públicas e histograma de notas filtram só por mediaId.
+  // O feed da home (reviewedAt DESC WHERE review IS NOT NULL) é índice parcial,
+  // escrito à mão na migration indices_consultas.
+  @@index([mediaId])
 }
 
 // Curtida numa resenha: uma por (entryId, userId), toggle. Apagar a resenha ou
@@ -213,6 +223,8 @@ model ReviewLike {
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([entryId, userId])
+  // O perfil conta curtidas dadas por usuário.
+  @@index([userId])
 }
 
 // Comentário numa resenha: sequência cronológica plana, tipo chat. O CHECK de
