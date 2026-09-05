@@ -25,14 +25,6 @@ const eslintConfig = defineConfig([
       // Por isso `controller` (src/app/api) vem antes de `ui` (o resto de src/app).
       "boundaries/elements": [
         { type: "prisma", partialMatch: false, pattern: "src/generated/**" },
-        {
-          // Resolucao de sessao (cookie -> userId). Vive na camada de controller,
-          // mas paginas server-side tambem resolvem sessao — e SO isso do lado
-          // de controller que a ui pode importar.
-          type: "sessao",
-          partialMatch: false,
-          pattern: "src/app/api/v1/_shared/**",
-        },
         { type: "controller", partialMatch: false, pattern: "src/app/api/**" },
         { type: "ui", partialMatch: false, pattern: "src/app/**" },
         { type: "domain", partialMatch: false, pattern: "src/server/domain/**" },
@@ -43,6 +35,14 @@ const eslintConfig = defineConfig([
         },
         { type: "service", partialMatch: false, pattern: "src/server/services/**" },
         { type: "infra", partialMatch: false, pattern: "src/server/infra/**" },
+      ],
+      // Resolucao de sessao (cookie -> userId). E um arquivo da camada de
+      // controller que as paginas server-side tambem podem importar — SO ele.
+      // Element casa pasta; arquivo individual e categoria de arquivo (#65,
+      // item 19): qualquer outro arquivo que nascer em _shared continua sendo
+      // `controller` puro, que a ui nao importa.
+      "boundaries/files": [
+        { category: "sessao", pattern: "src/app/api/v1/_shared/sessao.ts" },
       ],
     },
     rules: {
@@ -78,25 +78,31 @@ const eslintConfig = defineConfig([
               allow: {
                 to: {
                   element: {
-                    types: { anyOf: ["ui", "service", "domain", "sessao"] },
+                    types: { anyOf: ["ui", "service", "domain"] },
                   },
                 },
               },
+            },
+            {
+              // A unica coisa do lado de controller que a ui importa: sessao.ts.
+              from: { element: { type: "ui" } },
+              allow: { to: { file: { categories: "sessao" } } },
             },
             {
               from: { element: { type: "controller" } },
               allow: {
                 to: {
                   element: {
-                    types: { anyOf: ["controller", "service", "domain", "sessao"] },
+                    types: { anyOf: ["controller", "service", "domain"] },
                   },
                 },
               },
             },
             {
-              from: { element: { type: "sessao" } },
+              // sessao.ts abre o cookie e verifica o JWT: precisa da infra.
+              from: { file: { categories: "sessao" } },
               allow: {
-                to: { element: { types: { anyOf: ["sessao", "infra", "domain"] } } },
+                to: { element: { types: { anyOf: ["infra", "domain"] } } },
               },
             },
             {
@@ -171,6 +177,31 @@ const eslintConfig = defineConfig([
                 "Sessao, cookies e headers sao resolvidos no controller, nunca em '{{from.element.type}}'.",
             },
           ],
+        },
+      ],
+    },
+  },
+  {
+    // Servico e dominio nao conhecem HTTP. A regra de boundaries acima cobra o
+    // import de `next/headers` e `next/server`; esta cobra os GLOBAIS do
+    // runtime (`Request`, `Headers`, `Response`), que passavam sem import
+    // (#65, item 18) — tanto como valor quanto como anotacao de tipo.
+    files: ["src/server/services/**/*.ts", "src/server/domain/**/*.ts"],
+    rules: {
+      "no-restricted-globals": [
+        "error",
+        { name: "Request", message: "HTTP e coisa de controller — servico e dominio nao tocam Request." },
+        { name: "Headers", message: "HTTP e coisa de controller — servico e dominio nao tocam Headers." },
+        { name: "Response", message: "HTTP e coisa de controller — servico e dominio nao tocam Response." },
+      ],
+      "@typescript-eslint/no-restricted-types": [
+        "error",
+        {
+          types: {
+            Request: { message: "HTTP e coisa de controller — servico e dominio nao tocam Request." },
+            Headers: { message: "HTTP e coisa de controller — servico e dominio nao tocam Headers." },
+            Response: { message: "HTTP e coisa de controller — servico e dominio nao tocam Response." },
+          },
         },
       ],
     },
