@@ -894,7 +894,8 @@ Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
 - Migration username_normalizado tem timestamp local (1415) e ordena antes
   das de UTC (1525, 1701). Inofensivo; nao renomear (mexeria em
   _prisma_migrations dos bancos locais).
-- ANTES DO PROXIMO DEPLOY conferir no Neon: SELECT lower(username), count(*)
-  FROM "User" GROUP BY 1 HAVING count(*) > 1; — colisao faz a migration
-  falhar de proposito.
+- Nao ha banco de producao ainda (05/09, confirmado pelo usuario: o site nao
+  foi lancado). As migrations de hoje (indices, auth_attempt,
+  username_normalizado) vao rodar num banco vazio no primeiro deploy — a
+  checagem de colisao de username nao se aplica.
 - Abertas: #116 (i18n), #91/#52 (extensao), #16 (curadoria).
