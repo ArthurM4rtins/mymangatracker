@@ -6,6 +6,7 @@
  * formato (tamanho, e-mail válido) é do controller, com Zod — aqui só a regra.
  */
 import { gerarHashDeSenha } from "@/server/domain/senha";
+import { normalizarUsername } from "@/server/domain/username";
 import {
   criarUsuario as criarUsuarioNoBanco,
   type NovoUsuario,
@@ -33,9 +34,11 @@ export async function cadastrarUsuario(
   const passwordHash = await gerarHash(entrada.senha);
 
   // E-mail é identidade de login: minúsculas para "Foo@x" e "foo@x" não virarem
-  // duas contas. Username preserva o que o usuário digitou.
+  // duas contas. Username preserva o que o usuário digitou para exibição, e a
+  // forma normalizada é a identidade (#114): "Leitor" e "leitor" são um só.
   return deps.criarUsuario({
     username: entrada.username,
+    usernameNormalizado: normalizarUsername(entrada.username),
     email: entrada.email.toLowerCase(),
     passwordHash,
   });
