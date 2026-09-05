@@ -899,3 +899,27 @@ Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
   username_normalizado) vao rodar num banco vazio no primeiro deploy — a
   checagem de colisao de username nao se aplica.
 - Abertas: #116 (i18n), #91/#52 (extensao), #16 (curadoria).
+
+
+## Sessao 05/09 — continuacao: extensao de navegador (#52 servidor, #91 cliente)
+
+- Servidor: rebase de feature/extensao-navegador (12 commits) na main. Conflito so
+  no fake do teste de progresso (progressChapter do #61 + status); o servico
+  casou sozinho. ACHADO no caminho: registrarLeituraExterna ignorava
+  progressChapter (mesmo furo do #61) — corrigido com progressoAtual, TDD.
+  PR #128. 456 unitarios.
+- Cliente: extension/ na raiz (manifest MV3, comum.js, popup.*, background.js,
+  README). Sem bundler. Sessao: cookie kidoku_sessao lido em
+  mymangatracker.vercel.app e depois localhost:3000 — o primeiro com cookie
+  ganha, zero config. Pareamento host+slug (ou host+nome do titulo) ->
+  entradaId em chrome.storage.local (DESVIO do desenho: nao em ReadingSource,
+  registrado no vault). Badge no service worker. PR #129.
+- Dominio de producao existe: mymangatracker.vercel.app (503 no health porque
+  nao tem banco). host_permissions destravado.
+- Funcoes puras provadas no Node com chrome stub (MangaFire, MangaDex, Manga
+  Livre, "Vagabond 2" sem chute). NAO TESTADO no Chrome com sessao real: a
+  automacao nao instala extensao — passo do usuario, ver extension/README.md.
+- Pendentes da extensao (vault): icones, mais sites no teste de titulo, key do
+  manifest antes da Store, i18n do popup junto da #116, adicionar obra nova
+  pela extensao (issue propria a abrir).
+- Abertas: #116 (i18n) e #16 (curadoria).
