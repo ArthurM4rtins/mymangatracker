@@ -241,3 +241,32 @@ comentario-resumo que o workflow ja pede.
 apagar a branch so depois que a pilha inteira entrou. Conflito em
 `tasks/todo.md` entre branches paralelas e esperado: as duas anexam secoes
 no fim; resolver mantendo os dois lados em ordem cronologica.
+
+
+---
+
+## Merge so com o check verde — condicionar, nao encadear (05/09)
+
+**O que aconteceu:** num mesmo comando encadeei `gh pr checks --watch` e
+`gh pr merge`. O check falhou (teste flaky) e o merge rodou mesmo assim, porque
+o `merge` nao dependia do resultado do `checks`. Codigo com teste vermelho no CI
+entrou na main (#124).
+
+**Regra:** `gh pr checks <ref> --watch` tem exit code != 0 quando algum check
+falha. O merge SEMPRE vem atras de `&&` desse comando, ou de um `if` explicito.
+Nunca `checks; merge`. E ler a saida antes de dizer "mergeado".
+
+## Ordenar por `createdAt` sozinho e flaky (05/09)
+
+`TIMESTAMP(3)` tem milissegundo. Linhas criadas em laco caem no mesmo ms e a
+ordem fica ao acaso — passou local, quebrou no CI. Toda `orderBy` de lista que
+precisa de ordem estavel leva desempate por `id` (cuid e monotonico no
+processo), e paginacao usa cursor por `id`, nunca `createdAt < x`.
+
+## Migration criada a mao quando o `--create-only` recusa (05/09)
+
+`prisma migrate dev --create-only` recusa em ambiente nao interativo quando a
+mudanca exige confirmacao (coluna NOT NULL em tabela com linhas). Saida:
+criar a pasta `prisma/migrations/<timestamp UTC>_<nome>/migration.sql` a mao e
+rodar `migrate dev` para aplicar. Usar `date -u` no timestamp: o relogio local
+(UTC-3) gerou uma pasta que ordena ANTES de migrations mais antigas.
