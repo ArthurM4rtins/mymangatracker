@@ -20,13 +20,18 @@ export type ReviewParaTela = {
   containsSpoilers: boolean;
   curtidas: number;
   curtiPorMim: boolean;
-  comentarios: Array<{
-    id: string;
-    username: string;
-    avatarVersao: number | null;
-    texto: string;
-    meu: boolean;
-  }>;
+  /** Os mais recentes; o resto vem por "ver anteriores" (#109). */
+  comentarios: ComentarioParaTela[];
+  totalDeComentarios: number;
+};
+
+type ComentarioParaTela = {
+  id: string;
+  username: string;
+  avatarVersao: number | null;
+  texto: string;
+  criadoEm: Date;
+  meu: boolean;
 };
 
 export function ReviewSocial({
@@ -44,6 +49,67 @@ export function ReviewSocial({
   const [comentario, setComentario] = useState("");
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  // Páginas anteriores já carregadas. Os recentes vêm das props (o refresh
+  // depois de comentar atualiza); a lista exibida é a união, sem repetir.
+  const [anteriores, setAnteriores] = useState<ComentarioParaTela[]>([]);
+  const [carregandoAnteriores, setCarregandoAnteriores] = useState(false);
+
+  const vistos = new Set<string>();
+  const conversa = [...anteriores, ...review.comentarios].filter(function (item)
+  {
+    if (vistos.has(item.id))
+    {
+      return false;
+    }
+
+    vistos.add(item.id);
+    return true;
+  });
+  const faltam = review.totalDeComentarios - conversa.length;
+
+  async function verAnteriores()
+  {
+    const primeiro = conversa[0];
+
+    if (primeiro === undefined || carregandoAnteriores)
+    {
+      return;
+    }
+
+    setCarregandoAnteriores(true);
+
+    try
+    {
+      const resposta = await fetch(
+        `/api/v1/reviews/${review.entryId}/comentarios?antesDe=${encodeURIComponent(
+          new Date(primeiro.criadoEm).toISOString(),
+        )}`,
+      );
+
+      if (!resposta.ok)
+      {
+        return;
+      }
+
+      const corpo: { comentarios: Array<Omit<ComentarioParaTela, "criadoEm"> & { criadoEm: string }> } =
+        await resposta.json();
+
+      setAnteriores(function (atuais)
+      {
+        return [
+          ...corpo.comentarios.map(function (item)
+          {
+            return { ...item, criadoEm: new Date(item.criadoEm) };
+          }),
+          ...atuais,
+        ];
+      });
+    }
+    finally
+    {
+      setCarregandoAnteriores(false);
+    }
+  }
 
   async function curtir()
   {
@@ -127,6 +193,12 @@ export function ReviewSocial({
         return;
       }
 
+      if (resposta.status === 429)
+      {
+        setErro("muitos comentários em pouco tempo — aguarde um pouco");
+        return;
+      }
+
       if (!resposta.ok)
       {
         setErro("não deu para comentar — tente de novo");
@@ -200,18 +272,28 @@ export function ReviewSocial({
           {curtida ? "♥" : "♡"} {total}
         </button>
         <span>
-          {review.comentarios.length}{" "}
-          {review.comentarios.length === 1 ? "comentário" : "comentários"}
+          {review.totalDeComentarios}{" "}
+          {review.totalDeComentarios === 1 ? "comentário" : "comentários"}
         </span>
       </div>
 
       <details className="text-sm">
         <summary className="cursor-pointer text-texto-suave hover:text-texto">
-          {review.comentarios.length > 0 ? "ver conversa" : "comentar"}
+          {review.totalDeComentarios > 0 ? "ver conversa" : "comentar"}
         </summary>
 
         <div className="mt-2 flex flex-col gap-2 border-l border-borda pl-3">
-          {review.comentarios.map(function (item)
+          {faltam > 0 && (
+            <button
+              type="button"
+              onClick={function () { void verAnteriores(); }}
+              disabled={carregandoAnteriores}
+              className="w-fit text-xs text-texto-suave underline underline-offset-4 disabled:opacity-60"
+            >
+              {carregandoAnteriores ? "carregando…" : `ver ${faltam} ${faltam === 1 ? "anterior" : "anteriores"}`}
+            </button>
+          )}
+          {conversa.map(function (item)
           {
             return (
               <p key={item.id} className="flex items-start gap-2">
