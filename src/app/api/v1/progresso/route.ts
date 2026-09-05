@@ -13,7 +13,8 @@ export const dynamic = "force-dynamic";
 const ESQUEMA = z.object({
   entradaId: z.string().min(1),
   // Decimal com até 2 casas: capítulo 57.5 existe. Máximo do Decimal(8,2).
-  capitulo: z.number().positive().max(999999.99).optional(),
+  // Decimal(8,2): duas casas, senão o banco arredonda o que a resposta afirmou.
+  capitulo: z.number().positive().max(999999.99).multipleOf(0.01).optional(),
 });
 
 export async function POST(request: Request)

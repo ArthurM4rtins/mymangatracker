@@ -18,7 +18,8 @@ const ESQUEMA_PATCH = z
   .object({
     status: z.enum(["READING", "COMPLETED", "PLANNED", "PAUSED", "DROPPED"]).optional(),
     // Decimal com até 2 casas — capítulo 57.5 existe. Máximo do Decimal(8,2).
-    capitulo: z.number().positive().max(999999.99).optional(),
+    // Decimal(8,2): duas casas, senão o banco arredonda o que a resposta afirmou.
+    capitulo: z.number().positive().max(999999.99).multipleOf(0.01).optional(),
   })
   .refine(
     function (corpo) { return corpo.status !== undefined || corpo.capitulo !== undefined; },
