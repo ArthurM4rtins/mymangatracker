@@ -850,3 +850,24 @@ Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
   preview funcionando.
 - PENDENTE de decisao do dono do repo: branch protection na main exigindo o
   check "lint, testes e build". Sem isso o CI avisa mas nao bloqueia o merge.
+
+## Sessao 05/09 — continuacao: #65, os 50 achados da auditoria
+
+- 8 PRs mergeados na main, cada um com CI verde: #99 indices (migration
+  indices_consultas, com parcial a mao), #100 erros do Prisma discriminados +
+  posicao pelo maximo, #101 paginas degradam + cache() no metadata, #102
+  pequenos de tela, #103 capitulo com duas casas, #104 fonte com query +
+  DELETE de item da lista, #105 health (session_secret, sonda lembrada 30s),
+  #106 lint (sessao por arquivo, globais HTTP barrados).
+- Balanco na issue: 36 feitos, 7 resolvidos por #61/#63/#64, 1 obsoleto,
+  8 AGUARDANDO DECISAO (M15 rate limit, M16 paginacao de comentarios, M17
+  ordem migrate/build, M18 reviewedAt, L5 social ao apagar resenha, L27
+  oraculo de e-mail no cadastro, L28 username case, L30 codigo morto da
+  curadoria). #65 fica aberta como guarda-chuva desses.
+- LICAO (nao foi correcao do usuario, mas mordeu): eslint-plugin-boundaries 7
+  casa `elements` contra PASTA; arquivo individual e `boundaries/files`
+  (category), e as policies usam `file: { categories }`. O debug
+  (ESLINT_PLUGIN_BOUNDARIES_DEBUG=1) avisa isso.
+- Heredoc do bash com script Python grande quebra no parser da ferramenta;
+  escrever o script em arquivo no scratchpad e rodar.
+- Testes: 376 unitarios, 76 test:db.
