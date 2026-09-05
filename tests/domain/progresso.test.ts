@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  progressoAtual,
   progrideEstante,
   proximoCapitulo,
   tipoDaFonte,
@@ -109,5 +110,32 @@ describe("urlDaLeitura", function ()
     {
       urlDaLeitura("mangalivre.blog", "/c/{chapter}", 0);
     }).toThrowError();
+  });
+});
+
+// Issue #61: desde a edição manual (#31), o capítulo marcado à mão na estante
+// e o maior aberto no histórico podem divergir. O progresso atual é o MAIOR
+// dos dois — nenhum deles regride o outro.
+describe("progressoAtual", function ()
+{
+  it("sem edição manual nem histórico não há progresso", function ()
+  {
+    expect(progressoAtual(null, null)).toBeNull();
+  });
+
+  it("capítulo marcado à mão sozinho vale como progresso", function ()
+  {
+    expect(progressoAtual(100, null)).toBe(100);
+  });
+
+  it("histórico de abertura sozinho vale como progresso", function ()
+  {
+    expect(progressoAtual(null, 57.5)).toBe(57.5);
+  });
+
+  it("quando divergem, vale o maior — em qualquer ordem", function ()
+  {
+    expect(progressoAtual(100, 50)).toBe(100);
+    expect(progressoAtual(50, 100)).toBe(100);
   });
 });
