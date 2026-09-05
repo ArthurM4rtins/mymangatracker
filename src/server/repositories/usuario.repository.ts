@@ -4,10 +4,13 @@
 // sessão — e devolve o mínimo: id e hash.
 import { Prisma } from "@/generated/prisma/client";
 import { ErroCampoDuplicado } from "@/server/domain/erros";
+import { normalizarUsername } from "@/server/domain/username";
 import { getPrisma } from "./prisma";
 
 export type NovoUsuario = {
   username: string;
+  /** A identidade (#114): quem grava é o serviço, pela regra do domínio. */
+  usernameNormalizado: string;
   email: string;
   passwordHash: string;
 };
@@ -68,12 +71,13 @@ export function buscarUsuarioPorId(id: string): Promise<UsuarioPublico | null>
   });
 }
 
+/** Resolve em qualquer caixa (#114): a chave é o username normalizado. */
 export function buscarUsuarioPorUsername(
   username: string,
 ): Promise<UsuarioDoPerfil | null>
 {
   return getPrisma().user.findUnique({
-    where: { username },
+    where: { usernameNormalizado: normalizarUsername(username) },
     select: { id: true, username: true, createdAt: true, avatarUpdatedAt: true },
   });
 }
@@ -109,7 +113,7 @@ export async function buscarAvatarPorUsername(
 ): Promise<AvatarDoUsuario | null>
 {
   const linha = await getPrisma().user.findUnique({
-    where: { username },
+    where: { usernameNormalizado: normalizarUsername(username) },
     select: { avatar: true, avatarMime: true, avatarUpdatedAt: true },
   });
 
@@ -136,7 +140,8 @@ export function buscarCredenciaisPorEmail(
  * Prisma 7: com driver adapter o nome vem fundo em
  * `meta.driverAdapterError.cause.constraint.index` ("User_username_key"), no
  * engine clássico vem em `meta.target`. Procurar "username" no meta serializado
- * cobre as duas formas — os índices únicos de `User` são só username e email.
+ * cobre as duas formas — os índices únicos de `User` são username,
+ * usernameNormalizado (que contém "username") e email.
  * O código do Prisma morre aqui — para cima sobe erro de domínio.
  */
 function traduzirDuplicidade(erro: unknown): Error
