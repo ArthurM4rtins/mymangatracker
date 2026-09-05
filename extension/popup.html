@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Kidoku</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="topo">
+      <span class="marca">kidoku</span>
+      <a id="abrir-site" class="discreto" href="#" target="_blank" rel="noreferrer">abrir o site</a>
+    </header>
+
+    <main id="conteudo" class="conteudo">
+      <p id="estado" class="estado">carregando…</p>
+
+      <form id="formulario" class="formulario" hidden>
+        <p id="pagina" class="pagina"></p>
+
+        <label class="campo">
+          <span>Obra</span>
+          <input id="filtro" type="search" placeholder="filtrar pelo nome" autocomplete="off" />
+          <select id="obra" size="5"></select>
+        </label>
+
+        <label class="campo campo-curto">
+          <span>Capítulo</span>
+          <input id="capitulo" type="number" step="0.01" min="0.01" inputmode="decimal" placeholder="—" />
+          <small id="origem" class="discreto"></small>
+        </label>
+
+        <button id="registrar" type="submit">Registrar leitura</button>
+        <p id="resultado" class="resultado" role="status"></p>
+      </form>
+
+      <p id="sem-sessao" class="estado" hidden>
+        Entre no Kidoku para registrar a leitura.
+        <a id="entrar" href="#" target="_blank" rel="noreferrer">Entrar</a>
+      </p>
+    </main>
+
+    <script src="comum.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
