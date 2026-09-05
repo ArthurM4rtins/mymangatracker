@@ -831,3 +831,22 @@ Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
 - ATENCAO: feature/extensao-navegador (12 commits, sem PR) tambem mexe em
   progresso.service.ts (promover para Lendo). Vai conflitar no rebase — a
   resolucao e manter `atual` no lugar de `maior`.
+
+## Sessao 05/09 — continuacao: #63 (obra degrada) e #64 (portao de CI)
+
+- #63 (TDD): buscarCompleta em obraParaPagina agora dentro de try/catch ->
+  indisponivel. Teste "banco fora e indisponivel" vermelho antes, 364 verdes.
+  Prova: next build sem DATABASE_URL + next start -> /, /obra/105398 e
+  /obra/30002 respondem 200 com o aviso. PR #95.
+- #64: .github/workflows/ci.yml (pull_request + push main): install, prisma
+  generate, lint, test, test:db com Postgres 16 de servico
+  (mymangatracker_test), pnpm build SEM DATABASE_URL. Roda em ~1 min.
+  CLAUDE.md: o portao e o CI, a Vercel nao roda lint. PR #96.
+  Prova: PR #97 descartavel com import ui->repository ficou vermelho em 37s
+  no lint; fechado sem merge, branch apagada.
+- ACHADO: o check "Vercel" (preview deployment) falha em TODO PR (#92, #94,
+  #95, #96), enquanto o deploy de producao da main passa. Preexistente, nao
+  investigado — provavelmente env do ambiente Preview. Abrir issue se quiser
+  preview funcionando.
+- PENDENTE de decisao do dono do repo: branch protection na main exigindo o
+  check "lint, testes e build". Sem isso o CI avisa mas nao bloqueia o merge.
