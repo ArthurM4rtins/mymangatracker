@@ -69,6 +69,19 @@ model User {
   curtidasDoPerfil ProfileLike[]     @relation("PerfilCurtido")
 }
 
+// Tentativas de login e cadastro (#108), para o limite por IP e por
+// IP+e-mail. `key` é hash (domínio limite-de-tentativas): nada em claro.
+// Sem FK: tentativa existe antes de haver usuário. Leitura sempre por
+// (scope, key) numa janela — índice nessa direção.
+model AuthAttempt {
+  id        String   @id @default(cuid())
+  scope     String
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([scope, key, createdAt])
+}
+
 // Seguir (issue #74): quem segue quem. Um vínculo por par; apagar qualquer
 // dos dois leva o vínculo junto. O CHECK de não seguir a si mesmo está à mão
 // na migration.
