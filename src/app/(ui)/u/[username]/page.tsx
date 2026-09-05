@@ -24,12 +24,13 @@ const FORMATO_DIA = new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" });
 
 export async function generateMetadata({ params }: Props)
 {
-  return { title: decodeURIComponent((await params).username) };
+  // O Next já entrega o parâmetro decodificado (#65, item 14).
+  return { title: (await params).username };
 }
 
 export default async function PaginaDoPerfil({ params, searchParams }: Props)
 {
-  const username = decodeURIComponent((await params).username);
+  const username = (await params).username;
   const filtro = interpretarFiltroDasAvaliadas(await searchParams);
   const viewerId = await usuarioDaSessao();
 

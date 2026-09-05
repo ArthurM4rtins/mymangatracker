@@ -164,6 +164,9 @@ export async function obraParaPagina(
     return { estado: "indisponivel" };
   }
 
+  // Se o AniList cair aqui, não pagar outro timeout em série nos similares (#65, item 3).
+  let anilistFora = false;
+
   if (cache === null || !cacheEstaFresco(cache.syncedAt, agora))
   {
     try
@@ -204,11 +207,13 @@ export async function obraParaPagina(
       {
         return { estado: "indisponivel" };
       }
+
+      anilistFora = true;
     }
   }
 
   const [similares, minha, minhaAvaliacao, reviews, contagens] = await Promise.all([
-    similaresSemDerrubar(anilistId, deps),
+    anilistFora ? Promise.resolve([]) : similaresSemDerrubar(anilistId, deps),
     userId === null ? Promise.resolve(null) : minhaRelacao(userId, cache.id, deps),
     // Avaliar não exige estante — a avaliação anda separada do recorte.
     userId === null

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import {
   obraParaPaginaDoSistema,
   type MinhaRelacao,
@@ -21,6 +22,11 @@ import { SeletorStatus } from "../../estante/seletor-status";
 // Sessão + AniList: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
 
+// generateMetadata e a página rodam no mesmo request, em paralelo. Sem
+// memoizar, o caso de uso inteiro (AniList, upsert, similares) rodava duas
+// vezes por visita (#65, item 3). Mesmos argumentos = uma execução.
+const carregarObra = cache(obraParaPaginaDoSistema);
+
 const PAIS: Record<string, string> = {
   JP: "Mangá",
   KR: "Manhwa",
@@ -40,8 +46,8 @@ export async function generateMetadata({ params }: Props)
     return { title: "Obra" };
   }
 
-  // Segunda chamada barata: a página acabou de encher o cache.
-  const resultado = await obraParaPaginaDoSistema(id, null);
+  const userId = await usuarioDaSessao();
+  const resultado = await carregarObra(id, userId);
 
   return {
     title:
@@ -61,7 +67,7 @@ export default async function PaginaDaObra({ params }: Props)
   }
 
   const userId = await usuarioDaSessao();
-  const resultado = await obraParaPaginaDoSistema(id, userId);
+  const resultado = await carregarObra(id, userId);
 
   if (resultado.estado === "nao_encontrada")
   {

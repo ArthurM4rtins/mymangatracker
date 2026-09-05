@@ -270,6 +270,21 @@ describe("obraParaPagina", function ()
     expect(resultado.estado).toBe("ok");
   });
 
+  // #65, item 3: se o AniList já falhou neste request, não pagar um segundo
+  // timeout em série pedindo similares ao mesmo AniList.
+  it("AniList fora com cache velho não vai buscar similares", async function ()
+  {
+    const { deps } = fakeDeps({
+      noCache: { ...NO_CACHE, syncedAt: VELHO },
+      anilistFora: true,
+    });
+
+    const resultado = await obraParaPagina(30656, null, deps);
+
+    expect(resultado.estado).toBe("ok");
+    expect(deps.buscarSimilares).not.toHaveBeenCalled();
+  });
+
   it("AniList fora sem cache é indisponivel", async function ()
   {
     const { deps } = fakeDeps({ noCache: null, anilistFora: true });

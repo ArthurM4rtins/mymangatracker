@@ -26,7 +26,25 @@ export default async function PaginaDaLista({ params }: Props)
 {
   const { id } = await params;
   const userId = await usuarioDaSessao();
-  const lista = await listaComItensDoSistema(id, userId).catch(function () { return null; });
+
+  // Banco fora não é "lista não existe" (#65, item 13): degrada com aviso,
+  // como /listas; só o null do serviço vira 404.
+  let lista: Awaited<ReturnType<typeof listaComItensDoSistema>>;
+
+  try
+  {
+    lista = await listaComItensDoSistema(id, userId);
+  }
+  catch
+  {
+    return (
+      <main className="mx-auto w-full max-w-4xl px-6 py-12">
+        <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
+          As listas dependem do banco de dados, que não respondeu agora.
+        </p>
+      </main>
+    );
+  }
 
   if (lista === null)
   {
