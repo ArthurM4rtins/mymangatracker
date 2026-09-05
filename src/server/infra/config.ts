@@ -20,3 +20,12 @@ export function bancoConfigurado(): boolean
 {
   return Boolean(process.env.DATABASE_URL);
 }
+
+/**
+ * Se o segredo da sessão existe. Sem ele nenhum login funciona, e antes nada
+ * no deploy olhava para isso — o health passa a reportar (#65, item 23).
+ */
+export function sessaoConfigurada(): boolean
+{
+  return Boolean(process.env.SESSION_SECRET);
+}

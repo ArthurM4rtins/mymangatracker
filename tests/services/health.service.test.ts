@@ -39,30 +39,47 @@ function achar(relatorio: RelatorioSaude, nome: string)
 
 describe("verificarSaude", () =>
 {
-  it("reporta ok quando as duas dependências respondem", async () =>
+  it("reporta ok quando as três dependências respondem", async () =>
   {
-    const relatorio = await verificarSaude({ database: ok, anilist: ok, relogio });
+    const relatorio = await verificarSaude({ database: ok, anilist: ok, sessionSecret: ok, relogio });
 
     expect(relatorio.status).toBe("ok");
     expect(relatorio.checkedAt).toBe("2026-08-28T00:00:00.000Z");
-    expect(relatorio.dependencies).toHaveLength(2);
+    expect(relatorio.dependencies).toHaveLength(3);
   });
 
   it("mede a latência de quem respondeu", async () =>
   {
-    const relatorio = await verificarSaude({ database: ok, anilist: ok, relogio });
+    const relatorio = await verificarSaude({ database: ok, anilist: ok, sessionSecret: ok, relogio });
 
     expect(typeof achar(relatorio, "database")?.latencyMs).toBe("number");
   });
 
   it("mantém a ordem: database antes de anilist", async () =>
   {
-    const relatorio = await verificarSaude({ database: ok, anilist: ok, relogio });
+    const relatorio = await verificarSaude({ database: ok, anilist: ok, sessionSecret: ok, relogio });
 
     expect(relatorio.dependencies.map(function (d) { return d.name; })).toEqual([
       "database",
       "anilist",
+      "session_secret",
     ]);
+  });
+
+  // #65, item 23: SESSION_SECRET é obrigatória em runtime, mas nenhuma
+  // verificação de deploy olhava para ela — deploy sem a variável passava como saudável.
+  it("fica degraded quando o segredo da sessão não está configurado", async () =>
+  {
+    const relatorio = await verificarSaude({
+      database: ok,
+      anilist: ok,
+      sessionSecret: naoConfigurado,
+      relogio,
+    });
+
+    expect(relatorio.status).toBe("degraded");
+    expect(achar(relatorio, "session_secret")?.status).toBe("not_configured");
+    expect(achar(relatorio, "session_secret")).not.toHaveProperty("latencyMs");
   });
 
   it("fica degraded quando o banco não está configurado", async () =>
@@ -70,6 +87,8 @@ describe("verificarSaude", () =>
     const relatorio = await verificarSaude({
       database: naoConfigurado,
       anilist: ok,
+      
+      sessionSecret: ok,
       relogio,
     });
 
@@ -82,6 +101,8 @@ describe("verificarSaude", () =>
     const relatorio = await verificarSaude({
       database: naoConfigurado,
       anilist: ok,
+      
+      sessionSecret: ok,
       relogio,
     });
 
@@ -93,6 +114,8 @@ describe("verificarSaude", () =>
     const relatorio = await verificarSaude({
       database: async function () { throw new Error("connection refused"); },
       anilist: ok,
+      
+      sessionSecret: ok,
       relogio,
     });
 
@@ -108,6 +131,8 @@ describe("verificarSaude", () =>
     const relatorio = await verificarSaude({
       database: async function () { throw new Error(`falha ao conectar em ${segredo}`); },
       anilist: ok,
+      
+      sessionSecret: ok,
       relogio,
     });
 
@@ -124,6 +149,8 @@ describe("verificarSaude", () =>
     const relatorio = await verificarSaude({
       database: demora(400),
       anilist: ok,
+      
+      sessionSecret: ok,
       relogio,
       timeoutMs: 20,
     });
@@ -152,7 +179,7 @@ describe("verificarSaude", () =>
       });
     }
 
-    await verificarSaude({ database: sondaLenta, anilist: sondaLenta, relogio });
+    await verificarSaude({ database: sondaLenta, anilist: sondaLenta, sessionSecret: ok, relogio });
 
     expect(pico).toBe(2);
   });
