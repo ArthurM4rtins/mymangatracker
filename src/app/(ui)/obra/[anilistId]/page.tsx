@@ -14,6 +14,7 @@ import { NotaKidoku } from "./nota-kidoku";
 import { ReviewSocial } from "./review-social";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "../../catalogo/botao-estante";
+import { DataHora } from "../../componentes/data-hora";
 import { ConfigurarFonte } from "../../estante/configurar-fonte";
 import { ContinuarLeitura } from "../../estante/continuar-leitura";
 import { EditarProgresso } from "../../estante/editar-progresso";
@@ -357,11 +358,6 @@ function PainelDoUsuario({
   );
 }
 
-const FORMATO_ABERTURA = new Intl.DateTimeFormat("pt-BR", {
-  dateStyle: "short",
-  timeStyle: "short",
-});
-
 /** O histórico é do dono (issue #54): só renderiza dentro do painel de quem está logado. */
 function HistoricoDeLeitura({ historico }: { historico: MinhaRelacao["historico"] })
 {
@@ -377,12 +373,11 @@ function HistoricoDeLeitura({ historico }: { historico: MinhaRelacao["historico"
           return (
             <li key={abertura.id} className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
               <span className="font-medium tabular-nums">cap. {abertura.chapter}</span>
-              <time
-                dateTime={abertura.abertaEm.toISOString()}
+              {/* Fuso de quem lê, não do servidor (#65, item 7). */}
+              <DataHora
+                iso={abertura.abertaEm.toISOString()}
                 className="text-xs text-texto-suave tabular-nums"
-              >
-                {FORMATO_ABERTURA.format(abertura.abertaEm)}
-              </time>
+              />
               <a
                 href={abertura.url}
                 target="_blank"
