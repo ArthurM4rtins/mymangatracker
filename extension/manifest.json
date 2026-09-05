@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Kidoku",
+  "version": "0.1.0",
+  "description": "Registra na sua estante do Kidoku o capítulo que você está lendo, sem sair da aba.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Kidoku — registrar leitura"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["activeTab", "tabs", "cookies", "storage"],
+  "host_permissions": [
+    "https://mymangatracker.vercel.app/*",
+    "http://localhost:3000/*"
+  ]
+}
