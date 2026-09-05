@@ -2,6 +2,7 @@
 // username do dono, e-mail e ids de usuário nunca saem. ESCRITA é sempre do
 // dono: toda mutação carrega userId no where ou verifica a posse antes.
 import type { OrdemDasListas } from "@/server/domain/lista-listagem";
+import { Prisma } from "@/generated/prisma/client";
 import { getPrisma } from "./prisma";
 
 export type CapaDePreview = string | null;
@@ -266,6 +267,10 @@ export async function reordenarItens(
 /**
  * Toggle da curtida na lista (issue #51). `null` quando a lista não existe
  * (FK estoura no create). Devolve o estado final e o total.
+ *
+ * Atômico (#65, item 16): apaga se havia, senão cria. Dois cliques
+ * concorrentes não viram 404 — o segundo `create` bate no unique (P2002) e é
+ * lido como "já curtida". Qualquer outro erro sobe para a rota responder 500.
  */
 export async function alternarCurtidaDaLista(
   listaId: string,
@@ -274,31 +279,35 @@ export async function alternarCurtidaDaLista(
 {
   const prisma = getPrisma();
 
-  const existente = await prisma.listLike.findUnique({
-    where: { listId_userId: { listId: listaId, userId } },
-    select: { id: true },
-  });
+  const apagadas = await prisma.listLike.deleteMany({ where: { listId: listaId, userId } });
+  let curtida = false;
 
-  try
+  if (apagadas.count === 0)
   {
-    if (existente === null)
+    try
     {
       await prisma.listLike.create({ data: { listId: listaId, userId } });
     }
-    else
+    catch (erro)
     {
-      await prisma.listLike.delete({ where: { id: existente.id } });
+      if (eErroDoPrisma(erro, "P2003"))
+      {
+        // FK: lista (ou usuário) não existe. Mesma resposta de inexistente.
+        return null;
+      }
+
+      if (!eErroDoPrisma(erro, "P2002"))
+      {
+        throw erro;
+      }
     }
-  }
-  catch
-  {
-    // FK: lista (ou usuário) não existe. Mesma resposta de inexistente.
-    return null;
+
+    curtida = true;
   }
 
   const total = await prisma.listLike.count({ where: { listId: listaId } });
 
-  return { curtida: existente === null, total };
+  return { curtida, total };
 }
 
 /** As listas DO USUÁRIO, com "já contém" para o dropdown da página da obra. */
@@ -342,7 +351,7 @@ export async function adicionarItem(
 
   const lista = await prisma.list.findFirst({
     where: { id: listaId, userId },
-    select: { id: true, _count: { select: { itens: true } } },
+    select: { id: true },
   });
 
   if (lista === null)
@@ -350,19 +359,38 @@ export async function adicionarItem(
     return null;
   }
 
+  // Fim da lista = maior posição + 1, não contagem + 1: depois de remoções a
+  // contagem repete posições e o item novo cairia no meio (#65, itens 8/25).
+  const { _max } = await prisma.listItem.aggregate({
+    where: { listId: listaId },
+    _max: { position: true },
+  });
+
   try
   {
     await prisma.listItem.create({
-      data: { listId: listaId, mediaId, position: lista._count.itens + 1 },
+      data: { listId: listaId, mediaId, position: (_max.position ?? 0) + 1 },
     });
 
     return { jaExistia: false };
   }
-  catch
+  catch (erro)
   {
-    // Unique (listId, mediaId): a obra já estava na lista.
-    return { jaExistia: true };
+    // Só o unique (listId, mediaId) significa "já estava na lista" (#65,
+    // itens 7/20). O resto sobe: tratar banco fora como duplicata fazia o
+    // toggle REMOVER o item que outra requisição acabou de gravar.
+    if (eErroDoPrisma(erro, "P2002"))
+    {
+      return { jaExistia: true };
+    }
+
+    throw erro;
   }
+}
+
+function eErroDoPrisma(erro: unknown, codigo: "P2002" | "P2003"): boolean
+{
+  return erro instanceof Prisma.PrismaClientKnownRequestError && erro.code === codigo;
 }
 
 /** Remove a obra da lista DO DONO. `null` = lista alheia/inexistente ou obra fora. */

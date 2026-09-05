@@ -70,6 +70,32 @@ describe("listas públicas", function ()
       30002, 30013,
     ]);
   });
+
+  // #65, itens 8/25: posição era contagem + 1; depois de remover, o item novo
+  // recebia posição repetida e entrava no meio em vez de no fim.
+  it("remover no meio e adicionar de novo mantém a ordem de inserção", async function ()
+  {
+    const dono = await semearUsuario("dono");
+    const m1 = await salvarMediaDoAniList(OBRA, new Date());
+    const m2 = await salvarMediaDoAniList(OUTRA, new Date());
+    const m3 = await salvarMediaDoAniList(
+      { anilistId: 30656, type: "MANGA" as const, titleRomaji: "Vagabond", chapters: 327 },
+      new Date(),
+    );
+    const lista = await criarLista({ userId: dono.id, nome: "ordem", descricao: null });
+    await adicionarItem(dono.id, lista.id, m1.id);
+    await adicionarItem(dono.id, lista.id, m2.id);
+    await adicionarItem(dono.id, lista.id, m3.id);
+    await removerItem(dono.id, lista.id, m1.id);
+    await removerItem(dono.id, lista.id, m2.id);
+    await adicionarItem(dono.id, lista.id, m1.id);
+
+    // Com contagem + 1, m1 voltaria na posição 2 e passaria na frente de m3 (3).
+    const detalhe = await buscarListaComItens(lista.id, dono.id);
+    expect(detalhe?.itens.map(function (i) { return i.anilistId; })).toEqual([
+      30656, 30013,
+    ]);
+  });
 });
 
 describe("escrita só do dono", function ()
