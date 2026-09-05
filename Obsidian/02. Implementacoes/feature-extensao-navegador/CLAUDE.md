@@ -1,6 +1,6 @@
 # Extensão de navegador — Fase 6
 
-Issue #52 · branch `feature/extensao-navegador` · desenho fechado em 04/09/2026.
+Issue #52 (servidor, PR #128) e #91 (cliente) · desenho fechado em 04/09/2026 · MVP entregue em 05/09.
 
 ## Objetivo
 
@@ -47,8 +47,14 @@ Fora:
    `activeTab`; (2) padrão de URL por host, onde existir; (3) API oficial por id — MangaDex,
    ver issue #53; (4) usuário digita. A ordem foi **invertida** depois do teste de 04/09
    (ver Achados): o título é o extrator mais barato e mais estável, não o fallback.
-6. **Sem schema novo.** `ReadingProgress.resolvedUrl` guarda a URL real da aba;
-   `ReadingSource` guarda o pareamento host+slug.
+6. **Sem schema novo.** `ReadingProgress.resolvedUrl` guarda a URL real da aba.
+   **Revisto em 05/09:** o pareamento host+slug → obra ficou **no navegador**
+   (`chrome.storage.local`), não em `ReadingSource`. Motivo: não existe rota para
+   criar fonte de página sem derivar o caminho da série a partir da URL do
+   capítulo, e isso é específico por host (MangaDex nem tem slug). O pareamento é
+   conveniência de pré-seleção e badge; errar só pré-seleciona a obra errada, que
+   fica visível. Se um dia for para o servidor, a chave já está definida em
+   `extension/comum.js` (`chaveDaObra`).
 7. **Registrar leitura promove o status.** `PLANNED`, `PAUSED` e `DROPPED` viram `READING`;
    `COMPLETED` não é desmarcada. A regra vale nos DOIS caminhos — a extensão e o clique no
    site —, porque aplicar só no caminho novo criaria divergência de comportamento pior que o
@@ -97,19 +103,34 @@ Conclusões:
   usuário, não em requisição de servidor. O risco real é o site mudar o HTML e o seletor
   quebrar — por isso o passo 4 nunca sai do fluxo.
 
+## Entregue (05/09)
+
+- Servidor (PR #128): domínio `titulo-de-capitulo`, `url-visitada`, `capitulo`,
+  `status-de-leitura`; serviço `leitura-externa` (usa `progressoAtual` do #61, o
+  marcado à mão não regride); `POST /api/v1/leitura`; sessão aceita
+  `Authorization: Bearer <mesmo JWT>` quando não há cookie.
+- Cliente (`extension/`, #91): `manifest.json` MV3, `popup.html/css/js`,
+  `background.js` (badge), `comum.js` (regex, chave de pareamento, sessão),
+  `README.md`. Sem bundler. Fora de `src/`: não é camada do app e não entra no
+  build. O lint roda nela como JS comum.
+- Ambiente: a sessão é procurada em `https://mymangatracker.vercel.app` e depois
+  em `http://localhost:3000`; o primeiro com cookie ganha. Zero configuração.
+
 ## Pendências
 
 - [x] ~~Confirmar a URL de leitura real do MangaFire.~~ Não redireciona; resolvido pelo título
       (ver Achados).
+- [x] ~~Header de autorização~~ — `Authorization: Bearer <token do cookie>`, consultado só na
+      ausência do cookie (`_shared/sessao.ts`).
+- [x] ~~Onde a extensão mora~~ — `extension/` na raiz; boundaries só olha `src/**`.
+- [x] ~~Domínio de produção~~ — `mymangatracker.vercel.app` (responde; sem banco ainda).
 - [ ] Levantar o formato do título em mais sites antes de decidir se a regex genérica basta
-      ou se algum host precisa de regex própria.
-- [ ] Definir o formato do header de autorização e como `usuarioDaSessao()` passa a aceitá-lo
-      sem afrouxar o caminho do cookie.
-- [ ] Onde a extensão mora no repo (`extension/` na raiz?) e como o `eslint-plugin-boundaries`
-      enxerga essa pasta.
-- [ ] Fixar o ID da extensão (`key` no manifest) se a API for validar a origem.
-- [ ] Lista final de sites do teste manual.
-- [ ] Domínio do app em produção, para o `host_permissions` (em dev é `http://localhost:3000/*`).
+      ou se algum host precisa de regex própria. Testados: MangaFire, MangaDex, Manga Livre (pelo título).
+- [ ] Teste manual no Chrome com sessão real (carregar descompactada, ver README). Não dá para
+      instalar extensão pela automação do navegador; é passo do usuário.
+- [ ] Ícones da action (`default_icon`).
+- [ ] Fixar o ID da extensão (`key` no manifest) se a API for validar a origem — só antes da Store.
+- [ ] i18n do popup (`_locales/`), junto da #116 (D9).
 - [ ] Confirmar se `POST /api/v1/estante` devolve o `entradaId` — a issue de adicionar obra
       nova pela extensão vai precisar dele para registrar o capítulo logo em seguida.
 
