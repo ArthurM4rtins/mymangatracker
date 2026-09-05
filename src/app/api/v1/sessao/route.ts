@@ -7,6 +7,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { entrarNoSistema } from "@/server/services/sessao.service";
+import { liberarLogin, limitarLogin } from "@/server/services/limite.service";
+import { ipDoPedido } from "../_shared/ip";
 import {
   apagarSessaoDoCookie,
   escreverSessaoNoCookie,
@@ -44,8 +46,21 @@ export async function POST(request: Request)
     );
   }
 
+  const ip = ipDoPedido(request);
+
   try
   {
+    // Antes do scrypt: é o custo que o limite protege (#108).
+    const limite = await limitarLogin({ ip, email: analise.data.email });
+
+    if (limite.bloqueado)
+    {
+      return NextResponse.json(
+        { erros: { _geral: "muitas tentativas — aguarde para tentar de novo" } },
+        { status: 429, headers: { "Retry-After": String(limite.esperarSegundos) } },
+      );
+    }
+
     const sessao = await entrarNoSistema(analise.data);
 
     if (!sessao)
@@ -55,6 +70,8 @@ export async function POST(request: Request)
         { status: 401 },
       );
     }
+
+    await liberarLogin({ ip, email: analise.data.email });
 
     const resposta = NextResponse.json({ ok: true }, { status: 200 });
     escreverSessaoNoCookie(resposta, sessao.token);
