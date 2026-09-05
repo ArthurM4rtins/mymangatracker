@@ -51,6 +51,24 @@ describe("candidatosDeFonte", function ()
     });
   });
 
+  // #65, item 2: há site que identifica a obra na query string. Descartá-la
+  // apontava a "página da obra" para uma página genérica.
+  it("página da obra preserva a query string da URL colada", function ()
+  {
+    const resultado = candidatosDeFonte("https://leitor.com/read?manga=vagabond&ch=1");
+
+    if (resultado.estado !== "ok")
+    {
+      throw new Error("esperava ok");
+    }
+
+    expect(resultado.paginaDaObra).toEqual({
+      sourceHost: "leitor.com",
+      urlTemplate: "/read?manga=vagabond&ch=1",
+      urlExemplo: "https://leitor.com/read?manga=vagabond&ch=1",
+    });
+  });
+
   it("URL sem segmento 1 devolve lista vazia, mas ainda com a página da obra", function ()
   {
     const resultado = candidatosDeFonte("https://site.com/obra/capitulos");
