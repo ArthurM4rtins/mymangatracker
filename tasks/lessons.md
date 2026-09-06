@@ -274,3 +274,14 @@ mudanca exige confirmacao (coluna NOT NULL em tabela com linhas). Saida:
 criar a pasta `prisma/migrations/<timestamp UTC>_<nome>/migration.sql` a mao e
 rodar `migrate dev` para aplicar. Usar `date -u` no timestamp: o relogio local
 (UTC-3) gerou uma pasta que ordena ANTES de migrations mais antigas.
+
+## Entregavel de auditoria e .md no repo + issue, nao artifact (06/09)
+
+Terminei a auditoria de seguranca e tentei publicar o relatorio como artifact.
+Errado por dois motivos: o artifact vive fora do repo, entao o achado nao entra
+no fluxo de trabalho do projeto; e o CLAUDE.md ja diz que toda implementacao
+gera issue. **Regra:** resultado de auditoria ou de analise vira arquivo `.md`
+versionado no vault (`Obsidian/04. BUGS/Criar Issue Antes de Fazer/` quando os
+achados precisam virar issue antes de alguem pegar) mais uma issue por achado,
+com o `.md` como fonte de verdade e a issue apontando para ele. Nao propor
+artifact para entregavel que o time vai perseguir depois.
