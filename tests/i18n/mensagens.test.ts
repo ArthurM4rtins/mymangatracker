@@ -1,9 +1,28 @@
+import { readFileSync } from "node:fs";
+
 import { describe, expect, it } from "vitest";
 
-import en from "../../messages/en.json";
-import ptBR from "../../messages/pt-BR.json";
+import { PLURAL_DOBRADO_EM_OUTRO, routing } from "@/i18n/routing";
 
 type Arvore = { [chave: string]: string | Arvore };
+
+/**
+ * O idioma de referência: é dele que saem os tipos das chaves (`Messages` em
+ * `src/i18n/mensagens.d.ts`), então é contra ele que todos os outros batem.
+ */
+const REFERENCIA = "pt-BR";
+
+/**
+ * Os catálogos saem de `routing.locales`, não de import fixo. É isso que faz um
+ * idioma novo nascer coberto: acrescentar `"es"` ao routing já põe `es.json` sob
+ * todas as regras abaixo, sem tocar neste arquivo.
+ */
+function catalogo(idioma: string): Arvore {
+  return JSON.parse(readFileSync(`messages/${idioma}.json`, "utf8")) as Arvore;
+}
+
+const CATALOGOS = routing.locales.map((idioma) => [idioma, catalogo(idioma)] as const);
+const OUTROS = CATALOGOS.filter(([idioma]) => idioma !== REFERENCIA);
 
 /** Todo caminho folha da árvore, em ordem, como "estante.status.READING". */
 function caminhos(arvore: Arvore, prefixo = ""): string[] {
@@ -33,18 +52,31 @@ function folhas(arvore: Arvore, prefixo = ""): Map<string, string> {
   return mapa;
 }
 
+type Plural = {
+  /** Categorias do CLDR usadas: `one`, `few`, `other`… */
+  categorias: string[];
+  /** Formas exatas usadas: `=0`, `=1`. Cobrem um número, não uma categoria. */
+  exatas: string[];
+};
+
+type LeituraIcu = {
+  argumentos: string[];
+  plurais: Plural[];
+};
+
 /**
- * Os nomes de argumento de uma mensagem ICU, em ordem.
+ * Lê uma mensagem ICU de verdade, em vez de regex.
  *
- * Não dá para fazer isso com regex: em `{n, plural, =1 {curtida} other
- * {curtidas}}` as chaves de `{curtida}` são o corpo do ramo, não um argumento,
- * e uma regex de `{palavra}` conta as duas coisas igual. Então o texto é lido
- * de verdade — chave em posição de argumento é argumento, chave depois de um
- * seletor de plural abre corpo de mensagem, que pode ter argumentos dentro
- * (é o caso de `{n, plural, one {<forte>{valor}</forte> lista} ...}`).
+ * Regex não serve: em `{n, plural, =1 {curtida} other {curtidas}}` as chaves de
+ * `{curtida}` são o corpo do ramo, não um argumento, e `{palavra}` é igual nos
+ * dois casos. Então o texto é percorrido sabendo em que posição está — chave em
+ * posição de argumento é argumento, chave depois de um seletor abre corpo de
+ * mensagem, que pode ter argumento dentro (é o caso de
+ * `{n, plural, one {<forte>{valor}</forte> lista} …}`).
  */
-function argumentosIcu(mensagem: string): string[] {
-  const nomes: string[] = [];
+function lerIcu(mensagem: string): LeituraIcu {
+  const argumentos: string[] = [];
+  const plurais: Plural[] = [];
 
   const espacos = (i: number) => {
     while (i < mensagem.length && /\s/.test(mensagem[i])) i += 1;
@@ -71,7 +103,7 @@ function argumentosIcu(mensagem: string): string[] {
   function argumento(i: number): number {
     i = espacos(i);
     const fim = palavra(i);
-    nomes.push(mensagem.slice(i, fim));
+    argumentos.push(mensagem.slice(i, fim));
     i = espacos(fim);
 
     if (mensagem[i] !== ",") return i + 1;
@@ -91,14 +123,25 @@ function argumentosIcu(mensagem: string): string[] {
       return i + 1;
     }
 
+    const seletores: string[] = [];
+
     // `seletor {corpo}` até fechar o argumento.
     while (i < mensagem.length && mensagem[i] !== "}") {
-      i = espacos(palavra(espacos(i)));
+      i = espacos(i);
+      const fimDoSeletor = palavra(i);
+      seletores.push(mensagem.slice(i, fimDoSeletor));
+      i = espacos(fimDoSeletor);
 
       if (mensagem[i] !== "{") return i;
 
-      i = texto(i + 1) + 1;
-      i = espacos(i);
+      i = espacos(texto(i + 1) + 1);
+    }
+
+    if (tipo !== "select") {
+      plurais.push({
+        categorias: seletores.filter((s) => !s.startsWith("=")),
+        exatas: seletores.filter((s) => s.startsWith("=")),
+      });
     }
 
     return i + 1;
@@ -106,76 +149,136 @@ function argumentosIcu(mensagem: string): string[] {
 
   texto(0);
 
-  return nomes.sort();
+  return { argumentos: argumentos.sort(), plurais };
 }
 
-const CAMINHOS_PT = caminhos(ptBR as Arvore);
-const CAMINHOS_EN = caminhos(en as Arvore);
-
-describe("leitura de argumentos ICU", () => {
+describe("leitura de mensagem ICU", () => {
   it("acha o argumento simples", () => {
-    expect(argumentosIcu("Nada encontrado para {termo}.")).toEqual(["termo"]);
+    expect(lerIcu("Nada encontrado para {termo}.").argumentos).toEqual(["termo"]);
   });
 
   it("não confunde corpo de ramo do plural com argumento", () => {
-    expect(argumentosIcu("{n, plural, =1 {curtida} other {curtidas}}")).toEqual(["n"]);
-    expect(argumentosIcu("{n, plural, one {like} other {likes}}")).toEqual(["n"]);
+    expect(lerIcu("{n, plural, =1 {curtida} other {curtidas}}").argumentos).toEqual(["n"]);
+    expect(lerIcu("{n, plural, one {like} other {likes}}").argumentos).toEqual(["n"]);
   });
 
   it("acha argumento dentro do ramo, junto da marcação", () => {
     expect(
-      argumentosIcu("{n, plural, one {<forte>{valor}</forte> lista} other {<forte>{valor}</forte> listas}}"),
+      lerIcu("{n, plural, one {<forte>{valor}</forte> lista} other {<forte>{valor}</forte> listas}}")
+        .argumentos,
     ).toEqual(["n", "valor", "valor"]);
   });
 
-  it("separa quem realmente diverge", () => {
-    const pt = argumentosIcu("por <autor>{username}</autor> · {n, plural, =1 {# obra} other {# obras}}");
-    const bom = argumentosIcu("by <autor>{username}</autor> · {n, plural, one {# obra} other {# obras}}");
-    const ruim = argumentosIcu("by <autor>{user}</autor> · {n, plural, one {# obra} other {# obras}}");
+  it("separa categoria de plural de forma exata", () => {
+    const { plurais } = lerIcu("{n, plural, =0 {nada} one {uma} other {várias}}");
 
-    expect(bom).toEqual(pt);
-    expect(ruim).not.toEqual(pt);
+    expect(plurais).toEqual([{ categorias: ["one", "other"], exatas: ["=0"] }]);
+  });
+
+  it("separa quem realmente diverge", () => {
+    const args = (m: string) => lerIcu(m).argumentos.join("|");
+    const pt = args("por <autor>{username}</autor> · {n, plural, =1 {# obra} other {# obras}}");
+
+    expect(args("by <autor>{username}</autor> · {n, plural, one {# obra} other {# obras}}")).toBe(pt);
+    expect(args("by <autor>{user}</autor> · {n, plural, one {# obra} other {# obras}}")).not.toBe(pt);
   });
 });
 
 describe("catálogos de mensagens", () => {
-  it("tem pelo menos uma chave", () => {
-    expect(CAMINHOS_PT.length).toBeGreaterThan(0);
+  const referencia = catalogo(REFERENCIA);
+  const CAMINHOS_REFERENCIA = caminhos(referencia);
+
+  it("tem um arquivo para cada idioma do routing", () => {
+    expect(CATALOGOS.length).toBe(routing.locales.length);
   });
 
-  it("não tem chave só no pt-BR", () => {
-    const faltando = CAMINHOS_PT.filter((c) => !CAMINHOS_EN.includes(c));
+  it("tem pelo menos uma chave", () => {
+    expect(CAMINHOS_REFERENCIA.length).toBeGreaterThan(0);
+  });
+
+  it.each(OUTROS)("não deixa chave sem tradução em %s", (_idioma, arvore) => {
+    const faltando = CAMINHOS_REFERENCIA.filter((c) => !caminhos(arvore).includes(c));
 
     expect(faltando).toEqual([]);
   });
 
-  it("não tem chave só no en", () => {
-    const sobrando = CAMINHOS_EN.filter((c) => !CAMINHOS_PT.includes(c));
+  it.each(OUTROS)("não guarda chave que o %s inventou", (_idioma, arvore) => {
+    const sobrando = caminhos(arvore).filter((c) => !CAMINHOS_REFERENCIA.includes(c));
 
     expect(sobrando).toEqual([]);
   });
 
-  it("não tem valor vazio", () => {
-    const vazias = [...folhas(ptBR as Arvore), ...folhas(en as Arvore)]
+  it.each(CATALOGOS)("não tem valor vazio em %s", (_idioma, arvore) => {
+    const vazias = [...folhas(arvore)]
       .filter(([, valor]) => valor.trim() === "")
       .map(([caminho]) => caminho);
 
     expect(vazias).toEqual([]);
   });
 
-  it("mantém os mesmos argumentos ICU nos dois idiomas", () => {
-    const pt = folhas(ptBR as Arvore);
-    const emIngles = folhas(en as Arvore);
+  it.each(OUTROS)("mantém os argumentos ICU da referência em %s", (_idioma, arvore) => {
+    const daReferencia = folhas(referencia);
+    const traduzidas = folhas(arvore);
 
-    const divergentes = [...pt].filter(([caminho, valor]) => {
-      const outro = emIngles.get(caminho);
+    const divergentes = [...daReferencia].filter(([caminho, valor]) => {
+      const outro = traduzidas.get(caminho);
 
       return (
         outro !== undefined &&
-        argumentosIcu(valor).join("|") !== argumentosIcu(outro).join("|")
+        lerIcu(valor).argumentos.join("|") !== lerIcu(outro).argumentos.join("|")
       );
     });
 
     expect(divergentes.map(([caminho]) => caminho)).toEqual([]);
+  });
+
+  /**
+   * O erro que mata idioma novo: copiar a forma `one`/`other` do inglês para uma
+   * língua que precisa de mais. Russo precisa de `one`/`few`/`many`/`other`,
+   * árabe de seis, japonês só de `other`. Sem esta regra, um `ru.json` com duas
+   * formas passa no CI inteiro e renderiza errado para 2, 3, 4, 5…
+   *
+   * Só `other` é permitido e significa "a palavra não varia" — é o caso de
+   * "seguindo"/"following". O que a regra proíbe é a especificação PELA METADE:
+   * declarar `one` e parar, deixando `other` engolir formas que a língua
+   * distingue. Não declarar nada e declarar tudo são decisões; declarar metade
+   * é o descuido.
+   */
+  it.each(CATALOGOS)("declara as formas de plural que o %s exige", (idioma, arvore) => {
+    const exigidas = new Intl.PluralRules(idioma).resolvedOptions().pluralCategories;
+    const dobradas: readonly string[] = PLURAL_DOBRADO_EM_OUTRO[idioma] ?? [];
+    const precisa = exigidas.filter((categoria) => !dobradas.includes(categoria));
+
+    const incompletas = [...folhas(arvore)].flatMap(([caminho, valor]) =>
+      lerIcu(valor).plurais.flatMap((plural) => {
+        const invariavel =
+          plural.categorias.length === 1 && plural.categorias[0] === "other";
+
+        if (invariavel) {
+          return [];
+        }
+
+        const faltando = precisa.filter((categoria) => !plural.categorias.includes(categoria));
+
+        return faltando.length === 0
+          ? []
+          : [`${caminho}: tem [${plural.categorias.join(", ")}], falta [${faltando.join(", ")}]`];
+      }),
+    );
+
+    expect(incompletas).toEqual([]);
+  });
+
+  it.each(CATALOGOS)("não usa forma de plural que não existe em %s", (idioma, arvore) => {
+    const validas = new Intl.PluralRules(idioma).resolvedOptions().pluralCategories;
+
+    const invalidas = [...folhas(arvore)].flatMap(([caminho, valor]) =>
+      lerIcu(valor)
+        .plurais.flatMap((plural) => plural.categorias)
+        .filter((categoria) => !validas.includes(categoria as Intl.LDMLPluralRule))
+        .map((categoria) => `${caminho}: ${categoria}`),
+    );
+
+    expect(invalidas).toEqual([]);
   });
 });
