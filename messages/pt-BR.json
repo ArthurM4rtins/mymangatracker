@@ -169,7 +169,7 @@
     "destaques": "Populares agora",
     "cartao": {
       "formatoGenerico": "Obra",
-      "capitulos": "{n} capítulos"
+      "capitulos": "{n, plural, =1 {{n} capítulo} other {{n} capítulos}}"
     },
     "botaoEstante": {
       "naEstante": "Na estante",
@@ -407,7 +407,7 @@
     "curiosidades": "Curiosidades",
     "similares": "Obras similares",
     "contagem": {
-      "capitulos": "{n} capítulos",
+      "capitulos": "{n, plural, =1 {{n} capítulo} other {{n} capítulos}}",
       "aberturas": "{n, plural, =1 {{n} abertura} other {{n} aberturas}}",
       "avaliacoes": "{n, plural, =1 {{n} avaliação} other {{n} avaliações}}",
       "curtidas": "{n, plural, =1 {{n} curtida} other {{n} curtidas}}",
