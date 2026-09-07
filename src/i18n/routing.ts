@@ -8,7 +8,7 @@ import { defineRouting } from "next-intl/routing";
  * `pt` e `pt-PT` caem em `pt-BR` pela negociação do `Accept-Language`.
  */
 export const routing = defineRouting({
-  locales: ["pt-BR", "en", "es", "fr"],
+  locales: ["pt-BR", "en", "es", "fr", "de"],
   defaultLocale: "en",
   localePrefix: "always",
 });

@@ -1,0 +1,55 @@
+{
+  "nome": { "message": "Kidoku" },
+  "descricao": {
+    "message": "Trägt das Kapitel, das du gerade liest, in dein Kidoku-Regal ein — ohne den Tab zu verlassen."
+  },
+  "acaoTitulo": { "message": "Kidoku — Lektüre eintragen" },
+
+  "abrirSite": { "message": "Website öffnen" },
+  "carregando": { "message": "wird geladen…" },
+  "campoObra": { "message": "Obra" },
+  "filtroPlaceholder": { "message": "nach Namen filtern" },
+  "campoCapitulo": { "message": "Kapitel" },
+  "registrar": { "message": "Lektüre eintragen" },
+  "semSessao": { "message": "Melde dich bei Kidoku an, um deine Lektüre einzutragen." },
+  "entrar": { "message": "Anmelden" },
+
+  "semResposta": { "message": "Kidoku hat gerade nicht geantwortet — versuch es erneut" },
+  "estanteNaoCarregou": { "message": "dein Regal konnte nicht geladen werden — versuch es erneut" },
+  "estanteVazia": { "message": "in deinem Regal ist keine Obra offen — füge auf der Website eine hinzu." },
+  "escolhaObra": { "message": "wähle die Obra" },
+  "informeCapitulo": { "message": "gib das Kapitel an" },
+  "registrando": { "message": "wird eingetragen…" },
+
+  "capituloLido": { "message": "aus dem Tab-Titel gelesen — prüf es" },
+  "capituloNaoLido": { "message": "kein Kapitel im Tab-Titel gefunden — schreib es" },
+
+  "obraNoCapitulo": {
+    "message": " — bei Kap. $capitulo$",
+    "placeholders": { "capitulo": { "content": "$1" } }
+  },
+  "registradoAlcancou": {
+    "message": "Kap. $capitulo$ eingetragen — das Regal steht jetzt bei $progresso$",
+    "placeholders": {
+      "capitulo": { "content": "$1" },
+      "progresso": { "content": "$2" }
+    }
+  },
+  "registradoSegue": {
+    "message": "Kap. $capitulo$ eingetragen — das Regal bleibt bei $progresso$",
+    "placeholders": {
+      "capitulo": { "content": "$1" },
+      "progresso": { "content": "$2" }
+    }
+  },
+
+  "erroPadrao": { "message": "Eintragen nicht möglich" },
+  "erroCorpoInvalido": { "message": "Eintragen nicht möglich" },
+  "erroPedidoInvalido": { "message": "Eintragen nicht möglich" },
+  "erroEntradaNaoEncontrada": { "message": "diese Obra ist nicht mehr in deinem Regal" },
+  "erroCapituloInvalido": { "message": "ungültiges Kapitel" },
+  "erroUrlInvalida": { "message": "diese Seite taugt nicht als Lesequelle" },
+  "erroSemFonte": { "message": "richte zuerst die Lesequelle ein" },
+  "erroLimiteExcedido": { "message": "zu viele Einträge in kurzer Zeit — warte einen Moment" },
+  "erroFalhaInterna": { "message": "Kidoku konnte gerade nicht eintragen" }
+}
