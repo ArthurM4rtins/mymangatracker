@@ -223,10 +223,12 @@ describe("catálogos de mensagens", () => {
     const divergentes = [...daReferencia].filter(([caminho, valor]) => {
       const outro = traduzidas.get(caminho);
 
-      return (
-        outro !== undefined &&
-        lerIcu(valor).argumentos.join("|") !== lerIcu(outro).argumentos.join("|")
-      );
+      // Conjunto, não contagem: usar `{n}` uma vez ou três é escolha de quem
+      // escreve a frase. O que quebra a tela é argumento com nome diferente,
+      // ou que sumiu.
+      const nomes = (mensagem: string) => [...new Set(lerIcu(mensagem).argumentos)].join("|");
+
+      return outro !== undefined && nomes(valor) !== nomes(outro);
     });
 
     expect(divergentes.map(([caminho]) => caminho)).toEqual([]);
@@ -249,20 +251,40 @@ describe("catálogos de mensagens", () => {
     const dobradas: readonly string[] = PLURAL_DOBRADO_EM_OUTRO[idioma] ?? [];
     const precisa = exigidas.filter((categoria) => !dobradas.includes(categoria));
 
+    const regras = new Intl.PluralRules(idioma);
+
     const incompletas = [...folhas(arvore)].flatMap(([caminho, valor]) =>
       lerIcu(valor).plurais.flatMap((plural) => {
+        // Só `other` e mais nada: a palavra não varia. Ter uma forma exata junto
+        // (`=1 {…} other {…}`) prova que ela varia, e aí a regra volta a valer —
+        // era por aqui que os plurais do próprio pt-BR escapavam sem conferência.
         const invariavel =
-          plural.categorias.length === 1 && plural.categorias[0] === "other";
+          plural.exatas.length === 0 &&
+          plural.categorias.length === 1 &&
+          plural.categorias[0] === "other";
 
         if (invariavel) {
           return [];
         }
 
-        const faltando = precisa.filter((categoria) => !plural.categorias.includes(categoria));
+        // `=1` cobre a categoria em que o número 1 cai naquele idioma. É por isso
+        // que `=1 {# obra} other {# obras}` está correto em português: `=1` faz o
+        // trabalho de `one`. Quem decide isso é o CLDR, não o palpite de quem lê.
+        const cobertas = new Set(plural.categorias);
+
+        for (const exata of plural.exatas) {
+          const numero = Number(exata.slice(1));
+
+          if (Number.isFinite(numero)) {
+            cobertas.add(regras.select(numero));
+          }
+        }
+
+        const faltando = precisa.filter((categoria) => !cobertas.has(categoria));
 
         return faltando.length === 0
           ? []
-          : [`${caminho}: tem [${plural.categorias.join(", ")}], falta [${faltando.join(", ")}]`];
+          : [`${caminho}: cobre [${[...cobertas].sort().join(", ")}], falta [${faltando.join(", ")}]`];
       }),
     );
 
