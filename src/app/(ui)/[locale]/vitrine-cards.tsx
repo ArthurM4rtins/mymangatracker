@@ -4,8 +4,9 @@
  * Os cards da vitrine da home (issue #76): resenha e lista em largura fixa
  * para o carrossel. Client só pelo glyph da estrela; nenhuma ação aqui.
  */
+import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { estrelasTexto } from "./componentes/estrelas";
 
 export function CardResenha({
@@ -30,6 +31,8 @@ export function CardResenha({
   quando: string;
 })
 {
+  const t = useTranslations("home");
+
   return (
     // Altura fixa: no carrossel os cards são absolutos e não têm referência de
     // altura; sem isso cada um fica do tamanho do próprio texto.
@@ -54,7 +57,7 @@ export function CardResenha({
             {titulo}
           </Link>
           {rating !== null && (
-            <span aria-label={`Nota ${rating} de 5`} className="text-xs text-nota">
+            <span aria-label={t("resenha.notaAria", { nota: rating })} className="text-xs text-nota">
               {estrelasTexto(Number(rating))}
             </span>
           )}
@@ -67,13 +70,13 @@ export function CardResenha({
         </div>
       </div>
       {containsSpoilers ? (
-        <p className="text-xs italic text-texto-suave">Contém spoiler — leia na página da obra.</p>
+        <p className="text-xs italic text-texto-suave">{t("resenha.spoiler")}</p>
       ) : (
         <p className="line-clamp-3 text-sm text-texto-suave">{review}</p>
       )}
       <span className="mt-auto text-xs text-texto-suave">
         <span aria-hidden>♥</span> {curtidas}
-        <span className="sr-only">{curtidas === 1 ? "curtida" : "curtidas"}</span>
+        <span className="sr-only">{t("contagem.curtidasLeitorDeTela", { n: curtidas })}</span>
       </span>
     </article>
   );
@@ -101,6 +104,8 @@ export function CardLista({
   fluido?: boolean;
 })
 {
+  const t = useTranslations("home");
+
   return (
     <article
       className={`flex flex-col gap-2 rounded-lg border border-borda bg-superficie p-3 transition-colors hover:border-acento/60 ${
@@ -137,8 +142,8 @@ export function CardLista({
         <Link href={`/u/${username}`} className="font-medium text-texto hover:text-acento">
           {username}
         </Link>{" "}
-        · {totalDeObras} {totalDeObras === 1 ? "obra" : "obras"} · <span aria-hidden>♥</span> {curtidas}
-        <span className="sr-only">{curtidas === 1 ? "curtida" : "curtidas"}</span>
+        · {totalDeObras} {t("contagem.obras", { n: totalDeObras })} · <span aria-hidden>♥</span> {curtidas}
+        <span className="sr-only">{t("contagem.curtidasLeitorDeTela", { n: curtidas })}</span>
       </span>
     </article>
   );

@@ -5,8 +5,9 @@
  * escondido) e listas criadas, mescladas por data. Client só pelo glyph da
  * estrela; nenhuma ação aqui — curtir e comentar ficam na página da obra.
  */
+import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { estrelasTexto } from "./componentes/estrelas";
 
 export type ItemParaTela =
@@ -65,6 +66,8 @@ function Autor({ username, quando }: { username: string; quando: string })
 
 function Resenha({ item }: { item: Extract<ItemParaTela, { tipo: "resenha" }> })
 {
+  const t = useTranslations("home");
+
   return (
     <>
       <Link href={`/obra/${item.anilistId}`} className="shrink-0">
@@ -84,19 +87,19 @@ function Resenha({ item }: { item: Extract<ItemParaTela, { tipo: "resenha" }> })
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <p className="flex flex-wrap items-baseline gap-x-2 text-sm">
           <Autor username={item.username} quando={item.quando} />
-          <span className="text-texto-suave">resenhou</span>
+          <span className="text-texto-suave">{t("feed.resenhou")}</span>
           <Link href={`/obra/${item.anilistId}`} className="font-medium hover:text-acento">
             {item.titulo}
           </Link>
           {item.rating !== null && (
-            <span aria-label={`Nota ${item.rating} de 5`} className="text-nota">
+            <span aria-label={t("resenha.notaAria", { nota: item.rating })} className="text-nota">
               {estrelasTexto(Number(item.rating))}
             </span>
           )}
         </p>
         {item.containsSpoilers ? (
           <details className="text-sm">
-            <summary className="cursor-pointer text-texto-suave">Contém spoiler — mostrar</summary>
+            <summary className="cursor-pointer text-texto-suave">{t("resenha.spoilerMostrar")}</summary>
             <p className="mt-1 whitespace-pre-line">{item.review}</p>
           </details>
         ) : (
@@ -104,7 +107,7 @@ function Resenha({ item }: { item: Extract<ItemParaTela, { tipo: "resenha" }> })
         )}
         {item.curtidas > 0 && (
           <span className="text-xs text-texto-suave">
-            {item.curtidas} {item.curtidas === 1 ? "curtida" : "curtidas"}
+            {item.curtidas} {t("contagem.curtidas", { n: item.curtidas })}
           </span>
         )}
       </div>
@@ -114,6 +117,8 @@ function Resenha({ item }: { item: Extract<ItemParaTela, { tipo: "resenha" }> })
 
 function Lista({ item }: { item: Extract<ItemParaTela, { tipo: "lista" }> })
 {
+  const t = useTranslations("home");
+
   return (
     <>
       <Link href={`/listas/${item.listaId}`} className="flex shrink-0 -space-x-6">
@@ -141,17 +146,17 @@ function Lista({ item }: { item: Extract<ItemParaTela, { tipo: "lista" }> })
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <p className="flex flex-wrap items-baseline gap-x-2 text-sm">
           <Autor username={item.username} quando={item.quando} />
-          <span className="text-texto-suave">criou a lista</span>
+          <span className="text-texto-suave">{t("feed.criouLista")}</span>
           <Link href={`/listas/${item.listaId}`} className="font-medium hover:text-acento">
             {item.nome}
           </Link>
         </p>
         <span className="text-xs text-texto-suave">
-          {item.totalDeObras} {item.totalDeObras === 1 ? "obra" : "obras"}
+          {item.totalDeObras} {t("contagem.obras", { n: item.totalDeObras })}
           {item.curtidas > 0 && (
             <>
               {" "}· <span aria-hidden>♥</span> {item.curtidas}
-              <span className="sr-only">{item.curtidas === 1 ? "curtida" : "curtidas"}</span>
+              <span className="sr-only">{t("contagem.curtidasLeitorDeTela", { n: item.curtidas })}</span>
             </>
           )}
         </span>
