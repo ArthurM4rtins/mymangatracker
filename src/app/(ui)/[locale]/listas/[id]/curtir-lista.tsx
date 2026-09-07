@@ -4,8 +4,10 @@
  * Curtir a lista (issue #51): toggle otimista, mesmo jeito da resenha. Sem
  * sessão, leva para /entrar.
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+
+import { useRouter } from "@/i18n/navigation";
 
 export function CurtirLista({
   listaId,
@@ -20,6 +22,7 @@ export function CurtirLista({
 })
 {
   const roteador = useRouter();
+  const t = useTranslations("listas");
   const [total, setTotal] = useState(curtidas);
   const [curti, setCurti] = useState(curtiPorMim);
   const [ocupado, setOcupado] = useState(false);
@@ -75,7 +78,9 @@ export function CurtirLista({
     >
       <span aria-hidden>{curti ? "♥" : "♡"}</span>
       <span className="tabular-nums">{total}</span>
-      <span className="sr-only">{curti ? "descurtir" : "curtir"} a lista</span>
+      <span className="sr-only">
+        {curti ? t("detalhe.curtida.descurtir") : t("detalhe.curtida.curtir")}
+      </span>
     </button>
   );
 }

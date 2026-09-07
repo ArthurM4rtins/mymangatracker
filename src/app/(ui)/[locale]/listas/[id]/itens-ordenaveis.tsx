@@ -5,11 +5,11 @@
  * nova com a regra pura do domínio e mandam a ordem inteira num PUT; remover
  * continua o toggle de itens. Ordem otimista, volta se o servidor recusar.
  */
+import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { mover, type Direcao } from "@/server/domain/lista-ordem";
+import { Link, useRouter } from "@/i18n/navigation";
 import { RemoverDaLista } from "./acoes-da-lista";
 
 export type ItemParaOrdenar = {
@@ -27,6 +27,7 @@ export function ItensOrdenaveis({
 })
 {
   const roteador = useRouter();
+  const t = useTranslations("listas");
   const [ordem, setOrdem] = useState(itens);
   const [ocupado, setOcupado] = useState(false);
 
@@ -102,14 +103,14 @@ export function ItensOrdenaveis({
             <div className="flex items-center justify-between gap-2 text-xs">
               <span className="flex gap-1">
                 <Seta
-                  rotulo={`Mover ${item.titulo} para antes`}
+                  rotulo={t("detalhe.ordenar.antes", { titulo: item.titulo })}
                   desativada={ocupado || indice === 0}
                   aoClicar={function () { void moverItem(item.anilistId, "cima"); }}
                 >
                   ←
                 </Seta>
                 <Seta
-                  rotulo={`Mover ${item.titulo} para depois`}
+                  rotulo={t("detalhe.ordenar.depois", { titulo: item.titulo })}
                   desativada={ocupado || indice === ordem.length - 1}
                   aoClicar={function () { void moverItem(item.anilistId, "baixo"); }}
                 >

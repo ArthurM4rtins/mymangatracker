@@ -1,31 +1,31 @@
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listaComItensDoSistema } from "@/server/services/lista.service";
+import { Link } from "@/i18n/navigation";
 import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { ApagarLista, RemoverDaLista } from "./acoes-da-lista";
 import { CurtirLista } from "./curtir-lista";
 import { EditarLista } from "./editar-lista";
 import { ItensOrdenaveis } from "./itens-ordenaveis";
+import { idiomaDoSegmento } from "@/i18n/routing";
 
 export const dynamic = "force-dynamic";
 
-type Props = {
-  params: Promise<{ id: string }>;
-};
-
-export async function generateMetadata({ params }: Props)
+export async function generateMetadata({ params }: PageProps<"/[locale]/listas/[id]">)
 {
-  const { id } = await params;
+  const { locale, id } = await params;
+  const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "listas" });
   const lista = await listaComItensDoSistema(id, null).catch(function () { return null; });
 
-  return { title: lista?.nome ?? "Lista" };
+  return { title: lista?.nome ?? t("detalhe.meta.titulo") };
 }
 
-export default async function PaginaDaLista({ params }: Props)
+export default async function PaginaDaLista({ params }: PageProps<"/[locale]/listas/[id]">)
 {
   const { id } = await params;
   const userId = await usuarioDaSessao();
+  const t = await getTranslations("listas");
 
   // Banco fora não é "lista não existe" (#65, item 13): degrada com aviso,
   // como /listas; só o null do serviço vira 404.
@@ -40,7 +40,7 @@ export default async function PaginaDaLista({ params }: Props)
     return (
       <main className="mx-auto w-full max-w-4xl px-6 py-12">
         <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
-          As listas dependem do banco de dados, que não respondeu agora.
+          {t("erros.semBanco")}
         </p>
       </main>
     );
@@ -56,12 +56,18 @@ export default async function PaginaDaLista({ params }: Props)
       <header className="flex flex-col gap-2">
         <h1 className="font-marca text-3xl font-bold tracking-tight">{lista.nome}</h1>
         <p className="text-xs text-texto-suave">
-          por{" "}
-          <Link href={`/u/${lista.username}`} className="hover:text-acento hover:underline">
-            {lista.username}
-          </Link>{" "}
-          · {lista.itens.length}{" "}
-          {lista.itens.length === 1 ? "obra" : "obras"}
+          {t.rich("detalhe.autoria", {
+            username: lista.username,
+            n: lista.itens.length,
+            autor: function (conteudo)
+            {
+              return (
+                <Link href={`/u/${lista.username}`} className="hover:text-acento hover:underline">
+                  {conteudo}
+                </Link>
+              );
+            },
+          })}
         </p>
         {lista.descricao && (
           <p className="max-w-2xl text-sm text-texto-suave">{lista.descricao}</p>
@@ -86,7 +92,7 @@ export default async function PaginaDaLista({ params }: Props)
 
       {lista.itens.length === 0 ? (
         <p className="text-sm text-texto-suave">
-          Lista vazia — adicione obras pelo botão de lista na página de cada obra.
+          {t("detalhe.vazia")}
         </p>
       ) : lista.minha ? (
         <ItensOrdenaveis

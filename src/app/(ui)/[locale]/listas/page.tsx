@@ -1,22 +1,28 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import {
   interpretarOrdemDasListas,
-  type OrdemDasListas,
+  ORDENS_DAS_LISTAS,
 } from "@/server/domain/lista-listagem";
 import { listasPublicasDoSistema } from "@/server/services/lista.service";
+import { Link } from "@/i18n/navigation";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { CardLista } from "../vitrine-cards";
 import { CriarLista } from "./criar-lista";
+import { idiomaDoSegmento } from "@/i18n/routing";
 
 // Listas vêm do banco e mudam a toda hora: nada pré-renderizável.
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Listas" };
+export async function generateMetadata({
+  params,
+}: PageProps<"/[locale]/listas">): Promise<Metadata>
+{
+  const { locale } = await params;
+  const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "listas" });
 
-const ROTULO_DA_ORDEM: Record<OrdemDasListas, string> = {
-  recentes: "Recentes",
-  curtidas: "Mais curtidas",
-};
+  return { title: t("indice.meta.titulo") };
+}
 
 type Props = {
   searchParams: Promise<{ ordem?: string | string[] }>;
@@ -26,6 +32,7 @@ export default async function Listas({ searchParams }: Props)
 {
   const ordem = interpretarOrdemDasListas((await searchParams).ordem);
   const userId = await usuarioDaSessao();
+  const t = await getTranslations("listas");
 
   let listas;
   try
@@ -40,9 +47,9 @@ export default async function Listas({ searchParams }: Props)
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-6 py-12">
       <header className="flex flex-col gap-2">
-        <h1 className="font-marca text-3xl font-bold tracking-tight">Listas</h1>
+        <h1 className="font-marca text-3xl font-bold tracking-tight">{t("indice.titulo")}</h1>
         <p className="text-texto-suave">
-          Coleções feitas pelos leitores — dos clássicos às brincadeiras.
+          {t("indice.subtitulo")}
         </p>
       </header>
 
@@ -51,15 +58,21 @@ export default async function Listas({ searchParams }: Props)
           <CriarLista />
         ) : (
           <p className="text-sm text-texto-suave">
-            <Link href="/entrar" className="text-acento underline underline-offset-4">
-              Entre
-            </Link>{" "}
-            para criar a sua.
+            {t.rich("indice.convite", {
+              entrar: function (conteudo)
+              {
+                return (
+                  <Link href="/entrar" className="text-acento underline underline-offset-4">
+                    {conteudo}
+                  </Link>
+                );
+              },
+            })}
           </p>
         )}
 
-        <nav aria-label="Ordenar listas" className="flex rounded-md border border-borda p-0.5 text-xs">
-          {(Object.keys(ROTULO_DA_ORDEM) as OrdemDasListas[]).map(function (opcao)
+        <nav aria-label={t("indice.ordenar.rotulo")} className="flex rounded-md border border-borda p-0.5 text-xs">
+          {ORDENS_DAS_LISTAS.map(function (opcao)
           {
             const ativa = opcao === ordem;
 
@@ -72,7 +85,7 @@ export default async function Listas({ searchParams }: Props)
                   ativa ? "bg-superficie text-texto" : "text-texto-suave hover:text-texto"
                 }`}
               >
-                {ROTULO_DA_ORDEM[opcao]}
+                {t(`indice.ordenar.${opcao}`)}
               </Link>
             );
           })}
@@ -81,13 +94,13 @@ export default async function Listas({ searchParams }: Props)
 
       {listas === null && (
         <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
-          As listas dependem do banco de dados, que não respondeu agora.
+          {t("erros.semBanco")}
         </p>
       )}
 
       {listas !== null && listas.length === 0 && (
         <p className="text-sm text-texto-suave">
-          Nenhuma lista ainda — seja a primeira pessoa a criar uma.
+          {t("indice.vazia")}
         </p>
       )}
 

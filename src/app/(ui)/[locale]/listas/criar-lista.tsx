@@ -4,12 +4,16 @@
  * Criar lista: nome + descrição opcional. Sucesso leva direto para a página
  * da lista nova.
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+
+import { useRouter } from "@/i18n/navigation";
 
 export function CriarLista()
 {
   const roteador = useRouter();
+  const t = useTranslations("listas");
+  const c = useTranslations("comum");
   const [aberto, setAberto] = useState(false);
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -20,7 +24,7 @@ export function CriarLista()
   {
     if (nome.trim() === "")
     {
-      setErro("dá um nome para a lista");
+      setErro(t("indice.criar.erros.semNome"));
       return;
     }
 
@@ -48,7 +52,7 @@ export function CriarLista()
 
       if (!resposta.ok)
       {
-        setErro(corpo?.erros?._geral ?? "não deu — tente de novo");
+        setErro(corpo?.erros?._geral ?? t("indice.criar.erros.falhou"));
         return;
       }
 
@@ -57,7 +61,7 @@ export function CriarLista()
     }
     catch
     {
-      setErro("não deu agora — tente de novo");
+      setErro(t("indice.criar.erros.rede"));
     }
     finally
     {
@@ -73,7 +77,7 @@ export function CriarLista()
         onClick={function () { setAberto(true); }}
         className="w-fit rounded-md bg-acento px-4 py-2 text-sm font-medium text-acento-contraste"
       >
-        Criar lista
+        {t("indice.criar.abrir")}
       </button>
     );
   }
@@ -84,7 +88,7 @@ export function CriarLista()
         type="text"
         value={nome}
         onChange={function (evento) { setNome(evento.target.value); }}
-        placeholder="Nome da lista"
+        placeholder={t("campos.nome")}
         maxLength={100}
         autoFocus
         className="rounded-md border border-borda bg-fundo px-2 py-1.5 text-sm outline-none focus:border-acento"
@@ -92,7 +96,7 @@ export function CriarLista()
       <textarea
         value={descricao}
         onChange={function (evento) { setDescricao(evento.target.value); }}
-        placeholder="Descrição (opcional)"
+        placeholder={t("campos.descricaoOpcional")}
         rows={2}
         maxLength={2000}
         className="rounded-md border border-borda bg-fundo px-2 py-1.5 text-sm outline-none focus:border-acento"
@@ -109,14 +113,14 @@ export function CriarLista()
           disabled={ocupado}
           className="rounded-md bg-acento px-3 py-1 text-sm font-medium text-acento-contraste disabled:opacity-60"
         >
-          {ocupado ? "Criando…" : "Criar"}
+          {ocupado ? t("indice.criar.enviando") : t("indice.criar.enviar")}
         </button>
         <button
           type="button"
           onClick={function () { setAberto(false); setErro(null); }}
           className="text-sm text-texto-suave hover:text-texto"
         >
-          Cancelar
+          {c("cancelar")}
         </button>
       </div>
     </div>

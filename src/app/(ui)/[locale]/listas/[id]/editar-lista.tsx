@@ -4,8 +4,10 @@
  * Editar nome e descrição da própria lista (issue #51): o cabeçalho vira um
  * formulário inline, salva com PATCH e recarrega.
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+
+import { useRouter } from "@/i18n/navigation";
 
 export function EditarLista({
   listaId,
@@ -18,6 +20,8 @@ export function EditarLista({
 })
 {
   const roteador = useRouter();
+  const t = useTranslations("listas");
+  const c = useTranslations("comum");
   const [editando, setEditando] = useState(false);
   const [novoNome, setNovoNome] = useState(nome);
   const [novaDescricao, setNovaDescricao] = useState(descricao ?? "");
@@ -43,7 +47,7 @@ export function EditarLista({
         const corpo = (await resposta.json().catch(function () { return null; })) as
           | { erros?: Record<string, string> }
           | null;
-        setErro(corpo?.erros?.nome ?? corpo?.erros?._geral ?? "não foi possível salvar");
+        setErro(corpo?.erros?.nome ?? corpo?.erros?._geral ?? t("detalhe.editar.erro"));
         return;
       }
 
@@ -64,7 +68,7 @@ export function EditarLista({
         onClick={function () { setEditando(true); }}
         className="text-sm text-texto-suave underline underline-offset-4 hover:text-texto"
       >
-        Editar
+        {t("detalhe.editar.abrir")}
       </button>
     );
   }
@@ -76,7 +80,7 @@ export function EditarLista({
         onChange={function (e) { setNovoNome(e.target.value); }}
         maxLength={100}
         required
-        aria-label="Nome da lista"
+        aria-label={t("campos.nome")}
         className="rounded-md border border-borda bg-superficie px-3 py-2 font-marca text-xl font-bold text-texto outline-none focus:border-acento"
       />
       <textarea
@@ -84,8 +88,8 @@ export function EditarLista({
         onChange={function (e) { setNovaDescricao(e.target.value); }}
         maxLength={2000}
         rows={2}
-        placeholder="Descrição (opcional)"
-        aria-label="Descrição da lista"
+        placeholder={t("campos.descricaoOpcional")}
+        aria-label={t("campos.descricao")}
         className="rounded-md border border-borda bg-superficie px-3 py-2 text-sm text-texto outline-none focus:border-acento"
       />
       {erro && <p className="text-xs text-acento">{erro}</p>}
@@ -95,7 +99,7 @@ export function EditarLista({
           disabled={ocupado}
           className="rounded-md bg-acento px-3 py-1.5 text-acento-contraste disabled:opacity-60"
         >
-          Salvar
+          {c("salvar")}
         </button>
         <button
           type="button"
@@ -108,7 +112,7 @@ export function EditarLista({
           }}
           className="text-texto-suave hover:text-texto"
         >
-          Cancelar
+          {c("cancelar")}
         </button>
       </div>
     </form>

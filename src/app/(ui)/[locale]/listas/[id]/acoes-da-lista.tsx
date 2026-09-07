@@ -3,8 +3,10 @@
 /**
  * Ações do dono na página da lista: remover uma obra e apagar a lista.
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+
+import { useRouter } from "@/i18n/navigation";
 
 export function RemoverDaLista({
   listaId,
@@ -15,6 +17,7 @@ export function RemoverDaLista({
 })
 {
   const roteador = useRouter();
+  const t = useTranslations("listas");
   const [ocupado, setOcupado] = useState(false);
 
   async function remover()
@@ -44,7 +47,7 @@ export function RemoverDaLista({
       disabled={ocupado}
       className="text-xs text-texto-suave underline underline-offset-4 hover:text-texto disabled:opacity-60"
     >
-      remover
+      {t("detalhe.remover")}
     </button>
   );
 }
@@ -52,6 +55,7 @@ export function RemoverDaLista({
 export function ApagarLista({ listaId }: { listaId: string })
 {
   const roteador = useRouter();
+  const t = useTranslations("listas");
   const [confirmando, setConfirmando] = useState(false);
   const [ocupado, setOcupado] = useState(false);
 
@@ -83,28 +87,28 @@ export function ApagarLista({ listaId }: { listaId: string })
         onClick={function () { setConfirmando(true); }}
         className="text-sm text-texto-suave underline underline-offset-4 hover:text-texto"
       >
-        Apagar lista
+        {t("detalhe.apagar.abrir")}
       </button>
     );
   }
 
   return (
     <span className="flex items-center gap-2 text-sm">
-      <span className="text-texto-suave">apagar de vez?</span>
+      <span className="text-texto-suave">{t("detalhe.apagar.confirmacao")}</span>
       <button
         type="button"
         onClick={function () { void apagar(); }}
         disabled={ocupado}
         className="text-acento underline underline-offset-4 disabled:opacity-60"
       >
-        sim
+        {t("detalhe.apagar.sim")}
       </button>
       <button
         type="button"
         onClick={function () { setConfirmando(false); }}
         className="text-texto-suave hover:text-texto"
       >
-        não
+        {t("detalhe.apagar.nao")}
       </button>
     </span>
   );
