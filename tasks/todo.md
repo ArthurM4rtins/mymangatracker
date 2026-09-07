@@ -923,3 +923,61 @@ Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
   manifest antes da Store, i18n do popup junto da #116, adicionar obra nova
   pela extensao (issue propria a abrir).
 - Abertas: #116 (i18n) e #16 (curadoria).
+
+
+## Sessao 07/09 — #116 internacionalizacao, as cinco fases
+
+Cinco PRs empilhados, cada um com `lint, testes e build` verde: #149 (infra),
+#150 (ingles), #151 (erro por codigo + extensao), #152 (formatos), #153 (conta).
+A base de cada um e a branch do anterior — mergear na ordem.
+
+- 346 strings do site + 31 da extensao fora do codigo. 16 plurais a mao viraram
+  ICU. 40 codigos de erro levantados dos 125 pontos reais em 21 rotas, com ZERO
+  status HTTP alterado (conferido por script contra o HEAD).
+- Desvios de desenho, todos com motivo medido e registrados no vault: D5 (Zod
+  com codigo no `message`, nao `customError`), D6 (data no `Intl` nativo, nao
+  `useFormatter` — o `timeZone` do next-intl e resolvido no servidor e viaja ate
+  o cliente), D2 (o login escreve o cookie de idioma; o proxy nao abre JWT na
+  borda). O da D2 foi decidido com o dono do repo.
+- Decisoes do dono do repo em 07/09: 401 num codigo so (`sessao_necessaria`);
+  status da estante no estilo MyAnimeList; **"obra" NAO traduzida** — fica em
+  portugues tambem no ingles, com pendencia aberta para rediscutir.
+
+### DOIS DEFEITOS QUE PASSARAM POR LINT, TESTE E BUILD
+
+Achados so rodando o app. Vale como regra: verde nos tres nao prova tela.
+
+1. O matcher do proxy barrava TODO link antigo — `/catalogo` dava 404. O ponto
+   escapado virou ponto solto no literal TypeScript e o lookahead negativo
+   passou a excluir quase toda rota. Consertado com a classe `[.]` e coberto por
+   `tests/i18n/proxy-matcher.test.ts`, que LE `src/proxy.ts`: `matcher` e
+   analisado estaticamente pelo Next, entao testar uma copia nao serve — a copia
+   pode estar certa enquanto o que roda esta errado, que foi o que aconteceu na
+   primeira tentativa de conserto (constante importada e ignorada em silencio,
+   com /api/v1/health levando redirect de idioma).
+2. Trocar de idioma apagava o tema escolhido. O `lang` do `<html>` muda, o React
+   re-renderiza o elemento e leva junto o `data-theme` que o script inline poe —
+   `suppressHydrationWarning` so vale na hidratacao, nao em update. O seletor
+   passou a recarregar o documento.
+
+### Acrescentar um idioma ficou barato — e o furo que fechou junto
+
+Os testes importavam `pt-BR.json` e `en.json` PELO NOME: um `es.json` novo nao
+seria conferido por nada. Agora saem de `routing.locales`, e entrou a regra que
+faltava — CATEGORIA DE PLURAL do CLDR (russo pede one/few/many/other, arabe seis,
+japones so other). Copiar o one/other do ingles para o russo passava em tudo.
+
+Passo a passo em `messages/README.md`. Nao ficou automatico: subset de fonte
+para outro alfabeto, e RTL (~29 classNames com lado fisico).
+
+### Pendencias
+
+- **NAO PROVADO AO VIVO**: o login escrevendo o cookie de idioma (exige
+  autenticar). Cada elo esta provado em separado. Verificacao de 20s: trocar o
+  idioma logado, sair, entrar de novo.
+- Termo "obra" no ingles, para rediscutir (candidatas anotadas no vault).
+- Contagem nao passa pelo `#` do ICU: "1000 curtidas" viraria "1.000 curtidas".
+- `updatedAt` do User avanca a cada troca de idioma (`@updatedAt`).
+- Pre-existente, nao investigado: o check "Vercel" falha em todo PR desde o #92,
+  com o deploy de producao da main passando. Nao piorou nesta sessao.
+
