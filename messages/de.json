@@ -1,0 +1,549 @@
+{
+  "meta": {
+    "titulo": "Kidoku",
+    "descricao": "Ein Letterboxd für Manga, Manhwa und Romane, mit automatischem und privatem Lesefortschritt."
+  },
+  "cabecalho": {
+    "navegacao": "Navigation",
+    "catalogo": "Katalog",
+    "listas": "Listen",
+    "estante": "Regal",
+    "perfil": "Profil",
+    "entrar": "Anmelden",
+    "idioma": "Sprache"
+  },
+  "comum": {
+    "salvar": "Speichern",
+    "salvando": "Wird gespeichert…",
+    "cancelar": "Abbrechen",
+    "voltar": "Zurück",
+    "status": {
+      "READING": "Am Lesen",
+      "COMPLETED": "Abgeschlossen",
+      "PLANNED": "Geplant",
+      "PAUSED": "Pausiert",
+      "DROPPED": "Abgebrochen"
+    },
+    "formato": {
+      "JP": "Manga",
+      "KR": "Manhwa",
+      "CN": "Manhua",
+      "NOVEL": "Roman"
+    }
+  },
+  "erros": {
+    "corpo_invalido": "ungültiger Body — JSON erwartet",
+    "pedido_invalido": "ungültige Anfrage",
+    "anilist_id_invalido": "ungültige anilistId",
+    "obra_invalida": "ungültige Obra",
+    "status_invalido": "ungültiger Status",
+    "comentario_invalido": "ungültiger Kommentar",
+    "cursor_invalido": "gib antesDe mit der Kommentar-ID an",
+    "nome_invalido": "Name mit 1 bis 100 Zeichen",
+    "username_curto": "mindestens 3 Zeichen",
+    "username_longo": "höchstens 30 Zeichen",
+    "username_caracteres": "nur Buchstaben, Zahlen, Punkt, Bindestrich und Unterstrich",
+    "email_invalido": "ungültige E-Mail",
+    "senha_curta": "mindestens 8 Zeichen",
+    "senha_longa": "höchstens 72 Zeichen",
+    "credenciais_invalidas": "E-Mail oder Passwort falsch",
+    "sessao_necessaria": "melde dich an, um fortzufahren",
+    "obra_nao_encontrada": "Obra nicht gefunden",
+    "obra_fora_do_catalogo": "Obra nicht im Katalog gefunden",
+    "entrada_nao_encontrada": "Eintrag nicht gefunden",
+    "lista_nao_encontrada": "Liste nicht gefunden",
+    "lista_ou_obra_nao_encontrada": "Liste oder Obra nicht gefunden",
+    "resenha_nao_encontrada": "Rezension nicht gefunden",
+    "comentario_nao_encontrado": "Kommentar nicht gefunden",
+    "avaliacao_nao_encontrada": "Bewertung nicht gefunden",
+    "usuario_nao_encontrado": "Benutzer nicht gefunden",
+    "ja_em_uso": "schon vergeben",
+    "sem_fonte": "richte zuerst die Lesequelle ein",
+    "arquivo_grande_demais": "das Bild ist größer als 512 KB",
+    "tipo_de_arquivo_invalido": "lade ein JPEG-, PNG- oder WebP-Bild hoch",
+    "capitulo_invalido": "ungültiges Kapitel",
+    "avaliacao_invalida": "ungültige Bewertung — 0,5 bis 5 in halben Sternen oder eine Rezension",
+    "url_invalida": "ungültige Lese-URL",
+    "url_de_capitulo_invalida": "füge die vollständige URL von Kapitel 1 ein, mit https://",
+    "template_invalido": "ungültiges Template — leite es neu ab",
+    "ordem_invalida": "die Reihenfolge muss genau die Obras der Liste enthalten",
+    "comentario_tamanho_invalido": "Kommentar leer oder zu lang",
+    "proprio_perfil": "gilt nicht für dein eigenes Profil",
+    "idioma_invalido": "Sprache nicht verfügbar",
+    "limite_excedido": "zu viele Versuche — warte, bevor du es erneut versuchst",
+    "falha_interna": "gerade nicht möglich",
+    "catalogo_indisponivel": "Katalog gerade nicht verfügbar — versuche es noch einmal"
+  },
+  "entrar": {
+    "meta": {
+      "titulo": "Anmelden"
+    },
+    "titulo": "Anmelden",
+    "subtitulo": "Zurück zum Lesen.",
+    "contaCriada": "Konto erstellt. Melde dich jetzt an.",
+    "semConta": "Noch kein Konto? <link>Konto erstellen</link>",
+    "campos": {
+      "email": "E-Mail",
+      "senha": "Passwort"
+    },
+    "acoes": {
+      "enviar": "Anmelden",
+      "enviando": "Wird angemeldet…"
+    },
+    "erros": {
+      "geral": "Anmeldung fehlgeschlagen",
+      "conexao": "keine Verbindung zum Server — versuch es noch mal",
+      "falhaInterna": "Anmeldung gerade nicht möglich"
+    }
+  },
+  "cadastrar": {
+    "meta": {
+      "titulo": "Konto erstellen"
+    },
+    "titulo": "Konto erstellen",
+    "subtitulo": "Regal, Fortschritt und Rezensionen — deine Lektüre gehört nur dir.",
+    "jaTemConta": "Schon ein Konto? <link>Anmelden</link>",
+    "campos": {
+      "username": "Benutzername",
+      "email": "E-Mail",
+      "senha": "Passwort"
+    },
+    "acoes": {
+      "enviar": "Konto erstellen",
+      "enviando": "Wird erstellt…"
+    },
+    "erros": {
+      "geral": "Registrierung fehlgeschlagen",
+      "conexao": "keine Verbindung zum Server — versuch es noch mal",
+      "falhaInterna": "Registrierung gerade nicht möglich"
+    }
+  },
+  "autor": {
+    "meta": {
+      "titulo": "Autor"
+    },
+    "erros": {
+      "indisponivel": "AniList hat gerade nicht geantwortet. Versuch es gleich noch einmal."
+    },
+    "bio": {
+      "verMais": "Mehr anzeigen",
+      "verMenos": "Weniger anzeigen"
+    },
+    "obras": {
+      "titulo": "Obras",
+      "vazia": "Auf AniList sind keine Obras vom Typ Manga oder Roman eingetragen."
+    }
+  },
+  "catalogo": {
+    "meta": {
+      "titulo": "Katalog"
+    },
+    "titulo": "Katalog",
+    "subtitulo": "Such die Obra, stell sie ins Regal und deine Lektüre zählt ab sofort mit.",
+    "busca": {
+      "rotulo": "Obra suchen",
+      "placeholder": "Lookism, Solo Leveling, Berserk…",
+      "buscando": "Wird gesucht…"
+    },
+    "filtros": {
+      "tipo": "Typ",
+      "genero": "Genre",
+      "decada": "Jahrzehnt",
+      "ordenar": "Sortieren",
+      "todos": "Alle",
+      "limpar": "Filter zurücksetzen",
+      "ordens": {
+        "popular": "Beliebt",
+        "nota": "Beste Bewertung",
+        "alta": "Im Trend",
+        "recente": "Neueste"
+      }
+    },
+    "erros": {
+      "indisponivel": "AniList hat gerade nicht geantwortet. Versuch es gleich noch mal."
+    },
+    "vazio": {
+      "semTermo": "Der Katalog hat gerade nichts geliefert. Versuch es gleich noch mal.",
+      "semResultado": "Keine Treffer für <forte>{termo}</forte>."
+    },
+    "destaques": "Gerade beliebt",
+    "cartao": {
+      "formatoGenerico": "Obra",
+      "capitulos": "{n, plural, one {{n} Kapitel} other {{n} Kapitel}}"
+    },
+    "botaoEstante": {
+      "naEstante": "Im Regal",
+      "adicionar": "+ Regal",
+      "erro": "hat nicht geklappt — versuch es noch mal"
+    }
+  },
+  "componentes": {
+    "sair": "Abmelden",
+    "logo": {
+      "rotulo": "Kidoku — Startseite"
+    },
+    "carrossel": {
+      "anterior": "Zurück",
+      "proximo": "Weiter"
+    },
+    "estrelas": {
+      "grupo": "Bewertung von 0,5 bis 5",
+      "nota": "{nota} von 5",
+      "semNota": "keine Bewertung",
+      "limpar": "Entfernen"
+    },
+    "tema": {
+      "grupo": "Design der Website",
+      "escolher": "Design {nome}",
+      "nomes": {
+        "sumi": "Sumi",
+        "noturno": "Noturno",
+        "matcha": "Matcha"
+      }
+    }
+  },
+  "estante": {
+    "meta": {
+      "titulo": "Regal"
+    },
+    "titulo": "Regal",
+    "descricao": "Deine Obras, nach Status. Deinen Lesefortschritt siehst nur du.",
+    "vazia": "Hier ist noch nichts. <catalogo>Suche im Katalog</catalogo> und füge die erste Obra hinzu.",
+    "obra": "Obra",
+    "capitulos": "{capitulo} Kapitel",
+    "lendoEm": "Gelesen auf {host}",
+    "seletorStatus": "Status der Obra",
+    "filtros": {
+      "rotulo": "Nach Status filtern",
+      "tudo": "Alle"
+    },
+    "progresso": {
+      "editar": "Kapitel bearbeiten",
+      "marcar": "Kapitel setzen",
+      "atual": "bei Kap. {capitulo}",
+      "prefixo": "bei Kap.",
+      "campo": "Aktuelles Kapitel",
+      "salvar": "speichern",
+      "cancelar": "abbrechen"
+    },
+    "continuar": {
+      "abrirObra": "Obra öffnen ↗",
+      "abrindo": "Wird geöffnet…",
+      "proximo": "Weiter mit Kap. {capitulo} →",
+      "ouCap": "oder Kap.",
+      "campo": "Bestimmtes Kapitel",
+      "abrir": "öffnen"
+    },
+    "avaliacao": {
+      "nota": "Bewertung {nota} von 5",
+      "avaliar": "Bewerten",
+      "editar": "Bewertung bearbeiten",
+      "spoilerOculto": "Rezension mit Spoiler — anzeigen",
+      "resenha": "Schreibe die Rezension (optional)",
+      "spoiler": "enthält Spoiler",
+      "remover": "Entfernen"
+    },
+    "fonte": {
+      "trocar": "Lesequelle wechseln",
+      "configurar": "Lesequelle einrichten",
+      "rotuloUrl": "Füge den Link zu Kapitel 1 von der Website ein, auf der du liest",
+      "exemploUrl": "https://site.com/obra/capitulo/1",
+      "derivando": "Wird abgeleitet…",
+      "derivar": "Ableiten",
+      "confirmar": "Öffnet dieser Link Kapitel 2? Dann:",
+      "usar": "Diese Lesequelle verwenden",
+      "paginaComCandidatos": "Keiner davon öffnet Kapitel 2? Manche Websites schreiben die Nummer nicht in die URL — speichere die Seite der Obra, und dein Fortschritt wird genauso festgehalten:",
+      "paginaSemCandidatos": "Diese Website schreibt die Kapitelnummer nicht in die URL. Speichere die Seite der Obra: Der Button öffnet die Seite, und das Kapitel trägst du hier ein.",
+      "paginaDica": "Tipp: Um die Seite der Serie zu speichern (und kein Kapitel), füge die URL der Obra oben ins Feld ein und leite noch einmal ab.",
+      "salvarPagina": "Seite der Obra speichern"
+    },
+    "erros": {
+      "banco": "Das Regal hängt von der Datenbank ab, die gerade nicht geantwortet hat. Versuche es gleich noch einmal.",
+      "avaliacaoVazia": "gib eine Bewertung ab oder schreibe die Rezension",
+      "salvar": "Speichern hat nicht geklappt — versuche es noch einmal",
+      "remover": "Entfernen hat nicht geklappt — versuche es noch einmal",
+      "derivar": "Ableiten hat nicht geklappt — prüfe den Link",
+      "capituloInvalido": "ungültiges Kapitel",
+      "acao": "hat nicht geklappt — versuche es noch einmal",
+      "rede": "hat gerade nicht geklappt — versuche es noch einmal",
+      "registrar": "konnte gerade nicht eingetragen werden"
+    }
+  },
+  "home": {
+    "saude": {
+      "aviso": "{estado} — {dependencias}. Alles, was nicht davon abhängt, funktioniert weiter.",
+      "resumo": {
+        "ok": "alles läuft",
+        "degraded": "läuft, Konfiguration steht noch aus",
+        "down": "eine Abhängigkeit ist ausgefallen"
+      },
+      "dependencia": {
+        "database": "Datenbank",
+        "anilist": "AniList-Katalog"
+      },
+      "estado": {
+        "ok": "antwortet",
+        "down": "antwortet nicht",
+        "not_configured": "nicht konfiguriert"
+      }
+    },
+    "boasVindas": {
+      "titulo": "Viel Spaß beim Lesen, {username}.",
+      "continuarLendo": "Weiterlesen",
+      "semFonte": "Gerade hat keine Obra, die du liest, eine Lesequelle — markiere eine Obra als „Am Lesen“ und stelle die Lesequelle im <estante>Regal</estante> ein, dann erscheint hier der Button zum Weiterlesen.",
+      "estanteVazia": "Dein Regal ist leer — <catalogo>such im Katalog</catalogo> und füge die erste Obra hinzu."
+    },
+    "apresentacao": {
+      "descricao": "Halte deine Lektüre von Manga, Manhwa und Romanen fest. Automatischer Fortschritt, privater Leseverlauf, dein eigenes Regal.",
+      "criarConta": "Konto erstellen",
+      "entrar": "Anmelden"
+    },
+    "vitrine": {
+      "resenhas": {
+        "titulo": "Rezensionen",
+        "vazio": "Hier gibt es noch keine Rezension — die erste erscheint in diesem Bereich."
+      },
+      "listas": {
+        "titulo": "Listen",
+        "vazio": "Hier gibt es noch keine Liste — die erste erscheint in diesem Bereich."
+      }
+    },
+    "populares": {
+      "titulo": "Gerade beliebt",
+      "verMais": "mehr anzeigen →",
+      "indisponivel": "Der Katalog hat gerade nicht geantwortet — versuch es gleich noch einmal."
+    },
+    "atividade": {
+      "titulo": "Letzte Aktivität",
+      "vazia": "Hier gibt es noch keine Rezension und keine Liste — die erste erscheint in diesem Bereich."
+    },
+    "resenha": {
+      "notaAria": "Bewertung {nota} von 5",
+      "spoiler": "Enthält Spoiler — lies die Rezension auf der Seite der Obra.",
+      "spoilerMostrar": "Enthält Spoiler — anzeigen"
+    },
+    "feed": {
+      "resenhou": "rezensierte",
+      "criouLista": "erstellte die Liste"
+    },
+    "contagem": {
+      "obras": "{n, plural, one {Obra} other {Obras}}",
+      "curtidas": "{n, plural, one {Like} other {Likes}}",
+      "curtidasLeitorDeTela": "{n, plural, one {Like} other {Likes}}"
+    },
+    "rodape": {
+      "verificado": "{estado} · geprüft: {quando}"
+    }
+  },
+  "listas": {
+    "erros": {
+      "semBanco": "Listen hängen von der Datenbank ab, die gerade nicht geantwortet hat."
+    },
+    "campos": {
+      "nome": "Name der Liste",
+      "descricao": "Beschreibung der Liste",
+      "descricaoOpcional": "Beschreibung (optional)"
+    },
+    "indice": {
+      "meta": {
+        "titulo": "Listen"
+      },
+      "titulo": "Listen",
+      "subtitulo": "Sammlungen aus der Community — von den Klassikern bis zum Quatsch.",
+      "convite": "<entrar>Melde dich an</entrar>, um deine eigene zu erstellen.",
+      "vazia": "Noch keine Listen — sei die erste Person, die eine erstellt.",
+      "ordenar": {
+        "rotulo": "Listen sortieren",
+        "recentes": "Neueste",
+        "curtidas": "Meiste Likes"
+      },
+      "criar": {
+        "abrir": "Liste erstellen",
+        "enviar": "Erstellen",
+        "enviando": "Wird erstellt…",
+        "erros": {
+          "semNome": "gib der Liste einen Namen",
+          "falhou": "hat nicht geklappt — versuch es noch mal",
+          "rede": "hat gerade nicht geklappt — versuch es noch mal"
+        }
+      }
+    },
+    "detalhe": {
+      "meta": {
+        "titulo": "Liste"
+      },
+      "autoria": "von <autor>{username}</autor> · {n, plural, one {# Obra} other {# Obras}}",
+      "vazia": "Leere Liste — füge Obras über den Listen-Button auf der Seite jeder Obra hinzu.",
+      "remover": "entfernen",
+      "curtida": {
+        "curtir": "die Liste liken",
+        "descurtir": "Like von der Liste entfernen"
+      },
+      "editar": {
+        "abrir": "Bearbeiten",
+        "erro": "konnte nicht gespeichert werden",
+        "sessao": "melde dich an, um Listen zu nutzen",
+        "nomeInvalido": "1 bis 100 Zeichen"
+      },
+      "apagar": {
+        "abrir": "Liste löschen",
+        "confirmacao": "endgültig löschen?",
+        "sim": "ja",
+        "nao": "nein"
+      },
+      "ordenar": {
+        "antes": "{titulo} nach vorne verschieben",
+        "depois": "{titulo} nach hinten verschieben"
+      }
+    }
+  },
+  "obra": {
+    "meta": {
+      "titulo": "Obra"
+    },
+    "indisponivel": "AniList hat gerade nicht geantwortet und diese Obra ist noch nicht in unserem Cache. Versuch es gleich noch mal.",
+    "autoria": "von",
+    "formatoDesconhecido": "Obra",
+    "curiosidades": "Wissenswertes",
+    "similares": "Ähnliche Obras",
+    "contagem": {
+      "capitulos": "{n, plural, one {{n} Kapitel} other {{n} Kapitel}}",
+      "aberturas": "{n, plural, one {{n} Aufruf} other {{n} Aufrufe}}",
+      "avaliacoes": "{n, plural, one {{n} Bewertung} other {{n} Bewertungen}}",
+      "curtidas": "{n, plural, one {{n} Like} other {{n} Likes}}",
+      "comentarios": "{n, plural, one {{n} Kommentar} other {{n} Kommentare}}"
+    },
+    "painel": {
+      "convite": "<entrar>Melde dich an</entrar>, um sie ins Regal zu stellen, zu bewerten und deine Lektüre festzuhalten.",
+      "adicionar": "Stell sie ins Regal, um sie zu bewerten und deine Lektüre festzuhalten."
+    },
+    "historico": {
+      "titulo": "Leseverlauf",
+      "maisRecentes": "die {n} neuesten Aufrufe",
+      "capitulo": "Kap. {n}",
+      "fonteRemovida": "Lesequelle entfernt"
+    },
+    "avaliacao": {
+      "titulo": "Deine Bewertung",
+      "resenhar": "Rezension schreiben…",
+      "editarResenha": "Rezension bearbeiten…"
+    },
+    "apagar": {
+      "confirmar": "Wenn du den Rezensionstext löschst, löschst du auch {itens}. Weiter?"
+    },
+    "modal": {
+      "rotulo": "Rezension zu {titulo} schreiben",
+      "fechar": "Schließen",
+      "placeholder": "Schreib deine Rezension — sie ist öffentlich für andere Leser",
+      "spoiler": "enthält Spoiler"
+    },
+    "nota": {
+      "titulo": "Kidoku-Bewertung",
+      "distribuicao": "Verteilung der Bewertungen"
+    },
+    "resenhas": {
+      "titulo": "Rezensionen",
+      "vazio": "Hier gibt es noch keine Rezensionen — schreib ein paar Worte und deine wird für alle sichtbar.",
+      "minha": "du",
+      "nota": "Bewertung {nota} von 5",
+      "spoiler": "diese Rezension enthält Spoiler — anzeigen",
+      "verConversa": "Gespräch ansehen",
+      "comentar": "kommentieren",
+      "carregando": "Wird geladen…",
+      "verAnteriores": "{n, plural, one {{n} früheren Kommentar} other {{n} frühere Kommentare}} ansehen",
+      "apagarComentario": "Kommentar löschen",
+      "apagar": "löschen",
+      "placeholderComentario": "Schreib einen Kommentar…",
+      "enviar": "senden",
+      "entreParaComentar": "Melde dich an, um zu kommentieren."
+    },
+    "listas": {
+      "botao": "+ Liste",
+      "titulo": "Meine Listen",
+      "fechar": "schließen",
+      "vazia": "Noch keine Liste — erstell eine auf der Seite „Listen“."
+    },
+    "erros": {
+      "salvar": "Speichern hat nicht geklappt — versuch es noch mal",
+      "comentar": "Kommentieren hat nicht geklappt — versuch es noch mal",
+      "limite": "zu viele Kommentare in kurzer Zeit — warte einen Moment",
+      "listas": "das Laden deiner Listen hat nicht geklappt",
+      "rede": "es hat gerade nicht geklappt — versuch es noch mal"
+    }
+  },
+  "perfil": {
+    "voce": "du",
+    "membroDesde": "auf Kidoku seit {mes}",
+    "notaAria": "Bewertung {nota} von 5",
+    "erros": {
+      "semBanco": "Das Profil braucht die Datenbank, und die hat gerade nicht geantwortet."
+    },
+    "numeros": {
+      "avaliadas": "{n, plural, one {<forte>{valor}</forte> Bewertung} other {<forte>{valor}</forte> Bewertungen}}",
+      "resenhas": "{n, plural, one {<forte>{valor}</forte> Rezension} other {<forte>{valor}</forte> Rezensionen}}",
+      "listas": "{n, plural, one {<forte>{valor}</forte> Liste} other {<forte>{valor}</forte> Listen}}",
+      "curtidasDadas": "{n, plural, one {<forte>{valor}</forte> vergebenes Like} other {<forte>{valor}</forte> vergebene Likes}}",
+      "seguindo": "{n, plural, other {<forte>{valor}</forte> Gefolgt}}",
+      "seguidores": "{n, plural, one {<forte>{valor}</forte> Follower} other {<forte>{valor}</forte> Follower}}",
+      "curtidasNoPerfil": "{n, plural, one {<forte>{valor}</forte> Like auf dem Profil} other {<forte>{valor}</forte> Likes auf dem Profil}}"
+    },
+    "social": {
+      "seguir": "Folgen",
+      "seguindo": "Gefolgt",
+      "curtir": "Profil liken",
+      "descurtir": "Like vom Profil entfernen"
+    },
+    "foto": {
+      "altPropria": "Dein Profilbild",
+      "altOutro": "Profilbild von {username}",
+      "trocar": "Foto ändern",
+      "trocarAria": "Profilbild ändern",
+      "trocarCurto": "ändern",
+      "remover": "entfernen",
+      "erros": {
+        "geral": "gerade nicht möglich",
+        "leitura": "dieses Bild ließ sich nicht lesen",
+        "sessao": "melde dich an, um das Foto zu ändern"
+      }
+    },
+    "estante": {
+      "titulo": "Mein Regal",
+      "gerenciar": "Regal verwalten",
+      "abas": "Status",
+      "vazia": "Nichts unter „{status}“.",
+      "semCapitulo": "kein Kapitel",
+      "capitulo": "Kap. {n}"
+    },
+    "avaliadas": {
+      "titulo": "Bewertet",
+      "vaziaComFiltro": "Keine Obra mit diesem Filter.",
+      "vaziaPropria": "Du hast noch nichts bewertet. Bewerte eine Obra und sie erscheint hier.",
+      "vaziaOutro": "{username} hat noch keine Obra bewertet."
+    },
+    "filtros": {
+      "ordenar": "Sortieren",
+      "nota": "Bewertung",
+      "todas": "Alle",
+      "limpar": "zurücksetzen",
+      "ordens": {
+        "recentes": "Neueste",
+        "antigas": "Älteste",
+        "maior_nota": "Höchste Bewertung",
+        "menor_nota": "Niedrigste Bewertung"
+      }
+    },
+    "resenhas": {
+      "titulo": "Neueste Rezensionen",
+      "vaziaPropria": "Du hast noch keine Rezension geschrieben. Bewerte eine Obra mit Text und sie erscheint hier.",
+      "vaziaOutro": "{username} hat noch keine Rezension geschrieben.",
+      "spoiler": "Enthält Spoiler — anzeigen",
+      "curtidas": "{n, plural, one {{valor} Like} other {{valor} Likes}}"
+    },
+    "listas": {
+      "titulo": "Listen",
+      "vaziaPropria": "Du hast noch keine Liste erstellt. <link>Erstelle die erste</link>",
+      "vaziaOutro": "{username} hat noch keine Liste erstellt.",
+      "obras": "{n, plural, one {{valor} Obra} other {{valor} Obras}}"
+    }
+  }
+}
