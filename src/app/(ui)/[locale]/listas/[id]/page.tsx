@@ -1,0 +1,151 @@
+import { getTranslations } from "next-intl/server";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import { listaComItensDoSistema } from "@/server/services/lista.service";
+import { Link } from "@/i18n/navigation";
+import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
+import { ApagarLista, RemoverDaLista } from "./acoes-da-lista";
+import { CurtirLista } from "./curtir-lista";
+import { EditarLista } from "./editar-lista";
+import { ItensOrdenaveis } from "./itens-ordenaveis";
+import { idiomaDoSegmento } from "@/i18n/routing";
+
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: PageProps<"/[locale]/listas/[id]">)
+{
+  const { locale, id } = await params;
+  const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "listas" });
+  const lista = await listaComItensDoSistema(id, null).catch(function () { return null; });
+
+  return { title: lista?.nome ?? t("detalhe.meta.titulo") };
+}
+
+export default async function PaginaDaLista({ params }: PageProps<"/[locale]/listas/[id]">)
+{
+  const { id } = await params;
+  const userId = await usuarioDaSessao();
+  const t = await getTranslations("listas");
+
+  // Banco fora não é "lista não existe" (#65, item 13): degrada com aviso,
+  // como /listas; só o null do serviço vira 404.
+  let lista: Awaited<ReturnType<typeof listaComItensDoSistema>>;
+
+  try
+  {
+    lista = await listaComItensDoSistema(id, userId);
+  }
+  catch
+  {
+    return (
+      <main className="mx-auto w-full max-w-4xl px-6 py-12">
+        <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
+          {t("erros.semBanco")}
+        </p>
+      </main>
+    );
+  }
+
+  if (lista === null)
+  {
+    notFound();
+  }
+
+  return (
+    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
+      <header className="flex flex-col gap-2">
+        <h1 className="font-marca text-3xl font-bold tracking-tight">{lista.nome}</h1>
+        <p className="text-xs text-texto-suave">
+          {t.rich("detalhe.autoria", {
+            username: lista.username,
+            n: lista.itens.length,
+            autor: function (conteudo)
+            {
+              return (
+                <Link href={`/u/${lista.username}`} className="hover:text-acento hover:underline">
+                  {conteudo}
+                </Link>
+              );
+            },
+          })}
+        </p>
+        {lista.descricao && (
+          <p className="max-w-2xl text-sm text-texto-suave">{lista.descricao}</p>
+        )}
+        <div className="flex flex-wrap items-center gap-4">
+          <CurtirLista
+            listaId={lista.listaId}
+            curtidas={lista.curtidas}
+            curtiPorMim={lista.curtiPorMim}
+            logado={userId !== null}
+          />
+          {lista.minha && (
+            <EditarLista
+              listaId={lista.listaId}
+              nome={lista.nome}
+              descricao={lista.descricao}
+            />
+          )}
+          {lista.minha && <ApagarLista listaId={lista.listaId} />}
+        </div>
+      </header>
+
+      {lista.itens.length === 0 ? (
+        <p className="text-sm text-texto-suave">
+          {t("detalhe.vazia")}
+        </p>
+      ) : lista.minha ? (
+        <ItensOrdenaveis
+          key={lista.itens.map(function (i) { return i.anilistId; }).join(",")}
+          listaId={lista.listaId}
+          itens={lista.itens.map(function (item)
+          {
+            return {
+              anilistId: item.anilistId,
+              titulo: item.titleEnglish ?? item.titleRomaji,
+              coverImageUrl: item.coverImageUrl,
+            };
+          })}
+        />
+      ) : (
+        <ul className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6">
+          {lista.itens.map(function (item)
+          {
+            return (
+              <li key={item.anilistId} className="flex flex-col gap-1">
+                <Link
+                  href={`/obra/${item.anilistId}`}
+                  className="group flex flex-col gap-1.5"
+                >
+                  {item.coverImageUrl ? (
+                    <Image
+                      src={item.coverImageUrl}
+                      alt=""
+                      width={144}
+                      height={216}
+                      className="aspect-[2/3] w-full rounded object-cover transition-opacity group-hover:opacity-80"
+                      unoptimized
+                    />
+                  ) : (
+                    <div
+                      aria-hidden
+                      className="flex aspect-[2/3] w-full items-center justify-center rounded bg-superficie text-texto-suave"
+                    >
+                      —
+                    </div>
+                  )}
+                  <span className="line-clamp-1 text-xs text-texto-suave group-hover:text-texto">
+                    {item.titleEnglish ?? item.titleRomaji}
+                  </span>
+                </Link>
+                {lista.minha && (
+                  <RemoverDaLista listaId={lista.listaId} anilistId={item.anilistId} />
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </main>
+  );
+}

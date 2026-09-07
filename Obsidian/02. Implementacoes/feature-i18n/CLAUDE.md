@@ -209,6 +209,114 @@ TDD onde há regra: teste de paridade das messages (fase 1), `customError`
 do Zod (fase 3), negociação de `Accept-Language` no domínio se sair do
 next-intl (fase 1). Componente de tela e JSON de mensagem não precisam.
 
+## Fase 1 — o que foi feito (07/09/2026)
+
+Branch `feature/i18n-infra`. O desenho valeu quase inteiro; os desvios abaixo são
+os que a implementação obrigou, cada um com o motivo.
+
+### Desvios do desenho
+
+| Desenho | O que foi feito | Motivo |
+|---|---|---|
+| `src/proxy.ts` vira **element** `proxy` no lint | virou **categoria de arquivo** (`boundaries/files`) | `eslint-plugin-boundaries` 7 casa `elements` contra **pasta** — `mode: "file"` está deprecado e a doc diz "for element descriptors, the mode is always folder". Mesma lição do `sessao.ts` (#65, item 19). A categoria satisfaz `no-unknown-files` (a regra passa se `!file.isUnknown`) e a policy `from: { file: { categories: "proxy" } }` funciona igual |
+| negociação de `Accept-Language` talvez precise de domínio próprio | **não precisou** | `@formatjs/intl-localematcher`, que o next-intl já usa, resolve `pt` e `pt-PT` → `pt-BR` e todo o resto → `en`, que é exatamente a D1. Medido antes de escrever código |
+| `messages/pt-BR.json` com um namespace por tela | mais um namespace `comum` **compartilhado** | `Salvar`, `Salvando…`, `Cancelar`, `Voltar`, os 5 rótulos de status e os 4 de formato aparecem em 3+ telas. Duplicar em cada namespace seria 3 lugares para corrigir a mesma palavra. `comum` é somente leitura para quem extrai: quem precisa de chave nova põe no namespace da própria tela |
+| — | `favicon.ico` subiu de `(ui)/` para `src/app/` | dentro de `[locale]` ele viraria `/pt-BR/favicon.ico`. O ícone é do site, não de um idioma |
+| — | `globals.css` **ficou** em `(ui)/`, o layout importa `../globals.css` | CSS não é específico de idioma; descer junto seria churn sem ganho |
+| lint de texto solto (D8) liga "no fim da fase 1" | liga **depois da extração**, ainda na fase 1 | é a mesma coisa: só faz sentido com o pt-BR todo extraído, senão são centenas de erros preexistentes |
+
+### Decisões novas, que o desenho não previa
+
+- **`generateMetadata` no lugar de `export const metadata`.** Quatro telas (`entrar`,
+  `cadastrar`, `catalogo`, `estante`) tinham título estático. Metadata estático não
+  alcança o `t()`, então virou `generateMetadata` lendo o `locale` de `params`.
+- **`src/i18n/navigation.ts`.** O desenho listava `routing.ts` e `request.ts`. Faltava
+  o terceiro: com `localePrefix: "always"`, um `<Link href="/catalogo">` do `next/link`
+  ou um `router.push("/estante")` do `next/navigation` **perde o idioma** e paga um
+  redirect do proxy. `createNavigation(routing)` resolve trocando só o import — 19
+  arquivos com `Link`, 27 com `useRouter`/`usePathname`/`redirect`. `notFound` e
+  `useSearchParams` continuam vindo do `next/navigation`: não têm relação com idioma.
+- **`requestLocale` continua sendo a API.** O `.d.ts` do next-intl 4.14.2 marca
+  `requestLocale` como deprecated em favor de `next/root-params`, mas o bundle da
+  versão não menciona `root-params` em lugar nenhum — a migração ainda não chegou.
+  Reavaliar quando o next-intl passar a usar de fato.
+- **Augmentation em `next-intl`, não em `use-intl`.** A `interface AppConfig` nasce no
+  `use-intl`, mas o pnpm não hoista o pacote: `declare module "use-intl"` não resolve.
+  Augmentar `next-intl` funciona — comprovado pelo erro de tipo que o `tsc` deu com a
+  árvore de mensagens já resolvida.
+
+### Provas rodadas
+
+- `pnpm lint` com import proibido de propósito: `service` no `src/i18n/routing.ts` e
+  `repository` no `src/proxy.ts` → um erro cada, com a mensagem certa. Probes desfeitos,
+  lint volta a exit 0.
+- `pnpm exec next build` sem depender de banco: verde, rotas saem como
+  `/[locale]`, `/[locale]/obra/[anilistId]` etc., e o `Proxy (Middleware)` aparece no
+  relatório.
+- `pnpm test`: 461 (eram 456; os 5 novos são o teste de paridade).
+
+## Fase 3 — o catálogo de códigos, medido (07/09/2026)
+
+Levantamento no código, não estimativa: **126 pontos de erro em 21 rotas**, com
+**~50 mensagens distintas**. A cauda é curta — as cinco mais frequentes cobrem
+metade dos pontos.
+
+| Mensagem de hoje | Vezes | Código proposto | HTTP |
+|---|---|---|---|
+| `não foi possível agora` (+ variantes "salvar/registrar/remover/entrar/carregar") | 29 | `falha_interna` | 500 |
+| `corpo inválido — esperado JSON` | 15 | `corpo_invalido` | 400 |
+| `pedido inválido` | 11 | `pedido_invalido` | 400 |
+| `entre para …` (11 frases diferentes) | 22 | ver **granularidade** abaixo | 401 |
+| `lista não encontrada` | 5 | `lista_nao_encontrada` | 404 |
+| `entrada não encontrada` | 5 | `entrada_nao_encontrada` | 404 |
+| `capítulo inválido` | 3 | `capitulo_invalido` | 422 |
+| `obra não encontrada` / `no catálogo` | 4 | `obra_nao_encontrada` | 404 |
+| `muitas tentativas — aguarde…` / `muitos comentários…` | 3 | `limite_excedido` | 429 |
+| `e-mail ou senha incorretos` | 2 | `credenciais_invalidas` | 401 |
+| `usuário não encontrado` | 2 | `usuario_nao_encontrado` | 404 |
+| `resenha não encontrada` | 2 | `resenha_nao_encontrada` | 404 |
+| `não vale para o próprio perfil` | 2 | `proprio_perfil` | 422 |
+| `nome de 1 a 100 caracteres` | 2 | `nome_invalido` | 400/422 |
+| `já está em uso` (por campo) | 1 | `ja_em_uso` | 409 |
+| resto (URL de leitura, template, spoiler, ordem, antesDe, …) | ~20 | um código cada | vário |
+
+### Pendência de desenho: granularidade do 401
+
+As 11 frases `entre para avaliar` / `entre para usar listas` / `entre para curtir` /
+`entre para comentar` / `entre para seguir` / `entre para apagar` / `entre para
+trocar a foto` / … dizem a mesma coisa: **não há sessão**. Duas saídas:
+
+- **A — um código só, `sessao_necessaria`.** Quem chama já sabe qual ação tentou;
+  a tela escolhe a frase. É o espírito da D5 ("o servidor não precisa saber
+  idioma") levado até o fim: o servidor também não precisa saber de qual botão
+  veio o clique. 11 chaves de mensagem a menos, e nenhuma perda de informação
+  para quem lê — a tela mostra a frase certa porque é ela que sabe o contexto.
+- **B — um código por ação** (`entre_para_avaliar`, …). Fiel ao texto de hoje,
+  mas duplica no servidor uma informação que o cliente já tem, e a extensão
+  precisaria de 11 traduções para dizer "entre".
+
+**Decidido em 07/09: A.** Um código só, `sessao_necessaria`, para os 22 pontos.
+Quem mostra a frase é quem sabe qual ação foi tentada — a tela da avaliação diz
+"entre para avaliar", a dos comentários diz "entre para comentar", e o texto na
+tela não muda. A extensão traduz uma chave em vez de onze.
+
+### Forma
+
+```ts
+// src/app/api/v1/_shared/erros.ts
+export const ERROS = {
+  corpo_invalido: "corpo_invalido",
+  pedido_invalido: "pedido_invalido",
+  sessao_necessaria: "sessao_necessaria",
+  // …
+} as const;
+
+export type CodigoDeErro = (typeof ERROS)[keyof typeof ERROS];
+```
+
+O mesmo arquivo alimenta o namespace `erros` das messages e o `_locales/` da
+extensão. Código sem tradução quebra o teste de paridade da D4.
+
 ## Pendências
 
 Nenhuma de desenho. As cinco de 05/09 foram decididas (D1, D2, D5, D8, ordem

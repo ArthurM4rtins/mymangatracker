@@ -27,6 +27,9 @@ const eslintConfig = defineConfig([
         { type: "prisma", partialMatch: false, pattern: "src/generated/**" },
         { type: "controller", partialMatch: false, pattern: "src/app/api/**" },
         { type: "ui", partialMatch: false, pattern: "src/app/**" },
+        // Idioma: catalogo, roteamento e negociacao. Nao importa nada do
+        // projeto — e importado pela tela, pelo controller e pelo proxy.
+        { type: "i18n", partialMatch: false, pattern: "src/i18n/**" },
         { type: "domain", partialMatch: false, pattern: "src/server/domain/**" },
         {
           type: "repository",
@@ -43,6 +46,9 @@ const eslintConfig = defineConfig([
       // `controller` puro, que a ui nao importa.
       "boundaries/files": [
         { category: "sessao", pattern: "src/app/api/v1/_shared/sessao.ts" },
+        // O proxy do Next e um arquivo unico na raiz de src: `elements` casa
+        // pasta, entao ele so pode ser descrito como categoria de arquivo.
+        { category: "proxy", pattern: "src/proxy.ts" },
       ],
     },
     rules: {
@@ -78,7 +84,7 @@ const eslintConfig = defineConfig([
               allow: {
                 to: {
                   element: {
-                    types: { anyOf: ["ui", "service", "domain"] },
+                    types: { anyOf: ["ui", "service", "domain", "i18n"] },
                   },
                 },
               },
@@ -93,7 +99,7 @@ const eslintConfig = defineConfig([
               allow: {
                 to: {
                   element: {
-                    types: { anyOf: ["controller", "service", "domain"] },
+                    types: { anyOf: ["controller", "service", "domain", "i18n"] },
                   },
                 },
               },
@@ -140,6 +146,40 @@ const eslintConfig = defineConfig([
               allow: { to: { element: { type: "domain" } } },
             },
             {
+              from: { element: { type: "i18n" } },
+              allow: { to: { element: { type: "i18n" } } },
+            },
+            {
+              // O proxy so decide idioma e redireciona. Servico, repositorio e
+              // tela ficam do outro lado da linha.
+              from: { file: { categories: "proxy" } },
+              allow: { to: { element: { type: "i18n" } } },
+            },
+            {
+              // O `default: disallow` ja barraria, mas com mensagem generica: o
+              // proxy nao tem element, entao `{{from.element.type}}` sai vazio.
+              from: { file: { categories: "proxy" } },
+              disallow: {
+                to: {
+                  element: {
+                    types: {
+                      anyOf: [
+                        "ui",
+                        "controller",
+                        "service",
+                        "repository",
+                        "infra",
+                        "domain",
+                        "prisma",
+                      ],
+                    },
+                  },
+                },
+              },
+              message:
+                "O proxy so decide idioma e redireciona — nao importa '{{to.element.type}}'.",
+            },
+            {
               from: { element: { type: "!repository" } },
               disallow: {
                 to: { module: { origin: "external", source: "@prisma/client" } },
@@ -177,6 +217,53 @@ const eslintConfig = defineConfig([
                 "Sessao, cookies e headers sao resolvidos no controller, nunca em '{{from.element.type}}'.",
             },
           ],
+        },
+      ],
+    },
+  },
+  {
+    // D8 da #116: texto de produto nao nasce solto no JSX, nasce no catalogo de
+    // mensagens. Duas regras porque uma nao cobre o furo da outra.
+    files: ["src/app/(ui)/**/*.tsx"],
+    rules: {
+      // 1. Texto entre tags. `ignoreProps` evita centenas de falsos positivos em
+      //    className; as props que carregam texto ficam com a regra 2.
+      "react/jsx-no-literals": [
+        "error",
+        {
+          noStrings: true,
+          ignoreProps: true,
+          allowedStrings: [
+            // Pontuacao e simbolo: nao sao frase, nao se traduzem.
+            "·", "—", "–", "/", "%", "½", "+", "×", "♥", "←", "→", "✕", "●", "○",
+            // Marca: o wordmark, o simbolo e o 既読 do logo.
+            "Kidoku", "✦", "既読",
+            // Rota tecnica exibida como o proprio texto do link.
+            "/api/v1/health",
+            // Extremos da escala de Rating, aria-hidden. Numero, nao frase —
+            // sai daqui na fase 4, junto com os toLocaleString.
+            "0,5", "5,0",
+          ],
+        },
+      ],
+      // 2. O furo da regra 1: prop que vira texto para quem le. Regex so nessas,
+      //    entao className, href, type e id continuam passando.
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "JSXAttribute[name.name=/^(aria-label|aria-description|aria-placeholder|placeholder|title|alt)$/] > Literal[value!='']",
+          message: "Texto em prop: use t() do next-intl.",
+        },
+        {
+          selector:
+            "JSXAttribute[name.name=/^(aria-label|aria-description|aria-placeholder|placeholder|title|alt)$/] > JSXExpressionContainer > Literal[value!='']",
+          message: "Texto em prop: use t() do next-intl.",
+        },
+        {
+          selector:
+            "JSXAttribute[name.name=/^(aria-label|aria-description|aria-placeholder|placeholder|title|alt)$/] > JSXExpressionContainer > TemplateLiteral",
+          message: "Texto em prop: use t() do next-intl, com interpolacao ICU.",
         },
       ],
     },
