@@ -255,6 +255,66 @@ os que a implementação obrigou, cada um com o motivo.
   relatório.
 - `pnpm test`: 461 (eram 456; os 5 novos são o teste de paridade).
 
+## Fase 3 — o catálogo de códigos, medido (07/09/2026)
+
+Levantamento no código, não estimativa: **126 pontos de erro em 21 rotas**, com
+**~50 mensagens distintas**. A cauda é curta — as cinco mais frequentes cobrem
+metade dos pontos.
+
+| Mensagem de hoje | Vezes | Código proposto | HTTP |
+|---|---|---|---|
+| `não foi possível agora` (+ variantes "salvar/registrar/remover/entrar/carregar") | 29 | `falha_interna` | 500 |
+| `corpo inválido — esperado JSON` | 15 | `corpo_invalido` | 400 |
+| `pedido inválido` | 11 | `pedido_invalido` | 400 |
+| `entre para …` (11 frases diferentes) | 22 | ver **granularidade** abaixo | 401 |
+| `lista não encontrada` | 5 | `lista_nao_encontrada` | 404 |
+| `entrada não encontrada` | 5 | `entrada_nao_encontrada` | 404 |
+| `capítulo inválido` | 3 | `capitulo_invalido` | 422 |
+| `obra não encontrada` / `no catálogo` | 4 | `obra_nao_encontrada` | 404 |
+| `muitas tentativas — aguarde…` / `muitos comentários…` | 3 | `limite_excedido` | 429 |
+| `e-mail ou senha incorretos` | 2 | `credenciais_invalidas` | 401 |
+| `usuário não encontrado` | 2 | `usuario_nao_encontrado` | 404 |
+| `resenha não encontrada` | 2 | `resenha_nao_encontrada` | 404 |
+| `não vale para o próprio perfil` | 2 | `proprio_perfil` | 422 |
+| `nome de 1 a 100 caracteres` | 2 | `nome_invalido` | 400/422 |
+| `já está em uso` (por campo) | 1 | `ja_em_uso` | 409 |
+| resto (URL de leitura, template, spoiler, ordem, antesDe, …) | ~20 | um código cada | vário |
+
+### Pendência de desenho: granularidade do 401
+
+As 11 frases `entre para avaliar` / `entre para usar listas` / `entre para curtir` /
+`entre para comentar` / `entre para seguir` / `entre para apagar` / `entre para
+trocar a foto` / … dizem a mesma coisa: **não há sessão**. Duas saídas:
+
+- **A — um código só, `sessao_necessaria`.** Quem chama já sabe qual ação tentou;
+  a tela escolhe a frase. É o espírito da D5 ("o servidor não precisa saber
+  idioma") levado até o fim: o servidor também não precisa saber de qual botão
+  veio o clique. 11 chaves de mensagem a menos, e nenhuma perda de informação
+  para quem lê — a tela mostra a frase certa porque é ela que sabe o contexto.
+- **B — um código por ação** (`entre_para_avaliar`, …). Fiel ao texto de hoje,
+  mas duplica no servidor uma informação que o cliente já tem, e a extensão
+  precisaria de 11 traduções para dizer "entre".
+
+Recomendação: **A**. Decidir antes de escrever `_shared/erros.ts` — muda 22 dos
+126 pontos e é mudança de comportamento visível, não refactor mecânico.
+
+### Forma
+
+```ts
+// src/app/api/v1/_shared/erros.ts
+export const ERROS = {
+  corpo_invalido: "corpo_invalido",
+  pedido_invalido: "pedido_invalido",
+  sessao_necessaria: "sessao_necessaria",
+  // …
+} as const;
+
+export type CodigoDeErro = (typeof ERROS)[keyof typeof ERROS];
+```
+
+O mesmo arquivo alimenta o namespace `erros` das messages e o `_locales/` da
+extensão. Código sem tradução quebra o teste de paridade da D4.
+
 ## Pendências
 
 Nenhuma de desenho. As cinco de 05/09 foram decididas (D1, D2, D5, D8, ordem
