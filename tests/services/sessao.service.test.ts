@@ -19,7 +19,9 @@ async function fakeDeps(hash: string)
   const deps: DependenciasDaSessao = {
     buscarCredenciais: async function (email)
     {
-      return email === "existe@exemplo.test" ? { id: "u1", passwordHash: hash } : null;
+      return email === "existe@exemplo.test"
+        ? { id: "u1", passwordHash: hash, locale: null }
+        : null;
     },
     assinarToken,
   };
@@ -39,7 +41,7 @@ describe("entrar", function ()
       deps,
     );
 
-    expect(sessao).toEqual({ token: "token-de-u1" });
+    expect(sessao).toEqual({ token: "token-de-u1", locale: null });
     expect(assinarToken).toHaveBeenCalledExactlyOnceWith("u1");
   });
 

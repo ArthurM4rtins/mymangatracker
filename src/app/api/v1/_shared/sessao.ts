@@ -29,6 +29,23 @@ export function escreverSessaoNoCookie(
   });
 }
 
+/**
+ * O cookie que o proxy lê para decidir o idioma. Escrito no login a partir de
+ * `User.locale` (#116, fase 5): assim a preferência da conta vale já no
+ * primeiro clique de um aparelho novo, sem o proxy precisar abrir o JWT na
+ * borda. Não é `httpOnly` de propósito — é o mesmo cookie que o seletor de
+ * idioma escreve pelo next-intl quando ninguém está logado.
+ */
+export function escreverIdiomaNoCookie(resposta: NextResponse, locale: string): void
+{
+  resposta.cookies.set("NEXT_LOCALE", locale, {
+    sameSite: "lax",
+    secure: process.env.NODE_ENV !== "development",
+    path: "/",
+    maxAge: DURACAO_SESSAO_SEGUNDOS,
+  });
+}
+
 export function apagarSessaoDoCookie(resposta: NextResponse): void
 {
   resposta.cookies.set(COOKIE_DE_SESSAO, "", {

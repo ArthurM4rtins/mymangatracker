@@ -20,10 +20,17 @@ export type Login = {
 
 export type SessaoAberta = {
   token: string;
+  /**
+   * O idioma escolhido pela conta, ou null se ela nunca escolheu. Quem escreve
+   * o cookie é o controller — o serviço não conhece cookie (#116, fase 5).
+   */
+  locale: string | null;
 };
 
 export type DependenciasDaSessao = {
-  buscarCredenciais: (email: string) => Promise<{ id: string; passwordHash: string } | null>;
+  buscarCredenciais: (
+    email: string,
+  ) => Promise<{ id: string; passwordHash: string; locale: string | null } | null>;
   assinarToken: (userId: string) => Promise<string>;
   verificarHash?: (senha: string, hash: string) => Promise<boolean>;
 };
@@ -51,7 +58,10 @@ export async function entrar(
     return null;
   }
 
-  return { token: await deps.assinarToken(credenciais.id) };
+  return {
+    token: await deps.assinarToken(credenciais.id),
+    locale: credenciais.locale,
+  };
 }
 
 /** A composição de produção: repositório de verdade + JWT com o segredo do ambiente. */

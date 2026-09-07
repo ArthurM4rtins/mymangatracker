@@ -400,6 +400,97 @@ Os dois passaram por lint, teste e build verdes. Foram para o PR da fase 1, que
 Lição para as fases 3 a 5: **lint, teste e build verdes não são prova de que a
 tela funciona.** Os dois defeitos eram invisíveis para os três.
 
+## Fases 3, 4 e 5 — o que ficou (07/09/2026)
+
+### Fase 3 — erro por código
+
+40 códigos levantados dos **125 pontos reais** em 21 rotas. Nenhum status HTTP
+mudou (conferido por script, comparando a sequência de `status: N` contra o HEAD
+nos 26 arquivos). Duas colapsadas sem mudar o que o usuário lê, porque a tela
+sabe qual ação foi tentada: `sessao_necessaria` (11 frases) e `falha_interna`
+(5 frases).
+
+**Desvio da D5:** as seis mensagens do Zod do cadastro viram código escrito
+direto no `message` do esquema (`.min(3, ERRO.USERNAME_CURTO)`), e não
+`z.config({ customError })`. Um customError global teria que adivinhar por
+`issue.path` que `min(3)` em `username` é `username_curto` e não `senha_curta`.
+
+### Fase 4 — formatos
+
+**Desvio da D6:** número vai pelo `useFormatter()` do next-intl; **data fica no
+`Intl` nativo** com o idioma vindo de `useLocale()`/`getLocale()`. Medido no
+próprio next-intl: `timeZone` é resolvido no SERVIDOR (`getConfig` o devolve
+`NonNullable`) e viaja até o provider, então formatar data por ele daria a hora
+do servidor — UTC na Vercel — no cliente, que é o oposto do que a D6 pede para a
+hora exata.
+
+Contagem continua indo como string crua, não pelo `#` do ICU: `"1000 curtidas"`
+viraria `"1.000 curtidas"`, que é outra tela. Fica em aberto para quem quiser.
+
+### Fase 5 — preferência na conta
+
+**Desvio da D2, decidido em 07/09 com o dono do repo:** o proxy continua burro e
+só lê o cookie `NEXT_LOCALE`. Quem escreve é o **login** (a partir de
+`User.locale`) e o `PATCH /api/v1/perfil`.
+
+Para o proxy saber o idioma da conta, ele teria que abrir o JWT na borda — o que
+fura a regra de camada do proxy e obrigaria o `locale` a entrar no token, deixando
+as sessões de 7 dias já emitidas sem a preferência até novo login. Pelo cookie não
+há nenhum dos dois: para estar logada num aparelho novo a pessoa precisa entrar, e
+entrar já escreve.
+
+**Não provado ao vivo:** o login escrevendo o cookie. Exercitar exige autenticar.
+Cada elo está provado em separado (serviço devolve o locale, repositório grava e
+lê de volta, controller chama `escreverIdiomaNoCookie` sob `hasLocale`); falta
+juntar numa sessão real. Verificação de 20 segundos: trocar o idioma logado, sair,
+entrar de novo.
+
+## Acrescentar um idioma — o estado final
+
+O caro nunca foi traduzir; foi deixar o código traduzível. Isso está feito, e as
+duas regras de lint da D8 impedem de desfazer.
+
+Três passos, nenhum em código de tela: uma linha em `routing.locales`,
+`messages/<código>.json` (346 strings) e `extension/_locales/<código>/messages.json`
+(31 strings). O passo a passo está em **`messages/README.md`**, que é onde quem
+vai traduzir olha.
+
+### O furo que foi fechado no caminho
+
+Os testes importavam `pt-BR.json` e `en.json` **pelo nome**. Um `es.json` novo não
+seria conferido por nada. Agora saem de `routing.locales`, e junto entrou a regra
+que faltava: **categoria de plural**. O CLDR exige formas diferentes por língua —
+russo pede `one/few/many/other`, árabe seis, japonês só `other`. Copiar o
+`one`/`other` do inglês para o russo passa em lint, tipo, build e em todo o resto,
+e renderiza errado para 2, 3, 4, 5.
+
+A regra distingue descuido de decisão: declarar **todas** as formas exigidas, ou
+declarar **só `other`** (= a palavra não varia). Metade é o que quebra. Dobra
+deliberada fica em `PLURAL_DOBRADO_EM_OUTRO` com o motivo.
+
+### O que continua NÃO sendo automático
+
+- **Subset da fonte.** `subsets: ["latin"]` no layout; cirílico, grego, japonês ou
+  árabe caem na fonte do sistema até alguém acrescentar.
+- **Direita para a esquerda.** ~29 `className` com lado físico (`left-4`, `pl-`,
+  `border-r`) mais `dir` no `<html>`. É trabalho de CSS, não de catálogo, e não
+  fica mais barato por já existir um segundo idioma.
+
+## Lição da sessão
+
+**Lint, teste e build verdes não provam que a tela funciona.** Os dois piores
+defeitos desta sessão passaram pelos três:
+
+1. o matcher do proxy, que barrava TODO link antigo (`/catalogo` → 404), porque o
+   ponto escapado virou ponto solto no literal TypeScript;
+2. trocar de idioma apagava o tema escolhido, porque o React re-renderiza o
+   `<html>` e leva junto o `data-theme` posto pelo script inline.
+
+Os dois só apareceram rodando o app. O primeiro ganhou teste que **lê
+`src/proxy.ts`** em vez de uma cópia — `matcher` é analisado estaticamente pelo
+Next, então a cópia pode estar certa enquanto o que roda está errado (foi
+exatamente o que aconteceu na primeira tentativa de conserto).
+
 ## Pendências
 
 Nenhuma de desenho. As cinco de 05/09 foram decididas (D1, D2, D5, D8, ordem
