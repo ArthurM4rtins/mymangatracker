@@ -5,8 +5,9 @@
  * jeito da curtida de lista. Cada botão carrega o próprio número. Anônimo vai
  * para /entrar. O dono não vê isto — a página não renderiza para ele.
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useRouter } from "@/i18n/navigation";
 
 type Toggle = { ativo: boolean; total: number };
 
@@ -69,6 +70,7 @@ export function AcoesSociais({
   logado: boolean;
 })
 {
+  const t = useTranslations("perfil");
   const base = `/api/v1/usuarios/${encodeURIComponent(username)}`;
   const seguir = useToggle(`${base}/seguir`, { ativo: sigo, total: seguidores }, logado);
   const curtir = useToggle(`${base}/curtida`, { ativo: curti, total: curtidas }, logado);
@@ -86,7 +88,7 @@ export function AcoesSociais({
             : "border-borda text-texto hover:border-acento hover:text-acento"
         }`}
       >
-        {seguir.estado.ativo ? "Seguindo" : "Seguir"}
+        {seguir.estado.ativo ? t("social.seguindo") : t("social.seguir")}
         <span className="tabular-nums opacity-80">{seguir.estado.total}</span>
       </button>
 
@@ -95,8 +97,8 @@ export function AcoesSociais({
         onClick={curtir.alternar}
         disabled={curtir.ocupado}
         aria-pressed={curtir.estado.ativo}
-        aria-label={curtir.estado.ativo ? "Descurtir perfil" : "Curtir perfil"}
-        title={curtir.estado.ativo ? "Descurtir perfil" : "Curtir perfil"}
+        aria-label={curtir.estado.ativo ? t("social.descurtir") : t("social.curtir")}
+        title={curtir.estado.ativo ? t("social.descurtir") : t("social.curtir")}
         className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm transition-colors disabled:opacity-60 ${
           curtir.estado.ativo
             ? "border-acento text-acento"

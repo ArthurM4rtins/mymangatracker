@@ -4,7 +4,8 @@
  * A grade pública de obras avaliadas: capa, título e a nota embaixo. Client
  * só por causa do glyph da estrela, que vive num módulo client.
  */
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { estrelasTexto } from "../../componentes/estrelas";
 import { Capa } from "./minha-estante";
 
@@ -17,6 +18,8 @@ export type AvaliadaParaTela = {
 
 export function GradeAvaliadas({ avaliadas }: { avaliadas: AvaliadaParaTela[] })
 {
+  const t = useTranslations("perfil");
+
   return (
     <ul className="grid grid-cols-3 gap-4 sm:grid-cols-5 md:grid-cols-6">
       {avaliadas.map(function (obra)
@@ -31,7 +34,7 @@ export function GradeAvaliadas({ avaliadas }: { avaliadas: AvaliadaParaTela[] })
               <Capa src={obra.coverImageUrl} />
               <span className="truncate text-xs">{obra.titulo}</span>
               <span
-                aria-label={`Nota ${obra.rating} de 5`}
+                aria-label={t("notaAria", { nota: String(obra.rating) })}
                 className="text-xs text-acento"
               >
                 {estrelasTexto(obra.rating)}

@@ -1,8 +1,9 @@
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { interpretarFiltroDasAvaliadas } from "@/server/domain/perfil";
 import { perfilDoUsuarioDoSistema } from "@/server/services/perfil.service";
+import { Link } from "@/i18n/navigation";
 import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { AcoesSociais } from "./acoes-sociais";
 import { FiltrosAvaliadas } from "./filtros-avaliadas";
@@ -22,6 +23,23 @@ type Props = {
 const FORMATO_MES = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric" });
 const FORMATO_DIA = new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" });
 
+/** O número em destaque da contagem: a marcação mora na mensagem, não no JSX. */
+function destaque(conteudo: React.ReactNode)
+{
+  return <span className="font-marca font-bold text-texto">{conteudo}</span>;
+}
+
+/**
+ * Argumentos de uma contagem em destaque: `n` só escolhe o ramo do plural e
+ * `valor` é o que aparece. O `#` do ICU imprimiria o número pelo
+ * Intl.NumberFormat do locale — "1.000 avaliadas" —, e a tela sempre mostrou o
+ * número cru.
+ */
+function contagemEmDestaque(n: number)
+{
+  return { n, valor: String(n), forte: destaque };
+}
+
 export async function generateMetadata({ params }: Props)
 {
   // O Next já entrega o parâmetro decodificado (#65, item 14).
@@ -33,6 +51,7 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
   const username = (await params).username;
   const filtro = interpretarFiltroDasAvaliadas(await searchParams);
   const viewerId = await usuarioDaSessao();
+  const t = await getTranslations("perfil");
 
   let perfil;
   try
@@ -44,7 +63,7 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
         <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
-          O perfil depende do banco de dados, que não respondeu agora.
+          {t("erros.semBanco")}
         </p>
       </main>
     );
@@ -70,31 +89,37 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
             {perfil.username}
             {perfil.souEu && (
               <span className="rounded-full border border-borda px-2 py-0.5 text-xs font-normal text-texto-suave">
-                você
+                {t("voce")}
               </span>
             )}
           </h1>
           <p className="text-sm text-texto-suave">
-            no Kidoku desde {FORMATO_MES.format(perfil.membroDesde)}
+            {t("membroDesde", { mes: FORMATO_MES.format(perfil.membroDesde) })}
           </p>
           <p className="flex flex-wrap gap-x-3 text-sm text-texto-suave">
-            <Numero valor={perfil.numeros.avaliadas} um="avaliada" varios="avaliadas" />
-            <Numero valor={perfil.numeros.resenhas} um="resenha" varios="resenhas" />
-            <Numero valor={perfil.numeros.listas} um="lista" varios="listas" />
-            <Numero
-              valor={perfil.numeros.curtidasDadas}
-              um="curtida dada"
-              varios="curtidas dadas"
-            />
-            <Numero valor={perfil.social.seguindo} um="seguindo" varios="seguindo" />
+            <span>
+              {t.rich("numeros.avaliadas", contagemEmDestaque(perfil.numeros.avaliadas))}
+            </span>
+            <span>
+              {t.rich("numeros.resenhas", contagemEmDestaque(perfil.numeros.resenhas))}
+            </span>
+            <span>
+              {t.rich("numeros.listas", contagemEmDestaque(perfil.numeros.listas))}
+            </span>
+            <span>
+              {t.rich("numeros.curtidasDadas", contagemEmDestaque(perfil.numeros.curtidasDadas))}
+            </span>
+            <span>
+              {t.rich("numeros.seguindo", contagemEmDestaque(perfil.social.seguindo))}
+            </span>
             {perfil.souEu && (
               <>
-                <Numero valor={perfil.social.seguidores} um="seguidor" varios="seguidores" />
-                <Numero
-                  valor={perfil.social.curtidas}
-                  um="curtida no perfil"
-                  varios="curtidas no perfil"
-                />
+                <span>
+                  {t.rich("numeros.seguidores", contagemEmDestaque(perfil.social.seguidores))}
+                </span>
+                <span>
+                  {t.rich("numeros.curtidasNoPerfil", contagemEmDestaque(perfil.social.curtidas))}
+                </span>
               </>
             )}
           </p>
@@ -133,17 +158,17 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-            Avaliadas
+            {t("avaliadas.titulo")}
           </h2>
           {perfil.numeros.avaliadas > 0 && <FiltrosAvaliadas />}
         </div>
         {perfil.avaliadas.length === 0 ? (
           <p className="text-sm text-texto-suave">
             {temFiltro
-              ? "Nenhuma obra com esse filtro."
+              ? t("avaliadas.vaziaComFiltro")
               : perfil.souEu
-                ? "Você ainda não deu nota. Avalie uma obra e ela aparece aqui."
-                : `${perfil.username} ainda não deu nota a nenhuma obra.`}
+                ? t("avaliadas.vaziaPropria")
+                : t("avaliadas.vaziaOutro", { username: perfil.username })}
           </p>
         ) : (
           <GradeAvaliadas
@@ -162,13 +187,13 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
 
       <section className="flex flex-col gap-4">
         <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-          Resenhas recentes
+          {t("resenhas.titulo")}
         </h2>
         {perfil.resenhasRecentes.length === 0 ? (
           <p className="text-sm text-texto-suave">
             {perfil.souEu
-              ? "Você ainda não escreveu resenha. Avalie uma obra com texto e ela aparece aqui."
-              : `${perfil.username} ainda não escreveu resenha.`}
+              ? t("resenhas.vaziaPropria")
+              : t("resenhas.vaziaOutro", { username: perfil.username })}
           </p>
         ) : (
           <ul className="flex flex-col gap-4">
@@ -197,20 +222,22 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
 
       <section className="flex flex-col gap-4">
         <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-          Listas
+          {t("listas.titulo")}
         </h2>
         {perfil.listas.length === 0 ? (
           <p className="text-sm text-texto-suave">
-            {perfil.souEu ? (
-              <>
-                Você ainda não criou lista.{" "}
-                <Link href="/listas" className="text-acento underline underline-offset-4">
-                  Criar a primeira
-                </Link>
-              </>
-            ) : (
-              `${perfil.username} ainda não criou lista.`
-            )}
+            {perfil.souEu
+              ? t.rich("listas.vaziaPropria", {
+                  link: function (conteudo)
+                  {
+                    return (
+                      <Link href="/listas" className="text-acento underline underline-offset-4">
+                        {conteudo}
+                      </Link>
+                    );
+                  },
+                })
+              : t("listas.vaziaOutro", { username: perfil.username })}
           </p>
         ) : (
           <ul className="grid gap-4 sm:grid-cols-2">
@@ -256,7 +283,10 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
                       <h3 className="font-medium group-hover:text-acento">{lista.nome}</h3>
                       <p className="text-xs text-texto-suave">
-                        {lista.totalDeObras} {lista.totalDeObras === 1 ? "obra" : "obras"}
+                        {t("listas.obras", {
+                          n: lista.totalDeObras,
+                          valor: String(lista.totalDeObras),
+                        })}
                       </p>
                       {lista.descricao && (
                         <p className="line-clamp-2 text-sm text-texto-suave">
@@ -272,15 +302,5 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
         )}
       </section>
     </main>
-  );
-}
-
-function Numero({ valor, um, varios }: { valor: number; um: string; varios: string })
-{
-  return (
-    <span>
-      <span className="font-marca font-bold text-texto">{valor}</span>{" "}
-      {valor === 1 ? um : varios}
-    </span>
   );
 }

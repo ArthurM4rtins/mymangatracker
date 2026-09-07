@@ -6,8 +6,9 @@
  * antes de enviar — o servidor não processa imagem. "Remover" volta à
  * inicial. Para os outros, só a foto (ou a inicial).
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
+import { useRouter } from "@/i18n/navigation";
 
 const LADO = 256;
 
@@ -24,6 +25,7 @@ export function FotoDePerfil({
 {
   const roteador = useRouter();
   const entrada = useRef<HTMLInputElement>(null);
+  const t = useTranslations("perfil");
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -50,7 +52,7 @@ export function FotoDePerfil({
         const corpo = (await resposta.json().catch(function () { return null; })) as
           | { erros?: { _geral?: string } }
           | null;
-        setErro(corpo?.erros?._geral ?? "não foi possível agora");
+        setErro(corpo?.erros?._geral ?? t("foto.erros.geral"));
         return;
       }
 
@@ -58,7 +60,7 @@ export function FotoDePerfil({
     }
     catch
     {
-      setErro("não deu para ler essa imagem");
+      setErro(t("foto.erros.leitura"));
     }
     finally
     {
@@ -78,7 +80,7 @@ export function FotoDePerfil({
 
       if (!resposta.ok)
       {
-        setErro("não foi possível agora");
+        setErro(t("foto.erros.geral"));
         return;
       }
 
@@ -94,7 +96,7 @@ export function FotoDePerfil({
     // eslint-disable-next-line @next/next/no-img-element -- rota própria, sem otimização
     <img
       src={url}
-      alt={souEu ? "Sua foto de perfil" : `Foto de ${username}`}
+      alt={souEu ? t("foto.altPropria") : t("foto.altOutro", { username })}
       width={80}
       height={80}
       className="h-20 w-20 shrink-0 rounded-full border border-borda object-cover"
@@ -119,8 +121,8 @@ export function FotoDePerfil({
         type="button"
         onClick={function () { entrada.current?.click(); }}
         disabled={ocupado}
-        title="Trocar foto"
-        aria-label="Trocar foto de perfil"
+        title={t("foto.trocar")}
+        aria-label={t("foto.trocarAria")}
         className="group relative rounded-full disabled:opacity-60"
       >
         {circulo}
@@ -128,7 +130,7 @@ export function FotoDePerfil({
           aria-hidden
           className="absolute inset-0 flex items-center justify-center rounded-full bg-fundo/70 text-xs font-medium text-texto opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
         >
-          {ocupado ? "…" : "trocar"}
+          {ocupado ? "…" : t("foto.trocarCurto")}
         </span>
       </button>
       <input
@@ -149,7 +151,7 @@ export function FotoDePerfil({
           disabled={ocupado}
           className="text-xs text-texto-suave hover:text-acento disabled:opacity-60"
         >
-          remover
+          {t("foto.remover")}
         </button>
       )}
       {erro && <p className="max-w-[10rem] text-center text-xs text-acento">{erro}</p>}

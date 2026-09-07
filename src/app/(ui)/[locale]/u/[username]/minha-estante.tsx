@@ -5,10 +5,11 @@
  * o capítulo atual embaixo de cada uma. Nunca renderiza para outro usuário —
  * o serviço só entrega `estante` quando quem olha é o dono.
  */
+import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { STATUS_DA_ESTANTE, type StatusDaEstante } from "@/server/domain/perfil";
+import { Link } from "@/i18n/navigation";
 
 export type EntradaParaTela = {
   entradaId: string;
@@ -17,14 +18,6 @@ export type EntradaParaTela = {
   anilistId: number;
   titulo: string;
   coverImageUrl: string | null;
-};
-
-const ROTULO: Record<StatusDaEstante, string> = {
-  READING: "Lendo",
-  COMPLETED: "Concluído",
-  PLANNED: "Planejado",
-  PAUSED: "Pausado",
-  DROPPED: "Largado",
 };
 
 export function MinhaEstante({
@@ -36,23 +29,25 @@ export function MinhaEstante({
 })
 {
   const [aba, setAba] = useState<StatusDaEstante>("READING");
+  const t = useTranslations("perfil");
+  const c = useTranslations("comum");
   const visiveis = entradas.filter(function (e) { return e.status === aba; });
 
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-          Minha estante
+          {t("estante.titulo")}
         </h2>
         <Link
           href="/estante"
           className="text-xs text-texto-suave underline underline-offset-4 hover:text-texto"
         >
-          gerenciar na estante
+          {t("estante.gerenciar")}
         </Link>
       </div>
 
-      <div role="tablist" aria-label="Status" className="flex flex-wrap gap-2">
+      <div role="tablist" aria-label={t("estante.abas")} className="flex flex-wrap gap-2">
         {STATUS_DA_ESTANTE.map(function (status)
         {
           const ativa = status === aba;
@@ -70,7 +65,7 @@ export function MinhaEstante({
                   : "border-borda text-texto-suave hover:text-texto"
               }`}
             >
-              {ROTULO[status]}{" "}
+              {c(`status.${status}`)}{" "}
               <span className="font-marca font-bold">{contagem[status]}</span>
             </button>
           );
@@ -78,7 +73,9 @@ export function MinhaEstante({
       </div>
 
       {visiveis.length === 0 ? (
-        <p className="text-sm text-texto-suave">Nada em {ROTULO[aba].toLowerCase()}.</p>
+        <p className="text-sm text-texto-suave">
+          {t("estante.vazia", { status: c(`status.${aba}`).toLowerCase() })}
+        </p>
       ) : (
         <ul className="grid grid-cols-3 gap-4 sm:grid-cols-5 md:grid-cols-6">
           {visiveis.map(function (entrada)
@@ -94,8 +91,8 @@ export function MinhaEstante({
                   <span className="truncate text-xs">{entrada.titulo}</span>
                   <span className="text-xs text-texto-suave">
                     {entrada.progressChapter === null
-                      ? "sem capítulo"
-                      : `cap. ${entrada.progressChapter}`}
+                      ? t("estante.semCapitulo")
+                      : t("estante.capitulo", { n: entrada.progressChapter })}
                   </span>
                 </Link>
               </li>

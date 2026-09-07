@@ -4,14 +4,12 @@
  * Os filtros da grade de avaliadas do perfil. Cada mudança vai para a URL —
  * compartilhável, recarregável, e quem valida é o domínio no servidor.
  */
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 
-const ORDENS = [
-  { valor: "recentes", rotulo: "Mais recentes" },
-  { valor: "antigas", rotulo: "Mais antigas" },
-  { valor: "maior_nota", rotulo: "Maior nota" },
-  { valor: "menor_nota", rotulo: "Menor nota" },
-];
+// O valor vai para a URL e é a chave do rótulo: o texto vive no catálogo.
+const ORDENS = ["recentes", "antigas", "maior_nota", "menor_nota"] as const;
 
 const NOTAS = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5].map(function (nota)
 {
@@ -23,6 +21,7 @@ export function FiltrosAvaliadas()
   const roteador = useRouter();
   const caminho = usePathname();
   const params = useSearchParams();
+  const t = useTranslations("perfil");
 
   function mudar(chave: string, valor: string)
   {
@@ -41,19 +40,24 @@ export function FiltrosAvaliadas()
     roteador.replace(consulta === "" ? caminho : `${caminho}?${consulta}`, { scroll: false });
   }
 
+  const ordens = ORDENS.map(function (ordem)
+  {
+    return { valor: ordem, rotulo: t(`filtros.ordens.${ordem}`) };
+  });
+
   const temFiltro = params.get("ordem") !== null || params.get("nota") !== null;
 
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Seletor
-        rotulo="Ordenar"
+        rotulo={t("filtros.ordenar")}
         valor={params.get("ordem") ?? "recentes"}
-        opcoes={ORDENS}
+        opcoes={ordens}
         semVazio
         aoMudar={function (valor) { mudar("ordem", valor === "recentes" ? "" : valor); }}
       />
       <Seletor
-        rotulo="Nota"
+        rotulo={t("filtros.nota")}
         valor={params.get("nota") ?? ""}
         opcoes={NOTAS}
         aoMudar={function (valor) { mudar("nota", valor); }}
@@ -64,7 +68,7 @@ export function FiltrosAvaliadas()
           onClick={function () { roteador.replace(caminho, { scroll: false }); }}
           className="text-xs text-texto-suave underline underline-offset-4 hover:text-texto"
         >
-          limpar
+          {t("filtros.limpar")}
         </button>
       )}
     </div>
@@ -85,6 +89,8 @@ function Seletor({
   aoMudar: (valor: string) => void;
 })
 {
+  const t = useTranslations("perfil");
+
   return (
     <label className="flex items-center gap-1.5 text-xs text-texto-suave">
       {rotulo}
@@ -93,7 +99,7 @@ function Seletor({
         onChange={function (evento) { aoMudar(evento.target.value); }}
         className="rounded-md border border-borda bg-superficie px-2 py-1.5 text-sm text-texto outline-none focus:border-acento"
       >
-        {!semVazio && <option value="">Todas</option>}
+        {!semVazio && <option value="">{t("filtros.todas")}</option>}
         {opcoes.map(function (opcao)
         {
           return (
