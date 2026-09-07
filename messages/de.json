@@ -19,10 +19,10 @@
     "voltar": "Zurück",
     "status": {
       "READING": "Am Lesen",
-      "COMPLETED": "Abgeschlossen",
+      "COMPLETED": "Fertig",
       "PLANNED": "Geplant",
       "PAUSED": "Pausiert",
-      "DROPPED": "Abgebrochen"
+      "DROPPED": "Abbruch"
     },
     "formato": {
       "JP": "Manga",
