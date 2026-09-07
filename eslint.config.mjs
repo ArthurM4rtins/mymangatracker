@@ -222,6 +222,53 @@ const eslintConfig = defineConfig([
     },
   },
   {
+    // D8 da #116: texto de produto nao nasce solto no JSX, nasce no catalogo de
+    // mensagens. Duas regras porque uma nao cobre o furo da outra.
+    files: ["src/app/(ui)/**/*.tsx"],
+    rules: {
+      // 1. Texto entre tags. `ignoreProps` evita centenas de falsos positivos em
+      //    className; as props que carregam texto ficam com a regra 2.
+      "react/jsx-no-literals": [
+        "error",
+        {
+          noStrings: true,
+          ignoreProps: true,
+          allowedStrings: [
+            // Pontuacao e simbolo: nao sao frase, nao se traduzem.
+            "·", "—", "–", "/", "%", "½", "+", "×", "♥", "←", "→", "✕", "●", "○",
+            // Marca: o wordmark, o simbolo e o 既読 do logo.
+            "Kidoku", "✦", "既読",
+            // Rota tecnica exibida como o proprio texto do link.
+            "/api/v1/health",
+            // Extremos da escala de Rating, aria-hidden. Numero, nao frase —
+            // sai daqui na fase 4, junto com os toLocaleString.
+            "0,5", "5,0",
+          ],
+        },
+      ],
+      // 2. O furo da regra 1: prop que vira texto para quem le. Regex so nessas,
+      //    entao className, href, type e id continuam passando.
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "JSXAttribute[name.name=/^(aria-label|aria-description|aria-placeholder|placeholder|title|alt)$/] > Literal[value!='']",
+          message: "Texto em prop: use t() do next-intl.",
+        },
+        {
+          selector:
+            "JSXAttribute[name.name=/^(aria-label|aria-description|aria-placeholder|placeholder|title|alt)$/] > JSXExpressionContainer > Literal[value!='']",
+          message: "Texto em prop: use t() do next-intl.",
+        },
+        {
+          selector:
+            "JSXAttribute[name.name=/^(aria-label|aria-description|aria-placeholder|placeholder|title|alt)$/] > JSXExpressionContainer > TemplateLiteral",
+          message: "Texto em prop: use t() do next-intl, com interpolacao ICU.",
+        },
+      ],
+    },
+  },
+  {
     // Servico e dominio nao conhecem HTTP. A regra de boundaries acima cobra o
     // import de `next/headers` e `next/server`; esta cobra os GLOBAIS do
     // runtime (`Request`, `Headers`, `Response`), que passavam sem import
