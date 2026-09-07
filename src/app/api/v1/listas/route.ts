@@ -9,6 +9,7 @@ import {
   criarListaDoSistema,
   minhasListasDoSistema,
 } from "@/server/services/lista.service";
+import { ERRO } from "../_shared/erros";
 import { usuarioDaSessao } from "../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +26,7 @@ export async function GET(request: Request)
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para usar listas" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -36,7 +37,7 @@ export async function GET(request: Request)
   if (anilistId !== null && (!Number.isInteger(anilistId) || anilistId <= 0))
   {
     return NextResponse.json(
-      { erros: { _geral: "anilistId inválido" } },
+      { erros: { _geral: ERRO.ANILIST_ID_INVALIDO } },
       { status: 400 },
     );
   }
@@ -51,7 +52,7 @@ export async function GET(request: Request)
   {
     console.error("[listas] falha ao listar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }
@@ -64,7 +65,7 @@ export async function POST(request: Request)
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para criar listas" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -77,7 +78,7 @@ export async function POST(request: Request)
   catch
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
+      { erros: { _geral: ERRO.CORPO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -87,7 +88,7 @@ export async function POST(request: Request)
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "nome de 1 a 100 caracteres" } },
+      { erros: { _geral: ERRO.NOME_INVALIDO } },
       { status: 400 },
     );
   }
@@ -103,7 +104,7 @@ export async function POST(request: Request)
     if (resultado.estado === "lista_invalida")
     {
       return NextResponse.json(
-        { erros: { _geral: "nome de 1 a 100 caracteres" } },
+        { erros: { _geral: ERRO.NOME_INVALIDO } },
         { status: 422 },
       );
     }
@@ -114,7 +115,7 @@ export async function POST(request: Request)
   {
     console.error("[listas] falha ao criar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

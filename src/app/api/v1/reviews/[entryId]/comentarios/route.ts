@@ -8,6 +8,7 @@ import {
   comentarReviewDoSistema,
   comentariosAnterioresDaReviewDoSistema,
 } from "@/server/services/review-social.service";
+import { ERRO } from "../../../_shared/erros";
 import { usuarioDaSessao } from "../../../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +27,7 @@ export async function POST(
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para comentar" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -39,7 +40,7 @@ export async function POST(
   catch
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
+      { erros: { _geral: ERRO.CORPO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -49,7 +50,7 @@ export async function POST(
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "comentário inválido" } },
+      { erros: { _geral: ERRO.COMENTARIO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -67,7 +68,7 @@ export async function POST(
     if (resultado.estado === "muitos_comentarios")
     {
       return NextResponse.json(
-        { erros: { _geral: "muitos comentários em pouco tempo — aguarde para continuar" } },
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
         { status: 429, headers: { "Retry-After": String(resultado.esperarSegundos) } },
       );
     }
@@ -75,7 +76,7 @@ export async function POST(
     if (resultado.estado === "nao_encontrada")
     {
       return NextResponse.json(
-        { erros: { _geral: "resenha não encontrada" } },
+        { erros: { _geral: ERRO.RESENHA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -83,7 +84,7 @@ export async function POST(
     if (resultado.estado === "comentario_invalido")
     {
       return NextResponse.json(
-        { erros: { _geral: "comentário vazio ou longo demais" } },
+        { erros: { _geral: ERRO.COMENTARIO_TAMANHO_INVALIDO } },
         { status: 422 },
       );
     }
@@ -94,7 +95,7 @@ export async function POST(
   {
     console.error("[reviews] falha ao comentar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }
@@ -118,7 +119,7 @@ export async function GET(
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "informe antesDe com o id do comentário" } },
+      { erros: { _geral: ERRO.CURSOR_INVALIDO } },
       { status: 400 },
     );
   }
@@ -141,7 +142,7 @@ export async function GET(
   {
     console.error("[reviews] falha ao paginar comentários:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

@@ -4,6 +4,7 @@
  */
 import { NextResponse } from "next/server";
 import { apagarComentarioDoSistema } from "@/server/services/review-social.service";
+import { ERRO } from "../../_shared/erros";
 import { usuarioDaSessao } from "../../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +19,7 @@ export async function DELETE(
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para apagar" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -32,7 +33,7 @@ export async function DELETE(
     if (resultado.estado === "nao_encontrada")
     {
       return NextResponse.json(
-        { erros: { _geral: "comentário não encontrado" } },
+        { erros: { _geral: ERRO.COMENTARIO_NAO_ENCONTRADO } },
         { status: 404 },
       );
     }
@@ -43,7 +44,7 @@ export async function DELETE(
   {
     console.error("[comentarios] falha ao apagar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

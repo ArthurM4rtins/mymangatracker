@@ -3,6 +3,7 @@
  */
 import { NextResponse } from "next/server";
 import { curtirReviewDoSistema } from "@/server/services/review-social.service";
+import { ERRO } from "../../../_shared/erros";
 import { usuarioDaSessao } from "../../../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +18,7 @@ export async function POST(
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para curtir" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -31,7 +32,7 @@ export async function POST(
     if (resultado.estado === "nao_encontrada")
     {
       return NextResponse.json(
-        { erros: { _geral: "resenha não encontrada" } },
+        { erros: { _geral: ERRO.RESENHA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -45,7 +46,7 @@ export async function POST(
   {
     console.error("[reviews] falha ao curtir:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

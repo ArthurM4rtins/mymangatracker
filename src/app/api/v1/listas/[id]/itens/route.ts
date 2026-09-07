@@ -8,6 +8,7 @@ import {
   alternarObraNaListaDoSistema,
   removerObraDaListaDoSistema,
 } from "@/server/services/lista.service";
+import { ERRO } from "../../../_shared/erros";
 import { usuarioDaSessao } from "../../../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +27,7 @@ export async function POST(
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para usar listas" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -39,7 +40,7 @@ export async function POST(
   catch
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
+      { erros: { _geral: ERRO.CORPO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -49,7 +50,7 @@ export async function POST(
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "pedido inválido" } },
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -67,7 +68,7 @@ export async function POST(
     if (resultado.estado === "nao_encontrada")
     {
       return NextResponse.json(
-        { erros: { _geral: "lista não encontrada" } },
+        { erros: { _geral: ERRO.LISTA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -75,7 +76,7 @@ export async function POST(
     if (resultado.estado === "obra_desconhecida")
     {
       return NextResponse.json(
-        { erros: { _geral: "obra não encontrada" } },
+        { erros: { _geral: ERRO.OBRA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -86,7 +87,7 @@ export async function POST(
   {
     console.error("[listas] falha no toggle:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }
@@ -102,7 +103,7 @@ export async function DELETE(
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para usar listas" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -115,7 +116,7 @@ export async function DELETE(
   catch
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
+      { erros: { _geral: ERRO.CORPO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -125,7 +126,7 @@ export async function DELETE(
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "pedido inválido" } },
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -143,7 +144,7 @@ export async function DELETE(
     if (resultado.estado === "nao_encontrada")
     {
       return NextResponse.json(
-        { erros: { _geral: "lista ou obra não encontrada" } },
+        { erros: { _geral: ERRO.LISTA_OU_OBRA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -151,7 +152,7 @@ export async function DELETE(
     if (resultado.estado === "obra_desconhecida")
     {
       return NextResponse.json(
-        { erros: { _geral: "obra não encontrada" } },
+        { erros: { _geral: ERRO.OBRA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -162,7 +163,7 @@ export async function DELETE(
   {
     console.error("[listas] falha ao remover:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

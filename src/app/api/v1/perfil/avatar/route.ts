@@ -10,14 +10,10 @@ import {
   definirAvatarDoSistema,
   removerAvatarDoSistema,
 } from "@/server/services/avatar.service";
+import { ERRO } from "../../_shared/erros";
 import { usuarioDaSessao } from "../../_shared/sessao";
 
 export const dynamic = "force-dynamic";
-
-const MENSAGEM: Record<string, string> = {
-  tipo_invalido: "envie uma imagem JPEG, PNG ou WebP",
-  tamanho_invalido: "a imagem passou de 512 KB",
-};
 
 export async function PUT(request: Request)
 {
@@ -25,14 +21,14 @@ export async function PUT(request: Request)
 
   if (!userId)
   {
-    return NextResponse.json({ erros: { _geral: "entre para trocar a foto" } }, { status: 401 });
+    return NextResponse.json({ erros: { _geral: ERRO.SESSAO_NECESSARIA } }, { status: 401 });
   }
 
   const declarado = Number(request.headers.get("content-length") ?? 0);
 
   if (declarado > LIMITE_DO_AVATAR_BYTES)
   {
-    return NextResponse.json({ erros: { _geral: MENSAGEM.tamanho_invalido } }, { status: 413 });
+    return NextResponse.json({ erros: { _geral: ERRO.ARQUIVO_GRANDE_DEMAIS } }, { status: 413 });
   }
 
   const mime = (request.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
@@ -45,7 +41,13 @@ export async function PUT(request: Request)
     if (resultado.estado === "invalido")
     {
       return NextResponse.json(
-        { erros: { _geral: MENSAGEM[resultado.motivo] } },
+        {
+          erros: {
+            _geral: resultado.motivo === "tamanho_invalido"
+              ? ERRO.ARQUIVO_GRANDE_DEMAIS
+              : ERRO.TIPO_DE_ARQUIVO_INVALIDO,
+          },
+        },
         { status: resultado.motivo === "tamanho_invalido" ? 413 : 415 },
       );
     }
@@ -55,7 +57,7 @@ export async function PUT(request: Request)
   catch (erro)
   {
     console.error("[perfil] falha ao salvar avatar:", erro instanceof Error ? erro.message : erro);
-    return NextResponse.json({ erros: { _geral: "não foi possível agora" } }, { status: 500 });
+    return NextResponse.json({ erros: { _geral: ERRO.FALHA_INTERNA } }, { status: 500 });
   }
 }
 
@@ -65,7 +67,7 @@ export async function DELETE()
 
   if (!userId)
   {
-    return NextResponse.json({ erros: { _geral: "entre para remover a foto" } }, { status: 401 });
+    return NextResponse.json({ erros: { _geral: ERRO.SESSAO_NECESSARIA } }, { status: 401 });
   }
 
   try
@@ -77,6 +79,6 @@ export async function DELETE()
   catch (erro)
   {
     console.error("[perfil] falha ao remover avatar:", erro instanceof Error ? erro.message : erro);
-    return NextResponse.json({ erros: { _geral: "não foi possível agora" } }, { status: 500 });
+    return NextResponse.json({ erros: { _geral: ERRO.FALHA_INTERNA } }, { status: 500 });
   }
 }

@@ -7,7 +7,19 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { ERRO, type CodigoDeErro } from "@/app/api/v1/_shared/erros";
 import { useRouter } from "@/i18n/navigation";
+
+/**
+ * A API responde código, não frase — a tela escolhe a frase. Código que esta
+ * versão da tela não conhece cai na frase genérica, nunca aparece cru.
+ */
+const CODIGOS: ReadonlySet<string> = new Set(Object.values(ERRO));
+
+function ehCodigo(valor: unknown): valor is CodigoDeErro
+{
+  return typeof valor === "string" && CODIGOS.has(valor);
+}
 
 export function EditarLista({
   listaId,
@@ -22,11 +34,32 @@ export function EditarLista({
   const roteador = useRouter();
   const t = useTranslations("listas");
   const c = useTranslations("comum");
+  const erros = useTranslations("erros");
   const [editando, setEditando] = useState(false);
   const [novoNome, setNovoNome] = useState(nome);
   const [novaDescricao, setNovaDescricao] = useState(descricao ?? "");
   const [erro, setErro] = useState<string | null>(null);
   const [ocupado, setOcupado] = useState(false);
+
+  /**
+   * Dois códigos ganham a frase desta tela, porque o catálogo é mais genérico
+   * que o que se lê aqui: a sessão é para usar listas, e o nome inválido fica
+   * colado no campo, sem repetir a palavra "nome".
+   */
+  function fraseDoErro(codigo: unknown): string
+  {
+    if (codigo === ERRO.SESSAO_NECESSARIA)
+    {
+      return t("detalhe.editar.sessao");
+    }
+
+    if (codigo === ERRO.NOME_INVALIDO)
+    {
+      return t("detalhe.editar.nomeInvalido");
+    }
+
+    return ehCodigo(codigo) ? erros(codigo) : t("detalhe.editar.erro");
+  }
 
   async function salvar(evento: React.FormEvent)
   {
@@ -47,7 +80,7 @@ export function EditarLista({
         const corpo = (await resposta.json().catch(function () { return null; })) as
           | { erros?: Record<string, string> }
           | null;
-        setErro(corpo?.erros?.nome ?? corpo?.erros?._geral ?? t("detalhe.editar.erro"));
+        setErro(fraseDoErro(corpo?.erros?.nome ?? corpo?.erros?._geral));
         return;
       }
 

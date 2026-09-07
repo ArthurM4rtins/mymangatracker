@@ -4,6 +4,7 @@
  */
 import { NextResponse } from "next/server";
 import { removerAvaliacaoDoSistema } from "@/server/services/avaliacao.service";
+import { ERRO } from "../../_shared/erros";
 import { usuarioDaSessao } from "../../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +19,7 @@ export async function DELETE(
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para avaliar" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -28,7 +29,7 @@ export async function DELETE(
   if (!Number.isInteger(anilistId) || anilistId <= 0)
   {
     return NextResponse.json(
-      { erros: { _geral: "obra inválida" } },
+      { erros: { _geral: ERRO.OBRA_INVALIDA } },
       { status: 400 },
     );
   }
@@ -40,7 +41,7 @@ export async function DELETE(
     if (resultado.estado !== "ok")
     {
       return NextResponse.json(
-        { erros: { _geral: "avaliação não encontrada" } },
+        { erros: { _geral: ERRO.AVALIACAO_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -51,7 +52,7 @@ export async function DELETE(
   {
     console.error("[avaliacoes] falha ao remover:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível remover agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

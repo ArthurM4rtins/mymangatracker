@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Kidoku",
+  "default_locale": "en",
+  "name": "__MSG_nome__",
   "version": "0.1.0",
-  "description": "Registra na sua estante do Kidoku o capítulo que você está lendo, sem sair da aba.",
+  "description": "__MSG_descricao__",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Kidoku — registrar leitura"
+    "default_title": "__MSG_acaoTitulo__"
   },
   "background": {
     "service_worker": "background.js"

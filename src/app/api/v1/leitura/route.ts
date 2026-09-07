@@ -14,6 +14,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { registrarLeituraExternaDoSistema } from "@/server/services/leitura-externa.service";
+import { ERRO } from "../_shared/erros";
 import { usuarioDaSessao } from "../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -33,7 +34,7 @@ export async function POST(request: Request)
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para registrar a leitura" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -46,7 +47,7 @@ export async function POST(request: Request)
   catch
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
+      { erros: { _geral: ERRO.CORPO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -56,7 +57,7 @@ export async function POST(request: Request)
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "pedido inválido" } },
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -73,7 +74,7 @@ export async function POST(request: Request)
     if (resultado.estado === "nao_encontrada")
     {
       return NextResponse.json(
-        { erros: { _geral: "entrada não encontrada" } },
+        { erros: { _geral: ERRO.ENTRADA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -81,7 +82,7 @@ export async function POST(request: Request)
     if (resultado.estado === "capitulo_invalido")
     {
       return NextResponse.json(
-        { erros: { _geral: "capítulo inválido" } },
+        { erros: { _geral: ERRO.CAPITULO_INVALIDO } },
         { status: 422 },
       );
     }
@@ -89,7 +90,7 @@ export async function POST(request: Request)
     if (resultado.estado === "url_invalida")
     {
       return NextResponse.json(
-        { erros: { _geral: "URL de leitura inválida" } },
+        { erros: { _geral: ERRO.URL_INVALIDA } },
         { status: 422 },
       );
     }
@@ -107,7 +108,7 @@ export async function POST(request: Request)
   {
     console.error("[leitura] falha ao registrar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível registrar agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

@@ -11,6 +11,7 @@ import {
   adicionarNaEstanteDoSistema,
   listarEstanteDoSistema,
 } from "@/server/services/estante.service";
+import { ERRO } from "../_shared/erros";
 import { usuarioDaSessao } from "../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -29,7 +30,7 @@ export async function GET(request: Request)
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para usar a estante" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -40,7 +41,7 @@ export async function GET(request: Request)
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "status inválido" } },
+      { erros: { _geral: ERRO.STATUS_INVALIDO } },
       { status: 400 },
     );
   }
@@ -58,7 +59,7 @@ export async function GET(request: Request)
   {
     console.error("[estante] falha ao listar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível carregar a estante agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }
@@ -71,7 +72,7 @@ export async function POST(request: Request)
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para usar a estante" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -84,7 +85,7 @@ export async function POST(request: Request)
   catch
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
+      { erros: { _geral: ERRO.CORPO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -94,7 +95,7 @@ export async function POST(request: Request)
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "pedido inválido" } },
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -110,7 +111,7 @@ export async function POST(request: Request)
     if (resultado.estado === "obra_desconhecida")
     {
       return NextResponse.json(
-        { erros: { _geral: "obra não encontrada no catálogo" } },
+        { erros: { _geral: ERRO.OBRA_FORA_DO_CATALOGO } },
         { status: 404 },
       );
     }
@@ -118,7 +119,7 @@ export async function POST(request: Request)
     if (resultado.estado === "indisponivel")
     {
       return NextResponse.json(
-        { erros: { _geral: "catálogo indisponível agora — tente de novo" } },
+        { erros: { _geral: ERRO.CATALOGO_INDISPONIVEL } },
         { status: 503 },
       );
     }
@@ -129,7 +130,7 @@ export async function POST(request: Request)
   {
     console.error("[estante] falha ao adicionar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível salvar agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

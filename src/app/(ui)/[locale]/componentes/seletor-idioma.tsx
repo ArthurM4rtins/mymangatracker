@@ -7,8 +7,32 @@ import { useState } from "react";
 import { getPathname, usePathname } from "@/i18n/navigation";
 import { routing, type Idioma } from "@/i18n/routing";
 
-/** Sigla curta no botão; o nome inteiro fica no `title` e no leitor de tela. */
-const SIGLAS: Record<string, string> = { "pt-BR": "PT", en: "EN" };
+/**
+ * A sigla do botão sai do próprio código do idioma: `pt-BR` → PT, `en` → EN,
+ * `ja` → JA. Um mapa fixo aqui obrigaria a lembrar dele a cada idioma novo, e
+ * esquecer só apareceria como `es` minúsculo no header, sem quebrar nada.
+ */
+function sigla(idioma: string): string
+{
+  return idioma.split("-")[0].toUpperCase();
+}
+
+/**
+ * O nome do idioma, escrito NO próprio idioma ("English", "português (Brasil)",
+ * "日本語"), vem do `Intl.DisplayNames` do navegador.
+ *
+ * Guardar esses nomes no catálogo custaria caro de um jeito escondido: cada
+ * arquivo de idioma teria que nomear TODOS os idiomas, então entrar com o
+ * terceiro obrigaria a editar os dois que já existem. Nove chaves para três
+ * nomes, e crescendo ao quadrado.
+ */
+function nomeDoIdioma(idioma: string): string
+{
+  const nome = new Intl.DisplayNames([idioma], { type: "language" }).of(idioma) ?? idioma;
+
+  // Português devolve minúsculo ("português (Brasil)"); é rótulo, começa em maiúscula.
+  return nome.charAt(0).toLocaleUpperCase(idioma) + nome.slice(1);
+}
 
 export function SeletorIdioma()
 {
@@ -58,14 +82,14 @@ export function SeletorIdioma()
             }}
             disabled={trocando}
             aria-pressed={selecionado}
-            title={t(`idiomas.${idioma}`)}
+            title={nomeDoIdioma(idioma)}
             className={`rounded-md px-1.5 py-0.5 text-xs font-medium transition-colors disabled:opacity-60 ${
               selecionado
                 ? "text-texto"
                 : "text-texto-suave hover:text-texto"
             }`}
           >
-            {SIGLAS[idioma] ?? idioma}
+            {sigla(idioma)}
           </button>
         );
       })}

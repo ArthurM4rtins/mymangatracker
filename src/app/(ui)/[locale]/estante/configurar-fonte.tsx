@@ -7,7 +7,19 @@
  */
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { ERRO, type CodigoDeErro } from "@/app/api/v1/_shared/erros";
 import { useRouter } from "@/i18n/navigation";
+
+/**
+ * A API responde código, não frase — a tela escolhe a frase. Código que esta
+ * versão da tela não conhece cai na frase genérica, nunca aparece cru.
+ */
+const CODIGOS: ReadonlySet<string> = new Set(Object.values(ERRO));
+
+function ehCodigo(valor: unknown): valor is CodigoDeErro
+{
+  return typeof valor === "string" && CODIGOS.has(valor);
+}
 
 type Candidato = {
   sourceHost: string;
@@ -26,6 +38,7 @@ export function ConfigurarFonte({
   const roteador = useRouter();
   const t = useTranslations("estante");
   const c = useTranslations("comum");
+  const erros = useTranslations("erros");
   const [aberto, setAberto] = useState(false);
   const [url, setUrl] = useState("");
   const [candidatos, setCandidatos] = useState<Candidato[] | null>(null);
@@ -58,7 +71,8 @@ export function ConfigurarFonte({
 
       if (!resposta.ok)
       {
-        setErro(corpo?.erros?.url ?? t("erros.derivar"));
+        const codigo: unknown = corpo?.erros?.url;
+        setErro(ehCodigo(codigo) ? erros(codigo) : t("erros.derivar"));
         return;
       }
 

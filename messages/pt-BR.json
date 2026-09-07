@@ -10,11 +10,7 @@
     "estante": "Estante",
     "perfil": "Perfil",
     "entrar": "Entrar",
-    "idioma": "Idioma",
-    "idiomas": {
-      "pt-BR": "Português",
-      "en": "English"
-    }
+    "idioma": "Idioma"
   },
   "comum": {
     "salvar": "Salvar",
@@ -35,6 +31,48 @@
       "NOVEL": "Novel"
     }
   },
+  "erros": {
+    "corpo_invalido": "corpo inválido — esperado JSON",
+    "pedido_invalido": "pedido inválido",
+    "anilist_id_invalido": "anilistId inválido",
+    "obra_invalida": "obra inválida",
+    "status_invalido": "status inválido",
+    "comentario_invalido": "comentário inválido",
+    "cursor_invalido": "informe antesDe com o id do comentário",
+    "nome_invalido": "nome de 1 a 100 caracteres",
+    "username_curto": "no mínimo 3 caracteres",
+    "username_longo": "no máximo 30 caracteres",
+    "username_caracteres": "só letras, números, ponto, hífen e underline",
+    "email_invalido": "e-mail inválido",
+    "senha_curta": "no mínimo 8 caracteres",
+    "senha_longa": "no máximo 72 caracteres",
+    "credenciais_invalidas": "e-mail ou senha incorretos",
+    "sessao_necessaria": "entre para continuar",
+    "obra_nao_encontrada": "obra não encontrada",
+    "obra_fora_do_catalogo": "obra não encontrada no catálogo",
+    "entrada_nao_encontrada": "entrada não encontrada",
+    "lista_nao_encontrada": "lista não encontrada",
+    "lista_ou_obra_nao_encontrada": "lista ou obra não encontrada",
+    "resenha_nao_encontrada": "resenha não encontrada",
+    "comentario_nao_encontrado": "comentário não encontrado",
+    "avaliacao_nao_encontrada": "avaliação não encontrada",
+    "usuario_nao_encontrado": "usuário não encontrado",
+    "ja_em_uso": "já está em uso",
+    "sem_fonte": "configure a fonte de leitura primeiro",
+    "arquivo_grande_demais": "a imagem passou de 512 KB",
+    "tipo_de_arquivo_invalido": "envie uma imagem JPEG, PNG ou WebP",
+    "capitulo_invalido": "capítulo inválido",
+    "avaliacao_invalida": "avaliação inválida — nota de 0,5 a 5 em meia estrela, ou resenha",
+    "url_invalida": "URL de leitura inválida",
+    "url_de_capitulo_invalida": "cole a URL completa do capítulo 1, com https://",
+    "template_invalido": "template inválido — refaça a derivação",
+    "ordem_invalida": "a ordem precisa conter exatamente as obras da lista",
+    "comentario_tamanho_invalido": "comentário vazio ou longo demais",
+    "proprio_perfil": "não vale para o próprio perfil",
+    "limite_excedido": "muitas tentativas — aguarde para tentar de novo",
+    "falha_interna": "não foi possível agora",
+    "catalogo_indisponivel": "catálogo indisponível agora — tente de novo"
+  },
   "entrar": {
     "meta": {
       "titulo": "Entrar"
@@ -53,7 +91,8 @@
     },
     "erros": {
       "geral": "não foi possível entrar",
-      "conexao": "sem conexão com o servidor — tente de novo"
+      "conexao": "sem conexão com o servidor — tente de novo",
+      "falhaInterna": "não foi possível entrar agora"
     }
   },
   "cadastrar": {
@@ -74,7 +113,8 @@
     },
     "erros": {
       "geral": "não foi possível concluir o cadastro",
-      "conexao": "sem conexão com o servidor — tente de novo"
+      "conexao": "sem conexão com o servidor — tente de novo",
+      "falhaInterna": "não foi possível concluir o cadastro agora"
     }
   },
   "autor": {
@@ -224,7 +264,8 @@
       "derivar": "não deu para derivar — confira o link",
       "capituloInvalido": "capítulo inválido",
       "acao": "não deu — tente de novo",
-      "rede": "não deu agora — tente de novo"
+      "rede": "não deu agora — tente de novo",
+      "registrar": "não foi possível registrar agora"
     }
   },
   "home": {
@@ -339,7 +380,9 @@
       },
       "editar": {
         "abrir": "Editar",
-        "erro": "não foi possível salvar"
+        "erro": "não foi possível salvar",
+        "sessao": "entre para usar listas",
+        "nomeInvalido": "de 1 a 100 caracteres"
       },
       "apagar": {
         "abrir": "Apagar lista",
@@ -458,7 +501,8 @@
       "remover": "remover",
       "erros": {
         "geral": "não foi possível agora",
-        "leitura": "não deu para ler essa imagem"
+        "leitura": "não deu para ler essa imagem",
+        "sessao": "entre para trocar a foto"
       }
     },
     "estante": {

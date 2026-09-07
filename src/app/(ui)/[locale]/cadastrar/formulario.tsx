@@ -4,13 +4,24 @@
  * Formulário de cadastro. Fala com `POST /api/v1/usuarios` — a única porta de
  * escrita é a API versionada. Erro por campo vem no corpo (`erros`), status 400
  * (validação) ou 409 (duplicidade), e aparece embaixo do campo correspondente.
+ *
+ * O corpo traz código de erro, não frase — no `_geral` e em cada campo, como o
+ * `ja_em_uso` da duplicidade. Quem escolhe o texto é a tela.
  */
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { ERRO, type CodigoDeErro } from "@/app/api/v1/_shared/erros";
 import { useRouter } from "@/i18n/navigation";
 
 type Erros = Record<string, string>;
+
+const CODIGOS: ReadonlySet<string> = new Set(Object.values(ERRO));
+
+function ehCodigo(valor: unknown): valor is CodigoDeErro
+{
+  return typeof valor === "string" && CODIGOS.has(valor);
+}
 
 export function FormularioDeCadastro()
 {
@@ -18,6 +29,41 @@ export function FormularioDeCadastro()
   const [erros, setErros] = useState<Erros>({});
   const [enviando, setEnviando] = useState(false);
   const t = useTranslations("cadastrar");
+  const vocabulario = useTranslations("erros");
+
+  /**
+   * Código vira frase. `falha_interna` é genérico demais no vocabulário ("não
+   * foi possível agora") e aqui a frase é a do cadastro. Código que esta tela
+   * não conhece — API mais nova, resposta estranha — cai na frase genérica:
+   * código cru nunca chega ao usuário.
+   */
+  function frase(codigo: string): string
+  {
+    if (!ehCodigo(codigo))
+    {
+      return t("erros.geral");
+    }
+
+    if (codigo === ERRO.FALHA_INTERNA)
+    {
+      return t("erros.falhaInterna");
+    }
+
+    return vocabulario(codigo);
+  }
+
+  /** Cada campo do corpo carrega um código, e todos passam pela mesma tradução. */
+  function traduzir(recebidos: Erros | undefined): Erros
+  {
+    if (!recebidos)
+    {
+      return { _geral: t("erros.geral") };
+    }
+
+    return Object.fromEntries(
+      Object.entries(recebidos).map(([campo, codigo]) => [campo, frase(codigo)]),
+    );
+  }
 
   async function enviar(evento: React.FormEvent<HTMLFormElement>)
   {
@@ -46,7 +92,7 @@ export function FormularioDeCadastro()
       }
 
       const corpo = (await resposta.json()) as { erros?: Erros };
-      setErros(corpo.erros ?? { _geral: t("erros.geral") });
+      setErros(traduzir(corpo.erros));
     }
     catch
     {
