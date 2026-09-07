@@ -10,21 +10,24 @@ import { z } from "zod";
 import { ErroCampoDuplicado } from "@/server/domain/erros";
 import { cadastrarUsuarioNoSistema } from "@/server/services/cadastro.service";
 import { limitarCadastro } from "@/server/services/limite.service";
+import { ERRO } from "../_shared/erros";
 import { ipDoPedido } from "../_shared/ip";
 
 export const dynamic = "force-dynamic";
 
+// As mensagens aqui são código do catálogo, não frase: o 400 de validação
+// devolve `questao.message` cru por campo, e quem escolhe o texto é a tela.
 const ESQUEMA_CADASTRO = z.object({
   username: z
     .string()
-    .min(3, "no mínimo 3 caracteres")
-    .max(30, "no máximo 30 caracteres")
-    .regex(/^[a-zA-Z0-9_.-]+$/, "só letras, números, ponto, hífen e underline"),
-  email: z.email("e-mail inválido").max(254),
+    .min(3, ERRO.USERNAME_CURTO)
+    .max(30, ERRO.USERNAME_LONGO)
+    .regex(/^[a-zA-Z0-9_.-]+$/, ERRO.USERNAME_CARACTERES),
+  email: z.email(ERRO.EMAIL_INVALIDO).max(254, ERRO.EMAIL_INVALIDO),
   senha: z
     .string()
-    .min(8, "no mínimo 8 caracteres")
-    .max(72, "no máximo 72 caracteres"),
+    .min(8, ERRO.SENHA_CURTA)
+    .max(72, ERRO.SENHA_LONGA),
 });
 
 export async function POST(request: Request)
@@ -37,7 +40,7 @@ export async function POST(request: Request)
   catch
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
+      { erros: { _geral: ERRO.CORPO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -60,7 +63,7 @@ export async function POST(request: Request)
     if (limite.bloqueado)
     {
       return NextResponse.json(
-        { erros: { _geral: "muitas tentativas — aguarde para tentar de novo" } },
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
         { status: 429, headers: { "Retry-After": String(limite.esperarSegundos) } },
       );
     }
@@ -73,7 +76,7 @@ export async function POST(request: Request)
     if (erro instanceof ErroCampoDuplicado)
     {
       return NextResponse.json(
-        { erros: { [erro.campo]: "já está em uso" } },
+        { erros: { [erro.campo]: ERRO.JA_EM_USO } },
         { status: 409 },
       );
     }
@@ -81,7 +84,7 @@ export async function POST(request: Request)
     // Detalhe de banco não entra no corpo — quem precisa olha o log da plataforma.
     console.error("[usuarios] falha ao cadastrar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível concluir o cadastro agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

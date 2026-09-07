@@ -6,6 +6,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { confirmarFonteDoSistema } from "@/server/services/fonte.service";
+import { ERRO } from "../_shared/erros";
 import { usuarioDaSessao } from "../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +24,7 @@ export async function POST(request: Request)
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para configurar a leitura" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -36,7 +37,7 @@ export async function POST(request: Request)
   catch
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
+      { erros: { _geral: ERRO.CORPO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -46,7 +47,7 @@ export async function POST(request: Request)
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "pedido inválido" } },
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -63,7 +64,7 @@ export async function POST(request: Request)
     if (resultado.estado === "nao_encontrada")
     {
       return NextResponse.json(
-        { erros: { _geral: "entrada não encontrada" } },
+        { erros: { _geral: ERRO.ENTRADA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -71,7 +72,7 @@ export async function POST(request: Request)
     if (resultado.estado === "template_invalido")
     {
       return NextResponse.json(
-        { erros: { _geral: "template inválido — refaça a derivação" } },
+        { erros: { _geral: ERRO.TEMPLATE_INVALIDO } },
         { status: 422 },
       );
     }
@@ -82,7 +83,7 @@ export async function POST(request: Request)
   {
     console.error("[fontes] falha ao confirmar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível salvar agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

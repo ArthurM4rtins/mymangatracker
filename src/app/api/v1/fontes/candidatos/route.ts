@@ -6,6 +6,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { candidatosDeFonte } from "@/server/services/fonte.service";
+import { ERRO } from "../../_shared/erros";
 import { usuarioDaSessao } from "../../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,7 @@ export async function POST(request: Request)
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para configurar a leitura" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -34,7 +35,7 @@ export async function POST(request: Request)
   catch
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
+      { erros: { _geral: ERRO.CORPO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -44,7 +45,7 @@ export async function POST(request: Request)
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "pedido inválido" } },
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -54,7 +55,7 @@ export async function POST(request: Request)
   if (resultado.estado === "url_invalida")
   {
     return NextResponse.json(
-      { erros: { url: "cole a URL completa do capítulo 1, com https://" } },
+      { erros: { url: ERRO.URL_DE_CAPITULO_INVALIDA } },
       { status: 422 },
     );
   }

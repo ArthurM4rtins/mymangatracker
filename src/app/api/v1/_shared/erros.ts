@@ -24,6 +24,15 @@ export const ERRO = {
   CURSOR_INVALIDO: "cursor_invalido",
   NOME_INVALIDO: "nome_invalido",
 
+  // 400, por campo — o formulario de cadastro mostra um por campo, e sao os
+  // unicos codigos que o Zod escreve direto no `message` do esquema.
+  USERNAME_CURTO: "username_curto",
+  USERNAME_LONGO: "username_longo",
+  USERNAME_CARACTERES: "username_caracteres",
+  EMAIL_INVALIDO: "email_invalido",
+  SENHA_CURTA: "senha_curta",
+  SENHA_LONGA: "senha_longa",
+
   // 400/401 — de propósito nos dois: o login não conta se o e-mail existe.
   CREDENCIAIS_INVALIDAS: "credenciais_invalidas",
 

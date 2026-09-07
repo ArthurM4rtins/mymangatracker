@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { entrarNoSistema } from "@/server/services/sessao.service";
 import { liberarLogin, limitarLogin } from "@/server/services/limite.service";
+import { ERRO } from "../_shared/erros";
 import { ipDoPedido } from "../_shared/ip";
 import {
   apagarSessaoDoCookie,
@@ -31,7 +32,7 @@ export async function POST(request: Request)
   catch
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
+      { erros: { _geral: ERRO.CORPO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -41,7 +42,7 @@ export async function POST(request: Request)
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "e-mail ou senha incorretos" } },
+      { erros: { _geral: ERRO.CREDENCIAIS_INVALIDAS } },
       { status: 400 },
     );
   }
@@ -56,7 +57,7 @@ export async function POST(request: Request)
     if (limite.bloqueado)
     {
       return NextResponse.json(
-        { erros: { _geral: "muitas tentativas — aguarde para tentar de novo" } },
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
         { status: 429, headers: { "Retry-After": String(limite.esperarSegundos) } },
       );
     }
@@ -66,7 +67,7 @@ export async function POST(request: Request)
     if (!sessao)
     {
       return NextResponse.json(
-        { erros: { _geral: "e-mail ou senha incorretos" } },
+        { erros: { _geral: ERRO.CREDENCIAIS_INVALIDAS } },
         { status: 401 },
       );
     }
@@ -83,7 +84,7 @@ export async function POST(request: Request)
     // nunca é logada, nem aqui.
     console.error("[sessao] falha ao entrar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível entrar agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

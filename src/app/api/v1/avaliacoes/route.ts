@@ -5,6 +5,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { salvarAvaliacaoDoSistema } from "@/server/services/avaliacao.service";
+import { ERRO } from "../_shared/erros";
 import { usuarioDaSessao } from "../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +24,7 @@ export async function POST(request: Request)
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para avaliar" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -36,7 +37,7 @@ export async function POST(request: Request)
   catch
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
+      { erros: { _geral: ERRO.CORPO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -46,7 +47,7 @@ export async function POST(request: Request)
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "pedido inválido" } },
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -64,7 +65,7 @@ export async function POST(request: Request)
     if (resultado.estado === "obra_desconhecida")
     {
       return NextResponse.json(
-        { erros: { _geral: "obra não encontrada" } },
+        { erros: { _geral: ERRO.OBRA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -72,7 +73,7 @@ export async function POST(request: Request)
     if (resultado.estado === "avaliacao_invalida")
     {
       return NextResponse.json(
-        { erros: { _geral: "avaliação inválida — nota de 0,5 a 5 em meia estrela, ou resenha" } },
+        { erros: { _geral: ERRO.AVALIACAO_INVALIDA } },
         { status: 422 },
       );
     }
@@ -83,7 +84,7 @@ export async function POST(request: Request)
   {
     console.error("[avaliacoes] falha ao salvar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível salvar agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

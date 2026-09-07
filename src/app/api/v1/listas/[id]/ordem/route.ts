@@ -5,6 +5,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { reordenarItensDoSistema } from "@/server/services/lista.service";
+import { ERRO } from "../../../_shared/erros";
 import { usuarioDaSessao } from "../../../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +24,7 @@ export async function PUT(
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para usar listas" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -36,7 +37,7 @@ export async function PUT(
   catch
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
+      { erros: { _geral: ERRO.CORPO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -46,7 +47,7 @@ export async function PUT(
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "pedido inválido" } },
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -64,7 +65,7 @@ export async function PUT(
     if (resultado.estado === "nao_encontrada")
     {
       return NextResponse.json(
-        { erros: { _geral: "lista não encontrada" } },
+        { erros: { _geral: ERRO.LISTA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -72,7 +73,7 @@ export async function PUT(
     if (resultado.estado === "ordem_invalida")
     {
       return NextResponse.json(
-        { erros: { _geral: "a ordem precisa conter exatamente as obras da lista" } },
+        { erros: { _geral: ERRO.ORDEM_INVALIDA } },
         { status: 422 },
       );
     }
@@ -83,7 +84,7 @@ export async function PUT(
   {
     console.error("[listas] falha ao reordenar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }
