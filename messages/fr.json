@@ -1,7 +1,7 @@
 {
   "meta": {
     "titulo": "Kidoku",
-    "descricao": "Un Letterboxd pour manga, manhwa et roman, avec une progression de lecture automatique et privée."
+    "descricao": "Un Letterboxd pour manga, manhwa et novel, avec une progression de lecture automatique et privée."
   },
   "cabecalho": {
     "navegacao": "Navigation",
@@ -28,7 +28,7 @@
       "JP": "Manga",
       "KR": "Manhwa",
       "CN": "Manhua",
-      "NOVEL": "Roman"
+      "NOVEL": "Novel"
     }
   },
   "erros": {
