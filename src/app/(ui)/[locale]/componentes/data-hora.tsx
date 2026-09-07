@@ -1,20 +1,36 @@
 "use client";
 
-/**
- * Data e hora no fuso de quem está lendo. No servidor (UTC na Vercel) o
- * texto sai em UTC e o cliente corrige na hidratação — por isso o
- * `suppressHydrationWarning`. O `dateTime` ISO é a fonte, sempre exato.
- */
-const FORMATO = new Intl.DateTimeFormat("pt-BR", {
-  dateStyle: "short",
-  timeStyle: "short",
-});
+import { useLocale } from "next-intl";
+import { useMemo } from "react";
 
+/**
+ * Data e hora no fuso de quem está lendo, no idioma de quem está lendo.
+ *
+ * O formatador é o `Intl` nativo, e não o `useFormatter()` do next-intl, de
+ * propósito: o next-intl resolve o `timeZone` no SERVIDOR e o carrega até o
+ * provider, então formatar por ele aqui daria a hora do servidor — UTC na
+ * Vercel — em vez da hora de quem está lendo. Sem `timeZone` explícito, o
+ * `Intl` usa o fuso de quem executa: UTC no servidor, o do navegador no
+ * cliente, que é exatamente o que a D6 pede.
+ *
+ * Por isso o texto sai em UTC no primeiro render e o cliente corrige na
+ * hidratação — daí o `suppressHydrationWarning`. O `dateTime` ISO é a fonte,
+ * sempre exato.
+ */
 export function DataHora({ iso, className }: { iso: string; className?: string })
 {
+  const idioma = useLocale();
+  const formato = useMemo(
+    function ()
+    {
+      return new Intl.DateTimeFormat(idioma, { dateStyle: "short", timeStyle: "short" });
+    },
+    [idioma],
+  );
+
   return (
     <time dateTime={iso} suppressHydrationWarning className={className}>
-      {FORMATO.format(new Date(iso))}
+      {formato.format(new Date(iso))}
     </time>
   );
 }

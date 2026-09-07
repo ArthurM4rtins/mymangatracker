@@ -1,9 +1,9 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { interpretarFiltroDasAvaliadas } from "@/server/domain/perfil";
 import { perfilDoUsuarioDoSistema } from "@/server/services/perfil.service";
-import { Link } from "@/i18n/navigation";
+import { Link, alternativasDeIdioma } from "@/i18n/navigation";
 import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { AcoesSociais } from "./acoes-sociais";
 import { FiltrosAvaliadas } from "./filtros-avaliadas";
@@ -20,8 +20,20 @@ type Props = {
   searchParams: Promise<{ ordem?: string; nota?: string }>;
 };
 
-const FORMATO_MES = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric" });
-const FORMATO_DIA = new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" });
+/**
+ * As duas datas do perfil, no idioma de quem está lendo. `Intl` nativo, e não o
+ * `getFormatter()` do next-intl: sem `timeZone` explícito o nativo usa o fuso de
+ * quem executa, que é o que esta tela sempre fez.
+ */
+function formatoDoMes(idioma: string): Intl.DateTimeFormat
+{
+  return new Intl.DateTimeFormat(idioma, { month: "long", year: "numeric" });
+}
+
+function formatoDoDia(idioma: string): Intl.DateTimeFormat
+{
+  return new Intl.DateTimeFormat(idioma, { dateStyle: "medium" });
+}
 
 /** O número em destaque da contagem: a marcação mora na mensagem, não no JSX. */
 function destaque(conteudo: React.ReactNode)
@@ -43,7 +55,12 @@ function contagemEmDestaque(n: number)
 export async function generateMetadata({ params }: Props)
 {
   // O Next já entrega o parâmetro decodificado (#65, item 14).
-  return { title: (await params).username };
+  const { username } = await params;
+
+  return {
+    title: username,
+    alternates: alternativasDeIdioma(`/u/${username}`),
+  };
 }
 
 export default async function PaginaDoPerfil({ params, searchParams }: Props)
@@ -52,6 +69,7 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
   const filtro = interpretarFiltroDasAvaliadas(await searchParams);
   const viewerId = await usuarioDaSessao();
   const t = await getTranslations("perfil");
+  const idioma = await getLocale();
 
   let perfil;
   try
@@ -94,7 +112,7 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
             )}
           </h1>
           <p className="text-sm text-texto-suave">
-            {t("membroDesde", { mes: FORMATO_MES.format(perfil.membroDesde) })}
+            {t("membroDesde", { mes: formatoDoMes(idioma).format(perfil.membroDesde) })}
           </p>
           <p className="flex flex-wrap gap-x-3 text-sm text-texto-suave">
             <span>
@@ -210,7 +228,7 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
                     rating: resenha.rating,
                     review: resenha.review,
                     containsSpoilers: resenha.containsSpoilers,
-                    publicadaEm: FORMATO_DIA.format(resenha.publicadaEm),
+                    publicadaEm: formatoDoDia(idioma).format(resenha.publicadaEm),
                     curtidas: resenha.curtidas,
                   }}
                 />

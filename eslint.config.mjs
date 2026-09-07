@@ -248,9 +248,6 @@ const eslintConfig = defineConfig([
             "Kidoku", "✦", "既読",
             // Rota tecnica exibida como o proprio texto do link.
             "/api/v1/health",
-            // Extremos da escala de Rating, aria-hidden. Numero, nao frase —
-            // sai daqui na fase 4, junto com os toLocaleString.
-            "0,5", "5,0",
           ],
         },
       ],

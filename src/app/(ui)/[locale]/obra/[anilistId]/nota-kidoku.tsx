@@ -7,7 +7,7 @@
  * desenho do "Sua avaliação", histograma em largura cheia embaixo.
  * Client só por causa do glyph da estrela, que vive num módulo client.
  */
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { SIMBOLO } from "../../componentes/estrelas";
 
 export type NotaParaTela = {
@@ -19,6 +19,7 @@ export type NotaParaTela = {
 export function NotaKidoku({ nota }: { nota: NotaParaTela })
 {
   const t = useTranslations("obra");
+  const formato = useFormatter();
   const maior = Math.max(...nota.histograma.map(function (faixa) { return faixa.total; }));
 
   return (
@@ -30,7 +31,7 @@ export function NotaKidoku({ nota }: { nota: NotaParaTela })
       <p className="flex items-baseline gap-1.5">
         <span aria-hidden className="text-nota">{SIMBOLO}</span>
         <span className="font-marca text-3xl font-bold tabular-nums leading-none">
-          {nota.media.toLocaleString("pt-BR", { minimumFractionDigits: 1 })}
+          {formato.number(nota.media, { minimumFractionDigits: 1 })}
         </span>
         <span className="text-sm text-texto-suave">
           · {t("contagem.avaliacoes", { n: nota.total })}
@@ -45,7 +46,7 @@ export function NotaKidoku({ nota }: { nota: NotaParaTela })
         {
           const altura = maior === 0 ? 0 : Math.max(faixa.total === 0 ? 0 : 8, (faixa.total / maior) * 100);
 
-          const rotulo = `${faixa.rating.toLocaleString("pt-BR")} ${SIMBOLO} · ${t(
+          const rotulo = `${formato.number(faixa.rating)} ${SIMBOLO} · ${t(
             "contagem.avaliacoes",
             { n: faixa.total },
           )}`;
@@ -72,11 +73,12 @@ export function NotaKidoku({ nota }: { nota: NotaParaTela })
           );
         })}
       </ul>
-      {/* Os extremos da escala de Rating são número formatado, não frase: ficam
-          fora do catálogo, junto com os `toLocaleString` daqui de cima. */}
+      {/* Os extremos da escala de Rating são número, não frase: não vão para o
+          catálogo, mas passam pelo formatador — "0,5"/"5,0" em pt-BR e
+          "0.5"/"5.0" em inglês. */}
       <p aria-hidden className="flex justify-between text-[10px] text-texto-suave">
-        <span>0,5</span>
-        <span>5,0</span>
+        <span>{formato.number(0.5, { minimumFractionDigits: 1 })}</span>
+        <span>{formato.number(5, { minimumFractionDigits: 1 })}</span>
       </p>
     </section>
   );

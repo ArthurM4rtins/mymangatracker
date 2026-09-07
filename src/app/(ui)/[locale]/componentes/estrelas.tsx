@@ -7,7 +7,7 @@
  *
  * O glyph vive num lugar só: trocar SIMBOLO muda o site inteiro.
  */
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 
 export const SIMBOLO = "✦";
@@ -24,6 +24,7 @@ export function SeletorDeEstrelas({
 {
   const [preview, setPreview] = useState<number | null>(null);
   const t = useTranslations("componentes");
+  const formato = useFormatter();
   const exibida = preview ?? nota;
 
   return (
@@ -76,7 +77,7 @@ export function SeletorDeEstrelas({
         })}
       </div>
       <span className="text-xs tabular-nums text-texto-suave">
-        {exibida === null ? t("estrelas.semNota") : exibida.toLocaleString("pt-BR")}
+        {exibida === null ? t("estrelas.semNota") : formato.number(exibida)}
       </span>
       {nota !== null && (
         <button
