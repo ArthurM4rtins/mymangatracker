@@ -35,7 +35,7 @@
     "corpo_invalido": "invalid body — JSON expected",
     "pedido_invalido": "invalid request",
     "anilist_id_invalido": "invalid anilistId",
-    "obra_invalida": "invalid obra",
+    "obra_invalida": "invalid series",
     "status_invalido": "invalid status",
     "comentario_invalido": "invalid comment",
     "cursor_invalido": "pass antesDe with the comment id",
@@ -48,11 +48,11 @@
     "senha_longa": "at most 72 characters",
     "credenciais_invalidas": "wrong email or password",
     "sessao_necessaria": "sign in to continue",
-    "obra_nao_encontrada": "obra not found",
-    "obra_fora_do_catalogo": "obra not found in the catalog",
+    "obra_nao_encontrada": "series not found",
+    "obra_fora_do_catalogo": "series not found in the catalog",
     "entrada_nao_encontrada": "entry not found",
     "lista_nao_encontrada": "list not found",
-    "lista_ou_obra_nao_encontrada": "list or obra not found",
+    "lista_ou_obra_nao_encontrada": "list or series not found",
     "resenha_nao_encontrada": "review not found",
     "comentario_nao_encontrado": "comment not found",
     "avaliacao_nao_encontrada": "rating not found",
@@ -66,7 +66,7 @@
     "url_invalida": "invalid reading URL",
     "url_de_capitulo_invalida": "paste the full URL of chapter 1, with https://",
     "template_invalido": "invalid template — derive it again",
-    "ordem_invalida": "the order must contain exactly the obras in the list",
+    "ordem_invalida": "the order must contain exactly the series in the list",
     "comentario_tamanho_invalido": "comment is empty or too long",
     "proprio_perfil": "doesn't apply to your own profile",
     "idioma_invalido": "language not available",
@@ -130,8 +130,8 @@
       "verMenos": "Show less"
     },
     "obras": {
-      "titulo": "Obras",
-      "vazia": "No manga or novel obras listed on AniList."
+      "titulo": "Series",
+      "vazia": "No manga or novel series listed on AniList."
     }
   },
   "catalogo": {
@@ -139,9 +139,9 @@
       "titulo": "Catalog"
     },
     "titulo": "Catalog",
-    "subtitulo": "Search for an obra, add it to your shelf and your reading starts counting.",
+    "subtitulo": "Search for a series, add it to your shelf and your reading starts counting.",
     "busca": {
-      "rotulo": "Search obras",
+      "rotulo": "Search series",
       "placeholder": "Lookism, Solo Leveling, Berserk…",
       "buscando": "Searching…"
     },
@@ -168,7 +168,7 @@
     },
     "destaques": "Popular right now",
     "cartao": {
-      "formatoGenerico": "Obra",
+      "formatoGenerico": "Series",
       "capitulos": "{n, plural, one {{n} chapter} other {{n} chapters}}"
     },
     "botaoEstante": {
@@ -207,12 +207,12 @@
       "titulo": "Shelf"
     },
     "titulo": "Shelf",
-    "descricao": "Your obras, by status. Reading progress stays private to you.",
-    "vazia": "Nothing here yet. <catalogo>Search the catalog</catalogo> and add your first obra.",
-    "obra": "Obra",
+    "descricao": "Your series, by status. Reading progress stays private to you.",
+    "vazia": "Nothing here yet. <catalogo>Search the catalog</catalogo> and add your first series.",
+    "obra": "Series",
     "capitulos": "{capitulo} chapters",
     "lendoEm": "reading on {host}",
-    "seletorStatus": "Obra status",
+    "seletorStatus": "Series status",
     "filtros": {
       "rotulo": "Filter by status",
       "tudo": "All"
@@ -227,7 +227,7 @@
       "cancelar": "cancel"
     },
     "continuar": {
-      "abrirObra": "Open the obra ↗",
+      "abrirObra": "Open the series ↗",
       "abrindo": "Opening…",
       "proximo": "Continue ch. {capitulo} →",
       "ouCap": "or ch.",
@@ -252,10 +252,10 @@
       "derivar": "Derive",
       "confirmar": "Does this link open chapter 2? Then:",
       "usar": "Use this reading source",
-      "paginaComCandidatos": "None of these open chapter 2? Some sites don't put the number in the URL — save the obra page and tracking works the same:",
-      "paginaSemCandidatos": "This site doesn't put the chapter number in the URL. Save the obra page: the button opens the page and you record the chapter here.",
-      "paginaDica": "Tip: to save the obra page (and not a chapter), paste the obra URL in the field above and derive again.",
-      "salvarPagina": "Save obra page"
+      "paginaComCandidatos": "None of these open chapter 2? Some sites don't put the number in the URL — save the series page and tracking works the same:",
+      "paginaSemCandidatos": "This site doesn't put the chapter number in the URL. Save the series page: the button opens the page and you record the chapter here.",
+      "paginaDica": "Tip: to save the series page (and not a chapter), paste the series URL in the field above and derive again.",
+      "salvarPagina": "Save series page"
     },
     "erros": {
       "banco": "The shelf depends on the database, which didn't respond just now. Try again in a moment.",
@@ -290,8 +290,8 @@
     "boasVindas": {
       "titulo": "Happy reading, {username}.",
       "continuarLendo": "Continue reading",
-      "semFonte": "Nothing you're reading has a reading source set right now — mark an obra as Reading and set its source in your <estante>shelf</estante>, and the continue button shows up here.",
-      "estanteVazia": "Your shelf is empty — <catalogo>search the catalog</catalogo> and add your first obra."
+      "semFonte": "Nothing you're reading has a reading source set right now — mark a series as Reading and set its source in your <estante>shelf</estante>, and the continue button shows up here.",
+      "estanteVazia": "Your shelf is empty — <catalogo>search the catalog</catalogo> and add your first series."
     },
     "apresentacao": {
       "descricao": "Log your reading of manga, manhwa and novel. Automatic progress, private history, a shelf that's yours.",
@@ -319,7 +319,7 @@
     },
     "resenha": {
       "notaAria": "Rating {nota} out of 5",
-      "spoiler": "Contains spoilers — read it on the obra page.",
+      "spoiler": "Contains spoilers — read it on the series page.",
       "spoilerMostrar": "Contains spoilers — show"
     },
     "feed": {
@@ -327,7 +327,7 @@
       "criouLista": "created the list"
     },
     "contagem": {
-      "obras": "{n, plural, one {obra} other {obras}}",
+      "obras": "{n, plural, one {series} other {series}}",
       "curtidas": "{n, plural, one {like} other {likes}}",
       "curtidasLeitorDeTela": "{n, plural, one {like} other {likes}}"
     },
@@ -372,8 +372,8 @@
       "meta": {
         "titulo": "List"
       },
-      "autoria": "by <autor>{username}</autor> · {n, plural, one {# obra} other {# obras}}",
-      "vazia": "Empty list — add obras with the list button on each obra's page.",
+      "autoria": "by <autor>{username}</autor> · {n, plural, one {# series} other {# series}}",
+      "vazia": "Empty list — add series with the list button on each series page.",
       "remover": "remove",
       "curtida": {
         "curtir": "like the list",
@@ -399,13 +399,13 @@
   },
   "obra": {
     "meta": {
-      "titulo": "Obra"
+      "titulo": "Series"
     },
-    "indisponivel": "AniList didn't respond just now and this obra isn't in our cache yet. Try again in a moment.",
+    "indisponivel": "AniList didn't respond just now and this series isn't in our cache yet. Try again in a moment.",
     "autoria": "by",
-    "formatoDesconhecido": "Obra",
+    "formatoDesconhecido": "Series",
     "curiosidades": "Trivia",
-    "similares": "Similar obras",
+    "similares": "Similar series",
     "contagem": {
       "capitulos": "{n, plural, one {{n} chapter} other {{n} chapters}}",
       "aberturas": "{n, plural, one {{n} read} other {{n} reads}}",
@@ -516,9 +516,9 @@
     },
     "avaliadas": {
       "titulo": "Rated",
-      "vaziaComFiltro": "No obras match this filter.",
-      "vaziaPropria": "You haven't rated anything yet. Rate an obra and it shows up here.",
-      "vaziaOutro": "{username} hasn't rated any obras yet."
+      "vaziaComFiltro": "No series match this filter.",
+      "vaziaPropria": "You haven't rated anything yet. Rate a series and it shows up here.",
+      "vaziaOutro": "{username} hasn't rated any series yet."
     },
     "filtros": {
       "ordenar": "Sort",
@@ -534,7 +534,7 @@
     },
     "resenhas": {
       "titulo": "Recent reviews",
-      "vaziaPropria": "You haven't written a review yet. Rate an obra with text and it shows up here.",
+      "vaziaPropria": "You haven't written a review yet. Rate a series with text and it shows up here.",
       "vaziaOutro": "{username} hasn't written a review yet.",
       "spoiler": "Contains spoiler — show",
       "curtidas": "{n, plural, one {{valor} like} other {{valor} likes}}"
@@ -543,7 +543,7 @@
       "titulo": "Lists",
       "vaziaPropria": "You haven't created a list yet. <link>Create the first one</link>",
       "vaziaOutro": "{username} hasn't created a list yet.",
-      "obras": "{n, plural, one {{valor} obra} other {{valor} obras}}"
+      "obras": "{n, plural, one {{valor} series} other {{valor} series}}"
     }
   }
 }
