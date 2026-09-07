@@ -35,6 +35,42 @@
       "NOVEL": "Novel"
     }
   },
+  "erros": {
+    "corpo_invalido": "invalid body — JSON expected",
+    "pedido_invalido": "invalid request",
+    "anilist_id_invalido": "invalid anilistId",
+    "obra_invalida": "invalid obra",
+    "status_invalido": "invalid status",
+    "comentario_invalido": "invalid comment",
+    "cursor_invalido": "pass antesDe with the comment id",
+    "nome_invalido": "name must be 1 to 100 characters",
+    "credenciais_invalidas": "wrong email or password",
+    "sessao_necessaria": "sign in to continue",
+    "obra_nao_encontrada": "obra not found",
+    "obra_fora_do_catalogo": "obra not found in the catalog",
+    "entrada_nao_encontrada": "entry not found",
+    "lista_nao_encontrada": "list not found",
+    "lista_ou_obra_nao_encontrada": "list or obra not found",
+    "resenha_nao_encontrada": "review not found",
+    "comentario_nao_encontrado": "comment not found",
+    "avaliacao_nao_encontrada": "rating not found",
+    "usuario_nao_encontrado": "user not found",
+    "ja_em_uso": "already taken",
+    "sem_fonte": "set up the reading source first",
+    "arquivo_grande_demais": "the image is over 512 KB",
+    "tipo_de_arquivo_invalido": "send a JPEG, PNG or WebP image",
+    "capitulo_invalido": "invalid chapter",
+    "avaliacao_invalida": "invalid rating — 0.5 to 5 in half stars, or a review",
+    "url_invalida": "invalid reading URL",
+    "url_de_capitulo_invalida": "paste the full URL of chapter 1, with https://",
+    "template_invalido": "invalid template — derive it again",
+    "ordem_invalida": "the order must contain exactly the obras in the list",
+    "comentario_tamanho_invalido": "comment is empty or too long",
+    "proprio_perfil": "doesn't apply to your own profile",
+    "limite_excedido": "too many attempts — wait before trying again",
+    "falha_interna": "couldn't do that right now",
+    "catalogo_indisponivel": "catalog unavailable right now — try again"
+  },
   "entrar": {
     "meta": {
       "titulo": "Sign in"
