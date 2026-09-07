@@ -25,6 +25,8 @@ export type UsuarioPublico = {
 export type CredenciaisDeLogin = {
   id: string;
   passwordHash: string;
+  /** Idioma escolhido pela pessoa, ou null se ela nunca escolheu (#116). */
+  locale: string | null;
 };
 
 /**
@@ -131,7 +133,7 @@ export function buscarCredenciaisPorEmail(
 {
   return getPrisma().user.findUnique({
     where: { email },
-    select: { id: true, passwordHash: true },
+    select: { id: true, passwordHash: true, locale: true },
   });
 }
 
@@ -159,4 +161,13 @@ function traduzirDuplicidade(erro: unknown): Error
   }
 
   return erro instanceof Error ? erro : new Error(String(erro));
+}
+
+/** Grava o idioma da interface escolhido pela pessoa (#116, fase 5). */
+export async function salvarIdioma(userId: string, locale: string): Promise<void>
+{
+  await getPrisma().user.update({
+    where: { id: userId },
+    data: { locale },
+  });
 }
