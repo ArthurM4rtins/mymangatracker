@@ -1,35 +1,35 @@
 {
   "meta": {
     "titulo": "Kidoku",
-    "descricao": "Um Letterboxd para mangá, manhwa e novel, com progresso de leitura automático e privado."
+    "descricao": "A Letterboxd for manga, manhwa, and novels, with automatic, private reading progress."
   },
   "cabecalho": {
-    "navegacao": "Navegação",
-    "catalogo": "Catálogo",
-    "listas": "Listas",
-    "estante": "Estante",
-    "perfil": "Perfil",
-    "entrar": "Entrar",
-    "idioma": "Idioma",
+    "navegacao": "Navigation",
+    "catalogo": "Catalog",
+    "listas": "Lists",
+    "estante": "Shelf",
+    "perfil": "Profile",
+    "entrar": "Sign in",
+    "idioma": "Language",
     "idiomas": {
       "pt-BR": "Português",
       "en": "English"
     }
   },
   "comum": {
-    "salvar": "Salvar",
-    "salvando": "Salvando…",
-    "cancelar": "Cancelar",
-    "voltar": "Voltar",
+    "salvar": "Save",
+    "salvando": "Saving…",
+    "cancelar": "Cancel",
+    "voltar": "Back",
     "status": {
-      "READING": "Lendo",
-      "COMPLETED": "Concluído",
-      "PLANNED": "Planejado",
-      "PAUSED": "Pausado",
-      "DROPPED": "Largado"
+      "READING": "Reading",
+      "COMPLETED": "Completed",
+      "PLANNED": "Plan to Read",
+      "PAUSED": "On Hold",
+      "DROPPED": "Dropped"
     },
     "formato": {
-      "JP": "Mangá",
+      "JP": "Manga",
       "KR": "Manhwa",
       "CN": "Manhua",
       "NOVEL": "Novel"
@@ -37,123 +37,123 @@
   },
   "entrar": {
     "meta": {
-      "titulo": "Entrar"
+      "titulo": "Sign in"
     },
-    "titulo": "Entrar",
-    "subtitulo": "De volta à leitura.",
-    "contaCriada": "Conta criada. Agora é entrar.",
-    "semConta": "Ainda não tem conta? <link>Criar conta</link>",
+    "titulo": "Sign in",
+    "subtitulo": "Back to your reading.",
+    "contaCriada": "Account created. Now sign in.",
+    "semConta": "Don't have an account yet? <link>Create account</link>",
     "campos": {
-      "email": "E-mail",
-      "senha": "Senha"
+      "email": "Email",
+      "senha": "Password"
     },
     "acoes": {
-      "enviar": "Entrar",
-      "enviando": "Entrando…"
+      "enviar": "Sign in",
+      "enviando": "Signing in…"
     },
     "erros": {
-      "geral": "não foi possível entrar",
-      "conexao": "sem conexão com o servidor — tente de novo"
+      "geral": "couldn't sign in",
+      "conexao": "no connection to the server — try again"
     }
   },
   "cadastrar": {
     "meta": {
-      "titulo": "Criar conta"
+      "titulo": "Create account"
     },
-    "titulo": "Criar conta",
-    "subtitulo": "Estante, progresso e resenhas — a leitura fica só sua.",
-    "jaTemConta": "Já tem conta? <link>Entrar</link>",
+    "titulo": "Create account",
+    "subtitulo": "Shelf, progress and reviews — your reading stays yours alone.",
+    "jaTemConta": "Already have an account? <link>Sign in</link>",
     "campos": {
-      "username": "Nome de usuário",
-      "email": "E-mail",
-      "senha": "Senha"
+      "username": "Username",
+      "email": "Email",
+      "senha": "Password"
     },
     "acoes": {
-      "enviar": "Criar conta",
-      "enviando": "Criando…"
+      "enviar": "Create account",
+      "enviando": "Creating…"
     },
     "erros": {
-      "geral": "não foi possível concluir o cadastro",
-      "conexao": "sem conexão com o servidor — tente de novo"
+      "geral": "couldn't complete sign-up",
+      "conexao": "no connection to the server — try again"
     }
   },
   "autor": {
     "meta": {
-      "titulo": "Autor"
+      "titulo": "Author"
     },
     "erros": {
-      "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes."
+      "indisponivel": "AniList didn't respond just now. Try again in a moment."
     },
     "bio": {
-      "verMais": "Ver mais",
-      "verMenos": "Ver menos"
+      "verMais": "Show more",
+      "verMenos": "Show less"
     },
     "obras": {
       "titulo": "Obras",
-      "vazia": "Nenhuma obra de mangá ou novel registrada no AniList."
+      "vazia": "No manga or novel obras listed on AniList."
     }
   },
   "catalogo": {
     "meta": {
-      "titulo": "Catálogo"
+      "titulo": "Catalog"
     },
-    "titulo": "Catálogo",
-    "subtitulo": "Busque a obra, adicione à estante e a leitura começa a contar.",
+    "titulo": "Catalog",
+    "subtitulo": "Search for an obra, add it to your shelf and your reading starts counting.",
     "busca": {
-      "rotulo": "Buscar obra",
+      "rotulo": "Search obras",
       "placeholder": "Lookism, Solo Leveling, Berserk…",
-      "buscando": "Buscando…"
+      "buscando": "Searching…"
     },
     "filtros": {
-      "tipo": "Tipo",
-      "genero": "Gênero",
-      "decada": "Década",
-      "ordenar": "Ordenar",
-      "todos": "Todos",
-      "limpar": "limpar filtros",
+      "tipo": "Type",
+      "genero": "Genre",
+      "decada": "Decade",
+      "ordenar": "Sort",
+      "todos": "All",
+      "limpar": "clear filters",
       "ordens": {
-        "popular": "Populares",
-        "nota": "Melhor nota",
-        "alta": "Em alta",
-        "recente": "Mais recentes"
+        "popular": "Popular",
+        "nota": "Top rated",
+        "alta": "Trending",
+        "recente": "Newest"
       }
     },
     "erros": {
-      "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes."
+      "indisponivel": "AniList didn't respond just now. Try again in a moment."
     },
     "vazio": {
-      "semTermo": "O catálogo não respondeu nada agora. Tente de novo em instantes.",
-      "semResultado": "Nada encontrado para <forte>{termo}</forte>."
+      "semTermo": "The catalog didn't return anything just now. Try again in a moment.",
+      "semResultado": "Nothing found for <forte>{termo}</forte>."
     },
-    "destaques": "Populares agora",
+    "destaques": "Popular right now",
     "cartao": {
       "formatoGenerico": "Obra",
-      "capitulos": "{n} capítulos"
+      "capitulos": "{n, plural, one {# chapter} other {# chapters}}"
     },
     "botaoEstante": {
-      "naEstante": "Na estante",
-      "adicionar": "+ Estante",
-      "erro": "não deu — tente de novo"
+      "naEstante": "On shelf",
+      "adicionar": "+ Shelf",
+      "erro": "didn't work — try again"
     }
   },
   "componentes": {
-    "sair": "Sair",
+    "sair": "Sign out",
     "logo": {
-      "rotulo": "Kidoku — início"
+      "rotulo": "Kidoku — home"
     },
     "carrossel": {
-      "anterior": "Anterior",
-      "proximo": "Próximo"
+      "anterior": "Previous",
+      "proximo": "Next"
     },
     "estrelas": {
-      "grupo": "Nota de 0,5 a 5",
-      "nota": "{nota} de 5",
-      "semNota": "sem nota",
-      "limpar": "limpar"
+      "grupo": "Rating from 0.5 to 5",
+      "nota": "{nota} out of 5",
+      "semNota": "no rating",
+      "limpar": "clear"
     },
     "tema": {
-      "grupo": "Tema do site",
-      "escolher": "Tema {nome}",
+      "grupo": "Site theme",
+      "escolher": "{nome} theme",
       "nomes": {
         "sumi": "Sumi",
         "noturno": "Noturno",
@@ -163,193 +163,193 @@
   },
   "estante": {
     "meta": {
-      "titulo": "Estante"
+      "titulo": "Shelf"
     },
-    "titulo": "Estante",
-    "descricao": "Suas obras, por status. O progresso de leitura fica só com você.",
-    "vazia": "Nada por aqui ainda. <catalogo>Busque no catálogo</catalogo> e adicione a primeira obra.",
+    "titulo": "Shelf",
+    "descricao": "Your obras, by status. Reading progress stays private to you.",
+    "vazia": "Nothing here yet. <catalogo>Search the catalog</catalogo> and add your first obra.",
     "obra": "Obra",
-    "capitulos": "{capitulo} capítulos",
-    "lendoEm": "lendo em {host}",
-    "seletorStatus": "Status da obra",
+    "capitulos": "{capitulo} chapters",
+    "lendoEm": "reading on {host}",
+    "seletorStatus": "Obra status",
     "filtros": {
-      "rotulo": "Filtrar por status",
-      "tudo": "Tudo"
+      "rotulo": "Filter by status",
+      "tudo": "All"
     },
     "progresso": {
-      "editar": "Editar capítulo",
-      "marcar": "marcar capítulo",
-      "atual": "no cap. {capitulo}",
-      "prefixo": "no cap.",
-      "campo": "Capítulo em leitura",
-      "salvar": "salvar",
-      "cancelar": "cancelar"
+      "editar": "Edit chapter",
+      "marcar": "set chapter",
+      "atual": "on ch. {capitulo}",
+      "prefixo": "on ch.",
+      "campo": "Current chapter",
+      "salvar": "save",
+      "cancelar": "cancel"
     },
     "continuar": {
-      "abrirObra": "Abrir a obra ↗",
-      "abrindo": "Abrindo…",
-      "proximo": "Continuar cap. {capitulo} →",
-      "ouCap": "ou cap.",
-      "campo": "Capítulo específico",
-      "abrir": "abrir"
+      "abrirObra": "Open the obra ↗",
+      "abrindo": "Opening…",
+      "proximo": "Continue ch. {capitulo} →",
+      "ouCap": "or ch.",
+      "campo": "Specific chapter",
+      "abrir": "open"
     },
     "avaliacao": {
-      "nota": "Nota {nota} de 5",
-      "avaliar": "Avaliar",
-      "editar": "Editar avaliação",
-      "spoilerOculto": "resenha com spoiler — mostrar",
-      "resenha": "Escreva a resenha (opcional)",
-      "spoiler": "contém spoiler",
-      "remover": "Remover"
+      "nota": "Rating {nota} of 5",
+      "avaliar": "Rate",
+      "editar": "Edit rating",
+      "spoilerOculto": "review with spoiler — show",
+      "resenha": "Write your review (optional)",
+      "spoiler": "contains spoiler",
+      "remover": "Remove"
     },
     "fonte": {
-      "trocar": "Trocar fonte",
-      "configurar": "Configurar leitura",
-      "rotuloUrl": "Cole o link do capítulo 1 no site onde você lê",
+      "trocar": "Change reading source",
+      "configurar": "Set up reading source",
+      "rotuloUrl": "Paste the link to chapter 1 on the site where you read",
       "exemploUrl": "https://site.com/obra/capitulo/1",
-      "derivando": "Derivando…",
-      "derivar": "Derivar",
-      "confirmar": "Esse link abre o capítulo 2? Então:",
-      "usar": "Usar esta fonte",
-      "paginaComCandidatos": "Nenhum desses abre o capítulo 2? Alguns sites não colocam o número na URL — salve a página da obra e o registro continua igual:",
-      "paginaSemCandidatos": "Esse site não coloca o número do capítulo na URL. Salve a página da obra: o botão abre a página e você registra o capítulo aqui.",
-      "paginaDica": "Dica: para salvar a página da série (e não um capítulo), cole a URL da obra no campo acima e derive de novo.",
-      "salvarPagina": "Salvar página da obra"
+      "derivando": "Deriving…",
+      "derivar": "Derive",
+      "confirmar": "Does this link open chapter 2? Then:",
+      "usar": "Use this reading source",
+      "paginaComCandidatos": "None of these open chapter 2? Some sites don't put the number in the URL — save the obra page and tracking works the same:",
+      "paginaSemCandidatos": "This site doesn't put the chapter number in the URL. Save the obra page: the button opens the page and you record the chapter here.",
+      "paginaDica": "Tip: to save the obra page (and not a chapter), paste the obra URL in the field above and derive again.",
+      "salvarPagina": "Save obra page"
     },
     "erros": {
-      "banco": "A estante depende do banco de dados, que não respondeu agora. Tente de novo em instantes.",
-      "avaliacaoVazia": "dá uma nota ou escreve a resenha",
-      "salvar": "não deu para salvar — tente de novo",
-      "remover": "não deu para remover — tente de novo",
-      "derivar": "não deu para derivar — confira o link",
-      "capituloInvalido": "capítulo inválido",
-      "acao": "não deu — tente de novo",
-      "rede": "não deu agora — tente de novo"
+      "banco": "The shelf depends on the database, which didn't respond just now. Try again in a moment.",
+      "avaliacaoVazia": "give a rating or write a review",
+      "salvar": "couldn't save — try again",
+      "remover": "couldn't remove — try again",
+      "derivar": "couldn't derive — check the link",
+      "capituloInvalido": "invalid chapter",
+      "acao": "didn't work — try again",
+      "rede": "didn't work just now — try again"
     }
   },
   "home": {
     "saude": {
-      "aviso": "{estado} — {dependencias}. O que não depende disso continua funcionando.",
+      "aviso": "{estado} — {dependencias}. Everything that doesn't depend on it keeps working.",
       "resumo": {
-        "ok": "tudo no ar",
-        "degraded": "no ar, com configuração pendente",
-        "down": "alguma dependência está fora"
+        "ok": "all systems up",
+        "degraded": "up, with configuration pending",
+        "down": "a dependency is down"
       },
       "dependencia": {
-        "database": "banco de dados",
-        "anilist": "catálogo AniList"
+        "database": "database",
+        "anilist": "AniList catalog"
       },
       "estado": {
-        "ok": "respondendo",
-        "down": "fora do ar",
-        "not_configured": "não configurado"
+        "ok": "responding",
+        "down": "down",
+        "not_configured": "not configured"
       }
     },
     "boasVindas": {
-      "titulo": "Boa leitura, {username}.",
-      "continuarLendo": "Continuar lendo",
-      "semFonte": "Nada em leitura com fonte configurada agora — marque uma obra como Lendo e configure a fonte na <estante>estante</estante> e o botão de continuar aparece aqui.",
-      "estanteVazia": "Sua estante está vazia — <catalogo>busque no catálogo</catalogo> e adicione a primeira obra."
+      "titulo": "Happy reading, {username}.",
+      "continuarLendo": "Continue reading",
+      "semFonte": "Nothing you're reading has a reading source set right now — mark an obra as Reading and set its source in your <estante>shelf</estante>, and the continue button shows up here.",
+      "estanteVazia": "Your shelf is empty — <catalogo>search the catalog</catalogo> and add your first obra."
     },
     "apresentacao": {
-      "descricao": "Registre sua leitura de mangá, manhwa e novel. Progresso automático, histórico privado, estante sua.",
-      "criarConta": "Criar conta",
-      "entrar": "Entrar"
+      "descricao": "Log your reading of manga, manhwa and novel. Automatic progress, private history, a shelf that's yours.",
+      "criarConta": "Create account",
+      "entrar": "Sign in"
     },
     "vitrine": {
       "resenhas": {
-        "titulo": "Resenhas",
-        "vazio": "Ainda não tem resenha por aqui — a primeira aparece nesta vitrine."
+        "titulo": "Reviews",
+        "vazio": "No reviews here yet — the first one shows up in this showcase."
       },
       "listas": {
-        "titulo": "Listas",
-        "vazio": "Ainda não tem lista por aqui — a primeira aparece nesta vitrine."
+        "titulo": "Lists",
+        "vazio": "No lists here yet — the first one shows up in this showcase."
       }
     },
     "populares": {
-      "titulo": "Populares agora",
-      "verMais": "ver mais →",
-      "indisponivel": "O catálogo não respondeu agora — tente de novo em instantes."
+      "titulo": "Popular now",
+      "verMais": "see more →",
+      "indisponivel": "The catalog didn't respond just now — try again in a moment."
     },
     "atividade": {
-      "titulo": "Atividade recente",
-      "vazia": "Ainda não tem resenha nem lista por aqui — a primeira aparece nesta seção."
+      "titulo": "Recent activity",
+      "vazia": "No reviews or lists here yet — the first one shows up in this section."
     },
     "resenha": {
-      "notaAria": "Nota {nota} de 5",
-      "spoiler": "Contém spoiler — leia na página da obra.",
-      "spoilerMostrar": "Contém spoiler — mostrar"
+      "notaAria": "Rating {nota} out of 5",
+      "spoiler": "Contains spoilers — read it on the obra page.",
+      "spoilerMostrar": "Contains spoilers — show"
     },
     "feed": {
-      "resenhou": "resenhou",
-      "criouLista": "criou a lista"
+      "resenhou": "reviewed",
+      "criouLista": "created the list"
     },
     "contagem": {
-      "obras": "{n, plural, =1 {obra} other {obras}}",
-      "curtidas": "{n, plural, =1 {curtida} other {curtidas}}",
-      "curtidasLeitorDeTela": "{n, plural, =1 {curtida} other {curtidas}}"
+      "obras": "{n, plural, one {obra} other {obras}}",
+      "curtidas": "{n, plural, one {like} other {likes}}",
+      "curtidasLeitorDeTela": "{n, plural, one {like} other {likes}}"
     },
     "rodape": {
-      "verificado": "{estado} · verificado em {quando}"
+      "verificado": "{estado} · checked at {quando}"
     }
   },
   "listas": {
     "erros": {
-      "semBanco": "As listas dependem do banco de dados, que não respondeu agora."
+      "semBanco": "Lists depend on the database, and it didn't respond just now."
     },
     "campos": {
-      "nome": "Nome da lista",
-      "descricao": "Descrição da lista",
-      "descricaoOpcional": "Descrição (opcional)"
+      "nome": "List name",
+      "descricao": "List description",
+      "descricaoOpcional": "Description (optional)"
     },
     "indice": {
       "meta": {
-        "titulo": "Listas"
+        "titulo": "Lists"
       },
-      "titulo": "Listas",
-      "subtitulo": "Coleções feitas pelos leitores — dos clássicos às brincadeiras.",
-      "convite": "<entrar>Entre</entrar> para criar a sua.",
-      "vazia": "Nenhuma lista ainda — seja a primeira pessoa a criar uma.",
+      "titulo": "Lists",
+      "subtitulo": "Collections made by readers — from the classics to the silly ones.",
+      "convite": "<entrar>Sign in</entrar> to create your own.",
+      "vazia": "No lists yet — be the first to create one.",
       "ordenar": {
-        "rotulo": "Ordenar listas",
-        "recentes": "Recentes",
-        "curtidas": "Mais curtidas"
+        "rotulo": "Sort lists",
+        "recentes": "Recent",
+        "curtidas": "Most liked"
       },
       "criar": {
-        "abrir": "Criar lista",
-        "enviar": "Criar",
-        "enviando": "Criando…",
+        "abrir": "Create list",
+        "enviar": "Create",
+        "enviando": "Creating…",
         "erros": {
-          "semNome": "dá um nome para a lista",
-          "falhou": "não deu — tente de novo",
-          "rede": "não deu agora — tente de novo"
+          "semNome": "give the list a name",
+          "falhou": "didn't work — try again",
+          "rede": "didn't work just now — try again"
         }
       }
     },
     "detalhe": {
       "meta": {
-        "titulo": "Lista"
+        "titulo": "List"
       },
-      "autoria": "por <autor>{username}</autor> · {n, plural, =1 {# obra} other {# obras}}",
-      "vazia": "Lista vazia — adicione obras pelo botão de lista na página de cada obra.",
-      "remover": "remover",
+      "autoria": "by <autor>{username}</autor> · {n, plural, one {# obra} other {# obras}}",
+      "vazia": "Empty list — add obras with the list button on each obra's page.",
+      "remover": "remove",
       "curtida": {
-        "curtir": "curtir a lista",
-        "descurtir": "descurtir a lista"
+        "curtir": "like the list",
+        "descurtir": "unlike the list"
       },
       "editar": {
-        "abrir": "Editar",
-        "erro": "não foi possível salvar"
+        "abrir": "Edit",
+        "erro": "couldn't save"
       },
       "apagar": {
-        "abrir": "Apagar lista",
-        "confirmacao": "apagar de vez?",
-        "sim": "sim",
-        "nao": "não"
+        "abrir": "Delete list",
+        "confirmacao": "delete for good?",
+        "sim": "yes",
+        "nao": "no"
       },
       "ordenar": {
-        "antes": "Mover {titulo} para antes",
-        "depois": "Mover {titulo} para depois"
+        "antes": "Move {titulo} earlier",
+        "depois": "Move {titulo} later"
       }
     }
   },
@@ -357,148 +357,148 @@
     "meta": {
       "titulo": "Obra"
     },
-    "indisponivel": "O AniList não respondeu agora e esta obra ainda não está no nosso cache. Tente de novo em instantes.",
-    "autoria": "por",
+    "indisponivel": "AniList didn't respond just now and this obra isn't in our cache yet. Try again in a moment.",
+    "autoria": "by",
     "formatoDesconhecido": "Obra",
-    "curiosidades": "Curiosidades",
-    "similares": "Obras similares",
+    "curiosidades": "Trivia",
+    "similares": "Similar obras",
     "contagem": {
-      "capitulos": "{n} capítulos",
-      "aberturas": "{n, plural, =1 {{n} abertura} other {{n} aberturas}}",
-      "avaliacoes": "{n, plural, =1 {{n} avaliação} other {{n} avaliações}}",
-      "curtidas": "{n, plural, =1 {{n} curtida} other {{n} curtidas}}",
-      "comentarios": "{n, plural, =1 {{n} comentário} other {{n} comentários}}"
+      "capitulos": "{n, plural, one {# chapter} other {# chapters}}",
+      "aberturas": "{n, plural, one {{n} read} other {{n} reads}}",
+      "avaliacoes": "{n, plural, one {{n} rating} other {{n} ratings}}",
+      "curtidas": "{n, plural, one {{n} like} other {{n} likes}}",
+      "comentarios": "{n, plural, one {{n} comment} other {{n} comments}}"
     },
     "painel": {
-      "convite": "<entrar>Entre</entrar> para adicionar à estante, avaliar e registrar a leitura.",
-      "adicionar": "Adicione à estante para avaliar e registrar a leitura."
+      "convite": "<entrar>Sign in</entrar> to add to your shelf, rate and track your reading.",
+      "adicionar": "Add to your shelf to rate and track your reading."
     },
     "historico": {
-      "titulo": "Histórico de leitura",
-      "maisRecentes": "{n} mais recentes",
-      "capitulo": "cap. {n}",
-      "fonteRemovida": "fonte removida"
+      "titulo": "Reading history",
+      "maisRecentes": "{n} most recent",
+      "capitulo": "ch. {n}",
+      "fonteRemovida": "reading source removed"
     },
     "avaliacao": {
-      "titulo": "Sua avaliação",
-      "resenhar": "Resenhar…",
-      "editarResenha": "Editar resenha…"
+      "titulo": "Your rating",
+      "resenhar": "Write a review…",
+      "editarResenha": "Edit review…"
     },
     "apagar": {
-      "confirmar": "Apagar o texto da resenha também apaga {itens}. Continuar?"
+      "confirmar": "Deleting the review text also deletes {itens}. Continue?"
     },
     "modal": {
-      "rotulo": "Resenhar {titulo}",
-      "fechar": "Fechar",
-      "placeholder": "Escreva a resenha — ela fica pública para outros leitores",
-      "spoiler": "contém spoiler"
+      "rotulo": "Write a review for {titulo}",
+      "fechar": "Close",
+      "placeholder": "Write your review — other readers can see it",
+      "spoiler": "contains spoiler"
     },
     "nota": {
-      "titulo": "Nota do Kidoku",
-      "distribuicao": "Distribuição das notas"
+      "titulo": "Kidoku rating",
+      "distribuicao": "Rating distribution"
     },
     "resenhas": {
-      "titulo": "Resenhas",
-      "vazio": "Ainda não tem resenha por aqui — avalie com um texto e a sua aparece para todo mundo.",
-      "minha": "você",
-      "nota": "Nota {nota} de 5",
-      "spoiler": "esta resenha tem spoiler — mostrar",
-      "verConversa": "ver conversa",
-      "comentar": "comentar",
-      "carregando": "carregando…",
-      "verAnteriores": "ver {n, plural, =1 {{n} anterior} other {{n} anteriores}}",
-      "apagarComentario": "Apagar comentário",
-      "apagar": "apagar",
-      "placeholderComentario": "Escreva um comentário…",
-      "enviar": "enviar",
-      "entreParaComentar": "Entre para comentar."
+      "titulo": "Reviews",
+      "vazio": "No reviews here yet — rate it with a few words and yours shows up for everyone.",
+      "minha": "you",
+      "nota": "Rating {nota} out of 5",
+      "spoiler": "this review has a spoiler — show",
+      "verConversa": "see conversation",
+      "comentar": "comment",
+      "carregando": "Loading…",
+      "verAnteriores": "see {n, plural, one {{n} earlier comment} other {{n} earlier comments}}",
+      "apagarComentario": "Delete comment",
+      "apagar": "delete",
+      "placeholderComentario": "Write a comment…",
+      "enviar": "send",
+      "entreParaComentar": "Sign in to comment."
     },
     "listas": {
-      "botao": "+ Lista",
-      "titulo": "Minhas listas",
-      "fechar": "fechar",
-      "vazia": "Nenhuma lista ainda — crie uma na página de Listas."
+      "botao": "+ List",
+      "titulo": "My lists",
+      "fechar": "close",
+      "vazia": "No lists yet — create one on the Lists page."
     },
     "erros": {
-      "salvar": "não deu para salvar — tente de novo",
-      "comentar": "não deu para comentar — tente de novo",
-      "limite": "muitos comentários em pouco tempo — aguarde um pouco",
-      "listas": "não deu para carregar as listas",
-      "rede": "não deu agora — tente de novo"
+      "salvar": "couldn't save — try again",
+      "comentar": "couldn't post the comment — try again",
+      "limite": "too many comments too fast — wait a moment",
+      "listas": "couldn't load your lists",
+      "rede": "that didn't work — try again"
     }
   },
   "perfil": {
-    "voce": "você",
-    "membroDesde": "no Kidoku desde {mes}",
-    "notaAria": "Nota {nota} de 5",
+    "voce": "you",
+    "membroDesde": "on Kidoku since {mes}",
+    "notaAria": "Rating {nota} out of 5",
     "erros": {
-      "semBanco": "O perfil depende do banco de dados, que não respondeu agora."
+      "semBanco": "The profile needs the database, and it didn't respond just now."
     },
     "numeros": {
-      "avaliadas": "{n, plural, =1 {<forte>{valor}</forte> avaliada} other {<forte>{valor}</forte> avaliadas}}",
-      "resenhas": "{n, plural, =1 {<forte>{valor}</forte> resenha} other {<forte>{valor}</forte> resenhas}}",
-      "listas": "{n, plural, =1 {<forte>{valor}</forte> lista} other {<forte>{valor}</forte> listas}}",
-      "curtidasDadas": "{n, plural, =1 {<forte>{valor}</forte> curtida dada} other {<forte>{valor}</forte> curtidas dadas}}",
-      "seguindo": "{n, plural, other {<forte>{valor}</forte> seguindo}}",
-      "seguidores": "{n, plural, =1 {<forte>{valor}</forte> seguidor} other {<forte>{valor}</forte> seguidores}}",
-      "curtidasNoPerfil": "{n, plural, =1 {<forte>{valor}</forte> curtida no perfil} other {<forte>{valor}</forte> curtidas no perfil}}"
+      "avaliadas": "{n, plural, one {<forte>{valor}</forte> rated} other {<forte>{valor}</forte> rated}}",
+      "resenhas": "{n, plural, one {<forte>{valor}</forte> review} other {<forte>{valor}</forte> reviews}}",
+      "listas": "{n, plural, one {<forte>{valor}</forte> list} other {<forte>{valor}</forte> lists}}",
+      "curtidasDadas": "{n, plural, one {<forte>{valor}</forte> like given} other {<forte>{valor}</forte> likes given}}",
+      "seguindo": "{n, plural, other {<forte>{valor}</forte> following}}",
+      "seguidores": "{n, plural, one {<forte>{valor}</forte> follower} other {<forte>{valor}</forte> followers}}",
+      "curtidasNoPerfil": "{n, plural, one {<forte>{valor}</forte> profile like} other {<forte>{valor}</forte> profile likes}}"
     },
     "social": {
-      "seguir": "Seguir",
-      "seguindo": "Seguindo",
-      "curtir": "Curtir perfil",
-      "descurtir": "Descurtir perfil"
+      "seguir": "Follow",
+      "seguindo": "Following",
+      "curtir": "Like profile",
+      "descurtir": "Unlike profile"
     },
     "foto": {
-      "altPropria": "Sua foto de perfil",
-      "altOutro": "Foto de {username}",
-      "trocar": "Trocar foto",
-      "trocarAria": "Trocar foto de perfil",
-      "trocarCurto": "trocar",
-      "remover": "remover",
+      "altPropria": "Your profile photo",
+      "altOutro": "Photo of {username}",
+      "trocar": "Change photo",
+      "trocarAria": "Change profile photo",
+      "trocarCurto": "change",
+      "remover": "remove",
       "erros": {
-        "geral": "não foi possível agora",
-        "leitura": "não deu para ler essa imagem"
+        "geral": "couldn't do that right now",
+        "leitura": "couldn't read that image"
       }
     },
     "estante": {
-      "titulo": "Minha estante",
-      "gerenciar": "gerenciar na estante",
+      "titulo": "My shelf",
+      "gerenciar": "manage your shelf",
       "abas": "Status",
-      "vazia": "Nada em {status}.",
-      "semCapitulo": "sem capítulo",
-      "capitulo": "cap. {n}"
+      "vazia": "Nothing in {status}.",
+      "semCapitulo": "no chapter",
+      "capitulo": "ch. {n}"
     },
     "avaliadas": {
-      "titulo": "Avaliadas",
-      "vaziaComFiltro": "Nenhuma obra com esse filtro.",
-      "vaziaPropria": "Você ainda não deu nota. Avalie uma obra e ela aparece aqui.",
-      "vaziaOutro": "{username} ainda não deu nota a nenhuma obra."
+      "titulo": "Rated",
+      "vaziaComFiltro": "No obras match this filter.",
+      "vaziaPropria": "You haven't rated anything yet. Rate an obra and it shows up here.",
+      "vaziaOutro": "{username} hasn't rated any obras yet."
     },
     "filtros": {
-      "ordenar": "Ordenar",
-      "nota": "Nota",
-      "todas": "Todas",
-      "limpar": "limpar",
+      "ordenar": "Sort",
+      "nota": "Rating",
+      "todas": "All",
+      "limpar": "clear",
       "ordens": {
-        "recentes": "Mais recentes",
-        "antigas": "Mais antigas",
-        "maior_nota": "Maior nota",
-        "menor_nota": "Menor nota"
+        "recentes": "Newest",
+        "antigas": "Oldest",
+        "maior_nota": "Highest rating",
+        "menor_nota": "Lowest rating"
       }
     },
     "resenhas": {
-      "titulo": "Resenhas recentes",
-      "vaziaPropria": "Você ainda não escreveu resenha. Avalie uma obra com texto e ela aparece aqui.",
-      "vaziaOutro": "{username} ainda não escreveu resenha.",
-      "spoiler": "Contém spoiler — mostrar",
-      "curtidas": "{n, plural, =1 {{valor} curtida} other {{valor} curtidas}}"
+      "titulo": "Recent reviews",
+      "vaziaPropria": "You haven't written a review yet. Rate an obra with text and it shows up here.",
+      "vaziaOutro": "{username} hasn't written a review yet.",
+      "spoiler": "Contains spoiler — show",
+      "curtidas": "{n, plural, one {{valor} like} other {{valor} likes}}"
     },
     "listas": {
-      "titulo": "Listas",
-      "vaziaPropria": "Você ainda não criou lista. <link>Criar a primeira</link>",
-      "vaziaOutro": "{username} ainda não criou lista.",
-      "obras": "{n, plural, =1 {{valor} obra} other {{valor} obras}}"
+      "titulo": "Lists",
+      "vaziaPropria": "You haven't created a list yet. <link>Create the first one</link>",
+      "vaziaOutro": "{username} hasn't created a list yet.",
+      "obras": "{n, plural, one {{valor} obra} other {{valor} obras}}"
     }
   }
 }
