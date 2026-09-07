@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listaComItensDoSistema } from "@/server/services/lista.service";
-import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
+import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { ApagarLista, RemoverDaLista } from "./acoes-da-lista";
 import { CurtirLista } from "./curtir-lista";
 import { EditarLista } from "./editar-lista";

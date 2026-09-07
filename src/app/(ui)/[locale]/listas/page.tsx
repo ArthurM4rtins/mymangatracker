@@ -4,7 +4,7 @@ import {
   type OrdemDasListas,
 } from "@/server/domain/lista-listagem";
 import { listasPublicasDoSistema } from "@/server/services/lista.service";
-import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
+import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { CardLista } from "../vitrine-cards";
 import { CriarLista } from "./criar-lista";
 

@@ -12,7 +12,7 @@ import { AdicionarALista } from "./adicionar-a-lista";
 import { AvaliacaoDaObra } from "./avaliacao-da-obra";
 import { NotaKidoku } from "./nota-kidoku";
 import { ReviewSocial } from "./review-social";
-import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
+import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "../../catalogo/botao-estante";
 import { DataHora } from "../../componentes/data-hora";
 import { ConfigurarFonte } from "../../estante/configurar-fonte";

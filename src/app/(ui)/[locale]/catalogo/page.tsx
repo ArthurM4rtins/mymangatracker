@@ -4,7 +4,7 @@ import { buscarNoCatalogo } from "@/server/services/catalogo.service";
 import { anilistIdsNaEstanteDoSistema } from "@/server/services/estante.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
-import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
+import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "./botao-estante";
 import { BuscaCatalogo } from "./busca-catalogo";
 import { FiltrosCatalogo } from "./filtros-catalogo";

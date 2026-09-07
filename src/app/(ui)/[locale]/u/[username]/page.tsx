@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { interpretarFiltroDasAvaliadas } from "@/server/domain/perfil";
 import { perfilDoUsuarioDoSistema } from "@/server/services/perfil.service";
-import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
+import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { AcoesSociais } from "./acoes-sociais";
 import { FiltrosAvaliadas } from "./filtros-avaliadas";
 import { FotoDePerfil } from "./foto-de-perfil";

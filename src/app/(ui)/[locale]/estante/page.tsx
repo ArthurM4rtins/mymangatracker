@@ -6,7 +6,7 @@ import {
   type EntradaDaEstante,
   type StatusDaEstante,
 } from "@/server/services/estante.service";
-import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
+import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { Avaliar } from "./avaliar";
 import { ConfigurarFonte } from "./configurar-fonte";
 import { ContinuarLeitura } from "./continuar-leitura";

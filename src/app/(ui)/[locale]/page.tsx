@@ -21,7 +21,7 @@ import { Carrossel } from "./componentes/carrossel";
 import { CardLista, CardResenha } from "./vitrine-cards";
 import type { Dependencia, EstadoGeral } from "@/server/domain/health-status";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
-import { usuarioDaSessao } from "../api/v1/_shared/sessao";
+import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
 import { ContinuarLeitura } from "./estante/continuar-leitura";
 
 // Mede o agora e depende da sessão: nunca pré-renderizada, nunca de cache.
