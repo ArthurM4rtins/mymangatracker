@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "titulo": "Kidoku",
+    "descricao": "Um Letterboxd para mangá, manhwa e novel, com progresso de leitura automático e privado."
+  },
+  "cabecalho": {
+    "navegacao": "Navegação",
+    "catalogo": "Catálogo",
+    "listas": "Listas",
+    "estante": "Estante",
+    "perfil": "Perfil",
+    "entrar": "Entrar",
+    "idioma": "Idioma",
+    "idiomas": {
+      "pt-BR": "Português",
+      "en": "English"
+    }
+  }
+}
