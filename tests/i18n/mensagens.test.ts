@@ -208,6 +208,29 @@ describe("catálogos de mensagens", () => {
     expect(sobrando).toEqual([]);
   });
 
+  /**
+   * Um catálogo copiado do português e não traduzido passa em TODAS as outras
+   * regras desta suíte: mesma árvore, mesmos argumentos, mesmos plurais. Foi o
+   * que aconteceu ao acrescentar o espanhol e de novo ao acrescentar o francês.
+   *
+   * Alguma coincidência é legítima — nome de formato, marca, palavra que os dois
+   * idiomas escrevem igual. Medido nas traduções de verdade: inglês repete 4% do
+   * português, espanhol 19%. O corte fica em 50%, longe dos dois e longe da
+   * cópia, que é 100%.
+   */
+  it.each(OUTROS)("não é o português copiado, em %s", (_idioma, arvore) => {
+    const daReferencia = folhas(referencia);
+    const traduzidas = folhas(arvore);
+
+    const iguais = [...daReferencia].filter(
+      ([caminho, valor]) => traduzidas.get(caminho) === valor,
+    );
+
+    const proporcao = iguais.length / daReferencia.size;
+
+    expect(proporcao).toBeLessThan(0.5);
+  });
+
   it.each(CATALOGOS)("não tem valor vazio em %s", (_idioma, arvore) => {
     const vazias = [...folhas(arvore)]
       .filter(([, valor]) => valor.trim() === "")

@@ -38,7 +38,19 @@ ninguém editar teste:
 | **categorias de plural** | o erro que mata idioma novo: copiar o `one`/`other` do inglês para uma língua que precisa de mais |
 | categoria inexistente | `few` num idioma que não tem `few` — nunca casa, e ninguém percebe |
 | catálogos da extensão | pasta `_locales/` faltando, chave só num idioma, placeholder divergente |
+| **cópia não traduzida** | catálogo copiado do português e esquecido — passa em todas as outras regras |
 | códigos de erro | código da API sem frase, e frase de código que não existe |
+
+### Sobre a cópia esquecida
+
+Copiar `pt-BR.json`, renomear e esquecer de traduzir **passa em todas as outras
+regras**: mesma árvore, mesmos argumentos, mesmos plurais. Aconteceu ao entrar o
+espanhol e de novo ao entrar o francês.
+
+A regra mede o quanto o arquivo repete o português. Coincidência legítima existe
+— marca, nome de formato, palavra que os dois idiomas escrevem igual —, então o
+corte é largo: **50%**. Medido nas traduções de verdade, o inglês repete 4% e o
+espanhol 19%. Uma cópia repete 100%.
 
 ### Sobre plural, que é onde dói
 
@@ -62,6 +74,23 @@ este teste** e renderiza errado para 2, 3, 4, 5… A regra é:
 Declarar pela metade é o descuido, e é o que quebra. Se uma forma tem de fato o
 mesmo texto de `other` no idioma, registre a dobra em `PLURAL_DOBRADO_EM_OUTRO`
 (em `src/i18n/routing.ts`) **com o motivo** — é decisão, não esquecimento.
+
+**`=1` não é a mesma coisa que `one`.** `=1` casa exatamente o número 1; `one` é
+a categoria, e o que ela cobre muda por idioma:
+
+| idioma | `select(0)` | consequência |
+|---|---|---|
+| `en`, `es` | `other` | `=1`/`other` funciona: "0 chapters" |
+| `pt-BR`, `fr` | **`one`** | `one` cobre 0 **e** 1 |
+
+Em francês isso é visível: `=1 {…} other {…}` manda o zero para o plural e
+produz **"0 chapitres"**, quando o francês escreve "0 chapitre". Em francês,
+escreva `one`.
+
+O `pt-BR` usa `=1` **de propósito**, e é a exceção: pelo CLDR o português também
+manda o zero para `one`, mas quem escreve em português diz "0 obras", não
+"0 obra". O `=1` é o que mantém isso. Não copie esse padrão para outro idioma
+sem checar o `select(0)` dele.
 
 ## O que NÃO é automático
 

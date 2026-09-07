@@ -8,7 +8,7 @@ import { defineRouting } from "next-intl/routing";
  * `pt` e `pt-PT` caem em `pt-BR` pela negociação do `Accept-Language`.
  */
 export const routing = defineRouting({
-  locales: ["pt-BR", "en", "es"],
+  locales: ["pt-BR", "en", "es", "fr"],
   defaultLocale: "en",
   localePrefix: "always",
 });
@@ -36,6 +36,11 @@ export const PLURAL_DOBRADO_EM_OUTRO: Partial<Record<Idioma, readonly string[]>>
   // Espanhol é o mesmo caso do português: `many` é a categoria de 1e6 e acima
   // ("un millón de obras"), e o substantivo não muda de forma.
   es: ["many"],
+  // Francês, idem: `many` é 1e6 e acima ("un million d'obras"), mesma forma de
+  // `other`. Atenção ao que NÃO se dobra aqui: em francês `one` cobre 0 E 1,
+  // então "0 chapitre" é singular — isso é o ramo `one` fazendo o trabalho dele,
+  // não uma dobra.
+  fr: ["many"],
 };
 
 /**
