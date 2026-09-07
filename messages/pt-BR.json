@@ -34,5 +34,471 @@
       "CN": "Manhua",
       "NOVEL": "Novel"
     }
+  },
+  "entrar": {
+    "meta": {
+      "titulo": "Entrar"
+    },
+    "titulo": "Entrar",
+    "subtitulo": "De volta à leitura.",
+    "contaCriada": "Conta criada. Agora é entrar.",
+    "semConta": "Ainda não tem conta? <link>Criar conta</link>",
+    "campos": {
+      "email": "E-mail",
+      "senha": "Senha"
+    },
+    "acoes": {
+      "enviar": "Entrar",
+      "enviando": "Entrando…"
+    },
+    "erros": {
+      "geral": "não foi possível entrar",
+      "conexao": "sem conexão com o servidor — tente de novo"
+    }
+  },
+  "cadastrar": {
+    "meta": {
+      "titulo": "Criar conta"
+    },
+    "titulo": "Criar conta",
+    "subtitulo": "Estante, progresso e resenhas — a leitura fica só sua.",
+    "jaTemConta": "Já tem conta? <link>Entrar</link>",
+    "campos": {
+      "username": "Nome de usuário",
+      "email": "E-mail",
+      "senha": "Senha"
+    },
+    "acoes": {
+      "enviar": "Criar conta",
+      "enviando": "Criando…"
+    },
+    "erros": {
+      "geral": "não foi possível concluir o cadastro",
+      "conexao": "sem conexão com o servidor — tente de novo"
+    }
+  },
+  "autor": {
+    "meta": {
+      "titulo": "Autor"
+    },
+    "erros": {
+      "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes."
+    },
+    "bio": {
+      "verMais": "Ver mais",
+      "verMenos": "Ver menos"
+    },
+    "obras": {
+      "titulo": "Obras",
+      "vazia": "Nenhuma obra de mangá ou novel registrada no AniList."
+    }
+  },
+  "catalogo": {
+    "meta": {
+      "titulo": "Catálogo"
+    },
+    "titulo": "Catálogo",
+    "subtitulo": "Busque a obra, adicione à estante e a leitura começa a contar.",
+    "busca": {
+      "rotulo": "Buscar obra",
+      "placeholder": "Lookism, Solo Leveling, Berserk…",
+      "buscando": "Buscando…"
+    },
+    "filtros": {
+      "tipo": "Tipo",
+      "genero": "Gênero",
+      "decada": "Década",
+      "ordenar": "Ordenar",
+      "todos": "Todos",
+      "limpar": "limpar filtros",
+      "ordens": {
+        "popular": "Populares",
+        "nota": "Melhor nota",
+        "alta": "Em alta",
+        "recente": "Mais recentes"
+      }
+    },
+    "erros": {
+      "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes."
+    },
+    "vazio": {
+      "semTermo": "O catálogo não respondeu nada agora. Tente de novo em instantes.",
+      "semResultado": "Nada encontrado para <forte>{termo}</forte>."
+    },
+    "destaques": "Populares agora",
+    "cartao": {
+      "formatoGenerico": "Obra",
+      "capitulos": "{n} capítulos"
+    },
+    "botaoEstante": {
+      "naEstante": "Na estante",
+      "adicionar": "+ Estante",
+      "erro": "não deu — tente de novo"
+    }
+  },
+  "componentes": {
+    "sair": "Sair",
+    "logo": {
+      "rotulo": "Kidoku — início"
+    },
+    "carrossel": {
+      "anterior": "Anterior",
+      "proximo": "Próximo"
+    },
+    "estrelas": {
+      "grupo": "Nota de 0,5 a 5",
+      "nota": "{nota} de 5",
+      "semNota": "sem nota",
+      "limpar": "limpar"
+    },
+    "tema": {
+      "grupo": "Tema do site",
+      "escolher": "Tema {nome}",
+      "nomes": {
+        "sumi": "Sumi",
+        "noturno": "Noturno",
+        "matcha": "Matcha"
+      }
+    }
+  },
+  "estante": {
+    "meta": {
+      "titulo": "Estante"
+    },
+    "titulo": "Estante",
+    "descricao": "Suas obras, por status. O progresso de leitura fica só com você.",
+    "vazia": "Nada por aqui ainda. <catalogo>Busque no catálogo</catalogo> e adicione a primeira obra.",
+    "obra": "Obra",
+    "capitulos": "{capitulo} capítulos",
+    "lendoEm": "lendo em {host}",
+    "seletorStatus": "Status da obra",
+    "filtros": {
+      "rotulo": "Filtrar por status",
+      "tudo": "Tudo"
+    },
+    "progresso": {
+      "editar": "Editar capítulo",
+      "marcar": "marcar capítulo",
+      "atual": "no cap. {capitulo}",
+      "prefixo": "no cap.",
+      "campo": "Capítulo em leitura",
+      "salvar": "salvar",
+      "cancelar": "cancelar"
+    },
+    "continuar": {
+      "abrirObra": "Abrir a obra ↗",
+      "abrindo": "Abrindo…",
+      "proximo": "Continuar cap. {capitulo} →",
+      "ouCap": "ou cap.",
+      "campo": "Capítulo específico",
+      "abrir": "abrir"
+    },
+    "avaliacao": {
+      "nota": "Nota {nota} de 5",
+      "avaliar": "Avaliar",
+      "editar": "Editar avaliação",
+      "spoilerOculto": "resenha com spoiler — mostrar",
+      "resenha": "Escreva a resenha (opcional)",
+      "spoiler": "contém spoiler",
+      "remover": "Remover"
+    },
+    "fonte": {
+      "trocar": "Trocar fonte",
+      "configurar": "Configurar leitura",
+      "rotuloUrl": "Cole o link do capítulo 1 no site onde você lê",
+      "exemploUrl": "https://site.com/obra/capitulo/1",
+      "derivando": "Derivando…",
+      "derivar": "Derivar",
+      "confirmar": "Esse link abre o capítulo 2? Então:",
+      "usar": "Usar esta fonte",
+      "paginaComCandidatos": "Nenhum desses abre o capítulo 2? Alguns sites não colocam o número na URL — salve a página da obra e o registro continua igual:",
+      "paginaSemCandidatos": "Esse site não coloca o número do capítulo na URL. Salve a página da obra: o botão abre a página e você registra o capítulo aqui.",
+      "paginaDica": "Dica: para salvar a página da série (e não um capítulo), cole a URL da obra no campo acima e derive de novo.",
+      "salvarPagina": "Salvar página da obra"
+    },
+    "erros": {
+      "banco": "A estante depende do banco de dados, que não respondeu agora. Tente de novo em instantes.",
+      "avaliacaoVazia": "dá uma nota ou escreve a resenha",
+      "salvar": "não deu para salvar — tente de novo",
+      "remover": "não deu para remover — tente de novo",
+      "derivar": "não deu para derivar — confira o link",
+      "capituloInvalido": "capítulo inválido",
+      "acao": "não deu — tente de novo",
+      "rede": "não deu agora — tente de novo"
+    }
+  },
+  "home": {
+    "saude": {
+      "aviso": "{estado} — {dependencias}. O que não depende disso continua funcionando.",
+      "resumo": {
+        "ok": "tudo no ar",
+        "degraded": "no ar, com configuração pendente",
+        "down": "alguma dependência está fora"
+      },
+      "dependencia": {
+        "database": "banco de dados",
+        "anilist": "catálogo AniList"
+      },
+      "estado": {
+        "ok": "respondendo",
+        "down": "fora do ar",
+        "not_configured": "não configurado"
+      }
+    },
+    "boasVindas": {
+      "titulo": "Boa leitura, {username}.",
+      "continuarLendo": "Continuar lendo",
+      "semFonte": "Nada em leitura com fonte configurada agora — marque uma obra como Lendo e configure a fonte na <estante>estante</estante> e o botão de continuar aparece aqui.",
+      "estanteVazia": "Sua estante está vazia — <catalogo>busque no catálogo</catalogo> e adicione a primeira obra."
+    },
+    "apresentacao": {
+      "descricao": "Registre sua leitura de mangá, manhwa e novel. Progresso automático, histórico privado, estante sua.",
+      "criarConta": "Criar conta",
+      "entrar": "Entrar"
+    },
+    "vitrine": {
+      "resenhas": {
+        "titulo": "Resenhas",
+        "vazio": "Ainda não tem resenha por aqui — a primeira aparece nesta vitrine."
+      },
+      "listas": {
+        "titulo": "Listas",
+        "vazio": "Ainda não tem lista por aqui — a primeira aparece nesta vitrine."
+      }
+    },
+    "populares": {
+      "titulo": "Populares agora",
+      "verMais": "ver mais →",
+      "indisponivel": "O catálogo não respondeu agora — tente de novo em instantes."
+    },
+    "atividade": {
+      "titulo": "Atividade recente",
+      "vazia": "Ainda não tem resenha nem lista por aqui — a primeira aparece nesta seção."
+    },
+    "resenha": {
+      "notaAria": "Nota {nota} de 5",
+      "spoiler": "Contém spoiler — leia na página da obra.",
+      "spoilerMostrar": "Contém spoiler — mostrar"
+    },
+    "feed": {
+      "resenhou": "resenhou",
+      "criouLista": "criou a lista"
+    },
+    "contagem": {
+      "obras": "{n, plural, =1 {obra} other {obras}}",
+      "curtidas": "{n, plural, =1 {curtida} other {curtidas}}",
+      "curtidasLeitorDeTela": "{n, plural, =1 {curtida} other {curtidas}}"
+    },
+    "rodape": {
+      "verificado": "{estado} · verificado em {quando}"
+    }
+  },
+  "listas": {
+    "erros": {
+      "semBanco": "As listas dependem do banco de dados, que não respondeu agora."
+    },
+    "campos": {
+      "nome": "Nome da lista",
+      "descricao": "Descrição da lista",
+      "descricaoOpcional": "Descrição (opcional)"
+    },
+    "indice": {
+      "meta": {
+        "titulo": "Listas"
+      },
+      "titulo": "Listas",
+      "subtitulo": "Coleções feitas pelos leitores — dos clássicos às brincadeiras.",
+      "convite": "<entrar>Entre</entrar> para criar a sua.",
+      "vazia": "Nenhuma lista ainda — seja a primeira pessoa a criar uma.",
+      "ordenar": {
+        "rotulo": "Ordenar listas",
+        "recentes": "Recentes",
+        "curtidas": "Mais curtidas"
+      },
+      "criar": {
+        "abrir": "Criar lista",
+        "enviar": "Criar",
+        "enviando": "Criando…",
+        "erros": {
+          "semNome": "dá um nome para a lista",
+          "falhou": "não deu — tente de novo",
+          "rede": "não deu agora — tente de novo"
+        }
+      }
+    },
+    "detalhe": {
+      "meta": {
+        "titulo": "Lista"
+      },
+      "autoria": "por <autor>{username}</autor> · {n, plural, =1 {# obra} other {# obras}}",
+      "vazia": "Lista vazia — adicione obras pelo botão de lista na página de cada obra.",
+      "remover": "remover",
+      "curtida": {
+        "curtir": "curtir a lista",
+        "descurtir": "descurtir a lista"
+      },
+      "editar": {
+        "abrir": "Editar",
+        "erro": "não foi possível salvar"
+      },
+      "apagar": {
+        "abrir": "Apagar lista",
+        "confirmacao": "apagar de vez?",
+        "sim": "sim",
+        "nao": "não"
+      },
+      "ordenar": {
+        "antes": "Mover {titulo} para antes",
+        "depois": "Mover {titulo} para depois"
+      }
+    }
+  },
+  "obra": {
+    "meta": {
+      "titulo": "Obra"
+    },
+    "indisponivel": "O AniList não respondeu agora e esta obra ainda não está no nosso cache. Tente de novo em instantes.",
+    "autoria": "por",
+    "formatoDesconhecido": "Obra",
+    "curiosidades": "Curiosidades",
+    "similares": "Obras similares",
+    "contagem": {
+      "capitulos": "{n} capítulos",
+      "aberturas": "{n, plural, =1 {{n} abertura} other {{n} aberturas}}",
+      "avaliacoes": "{n, plural, =1 {{n} avaliação} other {{n} avaliações}}",
+      "curtidas": "{n, plural, =1 {{n} curtida} other {{n} curtidas}}",
+      "comentarios": "{n, plural, =1 {{n} comentário} other {{n} comentários}}"
+    },
+    "painel": {
+      "convite": "<entrar>Entre</entrar> para adicionar à estante, avaliar e registrar a leitura.",
+      "adicionar": "Adicione à estante para avaliar e registrar a leitura."
+    },
+    "historico": {
+      "titulo": "Histórico de leitura",
+      "maisRecentes": "{n} mais recentes",
+      "capitulo": "cap. {n}",
+      "fonteRemovida": "fonte removida"
+    },
+    "avaliacao": {
+      "titulo": "Sua avaliação",
+      "resenhar": "Resenhar…",
+      "editarResenha": "Editar resenha…"
+    },
+    "apagar": {
+      "confirmar": "Apagar o texto da resenha também apaga {itens}. Continuar?"
+    },
+    "modal": {
+      "rotulo": "Resenhar {titulo}",
+      "fechar": "Fechar",
+      "placeholder": "Escreva a resenha — ela fica pública para outros leitores",
+      "spoiler": "contém spoiler"
+    },
+    "nota": {
+      "titulo": "Nota do Kidoku",
+      "distribuicao": "Distribuição das notas"
+    },
+    "resenhas": {
+      "titulo": "Resenhas",
+      "vazio": "Ainda não tem resenha por aqui — avalie com um texto e a sua aparece para todo mundo.",
+      "minha": "você",
+      "nota": "Nota {nota} de 5",
+      "spoiler": "esta resenha tem spoiler — mostrar",
+      "verConversa": "ver conversa",
+      "comentar": "comentar",
+      "carregando": "carregando…",
+      "verAnteriores": "ver {n, plural, =1 {{n} anterior} other {{n} anteriores}}",
+      "apagarComentario": "Apagar comentário",
+      "apagar": "apagar",
+      "placeholderComentario": "Escreva um comentário…",
+      "enviar": "enviar",
+      "entreParaComentar": "Entre para comentar."
+    },
+    "listas": {
+      "botao": "+ Lista",
+      "titulo": "Minhas listas",
+      "fechar": "fechar",
+      "vazia": "Nenhuma lista ainda — crie uma na página de Listas."
+    },
+    "erros": {
+      "salvar": "não deu para salvar — tente de novo",
+      "comentar": "não deu para comentar — tente de novo",
+      "limite": "muitos comentários em pouco tempo — aguarde um pouco",
+      "listas": "não deu para carregar as listas",
+      "rede": "não deu agora — tente de novo"
+    }
+  },
+  "perfil": {
+    "voce": "você",
+    "membroDesde": "no Kidoku desde {mes}",
+    "notaAria": "Nota {nota} de 5",
+    "erros": {
+      "semBanco": "O perfil depende do banco de dados, que não respondeu agora."
+    },
+    "numeros": {
+      "avaliadas": "{n, plural, =1 {<forte>{valor}</forte> avaliada} other {<forte>{valor}</forte> avaliadas}}",
+      "resenhas": "{n, plural, =1 {<forte>{valor}</forte> resenha} other {<forte>{valor}</forte> resenhas}}",
+      "listas": "{n, plural, =1 {<forte>{valor}</forte> lista} other {<forte>{valor}</forte> listas}}",
+      "curtidasDadas": "{n, plural, =1 {<forte>{valor}</forte> curtida dada} other {<forte>{valor}</forte> curtidas dadas}}",
+      "seguindo": "{n, plural, other {<forte>{valor}</forte> seguindo}}",
+      "seguidores": "{n, plural, =1 {<forte>{valor}</forte> seguidor} other {<forte>{valor}</forte> seguidores}}",
+      "curtidasNoPerfil": "{n, plural, =1 {<forte>{valor}</forte> curtida no perfil} other {<forte>{valor}</forte> curtidas no perfil}}"
+    },
+    "social": {
+      "seguir": "Seguir",
+      "seguindo": "Seguindo",
+      "curtir": "Curtir perfil",
+      "descurtir": "Descurtir perfil"
+    },
+    "foto": {
+      "altPropria": "Sua foto de perfil",
+      "altOutro": "Foto de {username}",
+      "trocar": "Trocar foto",
+      "trocarAria": "Trocar foto de perfil",
+      "trocarCurto": "trocar",
+      "remover": "remover",
+      "erros": {
+        "geral": "não foi possível agora",
+        "leitura": "não deu para ler essa imagem"
+      }
+    },
+    "estante": {
+      "titulo": "Minha estante",
+      "gerenciar": "gerenciar na estante",
+      "abas": "Status",
+      "vazia": "Nada em {status}.",
+      "semCapitulo": "sem capítulo",
+      "capitulo": "cap. {n}"
+    },
+    "avaliadas": {
+      "titulo": "Avaliadas",
+      "vaziaComFiltro": "Nenhuma obra com esse filtro.",
+      "vaziaPropria": "Você ainda não deu nota. Avalie uma obra e ela aparece aqui.",
+      "vaziaOutro": "{username} ainda não deu nota a nenhuma obra."
+    },
+    "filtros": {
+      "ordenar": "Ordenar",
+      "nota": "Nota",
+      "todas": "Todas",
+      "limpar": "limpar",
+      "ordens": {
+        "recentes": "Mais recentes",
+        "antigas": "Mais antigas",
+        "maior_nota": "Maior nota",
+        "menor_nota": "Menor nota"
+      }
+    },
+    "resenhas": {
+      "titulo": "Resenhas recentes",
+      "vaziaPropria": "Você ainda não escreveu resenha. Avalie uma obra com texto e ela aparece aqui.",
+      "vaziaOutro": "{username} ainda não escreveu resenha.",
+      "spoiler": "Contém spoiler — mostrar",
+      "curtidas": "{n, plural, =1 {{valor} curtida} other {{valor} curtidas}}"
+    },
+    "listas": {
+      "titulo": "Listas",
+      "vaziaPropria": "Você ainda não criou lista. <link>Criar a primeira</link>",
+      "vaziaOutro": "{username} ainda não criou lista.",
+      "obras": "{n, plural, =1 {{valor} obra} other {{valor} obras}}"
+    }
   }
 }
