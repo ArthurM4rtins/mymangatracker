@@ -295,8 +295,10 @@ trocar a foto` / … dizem a mesma coisa: **não há sessão**. Duas saídas:
   mas duplica no servidor uma informação que o cliente já tem, e a extensão
   precisaria de 11 traduções para dizer "entre".
 
-Recomendação: **A**. Decidir antes de escrever `_shared/erros.ts` — muda 22 dos
-126 pontos e é mudança de comportamento visível, não refactor mecânico.
+**Decidido em 07/09: A.** Um código só, `sessao_necessaria`, para os 22 pontos.
+Quem mostra a frase é quem sabe qual ação foi tentada — a tela da avaliação diz
+"entre para avaliar", a dos comentários diz "entre para comentar", e o texto na
+tela não muda. A extensão traduz uma chave em vez de onze.
 
 ### Forma
 
