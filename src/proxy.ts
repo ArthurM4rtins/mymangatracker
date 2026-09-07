@@ -10,7 +10,15 @@ import { routing } from "@/i18n/routing";
 export default createMiddleware(routing);
 
 export const config = {
-  // `/api/**` fica de fora: a API fala código, não idioma. Estático e arquivo
-  // com extensão também, senão o redirect bloqueia CSS, JS e imagem.
-  matcher: "/((?!api|_next|_vercel|.*\..*).*)",
+  // `/api/**` fica de fora: a API fala codigo, nao idioma. Caminho com extensao
+  // tambem, senao o redirect bloqueia CSS, JS e imagem.
+  //
+  // O padrao TEM que ser literal aqui: o Next analisa `matcher` estaticamente e
+  // IGNORA variavel — com a constante importada o proxy passou a redirecionar
+  // ate /api/v1/health (visto ao vivo em 07/09). Quem cobra o conteudo dele e
+  // tests/i18n/proxy-matcher.test.ts, que le este arquivo.
+  //
+  // A classe [.] no lugar de \. e de proposito: um nivel de escape a menos e
+  // um jeito a menos de escrever o padrao errado sem o build reclamar.
+  matcher: "/((?!api|_next|_vercel|.*[.].*).*)",
 };
