@@ -981,3 +981,68 @@ para outro alfabeto, e RTL (~29 classNames com lado fisico).
 - Pre-existente, nao investigado: o check "Vercel" falha em todo PR desde o #92,
   com o deploy de producao da main passando. Nao piorou nesta sessao.
 
+
+## Sessao 07/09 — continuacao: cinco idiomas e as pendencias fechadas
+
+Espanhol (#159), frances (#160) e alemao (#161) entraram, e as decisoes que
+estavam em aberto foram tomadas e aplicadas (#163). Tudo mergeado e verificado
+em producao: os cinco idiomas respondem 200 e a negociacao por Accept-Language
+manda cada um para o prefixo certo.
+
+### Acrescentar idioma custa uma linha + dois arquivos
+
+`routing.locales`, `messages/<lang>.json` (346 strings) e
+`extension/_locales/<lang>/messages.json` (31). Nada de codigo de tela. Receita
+em `messages/README.md`.
+
+### Cada idioma novo achou um furo no proprio portao
+
+Isso e o padrao da sessao, e vale esperar que continue:
+
+- **espanhol**: o teste importava `pt-BR.json` e `en.json` PELO NOME — um `es.json`
+  novo nao seria conferido por nada. Passou a sair de `routing.locales`.
+- **espanhol de novo**: `{n, plural, =1 {…} other {…}}` caia no atalho de
+  "invariavel" que existia para o `seguindo`, entao os plurais do PROPRIO
+  portugues nunca tinham sido conferidos e o `many` do espanhol nunca era
+  cobrado. `=1` passou a contar como cobrindo `PluralRules.select(1)`.
+- **frances**: catalogo copiado e nao traduzido passava em TODAS as regras.
+  Virou portao com corte medido — ingles e frances repetem 4% do portugues,
+  espanhol 19%, copia 100%, corte em 50%.
+
+### Aprendizado de idioma que vale registrar
+
+`=1` NAO e `one`. `select(0)` e `other` em en/es, mas `one` em pt-BR e fr — por
+isso `=1`/`other` em frances produz "0 chapitres" quando o frances escreve
+"0 chapitre". O pt-BR usa `=1` DE PROPOSITO: pelo CLDR o portugues tambem manda o
+zero para `one`, mas quem escreve em portugues diz "0 obras". Documentado.
+
+### Pendencias fechadas
+
+- **"obra" traduzida por idioma**: en=series, fr=œuvre, de=Werk, es=obra (ja e
+  palavra do espanhol). O alemao forcou a decisao: exige genero em cada frase,
+  entao `obra` carimbava genero inventado e o plural saia "die Obras".
+- **NOVEL** vira "Novel" nos cinco: manga/manhwa/manhua sao emprestimos que
+  ninguem traduz, e o quarto rotulo da linha nao tinha por que ser diferente.
+- **Abas alemas** Abgeschlossen/Abgebrochen viraram Fertig/Abbruch — as duas
+  estavam CERTAS, o problema era dividirem o prefixo "Abge-" e se confundirem.
+- **Contagem** continua sem separador de milhar, por decisao.
+- **`User.updatedAt`**: investigado, NAO mudado. Ninguem le esse campo — os
+  unicos usos de `updatedAt` no codigo sao do `ShelfEntry`. Sem efeito observavel.
+
+### Aberto
+
+- **#162** — o check da Vercel falha em TODO preview e passa em TODA producao,
+  mesmos commits. Isso descarta codigo e aponta variavel de ambiente; a hipotese
+  (DATABASE_URL presente no Preview mas sem conectar, derrubando o
+  `migrate deploy` do build) e o comando para confirmar estao na issue. Precisa
+  de acesso a Vercel.
+- **#158** — canal para o usuario apontar erro de traducao. Ficou mais importante:
+  cinco idiomas e nenhum revisor nativo no time.
+- **Revisao nativa** de es, fr e de. Cada um tem `messages/revisao/<lang>.md` com
+  as chaves de maior risco marcadas pelos agentes — ~80 a 180 linhas em vez das
+  346 strings. A secao de FALSO AMIGO e a que mais importa: sao palavras CERTAS
+  que um revisor lusofono vai querer "corrigir" para o cognato do portugues.
+- **Proximos idiomas** mudam de natureza: id nao tem revisao possivel; ru precisa
+  de subset cirilico e 4 formas de plural; ja/ko/zh precisam de subset; ar/he
+  precisam de RTL (~29 classNames com lado fisico). Decidido parar em cinco.
+
