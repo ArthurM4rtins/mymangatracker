@@ -49,6 +49,10 @@ const eslintConfig = defineConfig([
         // O proxy do Next e um arquivo unico na raiz de src: `elements` casa
         // pasta, entao ele so pode ser descrito como categoria de arquivo.
         { category: "proxy", pattern: "src/proxy.ts" },
+        // O vocabulario de erro da API e contrato dos DOIS lados: o controller
+        // responde o codigo, a tela escolhe a frase. Por isso a ui importa este
+        // arquivo, e so ele, do lado de controller — mesmo caso do sessao.ts.
+        { category: "codigos-de-erro", pattern: "src/app/api/v1/_shared/erros.ts" },
       ],
     },
     rules: {
@@ -93,6 +97,10 @@ const eslintConfig = defineConfig([
               // A unica coisa do lado de controller que a ui importa: sessao.ts.
               from: { element: { type: "ui" } },
               allow: { to: { file: { categories: "sessao" } } },
+            },
+            {
+              from: { element: { type: "ui" } },
+              allow: { to: { file: { categories: "codigos-de-erro" } } },
             },
             {
               from: { element: { type: "controller" } },
