@@ -1,3 +1,4 @@
+import { hasLocale } from "next-intl";
 import { defineRouting } from "next-intl/routing";
 
 /**
@@ -13,3 +14,14 @@ export const routing = defineRouting({
 });
 
 export type Idioma = (typeof routing.locales)[number];
+
+/**
+ * O idioma que o segmento `[locale]` carrega. `[locale]` casa qualquer rota
+ * desconhecida (`/xx/obra/1`, `/robots.txt`), entao segmento invalido cai no
+ * padrao em vez de estourar. O layout ainda devolve 404 nesse caso; aqui e so
+ * para o `generateMetadata`, que roda antes dele.
+ */
+export function idiomaDoSegmento(segmento: string): Idioma
+{
+  return hasLocale(routing.locales, segmento) ? segmento : routing.defaultLocale;
+}

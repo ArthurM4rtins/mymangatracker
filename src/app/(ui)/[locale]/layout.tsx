@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import "../globals.css";
 import { perfilDoUsuarioDoSistema } from "@/server/services/usuario.service";
 import { Link } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
+import { idiomaDoSegmento, routing } from "@/i18n/routing";
 import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
 import { BotaoSair } from "./componentes/botao-sair";
 import { BotaoVoltar } from "./componentes/botao-voltar";
@@ -29,10 +29,7 @@ export async function generateMetadata({
   params,
 }: LayoutProps<"/[locale]">): Promise<Metadata> {
   const { locale } = await params;
-  // `generateMetadata` roda antes do layout, entao a validacao do segmento
-  // acontece de novo aqui: idioma desconhecido usa o titulo do padrao.
-  const idioma = hasLocale(routing.locales, locale) ? locale : routing.defaultLocale;
-  const t = await getTranslations({ locale: idioma, namespace: "meta" });
+  const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "meta" });
 
   return {
     title: {
