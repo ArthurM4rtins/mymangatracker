@@ -126,7 +126,7 @@ export default async function RootLayout({
                   {username && <LinkDoHeader href={`/u/${username}`}>{t("perfil")}</LinkDoHeader>}
                 </nav>
 
-                <SeletorIdioma />
+                <SeletorIdioma logado={userId !== null} />
                 <SeletorTema />
 
                 {userId ? (

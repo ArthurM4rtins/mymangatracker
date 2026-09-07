@@ -34,7 +34,7 @@ function nomeDoIdioma(idioma: string): string
   return nome.charAt(0).toLocaleUpperCase(idioma) + nome.slice(1);
 }
 
-export function SeletorIdioma()
+export function SeletorIdioma({ logado }: { logado: boolean })
 {
   const idiomaAtivo = useLocale();
   const caminho = usePathname();
@@ -42,19 +42,39 @@ export function SeletorIdioma()
   const [trocando, setTrocando] = useState(false);
   const t = useTranslations("cabecalho");
 
-  function trocar(idioma: Idioma)
+  async function trocar(idioma: Idioma)
   {
     if (idioma === idiomaAtivo)
     {
       return;
     }
 
+    setTrocando(true);
+
+    // Quem está logado leva a escolha para a conta, e não só para este
+    // navegador (#116, fase 5). A resposta reescreve o cookie, então o próximo
+    // aparelho pega o idioma certo no login. Falha de rede não trava a troca:
+    // o cookie que o next-intl escreve já resolve esta visita.
+    if (logado)
+    {
+      try
+      {
+        await fetch("/api/v1/perfil", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ locale: idioma }),
+        });
+      }
+      catch
+      {
+        // segue a troca mesmo assim
+      }
+    }
+
     // `usePathname` do next-intl devolve o caminho SEM o prefixo; `getPathname`
     // recoloca o do idioma pedido. A query segue junto para o filtro não sumir.
     const consulta = busca.toString();
     const destino = getPathname({ href: caminho, locale: idioma });
-
-    setTrocando(true);
 
     // Recarga de documento, não navegação de cliente, DE PROPÓSITO: trocar o
     // idioma muda o `lang` do <html>, o React re-renderiza o elemento e leva
@@ -78,7 +98,7 @@ export function SeletorIdioma()
             lang={idioma}
             onClick={function ()
             {
-              trocar(idioma);
+              void trocar(idioma);
             }}
             disabled={trocando}
             aria-pressed={selecionado}
