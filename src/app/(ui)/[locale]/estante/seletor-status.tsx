@@ -4,17 +4,19 @@
  * Troca o status de uma entrada (`PATCH /api/v1/estante/:id`) e recarrega os
  * dados do servidor — a lista e as contagens das abas vêm de lá, não daqui.
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useRouter } from "@/i18n/navigation";
 import type { StatusDaEstante } from "@/server/services/estante.service";
 
-const ROTULOS: Record<StatusDaEstante, string> = {
-  READING: "Lendo",
-  COMPLETED: "Concluído",
-  PLANNED: "Planejado",
-  PAUSED: "Pausado",
-  DROPPED: "Largado",
-};
+/** A ordem do seletor; o rótulo de cada um vem do catálogo comum. */
+const STATUS: StatusDaEstante[] = [
+  "READING",
+  "COMPLETED",
+  "PLANNED",
+  "PAUSED",
+  "DROPPED",
+];
 
 export function SeletorStatus({
   entradaId,
@@ -25,6 +27,8 @@ export function SeletorStatus({
 })
 {
   const roteador = useRouter();
+  const t = useTranslations("estante");
+  const c = useTranslations("comum");
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState(false);
 
@@ -71,21 +75,21 @@ export function SeletorStatus({
         value={status}
         onChange={function (evento) { void mudar(evento.target.value); }}
         disabled={salvando}
-        aria-label="Status da obra"
+        aria-label={t("seletorStatus")}
         className="rounded-md border border-borda bg-superficie px-2 py-1.5 text-sm outline-none focus:border-acento disabled:opacity-60"
       >
-        {Object.entries(ROTULOS).map(function ([valor, rotulo])
+        {STATUS.map(function (valor)
         {
           return (
             <option key={valor} value={valor}>
-              {rotulo}
+              {c(`status.${valor}`)}
             </option>
           );
         })}
       </select>
       {erro && (
         <span role="alert" className="text-xs text-texto-suave">
-          não deu — tente de novo
+          {t("erros.acao")}
         </span>
       )}
     </div>

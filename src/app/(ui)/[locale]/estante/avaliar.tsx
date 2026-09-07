@@ -4,8 +4,9 @@
  * Nota e resenha no card da estante. Desde a issue #45 a avaliação é por
  * obra (anilistId) e não exige entrada — aqui só muda o endereço.
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useRouter } from "@/i18n/navigation";
 import { SeletorDeEstrelas, estrelasTexto } from "../componentes/estrelas";
 
 type Avaliacao = {
@@ -23,6 +24,8 @@ export function Avaliar({
 })
 {
   const roteador = useRouter();
+  const t = useTranslations("estante");
+  const c = useTranslations("comum");
   const [aberto, setAberto] = useState(false);
   const [nota, setNota] = useState<number | null>(
     avaliacao?.rating == null ? null : Number(avaliacao.rating),
@@ -37,7 +40,7 @@ export function Avaliar({
   {
     if (nota === null && resenha.trim() === "")
     {
-      setErro("dá uma nota ou escreve a resenha");
+      setErro(t("erros.avaliacaoVazia"));
       return;
     }
 
@@ -65,7 +68,7 @@ export function Avaliar({
 
       if (!resposta.ok)
       {
-        setErro("não deu para salvar — tente de novo");
+        setErro(t("erros.salvar"));
         return;
       }
 
@@ -74,7 +77,7 @@ export function Avaliar({
     }
     catch
     {
-      setErro("não deu agora — tente de novo");
+      setErro(t("erros.rede"));
     }
     finally
     {
@@ -95,7 +98,7 @@ export function Avaliar({
 
       if (!resposta.ok && resposta.status !== 404)
       {
-        setErro("não deu para remover — tente de novo");
+        setErro(t("erros.remover"));
         return;
       }
 
@@ -107,7 +110,7 @@ export function Avaliar({
     }
     catch
     {
-      setErro("não deu agora — tente de novo");
+      setErro(t("erros.rede"));
     }
     finally
     {
@@ -121,7 +124,10 @@ export function Avaliar({
       <div className="flex flex-col gap-1">
         <div className="flex flex-wrap items-center gap-2">
           {avaliacao?.rating != null && (
-            <span aria-label={`Nota ${avaliacao.rating} de 5`} className="text-sm text-acento">
+            <span
+              aria-label={t("avaliacao.nota", { nota: avaliacao.rating })}
+              className="text-sm text-acento"
+            >
               {estrelasTexto(Number(avaliacao.rating))}
             </span>
           )}
@@ -130,7 +136,7 @@ export function Avaliar({
             onClick={function () { setAberto(true); }}
             className="text-sm text-acento underline underline-offset-4"
           >
-            {avaliacao === null ? "Avaliar" : "Editar avaliação"}
+            {avaliacao === null ? t("avaliacao.avaliar") : t("avaliacao.editar")}
           </button>
         </div>
 
@@ -141,7 +147,7 @@ export function Avaliar({
               onClick={function () { setMostrarSpoiler(true); }}
               className="w-fit text-xs text-texto-suave underline underline-offset-4"
             >
-              resenha com spoiler — mostrar
+              {t("avaliacao.spoilerOculto")}
             </button>
           ) : (
             <p className="line-clamp-3 text-sm text-texto-suave">{avaliacao.review}</p>
@@ -158,7 +164,7 @@ export function Avaliar({
       <textarea
         value={resenha}
         onChange={function (evento) { setResenha(evento.target.value); }}
-        placeholder="Escreva a resenha (opcional)"
+        placeholder={t("avaliacao.resenha")}
         rows={4}
         className="rounded-md border border-borda bg-superficie px-2 py-1.5 text-sm text-texto outline-none focus:border-acento"
       />
@@ -169,7 +175,7 @@ export function Avaliar({
           checked={spoilers}
           onChange={function (evento) { setSpoilers(evento.target.checked); }}
         />
-        contém spoiler
+        {t("avaliacao.spoiler")}
       </label>
 
       {erro && (
@@ -185,7 +191,7 @@ export function Avaliar({
           disabled={ocupado}
           className="rounded-md bg-acento px-3 py-1 text-sm font-medium text-acento-contraste disabled:opacity-60"
         >
-          {ocupado ? "Salvando…" : "Salvar"}
+          {ocupado ? c("salvando") : c("salvar")}
         </button>
         {avaliacao !== null && (
           <button
@@ -194,7 +200,7 @@ export function Avaliar({
             disabled={ocupado}
             className="text-sm text-texto-suave underline underline-offset-4 disabled:opacity-60"
           >
-            Remover
+            {t("avaliacao.remover")}
           </button>
         )}
         <button
@@ -202,7 +208,7 @@ export function Avaliar({
           onClick={function () { setAberto(false); setErro(null); }}
           className="text-sm text-texto-suave hover:text-texto"
         >
-          Cancelar
+          {c("cancelar")}
         </button>
       </div>
     </div>

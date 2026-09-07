@@ -1,11 +1,13 @@
+import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
-import Link from "next/link";
-import { redirect } from "next/navigation";
 import {
   listarEstanteDoSistema,
   type EntradaDaEstante,
   type StatusDaEstante,
 } from "@/server/services/estante.service";
+import { Link, redirect } from "@/i18n/navigation";
+import { idiomaDoSegmento } from "@/i18n/routing";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { Avaliar } from "./avaliar";
 import { ConfigurarFonte } from "./configurar-fonte";
@@ -16,24 +18,30 @@ import { SeletorStatus } from "./seletor-status";
 // Estante é da sessão e do banco: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Estante" };
+export async function generateMetadata({
+  params,
+}: PageProps<"/[locale]/estante">): Promise<Metadata>
+{
+  const { locale } = await params;
+  const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "estante" });
 
-const PAIS: Record<string, string> = {
-  JP: "Mangá",
-  KR: "Manhwa",
-  CN: "Manhua",
-};
+  return { title: t("meta.titulo") };
+}
 
-const ABAS: { valor?: StatusDaEstante; rotulo: string }[] = [
-  { rotulo: "Tudo" },
-  { valor: "READING", rotulo: "Lendo" },
-  { valor: "COMPLETED", rotulo: "Concluído" },
-  { valor: "PLANNED", rotulo: "Planejado" },
-  { valor: "PAUSED", rotulo: "Pausado" },
-  { valor: "DROPPED", rotulo: "Largado" },
+/** Os países que têm rótulo de formato; qualquer outro fica sem selo. */
+const PAISES = ["JP", "KR", "CN"] as const;
+
+/** A aba sem valor é a "Tudo": não filtra nada. */
+const ABAS: (StatusDaEstante | undefined)[] = [
+  undefined,
+  "READING",
+  "COMPLETED",
+  "PLANNED",
+  "PAUSED",
+  "DROPPED",
 ];
 
-const STATUS_VALIDOS = new Set(ABAS.map(function (aba) { return aba.valor; }));
+const STATUS_VALIDOS = new Set(ABAS);
 
 type Props = {
   searchParams: Promise<{ status?: string }>;
@@ -45,7 +53,7 @@ export default async function Estante({ searchParams }: Props)
 
   if (!userId)
   {
-    redirect("/entrar");
+    return redirect({ href: "/entrar", locale: await getLocale() });
   }
 
   const { status } = await searchParams;
@@ -64,24 +72,27 @@ export default async function Estante({ searchParams }: Props)
     entradas = null;
   }
 
+  const t = await getTranslations("estante");
+  const c = await getTranslations("comum");
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
       <header className="flex flex-col gap-2">
-        <h1 className="font-marca text-3xl font-bold tracking-tight">Estante</h1>
+        <h1 className="font-marca text-3xl font-bold tracking-tight">{t("titulo")}</h1>
         <p className="text-texto-suave">
-          Suas obras, por status. O progresso de leitura fica só com você.
+          {t("descricao")}
         </p>
       </header>
 
-      <nav aria-label="Filtrar por status" className="flex flex-wrap gap-2">
+      <nav aria-label={t("filtros.rotulo")} className="flex flex-wrap gap-2">
         {ABAS.map(function (aba)
         {
-          const ativa = aba.valor === filtro;
+          const ativa = aba === filtro;
 
           return (
             <Link
-              key={aba.rotulo}
-              href={aba.valor ? `/estante?status=${aba.valor}` : "/estante"}
+              key={aba ?? "tudo"}
+              href={aba ? `/estante?status=${aba}` : "/estante"}
               aria-current={ativa ? "page" : undefined}
               className={`rounded-full border px-3 py-1 text-sm transition-colors ${
                 ativa
@@ -89,7 +100,7 @@ export default async function Estante({ searchParams }: Props)
                   : "border-borda text-texto-suave hover:text-texto"
               }`}
             >
-              {aba.rotulo}
+              {aba === undefined ? t("filtros.tudo") : c(`status.${aba}`)}
             </Link>
           );
         })}
@@ -97,18 +108,22 @@ export default async function Estante({ searchParams }: Props)
 
       {entradas === null && (
         <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
-          A estante depende do banco de dados, que não respondeu agora. Tente de
-          novo em instantes.
+          {t("erros.banco")}
         </p>
       )}
 
       {entradas !== null && entradas.length === 0 && (
         <p className="text-sm text-texto-suave">
-          Nada por aqui ainda.{" "}
-          <Link href="/catalogo" className="text-acento underline underline-offset-4">
-            Busque no catálogo
-          </Link>{" "}
-          e adicione a primeira obra.
+          {t.rich("vazia", {
+            catalogo: function (partes)
+            {
+              return (
+                <Link href="/catalogo" className="text-acento underline underline-offset-4">
+                  {partes}
+                </Link>
+              );
+            },
+          })}
         </p>
       )}
 
@@ -124,10 +139,16 @@ export default async function Estante({ searchParams }: Props)
   );
 }
 
-function Entrada({ entrada }: { entrada: EntradaDaEstante })
+async function Entrada({ entrada }: { entrada: EntradaDaEstante })
 {
+  const t = await getTranslations("estante");
+  const c = await getTranslations("comum");
   const { obra } = entrada;
-  const rotulo = obra.countryOfOrigin ? PAIS[obra.countryOfOrigin] : "Obra";
+  const pais = PAISES.find(function (valor) { return valor === obra.countryOfOrigin; });
+  // País fora do mapa segue sem selo; obra que não declara país cai no genérico.
+  const rotulo = pais === undefined
+    ? (obra.countryOfOrigin === null ? t("obra") : "")
+    : c(`formato.${pais}`);
 
   return (
     <li className="flex gap-4 rounded-lg border border-borda bg-superficie p-4">
@@ -160,10 +181,10 @@ function Entrada({ entrada }: { entrada: EntradaDaEstante })
 
         <p className="flex flex-wrap items-center gap-1.5 text-xs text-texto-suave">
           <span className="rounded-full border border-borda px-2 py-0.5">
-            {obra.type === "NOVEL" ? "Novel" : rotulo}
+            {obra.type === "NOVEL" ? c("formato.NOVEL") : rotulo}
           </span>
           {obra.chapters !== null && (
-            <span className="tabular-nums">{obra.chapters} capítulos</span>
+            <span className="tabular-nums">{t("capitulos", { capitulo: String(obra.chapters) })}</span>
           )}
           <EditarProgresso
             entradaId={entrada.entradaId}
@@ -190,7 +211,9 @@ function Entrada({ entrada }: { entrada: EntradaDaEstante })
           </div>
 
           {entrada.fonte && (
-            <p className="text-xs text-texto-suave">lendo em {entrada.fonte.sourceHost}</p>
+            <p className="text-xs text-texto-suave">
+              {t("lendoEm", { host: entrada.fonte.sourceHost })}
+            </p>
           )}
 
           <Avaliar anilistId={entrada.obra.anilistId} avaliacao={entrada.avaliacao} />

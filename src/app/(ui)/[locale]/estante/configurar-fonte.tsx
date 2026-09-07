@@ -5,8 +5,9 @@
  * servidor deriva os candidatos e cada um volta com o link de exemplo do
  * capítulo 2 — o usuário testa e confirma. Nada é escolhido em silêncio.
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useRouter } from "@/i18n/navigation";
 
 type Candidato = {
   sourceHost: string;
@@ -23,6 +24,8 @@ export function ConfigurarFonte({
 })
 {
   const roteador = useRouter();
+  const t = useTranslations("estante");
+  const c = useTranslations("comum");
   const [aberto, setAberto] = useState(false);
   const [url, setUrl] = useState("");
   const [candidatos, setCandidatos] = useState<Candidato[] | null>(null);
@@ -55,7 +58,7 @@ export function ConfigurarFonte({
 
       if (!resposta.ok)
       {
-        setErro(corpo?.erros?.url ?? "não deu para derivar — confira o link");
+        setErro(corpo?.erros?.url ?? t("erros.derivar"));
         return;
       }
 
@@ -64,7 +67,7 @@ export function ConfigurarFonte({
     }
     catch
     {
-      setErro("não deu agora — tente de novo");
+      setErro(t("erros.rede"));
     }
     finally
     {
@@ -97,7 +100,7 @@ export function ConfigurarFonte({
 
       if (!resposta.ok)
       {
-        setErro("não deu para salvar — tente de novo");
+        setErro(t("erros.salvar"));
         return;
       }
 
@@ -109,7 +112,7 @@ export function ConfigurarFonte({
     }
     catch
     {
-      setErro("não deu agora — tente de novo");
+      setErro(t("erros.rede"));
     }
     finally
     {
@@ -125,7 +128,7 @@ export function ConfigurarFonte({
         onClick={function () { setAberto(true); }}
         className="text-sm text-acento underline underline-offset-4"
       >
-        {temFonte ? "Trocar fonte" : "Configurar leitura"}
+        {temFonte ? t("fonte.trocar") : t("fonte.configurar")}
       </button>
     );
   }
@@ -133,12 +136,12 @@ export function ConfigurarFonte({
   return (
     <div className="flex flex-col gap-2 rounded-md border border-borda bg-fundo p-3">
       <label className="flex flex-col gap-1 text-xs text-texto-suave">
-        Cole o link do capítulo 1 no site onde você lê
+        {t("fonte.rotuloUrl")}
         <input
           type="url"
           value={url}
           onChange={function (evento) { setUrl(evento.target.value); }}
-          placeholder="https://site.com/obra/capitulo/1"
+          placeholder={t("fonte.exemploUrl")}
           className="rounded-md border border-borda bg-superficie px-2 py-1.5 text-sm text-texto outline-none focus:border-acento"
         />
       </label>
@@ -150,7 +153,7 @@ export function ConfigurarFonte({
           disabled={ocupado || url.trim() === ""}
           className="w-fit rounded-md border border-acento px-3 py-1 text-sm text-acento transition-colors hover:bg-acento hover:text-acento-contraste disabled:opacity-60"
         >
-          {ocupado ? "Derivando…" : "Derivar"}
+          {ocupado ? t("fonte.derivando") : t("fonte.derivar")}
         </button>
         <button
           type="button"
@@ -163,7 +166,7 @@ export function ConfigurarFonte({
           }}
           className="text-sm text-texto-suave hover:text-texto"
         >
-          Cancelar
+          {c("cancelar")}
         </button>
       </div>
 
@@ -191,7 +194,7 @@ export function ConfigurarFonte({
                   {candidato.urlExemplo}
                 </a>
                 <span className="text-xs text-texto-suave">
-                  Esse link abre o capítulo 2? Então:
+                  {t("fonte.confirmar")}
                 </span>
                 <button
                   type="button"
@@ -199,7 +202,7 @@ export function ConfigurarFonte({
                   disabled={ocupado}
                   className="w-fit rounded-md bg-acento px-3 py-1 text-xs font-medium text-acento-contraste disabled:opacity-60"
                 >
-                  Usar esta fonte
+                  {t("fonte.usar")}
                 </button>
               </li>
             );
@@ -211,8 +214,8 @@ export function ConfigurarFonte({
         <div className="flex flex-col gap-1 rounded-md border border-dashed border-borda p-2">
           <span className="text-xs text-texto-suave">
             {candidatos && candidatos.length > 0
-              ? "Nenhum desses abre o capítulo 2? Alguns sites não colocam o número na URL — salve a página da obra e o registro continua igual:"
-              : "Esse site não coloca o número do capítulo na URL. Salve a página da obra: o botão abre a página e você registra o capítulo aqui."}
+              ? t("fonte.paginaComCandidatos")
+              : t("fonte.paginaSemCandidatos")}
           </span>
           <a
             href={paginaDaObra.urlExemplo}
@@ -223,8 +226,7 @@ export function ConfigurarFonte({
             {paginaDaObra.urlExemplo}
           </a>
           <span className="text-xs text-texto-suave">
-            Dica: para salvar a página da série (e não um capítulo), cole a URL
-            da obra no campo acima e derive de novo.
+            {t("fonte.paginaDica")}
           </span>
           <button
             type="button"
@@ -232,7 +234,7 @@ export function ConfigurarFonte({
             disabled={ocupado}
             className="w-fit rounded-md border border-acento px-3 py-1 text-xs font-medium text-acento transition-colors hover:bg-acento hover:text-acento-contraste disabled:opacity-60"
           >
-            Salvar página da obra
+            {t("fonte.salvarPagina")}
           </button>
         </div>
       )}
