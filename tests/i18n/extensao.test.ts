@@ -3,25 +3,37 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import { ERRO } from "@/app/api/v1/_shared/erros";
+import { routing } from "@/i18n/routing";
 
 /**
  * A extensão tem catálogo próprio (`_locales/` do Chrome, D9 da #116), então
  * ela quebra sozinha: chave que só existe num idioma vira string vazia no
  * popup, e código de erro que ela não conhece vira frase genérica onde deveria
  * haver frase específica. Aqui os dois lados são cobrados.
+ *
+ * Os idiomas saem de `routing.locales`, os mesmos do site — acrescentar um lá
+ * passa a cobrar a pasta `_locales/` dele aqui, em vez de a extensão ficar para
+ * trás em silêncio.
  */
 type Mensagem = { message: string; placeholders?: Record<string, { content: string }> };
 
+/** O Chrome escreve a pasta com underline: `pt-BR` vira `pt_BR`. */
+function pastaDoChrome(idioma: string): string {
+  return idioma.replace("-", "_");
+}
+
 function catalogo(idioma: string): Record<string, Mensagem> {
-  return JSON.parse(readFileSync(`extension/_locales/${idioma}/messages.json`, "utf8"));
+  return JSON.parse(
+    readFileSync(`extension/_locales/${pastaDoChrome(idioma)}/messages.json`, "utf8"),
+  );
 }
 
 function fonte(arquivo: string): string {
   return readFileSync(`extension/${arquivo}`, "utf8");
 }
 
-const PT = catalogo("pt_BR");
-const EN = catalogo("en");
+const CATALOGOS = routing.locales.map((idioma) => [idioma, catalogo(idioma)] as const);
+const REFERENCIA = catalogo(routing.defaultLocale);
 
 const MANIFEST = JSON.parse(fonte("manifest.json")) as {
   default_locale: string;
@@ -65,8 +77,12 @@ function codigosMapeados(): string[] {
 const CODIGOS_DA_API: string[] = Object.values(ERRO);
 
 describe("catálogos da extensão", () => {
-  it("declara `en` como idioma padrão", () => {
-    expect(MANIFEST.default_locale).toBe("en");
+  it("usa o mesmo idioma padrão do site", () => {
+    expect(MANIFEST.default_locale).toBe(pastaDoChrome(routing.defaultLocale));
+  });
+
+  it("tem uma pasta `_locales` para cada idioma do routing", () => {
+    expect(CATALOGOS.length).toBe(routing.locales.length);
   });
 
   it("tira nome, descrição e título do catálogo", () => {
@@ -75,31 +91,31 @@ describe("catálogos da extensão", () => {
     expect(MANIFEST.action.default_title).toBe("__MSG_acaoTitulo__");
   });
 
-  it("tem as mesmas chaves nos dois idiomas", () => {
-    expect(Object.keys(EN).sort()).toEqual(Object.keys(PT).sort());
+  it.each(CATALOGOS)("tem as mesmas chaves da referência em %s", (_idioma, catalogo) => {
+    expect(Object.keys(catalogo).sort()).toEqual(Object.keys(REFERENCIA).sort());
   });
 
-  it("não tem mensagem vazia", () => {
-    const vazias = [...Object.entries(PT), ...Object.entries(EN)]
+  it.each(CATALOGOS)("não tem mensagem vazia em %s", (_idioma, catalogo) => {
+    const vazias = Object.entries(catalogo)
       .filter(([, valor]) => valor.message.trim() === "")
       .map(([chave]) => chave);
 
     expect(vazias).toEqual([]);
   });
 
-  it("mantém os mesmos placeholders nos dois idiomas", () => {
-    const divergentes = Object.keys(PT).filter((chave) => {
-      const aqui = Object.keys(PT[chave].placeholders ?? {}).sort();
-      const la = Object.keys(EN[chave]?.placeholders ?? {}).sort();
+  it.each(CATALOGOS)("mantém os placeholders da referência em %s", (_idioma, catalogo) => {
+    const divergentes = Object.keys(REFERENCIA).filter((chave) => {
+      const naReferencia = Object.keys(REFERENCIA[chave].placeholders ?? {}).sort();
+      const aqui = Object.keys(catalogo[chave]?.placeholders ?? {}).sort();
 
-      return aqui.join("|") !== la.join("|");
+      return naReferencia.join("|") !== aqui.join("|");
     });
 
     expect(divergentes).toEqual([]);
   });
 
-  it("tem frase para todo nome que o popup pede", () => {
-    const semFrase = nomesUsados().filter((nome) => PT[nome] === undefined);
+  it.each(CATALOGOS)("tem frase para todo nome que o popup pede em %s", (_idioma, catalogo) => {
+    const semFrase = nomesUsados().filter((nome) => catalogo[nome] === undefined);
 
     expect(semFrase).toEqual([]);
   });
