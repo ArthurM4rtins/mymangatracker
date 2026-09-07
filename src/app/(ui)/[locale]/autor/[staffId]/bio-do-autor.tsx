@@ -5,6 +5,7 @@
  * seis linhas, como antes; com JS, o botão só aparece quando o clamp de fato
  * cortou alguma coisa — bio curta não ganha botão à toa.
  */
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
 export function BioDoAutor({ texto }: { texto: string })
@@ -12,6 +13,7 @@ export function BioDoAutor({ texto }: { texto: string })
   const paragrafo = useRef<HTMLParagraphElement>(null);
   const [aberta, setAberta] = useState(false);
   const [cortada, setCortada] = useState(false);
+  const t = useTranslations("autor");
 
   useEffect(function ()
   {
@@ -55,7 +57,7 @@ export function BioDoAutor({ texto }: { texto: string })
           onClick={function () { setAberta(!aberta); }}
           className="text-xs font-medium text-acento hover:underline"
         >
-          {aberta ? "Ver menos" : "Ver mais"}
+          {aberta ? t("bio.verMenos") : t("bio.verMais")}
         </button>
       )}
     </div>

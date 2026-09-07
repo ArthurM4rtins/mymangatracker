@@ -1,7 +1,9 @@
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
+import { Link } from "@/i18n/navigation";
+import { idiomaDoSegmento } from "@/i18n/routing";
 import { autorParaPaginaDoSistema } from "@/server/services/autor.service";
 import { BioDoAutor } from "./bio-do-autor";
 
@@ -16,18 +18,24 @@ type Props = {
   params: Promise<{ staffId: string }>;
 };
 
-export async function generateMetadata({ params }: Props)
+export async function generateMetadata({
+  params,
+}: PageProps<"/[locale]/autor/[staffId]">)
 {
-  const id = Number((await params).staffId);
+  const { locale, staffId } = await params;
+  const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "autor" });
+  const id = Number(staffId);
 
   if (!Number.isInteger(id) || id <= 0)
   {
-    return { title: "Autor" };
+    return { title: t("meta.titulo") };
   }
 
   const resultado = await carregarAutor(id);
 
-  return { title: resultado.estado === "ok" ? resultado.autor.nome : "Autor" };
+  return {
+    title: resultado.estado === "ok" ? resultado.autor.nome : t("meta.titulo"),
+  };
 }
 
 export default async function PaginaDoAutor({ params }: Props)
@@ -40,6 +48,7 @@ export default async function PaginaDoAutor({ params }: Props)
   }
 
   const resultado = await carregarAutor(id);
+  const t = await getTranslations("autor");
 
   if (resultado.estado === "nao_encontrado")
   {
@@ -51,7 +60,7 @@ export default async function PaginaDoAutor({ params }: Props)
     return (
       <main className="mx-auto w-full max-w-4xl px-6 py-12">
         <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
-          O AniList não respondeu agora. Tente de novo em instantes.
+          {t("erros.indisponivel")}
         </p>
       </main>
     );
@@ -97,12 +106,12 @@ export default async function PaginaDoAutor({ params }: Props)
 
       <section className="flex flex-col gap-4">
         <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-          Obras
+          {t("obras.titulo")}
         </h2>
 
         {autor.obras.length === 0 ? (
           <p className="text-sm text-texto-suave">
-            Nenhuma obra de mangá ou novel registrada no AniList.
+            {t("obras.vazia")}
           </p>
         ) : (
           <ul className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6">
