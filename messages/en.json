@@ -69,6 +69,7 @@
     "ordem_invalida": "the order must contain exactly the obras in the list",
     "comentario_tamanho_invalido": "comment is empty or too long",
     "proprio_perfil": "doesn't apply to your own profile",
+    "idioma_invalido": "language not available",
     "limite_excedido": "too many attempts — wait before trying again",
     "falha_interna": "couldn't do that right now",
     "catalogo_indisponivel": "catalog unavailable right now — try again"

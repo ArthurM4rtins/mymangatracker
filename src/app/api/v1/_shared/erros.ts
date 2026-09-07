@@ -67,6 +67,7 @@ export const ERRO = {
   ORDEM_INVALIDA: "ordem_invalida",
   COMENTARIO_TAMANHO_INVALIDO: "comentario_tamanho_invalido",
   PROPRIO_PERFIL: "proprio_perfil",
+  IDIOMA_INVALIDO: "idioma_invalido",
 
   // 429 — bateu no limitador.
   LIMITE_EXCEDIDO: "limite_excedido",

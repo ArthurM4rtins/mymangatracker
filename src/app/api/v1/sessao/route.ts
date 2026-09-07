@@ -8,10 +8,13 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { entrarNoSistema } from "@/server/services/sessao.service";
 import { liberarLogin, limitarLogin } from "@/server/services/limite.service";
+import { hasLocale } from "next-intl";
+import { routing } from "@/i18n/routing";
 import { ERRO } from "../_shared/erros";
 import { ipDoPedido } from "../_shared/ip";
 import {
   apagarSessaoDoCookie,
+  escreverIdiomaNoCookie,
   escreverSessaoNoCookie,
 } from "../_shared/sessao";
 
@@ -76,6 +79,17 @@ export async function POST(request: Request)
 
     const resposta = NextResponse.json({ ok: true }, { status: 200 });
     escreverSessaoNoCookie(resposta, sessao.token);
+
+    // O idioma da conta vence a negociação a partir daqui (#116, fase 5). É o
+    // login que escreve o cookie, e não o proxy que abre o JWT na borda: para
+    // estar logada num aparelho novo a pessoa precisa entrar, e entrar já passa
+    // por aqui. Conta que nunca escolheu idioma não escreve nada, e a
+    // negociação por `Accept-Language` segue valendo.
+    if (hasLocale(routing.locales, sessao.locale))
+    {
+      escreverIdiomaNoCookie(resposta, sessao.locale);
+    }
+
     return resposta;
   }
   catch (erro)
