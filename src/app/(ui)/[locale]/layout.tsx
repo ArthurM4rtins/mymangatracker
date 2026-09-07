@@ -25,6 +25,25 @@ const fonteMarca = Zen_Kaku_Gothic_New({
   subsets: ["latin"],
 });
 
+/**
+ * O endereço do site, para o metadata montar URL absoluta.
+ *
+ * `hreflang` sem protocolo é ignorado pelo buscador — a tag sai no HTML e não
+ * serve para nada. Sem `metadataBase` o Next deixa os `href` de
+ * `alternates.languages` relativos, que foi o que aconteceu no primeiro deploy
+ * da fase 4 da #116.
+ *
+ * `VERCEL_PROJECT_PRODUCTION_URL` é o domínio de produção, e a Vercel o entrega
+ * em todos os ambientes — inclusive no preview, que é o que se quer aqui: o
+ * canônico de um preview deve apontar para produção, não para o deploy efêmero.
+ */
+function enderecoDoSite(): URL
+{
+  const producao = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+
+  return new URL(producao ? `https://${producao}` : "http://localhost:3000");
+}
+
 export async function generateMetadata({
   params,
 }: LayoutProps<"/[locale]">): Promise<Metadata> {
@@ -32,6 +51,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "meta" });
 
   return {
+    metadataBase: enderecoDoSite(),
     title: {
       default: t("titulo"),
       template: `%s · ${t("titulo")}`,
