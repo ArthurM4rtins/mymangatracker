@@ -10,9 +10,10 @@
  * estrelas de fora) no "Salvar". Fechar descarta tudo. A estrela de fora
  * persiste sempre a resenha JÁ SALVA, nunca um rascunho abandonado.
  */
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from "@/i18n/navigation";
 import { SeletorDeEstrelas } from "../../componentes/estrelas";
 
 type Avaliacao = {
@@ -44,6 +45,8 @@ export function AvaliacaoDaObra({
   social: { curtidas: number; comentarios: number } | null;
 })
 {
+  const t = useTranslations("obra");
+  const idioma = useLocale();
   const roteador = useRouter();
   const [nota, setNota] = useState<number | null>(
     avaliacao?.rating == null ? null : Number(avaliacao.rating),
@@ -92,7 +95,7 @@ export function AvaliacaoDaObra({
 
       if (!resposta.ok && resposta.status !== 404)
       {
-        setAviso("não deu para salvar — tente de novo");
+        setAviso(t("erros.salvar"));
         return false;
       }
 
@@ -101,13 +104,36 @@ export function AvaliacaoDaObra({
     }
     catch
     {
-      setAviso("não deu agora — tente de novo");
+      setAviso(t("erros.rede"));
       return false;
     }
     finally
     {
       setOcupado(false);
     }
+  }
+
+  /**
+   * "…também apaga 2 curtidas e 1 comentário": o conector entre os itens sai
+   * do idioma (`Intl.ListFormat`), não de um " e " fixo no código.
+   */
+  function avisoDeApagar(social: { curtidas: number; comentarios: number }): string
+  {
+    const partes = [];
+
+    if (social.curtidas > 0)
+    {
+      partes.push(t("contagem.curtidas", { n: social.curtidas }));
+    }
+
+    if (social.comentarios > 0)
+    {
+      partes.push(t("contagem.comentarios", { n: social.comentarios }));
+    }
+
+    const conector = new Intl.ListFormat(idioma, { style: "long", type: "conjunction" });
+
+    return t("apagar.confirmar", { itens: conector.format(partes) });
   }
 
   async function mudarNota(nova: number | null)
@@ -160,7 +186,7 @@ export function AvaliacaoDaObra({
   return (
     <section className="flex w-full flex-col gap-3 rounded-lg border border-borda bg-superficie p-4">
       <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-        Sua avaliação
+        {t("avaliacao.titulo")}
       </h2>
 
       <SeletorDeEstrelas
@@ -174,7 +200,7 @@ export function AvaliacaoDaObra({
         onClick={function () { setModalAberto(true); }}
         className="w-fit rounded-md border border-borda px-3 py-1.5 text-sm text-texto transition-colors hover:border-acento"
       >
-        {avaliacao?.review ? "Editar resenha…" : "Resenhar…"}
+        {avaliacao?.review ? t("avaliacao.editarResenha") : t("avaliacao.resenhar")}
       </button>
 
       {aviso && (
@@ -198,23 +224,6 @@ export function AvaliacaoDaObra({
   );
 }
 
-function avisoDeApagar(social: { curtidas: number; comentarios: number }): string
-{
-  const partes = [];
-
-  if (social.curtidas > 0)
-  {
-    partes.push(`${social.curtidas} ${social.curtidas === 1 ? "curtida" : "curtidas"}`);
-  }
-
-  if (social.comentarios > 0)
-  {
-    partes.push(`${social.comentarios} ${social.comentarios === 1 ? "comentário" : "comentários"}`);
-  }
-
-  return `Apagar o texto da resenha também apaga ${partes.join(" e ")}. Continuar?`;
-}
-
 function ModalDeResenha({
   titulo,
   ano,
@@ -233,6 +242,8 @@ function ModalDeResenha({
   aoFechar: () => void;
 })
 {
+  const t = useTranslations("obra");
+  const c = useTranslations("comum");
   // Rascunho local: nasce do que está salvo quando o modal abre e morre com ele.
   const [nota, setNota] = useState<number | null>(inicial.nota);
   const [resenha, setResenha] = useState(inicial.resenha);
@@ -260,7 +271,7 @@ function ModalDeResenha({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={`Resenhar ${titulo}`}
+      aria-label={t("modal.rotulo", { titulo })}
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
     >
       <div
@@ -296,7 +307,7 @@ function ModalDeResenha({
           <button
             type="button"
             onClick={aoFechar}
-            aria-label="Fechar"
+            aria-label={t("modal.fechar")}
             className="text-texto-suave hover:text-texto"
           >
             ✕
@@ -306,7 +317,7 @@ function ModalDeResenha({
         <textarea
           value={resenha}
           onChange={function (evento) { setResenha(evento.target.value); }}
-          placeholder="Escreva a resenha — ela fica pública para outros leitores"
+          placeholder={t("modal.placeholder")}
           rows={6}
           autoFocus
           className="rounded-md border border-borda bg-fundo px-2 py-1.5 text-sm outline-none focus:border-acento"
@@ -319,7 +330,7 @@ function ModalDeResenha({
               checked={spoilers}
               onChange={function (evento) { setSpoilers(evento.target.checked); }}
             />
-            contém spoiler
+            {t("modal.spoiler")}
           </label>
 
           <button
@@ -328,7 +339,7 @@ function ModalDeResenha({
             disabled={ocupado}
             className="rounded-md bg-acento px-4 py-1.5 text-sm font-medium text-acento-contraste disabled:opacity-60"
           >
-            {ocupado ? "Salvando…" : "Salvar"}
+            {ocupado ? c("salvando") : c("salvar")}
           </button>
         </div>
       </div>

@@ -1,7 +1,9 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
+import { Link } from "@/i18n/navigation";
 import {
   obraParaPaginaDoSistema,
   type MinhaRelacao,
@@ -19,6 +21,7 @@ import { ConfigurarFonte } from "../../estante/configurar-fonte";
 import { ContinuarLeitura } from "../../estante/continuar-leitura";
 import { EditarProgresso } from "../../estante/editar-progresso";
 import { SeletorStatus } from "../../estante/seletor-status";
+import { idiomaDoSegmento } from "@/i18n/routing";
 
 // Sessão + AniList: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -28,23 +31,28 @@ export const dynamic = "force-dynamic";
 // vezes por visita (#65, item 3). Mesmos argumentos = uma execução.
 const carregarObra = cache(obraParaPaginaDoSistema);
 
-const PAIS: Record<string, string> = {
-  JP: "Mangá",
-  KR: "Manhwa",
-  CN: "Manhua",
+/** País de origem → a chave do rótulo do formato em `comum.formato`. */
+const PAIS: Record<string, "formato.JP" | "formato.KR" | "formato.CN"> = {
+  JP: "formato.JP",
+  KR: "formato.KR",
+  CN: "formato.CN",
 };
 
 type Props = {
   params: Promise<{ anilistId: string }>;
 };
 
-export async function generateMetadata({ params }: Props)
+export async function generateMetadata({
+  params,
+}: PageProps<"/[locale]/obra/[anilistId]">): Promise<Metadata>
 {
-  const id = Number((await params).anilistId);
+  const { locale, anilistId } = await params;
+  const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "obra" });
+  const id = Number(anilistId);
 
   if (!Number.isInteger(id) || id <= 0)
   {
-    return { title: "Obra" };
+    return { title: t("meta.titulo") };
   }
 
   const userId = await usuarioDaSessao();
@@ -54,7 +62,7 @@ export async function generateMetadata({ params }: Props)
     title:
       resultado.estado === "ok"
         ? resultado.obra.titleEnglish ?? resultado.obra.titleRomaji
-        : "Obra",
+        : t("meta.titulo"),
   };
 }
 
@@ -69,6 +77,8 @@ export default async function PaginaDaObra({ params }: Props)
 
   const userId = await usuarioDaSessao();
   const resultado = await carregarObra(id, userId);
+  const t = await getTranslations("obra");
+  const c = await getTranslations("comum");
 
   if (resultado.estado === "nao_encontrada")
   {
@@ -80,8 +90,7 @@ export default async function PaginaDaObra({ params }: Props)
     return (
       <main className="mx-auto w-full max-w-4xl px-6 py-12">
         <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
-          O AniList não respondeu agora e esta obra ainda não está no nosso
-          cache. Tente de novo em instantes.
+          {t("indisponivel")}
         </p>
       </main>
     );
@@ -99,6 +108,14 @@ export default async function PaginaDaObra({ params }: Props)
   const fundo = obra.bannerImageUrl ?? obra.coverImageUrl;
   const descricao =
     obra.description === null ? null : interpretarDescricao(obra.description);
+  // Novel vem do tipo; o resto sai do país de origem. País que não conhecemos
+  // continua caindo no rótulo genérico.
+  const chaveDoFormato =
+    obra.type === "NOVEL"
+      ? "formato.NOVEL"
+      : obra.countryOfOrigin
+        ? PAIS[obra.countryOfOrigin]
+        : undefined;
 
   return (
     <main className="flex min-h-screen flex-col">
@@ -149,7 +166,7 @@ export default async function PaginaDaObra({ params }: Props)
 
             {obra.autores.length > 0 && (
               <p className="text-sm text-texto-suave">
-                por{" "}
+                {t("autoria")}{" "}
                 {obra.autores.map(function (autor, indice)
                 {
                   return (
@@ -169,9 +186,9 @@ export default async function PaginaDaObra({ params }: Props)
 
             <p className="flex flex-wrap items-center gap-1.5 text-xs text-texto-suave">
               <span className="rounded-full border border-borda px-2 py-0.5">
-                {obra.type === "NOVEL"
-                  ? "Novel"
-                  : (obra.countryOfOrigin && PAIS[obra.countryOfOrigin]) ?? "Obra"}
+                {chaveDoFormato === undefined
+                  ? t("formatoDesconhecido")
+                  : c(chaveDoFormato)}
               </span>
               {obra.genres.map(function (genero)
               {
@@ -181,8 +198,12 @@ export default async function PaginaDaObra({ params }: Props)
                   </span>
                 );
               })}
+              {/* Sem plural de propósito: a tela sempre disse "capítulos", inclusive
+                  no one-shot. `{n}` cru também não agrupa milhar, como era antes. */}
               {obra.chapters !== null && (
-                <span className="tabular-nums">{obra.chapters} capítulos</span>
+                <span className="tabular-nums">
+                  {t("contagem.capitulos", { n: obra.chapters })}
+                </span>
               )}
             </p>
 
@@ -215,7 +236,7 @@ export default async function PaginaDaObra({ params }: Props)
           <section className="flex flex-col gap-4">
             <div className="flex items-baseline gap-3">
               <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-                Curiosidades
+                {t("curiosidades")}
               </h2>
               <span className="text-xs tabular-nums text-texto-suave">
                 {descricao.notas.length}
@@ -255,12 +276,11 @@ export default async function PaginaDaObra({ params }: Props)
 
         <section className="flex flex-col gap-4">
           <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-            Resenhas
+            {t("resenhas.titulo")}
           </h2>
           {reviews.length === 0 ? (
             <p className="text-sm text-texto-suave">
-              Ainda não tem resenha por aqui — avalie com um texto e a sua
-              aparece para todo mundo.
+              {t("resenhas.vazio")}
             </p>
           ) : (
             <ul className="flex flex-col gap-4">
@@ -306,7 +326,7 @@ export default async function PaginaDaObra({ params }: Props)
   );
 }
 
-function PainelDoUsuario({
+async function PainelDoUsuario({
   anilistId,
   minha,
   logado,
@@ -316,14 +336,22 @@ function PainelDoUsuario({
   logado: boolean;
 })
 {
+  const t = await getTranslations("obra");
+
   if (!logado)
   {
     return (
       <section className="rounded-lg border border-borda bg-superficie p-4 text-sm text-texto-suave">
-        <Link href="/entrar" className="text-acento underline underline-offset-4">
-          Entre
-        </Link>{" "}
-        para adicionar à estante, avaliar e registrar a leitura.
+        {t.rich("painel.convite", {
+          entrar: function (partes)
+          {
+            return (
+              <Link href="/entrar" className="text-acento underline underline-offset-4">
+                {partes}
+              </Link>
+            );
+          },
+        })}
       </section>
     );
   }
@@ -334,7 +362,7 @@ function PainelDoUsuario({
       <section className="flex items-center gap-4 rounded-lg border border-borda bg-superficie p-4">
         <BotaoEstante anilistId={anilistId} atualizarAoSalvar />
         <span className="text-sm text-texto-suave">
-          Adicione à estante para avaliar e registrar a leitura.
+          {t("painel.adicionar")}
         </span>
       </section>
     );
@@ -369,20 +397,26 @@ function PainelDoUsuario({
 }
 
 /** O histórico é do dono (issue #54): só renderiza dentro do painel de quem está logado. */
-function HistoricoDeLeitura({ historico }: { historico: MinhaRelacao["historico"] })
+async function HistoricoDeLeitura({ historico }: { historico: MinhaRelacao["historico"] })
 {
+  const t = await getTranslations("obra");
+
   return (
     <details className="group text-sm">
       <summary className="cursor-pointer select-none text-xs uppercase tracking-wide text-texto-suave hover:text-texto">
-        Histórico de leitura · {historico.length}
-        {historico.length === 20 ? " mais recentes" : historico.length === 1 ? " abertura" : " aberturas"}
+        {t("historico.titulo")} ·{" "}
+        {historico.length === 20
+          ? t("historico.maisRecentes", { n: historico.length })
+          : t("contagem.aberturas", { n: historico.length })}
       </summary>
       <ol className="mt-3 flex flex-col gap-1.5 border-l border-borda pl-3">
         {historico.map(function (abertura)
         {
           return (
             <li key={abertura.id} className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-              <span className="font-medium tabular-nums">cap. {abertura.chapter}</span>
+              <span className="font-medium tabular-nums">
+                {t("historico.capitulo", { n: abertura.chapter })}
+              </span>
               {/* Fuso de quem lê, não do servidor (#65, item 7). */}
               <DataHora
                 iso={abertura.abertaEm.toISOString()}
@@ -394,7 +428,7 @@ function HistoricoDeLeitura({ historico }: { historico: MinhaRelacao["historico"
                 rel="noreferrer noopener"
                 className="text-xs text-texto-suave underline decoration-dotted underline-offset-4 hover:text-acento"
               >
-                {abertura.sourceHost ?? "fonte removida"}
+                {abertura.sourceHost ?? t("historico.fonteRemovida")}
               </a>
             </li>
           );
@@ -404,12 +438,14 @@ function HistoricoDeLeitura({ historico }: { historico: MinhaRelacao["historico"
   );
 }
 
-function Similares({ similares }: { similares: ObraSimilar[] })
+async function Similares({ similares }: { similares: ObraSimilar[] })
 {
+  const t = await getTranslations("obra");
+
   return (
     <section className="flex flex-col gap-4">
       <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-        Obras similares
+        {t("similares")}
       </h2>
       <ul className="grid grid-cols-3 gap-3 sm:grid-cols-6">
         {similares.map(function (similar)

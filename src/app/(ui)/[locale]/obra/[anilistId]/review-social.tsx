@@ -4,9 +4,9 @@
  * Uma resenha pública: curtir (toggle otimista), comentários tipo chat e
  * spoiler escondido por padrão. Quem escreveu aparece pelo username.
  */
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Avatar } from "../../componentes/avatar";
 import { estrelasTexto } from "../../componentes/estrelas";
 
@@ -42,6 +42,7 @@ export function ReviewSocial({
   logado: boolean;
 })
 {
+  const t = useTranslations("obra");
   const roteador = useRouter();
   const [curtida, setCurtida] = useState(review.curtiPorMim);
   const [total, setTotal] = useState(review.curtidas);
@@ -193,13 +194,13 @@ export function ReviewSocial({
 
       if (resposta.status === 429)
       {
-        setErro("muitos comentários em pouco tempo — aguarde um pouco");
+        setErro(t("erros.limite"));
         return;
       }
 
       if (!resposta.ok)
       {
-        setErro("não deu para comentar — tente de novo");
+        setErro(t("erros.comentar"));
         return;
       }
 
@@ -208,7 +209,7 @@ export function ReviewSocial({
     }
     catch
     {
-      setErro("não deu agora — tente de novo");
+      setErro(t("erros.rede"));
     }
     finally
     {
@@ -238,11 +239,11 @@ export function ReviewSocial({
         </Link>
         {review.minha && (
           <span className="rounded-full border border-borda px-2 py-0.5 text-xs text-texto-suave">
-            você
+            {t("resenhas.minha")}
           </span>
         )}
         {review.rating !== null && (
-          <span aria-label={`Nota ${review.rating} de 5`} className="text-acento">
+          <span aria-label={t("resenhas.nota", { nota: review.rating })} className="text-acento">
             {estrelasTexto(Number(review.rating))}
           </span>
         )}
@@ -254,7 +255,7 @@ export function ReviewSocial({
           onClick={function () { setMostrarSpoiler(true); }}
           className="w-fit text-sm text-texto-suave underline underline-offset-4"
         >
-          esta resenha tem spoiler — mostrar
+          {t("resenhas.spoiler")}
         </button>
       ) : (
         <p className="whitespace-pre-line text-sm leading-relaxed">{review.review}</p>
@@ -270,14 +271,13 @@ export function ReviewSocial({
           {curtida ? "♥" : "♡"} {total}
         </button>
         <span>
-          {review.totalDeComentarios}{" "}
-          {review.totalDeComentarios === 1 ? "comentário" : "comentários"}
+          {t("contagem.comentarios", { n: review.totalDeComentarios })}
         </span>
       </div>
 
       <details className="text-sm">
         <summary className="cursor-pointer text-texto-suave hover:text-texto">
-          {review.totalDeComentarios > 0 ? "ver conversa" : "comentar"}
+          {review.totalDeComentarios > 0 ? t("resenhas.verConversa") : t("resenhas.comentar")}
         </summary>
 
         <div className="mt-2 flex flex-col gap-2 border-l border-borda pl-3">
@@ -288,7 +288,9 @@ export function ReviewSocial({
               disabled={carregandoAnteriores}
               className="w-fit text-xs text-texto-suave underline underline-offset-4 disabled:opacity-60"
             >
-              {carregandoAnteriores ? "carregando…" : `ver ${faltam} ${faltam === 1 ? "anterior" : "anteriores"}`}
+              {carregandoAnteriores
+                ? t("resenhas.carregando")
+                : t("resenhas.verAnteriores", { n: faltam })}
             </button>
           )}
           {conversa.map(function (item)
@@ -309,10 +311,10 @@ export function ReviewSocial({
                   <button
                     type="button"
                     onClick={function () { void apagar(item.id); }}
-                    aria-label="Apagar comentário"
+                    aria-label={t("resenhas.apagarComentario")}
                     className="text-xs text-texto-suave underline underline-offset-4"
                   >
-                    apagar
+                    {t("resenhas.apagar")}
                   </button>
                 )}
               </p>
@@ -332,7 +334,7 @@ export function ReviewSocial({
                     void comentar();
                   }
                 }}
-                placeholder="Escreva um comentário…"
+                placeholder={t("resenhas.placeholderComentario")}
                 maxLength={2000}
                 className="min-w-0 flex-1 rounded-md border border-borda bg-fundo px-2 py-1.5 text-sm outline-none focus:border-acento"
               />
@@ -342,11 +344,11 @@ export function ReviewSocial({
                 disabled={ocupado || comentario.trim() === ""}
                 className="text-acento underline underline-offset-4 disabled:opacity-60"
               >
-                enviar
+                {t("resenhas.enviar")}
               </button>
             </div>
           ) : (
-            <p className="text-xs text-texto-suave">Entre para comentar.</p>
+            <p className="text-xs text-texto-suave">{t("resenhas.entreParaComentar")}</p>
           )}
 
           {erro && (

@@ -7,6 +7,7 @@
  * desenho do "Sua avaliação", histograma em largura cheia embaixo.
  * Client só por causa do glyph da estrela, que vive num módulo client.
  */
+import { useTranslations } from "next-intl";
 import { SIMBOLO } from "../../componentes/estrelas";
 
 export type NotaParaTela = {
@@ -17,12 +18,13 @@ export type NotaParaTela = {
 
 export function NotaKidoku({ nota }: { nota: NotaParaTela })
 {
+  const t = useTranslations("obra");
   const maior = Math.max(...nota.histograma.map(function (faixa) { return faixa.total; }));
 
   return (
     <section className="flex flex-col gap-3 rounded-lg border border-borda bg-superficie p-4">
       <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-        Nota do Kidoku
+        {t("nota.titulo")}
       </h2>
 
       <p className="flex items-baseline gap-1.5">
@@ -31,21 +33,22 @@ export function NotaKidoku({ nota }: { nota: NotaParaTela })
           {nota.media.toLocaleString("pt-BR", { minimumFractionDigits: 1 })}
         </span>
         <span className="text-sm text-texto-suave">
-          · {nota.total} {nota.total === 1 ? "avaliação" : "avaliações"}
+          · {t("contagem.avaliacoes", { n: nota.total })}
         </span>
       </p>
 
       <ul
-        aria-label="Distribuição das notas"
+        aria-label={t("nota.distribuicao")}
         className="flex h-10 items-end gap-1"
       >
         {nota.histograma.map(function (faixa)
         {
           const altura = maior === 0 ? 0 : Math.max(faixa.total === 0 ? 0 : 8, (faixa.total / maior) * 100);
 
-          const rotulo = `${faixa.rating.toLocaleString("pt-BR")} ${SIMBOLO} · ${faixa.total} ${
-            faixa.total === 1 ? "avaliação" : "avaliações"
-          }`;
+          const rotulo = `${faixa.rating.toLocaleString("pt-BR")} ${SIMBOLO} · ${t(
+            "contagem.avaliacoes",
+            { n: faixa.total },
+          )}`;
 
           return (
             // Hover (issue #85): a barra cresce a partir da base, fica na cor
@@ -69,6 +72,8 @@ export function NotaKidoku({ nota }: { nota: NotaParaTela })
           );
         })}
       </ul>
+      {/* Os extremos da escala de Rating são número formatado, não frase: ficam
+          fora do catálogo, junto com os `toLocaleString` daqui de cima. */}
       <p aria-hidden className="flex justify-between text-[10px] text-texto-suave">
         <span>0,5</span>
         <span>5,0</span>

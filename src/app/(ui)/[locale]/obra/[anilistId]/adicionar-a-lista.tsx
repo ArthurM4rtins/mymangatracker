@@ -4,8 +4,9 @@
  * O botão de listas da página da obra: abre as listas do usuário com o
  * "já contém" marcado; clicar alterna a obra (entra/sai).
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useRouter } from "@/i18n/navigation";
 
 type MinhaLista = {
   listaId: string;
@@ -15,6 +16,7 @@ type MinhaLista = {
 
 export function AdicionarALista({ anilistId }: { anilistId: number })
 {
+  const t = useTranslations("obra");
   const roteador = useRouter();
   const [aberto, setAberto] = useState(false);
   const [listas, setListas] = useState<MinhaLista[] | null>(null);
@@ -37,7 +39,7 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
 
       if (!resposta.ok)
       {
-        setErro("não deu para carregar as listas");
+        setErro(t("erros.listas"));
         return;
       }
 
@@ -46,7 +48,7 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
     }
     catch
     {
-      setErro("não deu agora — tente de novo");
+      setErro(t("erros.rede"));
     }
   }
 
@@ -90,7 +92,7 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
         onClick={function () { void abrir(); }}
         className="text-sm text-acento underline underline-offset-4"
       >
-        + Lista
+        {t("listas.botao")}
       </button>
     );
   }
@@ -99,14 +101,14 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
     <div className="flex flex-col gap-1.5 rounded-md border border-borda bg-fundo p-3 text-sm">
       <div className="flex items-center justify-between gap-4">
         <span className="text-xs uppercase tracking-wide text-texto-suave">
-          Minhas listas
+          {t("listas.titulo")}
         </span>
         <button
           type="button"
           onClick={function () { setAberto(false); }}
           className="text-xs text-texto-suave hover:text-texto"
         >
-          fechar
+          {t("listas.fechar")}
         </button>
       </div>
 
@@ -118,7 +120,7 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
 
       {listas !== null && listas.length === 0 && (
         <p className="text-xs text-texto-suave">
-          Nenhuma lista ainda — crie uma na página de Listas.
+          {t("listas.vazia")}
         </p>
       )}
 
