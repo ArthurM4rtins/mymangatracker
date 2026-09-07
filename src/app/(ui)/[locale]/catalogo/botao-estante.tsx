@@ -4,8 +4,10 @@
  * Adiciona a obra à estante (`POST /api/v1/estante`, status PLANNED).
  * Sem sessão a API responde 401 e o botão leva para /entrar.
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+
+import { useRouter } from "@/i18n/navigation";
 
 type Estado = "parado" | "salvando" | "salvo" | "erro";
 
@@ -23,6 +25,8 @@ export function BotaoEstante({
 {
   const roteador = useRouter();
   const [estado, setEstado] = useState<Estado>(jaNaEstante ? "salvo" : "parado");
+  const t = useTranslations("catalogo");
+  const c = useTranslations("comum");
 
   async function adicionar()
   {
@@ -59,7 +63,7 @@ export function BotaoEstante({
   {
     return (
       <span className="inline-flex items-center gap-1.5 text-sm font-medium text-acento">
-        <MarcaDeVisto /> Na estante
+        <MarcaDeVisto /> {t("botaoEstante.naEstante")}
       </span>
     );
   }
@@ -72,11 +76,11 @@ export function BotaoEstante({
         disabled={estado === "salvando"}
         className="rounded-md border border-acento px-3 py-1.5 text-sm font-medium text-acento transition-colors hover:bg-acento hover:text-acento-contraste disabled:opacity-60"
       >
-        {estado === "salvando" ? "Salvando…" : "+ Estante"}
+        {estado === "salvando" ? c("salvando") : t("botaoEstante.adicionar")}
       </button>
       {estado === "erro" && (
         <span role="alert" className="text-xs text-texto-suave">
-          não deu — tente de novo
+          {t("botaoEstante.erro")}
         </span>
       )}
     </div>

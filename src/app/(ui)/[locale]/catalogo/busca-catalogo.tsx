@@ -8,14 +8,17 @@
  * O debounce existe por causa da cota do AniList: cada tecla sem ele seria uma
  * requisição no servidor.
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useTransition } from "react";
+
+import { useRouter } from "@/i18n/navigation";
 
 const DEBOUNCE_MS = 400;
 
 export function BuscaCatalogo({ termoInicial }: { termoInicial: string })
 {
   const roteador = useRouter();
+  const t = useTranslations("catalogo");
   const [pendente, iniciarTransicao] = useTransition();
   const temporizador = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -91,8 +94,8 @@ export function BuscaCatalogo({ termoInicial }: { termoInicial: string })
         name="q"
         defaultValue={termoInicial}
         onChange={function (evento) { aoDigitar(evento.target.value); }}
-        placeholder="Lookism, Solo Leveling, Berserk…"
-        aria-label="Buscar obra"
+        placeholder={t("busca.placeholder")}
+        aria-label={t("busca.rotulo")}
         autoComplete="off"
         className="flex-1 rounded-md border border-borda bg-superficie px-3 py-2 text-sm outline-none focus:border-acento"
       />
@@ -100,7 +103,7 @@ export function BuscaCatalogo({ termoInicial }: { termoInicial: string })
         aria-hidden={!pendente}
         className={`text-xs text-texto-suave transition-opacity ${pendente ? "opacity-100" : "opacity-0"}`}
       >
-        Buscando…
+        {t("busca.buscando")}
       </span>
     </form>
   );

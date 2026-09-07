@@ -1,24 +1,29 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import Link from "next/link";
 import { buscarNoCatalogo } from "@/server/services/catalogo.service";
 import { anilistIdsNaEstanteDoSistema } from "@/server/services/estante.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
+import { Link } from "@/i18n/navigation";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "./botao-estante";
 import { BuscaCatalogo } from "./busca-catalogo";
 import { FiltrosCatalogo } from "./filtros-catalogo";
+import { idiomaDoSegmento } from "@/i18n/routing";
 
 // A busca depende do termo da URL e do AniList: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Catálogo" };
+export async function generateMetadata({
+  params,
+}: PageProps<"/[locale]/catalogo">): Promise<Metadata>
+{
+  const { locale } = await params;
+  const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "catalogo" });
 
-const PAIS: Record<string, string> = {
-  JP: "Mangá",
-  KR: "Manhwa",
-  CN: "Manhua",
-};
+  return { title: t("meta.titulo") };
+}
 
 type Props = {
   searchParams: Promise<{
@@ -37,13 +42,14 @@ export default async function Catalogo({ searchParams }: Props)
     buscarNoCatalogo(filtro),
     idsNaEstante(),
   ]);
+  const t = await getTranslations("catalogo");
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
       <header className="flex flex-col gap-2">
-        <h1 className="font-marca text-3xl font-bold tracking-tight">Catálogo</h1>
+        <h1 className="font-marca text-3xl font-bold tracking-tight">{t("titulo")}</h1>
         <p className="text-texto-suave">
-          Busque a obra, adicione à estante e a leitura começa a contar.
+          {t("subtitulo")}
         </p>
       </header>
 
@@ -53,16 +59,19 @@ export default async function Catalogo({ searchParams }: Props)
 
       {resultado.estado === "indisponivel" && (
         <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
-          O AniList não respondeu agora. Tente de novo em instantes.
+          {t("erros.indisponivel")}
         </p>
       )}
 
       {resultado.estado === "vazio" && (
         <p className="text-sm text-texto-suave">
           {resultado.termo === "" ? (
-            "O catálogo não respondeu nada agora. Tente de novo em instantes."
+            t("vazio.semTermo")
           ) : (
-            <>Nada encontrado para <strong>{resultado.termo}</strong>.</>
+            t.rich("vazio.semResultado", {
+              termo: resultado.termo,
+              forte: function (partes) { return <strong>{partes}</strong>; },
+            })
           )}
         </p>
       )}
@@ -71,7 +80,7 @@ export default async function Catalogo({ searchParams }: Props)
         <section className="flex flex-col gap-4">
           {resultado.estado === "destaques" && (
             <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
-              Populares agora
+              {t("destaques")}
             </h2>
           )}
           <ul className="grid gap-5 sm:grid-cols-2">
@@ -112,9 +121,13 @@ async function idsNaEstante(): Promise<Set<number>>
   }
 }
 
-function Obra({ obra, jaNaEstante }: { obra: MediaDoAniList; jaNaEstante: boolean })
+async function Obra({ obra, jaNaEstante }: { obra: MediaDoAniList; jaNaEstante: boolean })
 {
-  const rotulo = obra.countryOfOrigin ? PAIS[obra.countryOfOrigin] : "Obra";
+  const t = await getTranslations("catalogo");
+  const c = await getTranslations("comum");
+  const rotulo = obra.countryOfOrigin
+    ? c(`formato.${obra.countryOfOrigin}`)
+    : t("cartao.formatoGenerico");
 
   return (
     <li className="group flex gap-4 rounded-lg border border-borda bg-superficie p-4 transition-colors hover:border-acento/60">
@@ -147,10 +160,12 @@ function Obra({ obra, jaNaEstante }: { obra: MediaDoAniList; jaNaEstante: boolea
 
         <p className="flex flex-wrap items-center gap-1.5 text-xs text-texto-suave">
           <span className="rounded-full border border-borda px-2 py-0.5">
-            {obra.type === "NOVEL" ? "Novel" : rotulo}
+            {obra.type === "NOVEL" ? c("formato.NOVEL") : rotulo}
           </span>
           {obra.chapters !== undefined && (
-            <span className="tabular-nums">{obra.chapters} capítulos</span>
+            <span className="tabular-nums">
+              {t("cartao.capitulos", { n: obra.chapters })}
+            </span>
           )}
         </p>
 
