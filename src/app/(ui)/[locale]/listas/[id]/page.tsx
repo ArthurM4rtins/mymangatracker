@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { listaComItensDoSistema } from "@/server/services/lista.service";
-import { Link } from "@/i18n/navigation";
+import { Link, alternativasDeIdioma } from "@/i18n/navigation";
 import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { ApagarLista, RemoverDaLista } from "./acoes-da-lista";
 import { CurtirLista } from "./curtir-lista";
@@ -18,7 +18,10 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/listas/[
   const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "listas" });
   const lista = await listaComItensDoSistema(id, null).catch(function () { return null; });
 
-  return { title: lista?.nome ?? t("detalhe.meta.titulo") };
+  return {
+    title: lista?.nome ?? t("detalhe.meta.titulo"),
+    alternates: alternativasDeIdioma(`/listas/${id}`),
+  };
 }
 
 export default async function PaginaDaLista({ params }: PageProps<"/[locale]/listas/[id]">)

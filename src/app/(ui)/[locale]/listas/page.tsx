@@ -5,7 +5,7 @@ import {
   ORDENS_DAS_LISTAS,
 } from "@/server/domain/lista-listagem";
 import { listasPublicasDoSistema } from "@/server/services/lista.service";
-import { Link } from "@/i18n/navigation";
+import { Link, alternativasDeIdioma } from "@/i18n/navigation";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { CardLista } from "../vitrine-cards";
 import { CriarLista } from "./criar-lista";
@@ -21,7 +21,10 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "listas" });
 
-  return { title: t("indice.meta.titulo") };
+  return {
+    title: t("indice.meta.titulo"),
+    alternates: alternativasDeIdioma("/listas"),
+  };
 }
 
 type Props = {

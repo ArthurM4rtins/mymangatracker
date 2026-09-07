@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
 // A rota de API não tem prefixo de idioma (D2 do desenho): o link do rodapé usa
 // o `Link` cru, não o de `@/i18n/navigation`, senão vira `/pt-BR/api/v1/health`.
@@ -45,6 +45,7 @@ export default async function Home()
 {
   const userId = await usuarioDaSessao();
   const t = await getTranslations("home");
+  const idioma = await getLocale();
 
   const [saude, populares, leitura, atividade, vitrine] = await Promise.all([
     verificarSaudeDoSistema(),
@@ -85,7 +86,7 @@ export default async function Home()
 
       <Carrossel
         titulo={t("vitrine.resenhas.titulo")}
-        itens={cardsDeResenhas(vitrine)}
+        itens={cardsDeResenhas(vitrine, idioma)}
         vazio={t("vitrine.resenhas.vazio")}
       />
 
@@ -133,7 +134,12 @@ export default async function Home()
               {t("atividade.vazia")}
             </p>
           ) : (
-            <FeedDaComunidade itens={atividade.map(itemParaTela)} />
+            <FeedDaComunidade
+              itens={atividade.map(function (item)
+              {
+                return itemParaTela(item, formatoDoQuando(idioma));
+              })}
+            />
           )}
         </section>
       </div>
@@ -241,12 +247,20 @@ async function BoasVindas({ leitura }: { leitura: DadosDeLeitura })
   );
 }
 
-const FORMATO_QUANDO = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" });
+/**
+ * Data curta do feed, no idioma de quem está lendo. `Intl` nativo, e não o
+ * `getFormatter()` do next-intl: sem `timeZone` explícito o nativo usa o fuso
+ * de quem executa, que é o que esta tela sempre fez.
+ */
+function formatoDoQuando(idioma: string): Intl.DateTimeFormat
+{
+  return new Intl.DateTimeFormat(idioma, { day: "2-digit", month: "short" });
+}
 
 /** Achata o item do feed para a tela: datas viram texto, chave única por tipo. */
-function itemParaTela(item: AtividadeDaComunidade): ItemParaTela
+function itemParaTela(item: AtividadeDaComunidade, formato: Intl.DateTimeFormat): ItemParaTela
 {
-  const quando = FORMATO_QUANDO.format(item.quando);
+  const quando = formato.format(item.quando);
 
   if (item.tipo === "resenha")
   {
@@ -279,8 +293,10 @@ function itemParaTela(item: AtividadeDaComunidade): ItemParaTela
 }
 
 /** Os cards de cada carrossel (issue #76). */
-function cardsDeResenhas(vitrine: VitrineDaHome)
+function cardsDeResenhas(vitrine: VitrineDaHome, idioma: string)
 {
+  const formato = formatoDoQuando(idioma);
+
   return vitrine.resenhas.map(function (r)
   {
     return (
@@ -294,7 +310,7 @@ function cardsDeResenhas(vitrine: VitrineDaHome)
         review={r.review}
         containsSpoilers={r.containsSpoilers}
         curtidas={r.curtidas}
-        quando={FORMATO_QUANDO.format(r.quando)}
+        quando={formato.format(r.quando)}
       />
     );
   });

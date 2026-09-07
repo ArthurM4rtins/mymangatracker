@@ -5,7 +5,7 @@ import { buscarNoCatalogo } from "@/server/services/catalogo.service";
 import { anilistIdsNaEstanteDoSistema } from "@/server/services/estante.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
-import { Link } from "@/i18n/navigation";
+import { alternativasDeIdioma, Link } from "@/i18n/navigation";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "./botao-estante";
 import { BuscaCatalogo } from "./busca-catalogo";
@@ -22,7 +22,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "catalogo" });
 
-  return { title: t("meta.titulo") };
+  return { title: t("meta.titulo"), alternates: alternativasDeIdioma("/catalogo") };
 }
 
 type Props = {
