@@ -27,6 +27,9 @@ const eslintConfig = defineConfig([
         { type: "prisma", partialMatch: false, pattern: "src/generated/**" },
         { type: "controller", partialMatch: false, pattern: "src/app/api/**" },
         { type: "ui", partialMatch: false, pattern: "src/app/**" },
+        // Idioma: catalogo, roteamento e negociacao. Nao importa nada do
+        // projeto — e importado pela tela, pelo controller e pelo proxy.
+        { type: "i18n", partialMatch: false, pattern: "src/i18n/**" },
         { type: "domain", partialMatch: false, pattern: "src/server/domain/**" },
         {
           type: "repository",
@@ -43,6 +46,9 @@ const eslintConfig = defineConfig([
       // `controller` puro, que a ui nao importa.
       "boundaries/files": [
         { category: "sessao", pattern: "src/app/api/v1/_shared/sessao.ts" },
+        // O proxy do Next e um arquivo unico na raiz de src: `elements` casa
+        // pasta, entao ele so pode ser descrito como categoria de arquivo.
+        { category: "proxy", pattern: "src/proxy.ts" },
       ],
     },
     rules: {
@@ -78,7 +84,7 @@ const eslintConfig = defineConfig([
               allow: {
                 to: {
                   element: {
-                    types: { anyOf: ["ui", "service", "domain"] },
+                    types: { anyOf: ["ui", "service", "domain", "i18n"] },
                   },
                 },
               },
@@ -93,7 +99,7 @@ const eslintConfig = defineConfig([
               allow: {
                 to: {
                   element: {
-                    types: { anyOf: ["controller", "service", "domain"] },
+                    types: { anyOf: ["controller", "service", "domain", "i18n"] },
                   },
                 },
               },
@@ -138,6 +144,40 @@ const eslintConfig = defineConfig([
             {
               from: { element: { type: "domain" } },
               allow: { to: { element: { type: "domain" } } },
+            },
+            {
+              from: { element: { type: "i18n" } },
+              allow: { to: { element: { type: "i18n" } } },
+            },
+            {
+              // O proxy so decide idioma e redireciona. Servico, repositorio e
+              // tela ficam do outro lado da linha.
+              from: { file: { categories: "proxy" } },
+              allow: { to: { element: { type: "i18n" } } },
+            },
+            {
+              // O `default: disallow` ja barraria, mas com mensagem generica: o
+              // proxy nao tem element, entao `{{from.element.type}}` sai vazio.
+              from: { file: { categories: "proxy" } },
+              disallow: {
+                to: {
+                  element: {
+                    types: {
+                      anyOf: [
+                        "ui",
+                        "controller",
+                        "service",
+                        "repository",
+                        "infra",
+                        "domain",
+                        "prisma",
+                      ],
+                    },
+                  },
+                },
+              },
+              message:
+                "O proxy so decide idioma e redireciona — nao importa '{{to.element.type}}'.",
             },
             {
               from: { element: { type: "!repository" } },
