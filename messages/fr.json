@@ -1,7 +1,7 @@
 {
   "meta": {
     "titulo": "Kidoku",
-    "descricao": "Un Letterboxd pour manga, manhwa et roman, avec une progression de lecture automatique et privée."
+    "descricao": "Un Letterboxd pour manga, manhwa et novel, avec une progression de lecture automatique et privée."
   },
   "cabecalho": {
     "navegacao": "Navigation",
@@ -28,14 +28,14 @@
       "JP": "Manga",
       "KR": "Manhwa",
       "CN": "Manhua",
-      "NOVEL": "Roman"
+      "NOVEL": "Novel"
     }
   },
   "erros": {
     "corpo_invalido": "corps invalide — JSON attendu",
     "pedido_invalido": "requête invalide",
     "anilist_id_invalido": "anilistId invalide",
-    "obra_invalida": "obra invalide",
+    "obra_invalida": "œuvre invalide",
     "status_invalido": "statut invalide",
     "comentario_invalido": "commentaire invalide",
     "cursor_invalido": "indique antesDe avec l’id du commentaire",
@@ -48,11 +48,11 @@
     "senha_longa": "72 caractères maximum",
     "credenciais_invalidas": "e-mail ou mot de passe incorrect",
     "sessao_necessaria": "connecte-toi pour continuer",
-    "obra_nao_encontrada": "obra introuvable",
-    "obra_fora_do_catalogo": "obra introuvable dans le catalogue",
+    "obra_nao_encontrada": "œuvre introuvable",
+    "obra_fora_do_catalogo": "œuvre introuvable dans le catalogue",
     "entrada_nao_encontrada": "entrée introuvable",
     "lista_nao_encontrada": "liste introuvable",
-    "lista_ou_obra_nao_encontrada": "liste ou obra introuvable",
+    "lista_ou_obra_nao_encontrada": "liste ou œuvre introuvable",
     "resenha_nao_encontrada": "critique introuvable",
     "comentario_nao_encontrado": "commentaire introuvable",
     "avaliacao_nao_encontrada": "note introuvable",
@@ -66,7 +66,7 @@
     "url_invalida": "URL de lecture invalide",
     "url_de_capitulo_invalida": "colle l’URL complète du chapitre 1, avec https://",
     "template_invalido": "modèle invalide — refais la dérivation",
-    "ordem_invalida": "l’ordre doit contenir exactement les obras de la liste",
+    "ordem_invalida": "l’ordre doit contenir exactement les œuvres de la liste",
     "comentario_tamanho_invalido": "commentaire vide ou trop long",
     "proprio_perfil": "impossible sur ton propre profil",
     "idioma_invalido": "langue non disponible",
@@ -130,8 +130,8 @@
       "verMenos": "Voir moins"
     },
     "obras": {
-      "titulo": "Obras",
-      "vazia": "Aucune obra de manga ou de roman enregistrée sur AniList."
+      "titulo": "Œuvres",
+      "vazia": "Aucune œuvre de manga ou de roman enregistrée sur AniList."
     }
   },
   "catalogo": {
@@ -139,9 +139,9 @@
       "titulo": "Catalogue"
     },
     "titulo": "Catalogue",
-    "subtitulo": "Recherche l’obra, ajoute-la à ta bibliothèque et ta lecture commence à compter.",
+    "subtitulo": "Recherche l’œuvre, ajoute-la à ta bibliothèque et ta lecture commence à compter.",
     "busca": {
-      "rotulo": "Rechercher une obra",
+      "rotulo": "Rechercher une œuvre",
       "placeholder": "Lookism, Solo Leveling, Berserk…",
       "buscando": "Recherche…"
     },
@@ -168,7 +168,7 @@
     },
     "destaques": "Populaires en ce moment",
     "cartao": {
-      "formatoGenerico": "Obra",
+      "formatoGenerico": "Œuvre",
       "capitulos": "{n, plural, one {{n} chapitre} other {{n} chapitres}}"
     },
     "botaoEstante": {
@@ -207,12 +207,12 @@
       "titulo": "Bibliothèque"
     },
     "titulo": "Bibliothèque",
-    "descricao": "Tes obras, par statut. Ta progression de lecture ne regarde que toi.",
-    "vazia": "Rien par ici pour l’instant. <catalogo>Recherche dans le catalogue</catalogo> et ajoute ta première obra.",
-    "obra": "Obra",
+    "descricao": "Tes œuvres, par statut. Ta progression de lecture ne regarde que toi.",
+    "vazia": "Rien par ici pour l’instant. <catalogo>Recherche dans le catalogue</catalogo> et ajoute ta première œuvre.",
+    "obra": "Œuvre",
     "capitulos": "{capitulo} chapitres",
     "lendoEm": "en lecture sur {host}",
-    "seletorStatus": "Statut de l’obra",
+    "seletorStatus": "Statut de l’œuvre",
     "filtros": {
       "rotulo": "Filtrer par statut",
       "tudo": "Tout"
@@ -227,7 +227,7 @@
       "cancelar": "annuler"
     },
     "continuar": {
-      "abrirObra": "Ouvrir l’obra ↗",
+      "abrirObra": "Ouvrir l’œuvre ↗",
       "abrindo": "Ouverture…",
       "proximo": "Continuer au ch. {capitulo} →",
       "ouCap": "ou ch.",
@@ -252,10 +252,10 @@
       "derivar": "Dériver",
       "confirmar": "Ce lien ouvre le chapitre 2 ? Alors :",
       "usar": "Utiliser cette source",
-      "paginaComCandidatos": "Aucun de ces liens n’ouvre le chapitre 2 ? Certains sites ne mettent pas le numéro dans l’URL — enregistre la page de l’obra et le suivi reste le même :",
-      "paginaSemCandidatos": "Ce site ne met pas le numéro du chapitre dans l’URL. Enregistre la page de l’obra : le bouton ouvre la page et tu indiques le chapitre ici.",
-      "paginaDica": "Astuce : pour enregistrer la page de la série (et non un chapitre), colle l’URL de l’obra dans le champ ci-dessus et dérive à nouveau.",
-      "salvarPagina": "Enregistrer la page de l’obra"
+      "paginaComCandidatos": "Aucun de ces liens n’ouvre le chapitre 2 ? Certains sites ne mettent pas le numéro dans l’URL — enregistre la page de l’œuvre et le suivi reste le même :",
+      "paginaSemCandidatos": "Ce site ne met pas le numéro du chapitre dans l’URL. Enregistre la page de l’œuvre : le bouton ouvre la page et tu indiques le chapitre ici.",
+      "paginaDica": "Astuce : pour enregistrer la page de la série (et non un chapitre), colle l’URL de l’œuvre dans le champ ci-dessus et dérive à nouveau.",
+      "salvarPagina": "Enregistrer la page de l’œuvre"
     },
     "erros": {
       "banco": "La bibliothèque dépend de la base de données, qui n’a pas répondu à l’instant. Réessaie dans un moment.",
@@ -290,8 +290,8 @@
     "boasVindas": {
       "titulo": "Bonne lecture, {username}.",
       "continuarLendo": "Continuer la lecture",
-      "semFonte": "Aucune lecture en cours n’a de source configurée pour l’instant — marque une obra comme En cours et configure sa source dans ta <estante>bibliothèque</estante>, et le bouton pour continuer apparaîtra ici.",
-      "estanteVazia": "Ta bibliothèque est vide — <catalogo>recherche dans le catalogue</catalogo> et ajoute ta première obra."
+      "semFonte": "Aucune lecture en cours n’a de source configurée pour l’instant — marque une œuvre comme En cours et configure sa source dans ta <estante>bibliothèque</estante>, et le bouton pour continuer apparaîtra ici.",
+      "estanteVazia": "Ta bibliothèque est vide — <catalogo>recherche dans le catalogue</catalogo> et ajoute ta première œuvre."
     },
     "apresentacao": {
       "descricao": "Enregistre tes lectures de manga, manhwa et roman. Progression automatique, historique privé, une bibliothèque bien à toi.",
@@ -319,7 +319,7 @@
     },
     "resenha": {
       "notaAria": "Note {nota} sur 5",
-      "spoiler": "Contient un spoiler — à lire sur la page de l’obra.",
+      "spoiler": "Contient un spoiler — à lire sur la page de l’œuvre.",
       "spoilerMostrar": "Contient un spoiler — afficher"
     },
     "feed": {
@@ -327,7 +327,7 @@
       "criouLista": "a créé la liste"
     },
     "contagem": {
-      "obras": "{n, plural, one {obra} other {obras}}",
+      "obras": "{n, plural, one {œuvre} other {œuvres}}",
       "curtidas": "{n, plural, other {j’aime}}",
       "curtidasLeitorDeTela": "{n, plural, other {j’aime}}"
     },
@@ -372,8 +372,8 @@
       "meta": {
         "titulo": "Liste"
       },
-      "autoria": "par <autor>{username}</autor> · {n, plural, one {# obra} other {# obras}}",
-      "vazia": "Liste vide — ajoute des obras avec le bouton de liste sur la page de chaque obra.",
+      "autoria": "par <autor>{username}</autor> · {n, plural, one {# œuvre} other {# œuvres}}",
+      "vazia": "Liste vide — ajoute des œuvres avec le bouton de liste sur la page de chaque œuvre.",
       "remover": "retirer",
       "curtida": {
         "curtir": "aimer la liste",
@@ -399,13 +399,13 @@
   },
   "obra": {
     "meta": {
-      "titulo": "Obra"
+      "titulo": "Œuvre"
     },
-    "indisponivel": "AniList n’a pas répondu cette fois et cette obra n’est pas encore dans notre cache. Réessaie dans quelques instants.",
+    "indisponivel": "AniList n’a pas répondu cette fois et cette œuvre n’est pas encore dans notre cache. Réessaie dans quelques instants.",
     "autoria": "par",
-    "formatoDesconhecido": "Obra",
+    "formatoDesconhecido": "Œuvre",
     "curiosidades": "Anecdotes",
-    "similares": "Obras similaires",
+    "similares": "Œuvres similaires",
     "contagem": {
       "capitulos": "{n, plural, one {{n} chapitre} other {{n} chapitres}}",
       "aberturas": "{n, plural, one {{n} consultation} other {{n} consultations}}",
@@ -443,7 +443,7 @@
     },
     "resenhas": {
       "titulo": "Critiques",
-      "vazio": "Pas encore de critique par ici — note l’obra avec quelques mots et la tienne apparaît pour tout le monde.",
+      "vazio": "Pas encore de critique par ici — note l’œuvre avec quelques mots et la tienne apparaît pour tout le monde.",
       "minha": "toi",
       "nota": "Note {nota} sur 5",
       "spoiler": "cette critique contient un spoiler — afficher",
@@ -516,9 +516,9 @@
     },
     "avaliadas": {
       "titulo": "Notées",
-      "vaziaComFiltro": "Aucune obra avec ce filtre.",
-      "vaziaPropria": "Tu n’as encore rien noté. Note une obra et elle apparaît ici.",
-      "vaziaOutro": "{username} n’a encore noté aucune obra."
+      "vaziaComFiltro": "Aucune œuvre avec ce filtre.",
+      "vaziaPropria": "Tu n’as encore rien noté. Note une œuvre et elle apparaît ici.",
+      "vaziaOutro": "{username} n’a encore noté aucune œuvre."
     },
     "filtros": {
       "ordenar": "Trier",
@@ -534,7 +534,7 @@
     },
     "resenhas": {
       "titulo": "Critiques récentes",
-      "vaziaPropria": "Tu n’as pas encore écrit de critique. Note une obra avec un texte et elle apparaît ici.",
+      "vaziaPropria": "Tu n’as pas encore écrit de critique. Note une œuvre avec un texte et elle apparaît ici.",
       "vaziaOutro": "{username} n’a pas encore écrit de critique.",
       "spoiler": "Contient un spoiler — afficher",
       "curtidas": "{n, plural, other {{valor} j’aime}}"
@@ -543,7 +543,7 @@
       "titulo": "Listes",
       "vaziaPropria": "Tu n’as pas encore créé de liste. <link>Créer la première</link>",
       "vaziaOutro": "{username} n’a pas encore créé de liste.",
-      "obras": "{n, plural, one {{valor} obra} other {{valor} obras}}"
+      "obras": "{n, plural, one {{valor} œuvre} other {{valor} œuvres}}"
     }
   }
 }

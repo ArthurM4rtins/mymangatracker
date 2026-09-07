@@ -1,7 +1,7 @@
 {
   "meta": {
     "titulo": "Kidoku",
-    "descricao": "Ein Letterboxd für Manga, Manhwa und Romane, mit automatischem und privatem Lesefortschritt."
+    "descricao": "Ein Letterboxd für Manga, Manhwa und Novel, mit automatischem und privatem Lesefortschritt."
   },
   "cabecalho": {
     "navegacao": "Navigation",
@@ -19,23 +19,23 @@
     "voltar": "Zurück",
     "status": {
       "READING": "Am Lesen",
-      "COMPLETED": "Abgeschlossen",
+      "COMPLETED": "Fertig",
       "PLANNED": "Geplant",
       "PAUSED": "Pausiert",
-      "DROPPED": "Abgebrochen"
+      "DROPPED": "Abbruch"
     },
     "formato": {
       "JP": "Manga",
       "KR": "Manhwa",
       "CN": "Manhua",
-      "NOVEL": "Roman"
+      "NOVEL": "Novel"
     }
   },
   "erros": {
     "corpo_invalido": "ungültiger Body — JSON erwartet",
     "pedido_invalido": "ungültige Anfrage",
     "anilist_id_invalido": "ungültige anilistId",
-    "obra_invalida": "ungültige Obra",
+    "obra_invalida": "ungültiges Werk",
     "status_invalido": "ungültiger Status",
     "comentario_invalido": "ungültiger Kommentar",
     "cursor_invalido": "gib antesDe mit der Kommentar-ID an",
@@ -48,11 +48,11 @@
     "senha_longa": "höchstens 72 Zeichen",
     "credenciais_invalidas": "E-Mail oder Passwort falsch",
     "sessao_necessaria": "melde dich an, um fortzufahren",
-    "obra_nao_encontrada": "Obra nicht gefunden",
-    "obra_fora_do_catalogo": "Obra nicht im Katalog gefunden",
+    "obra_nao_encontrada": "Werk nicht gefunden",
+    "obra_fora_do_catalogo": "Werk nicht im Katalog gefunden",
     "entrada_nao_encontrada": "Eintrag nicht gefunden",
     "lista_nao_encontrada": "Liste nicht gefunden",
-    "lista_ou_obra_nao_encontrada": "Liste oder Obra nicht gefunden",
+    "lista_ou_obra_nao_encontrada": "Liste oder Werk nicht gefunden",
     "resenha_nao_encontrada": "Rezension nicht gefunden",
     "comentario_nao_encontrado": "Kommentar nicht gefunden",
     "avaliacao_nao_encontrada": "Bewertung nicht gefunden",
@@ -66,7 +66,7 @@
     "url_invalida": "ungültige Lese-URL",
     "url_de_capitulo_invalida": "füge die vollständige URL von Kapitel 1 ein, mit https://",
     "template_invalido": "ungültiges Template — leite es neu ab",
-    "ordem_invalida": "die Reihenfolge muss genau die Obras der Liste enthalten",
+    "ordem_invalida": "die Reihenfolge muss genau die Werke der Liste enthalten",
     "comentario_tamanho_invalido": "Kommentar leer oder zu lang",
     "proprio_perfil": "gilt nicht für dein eigenes Profil",
     "idioma_invalido": "Sprache nicht verfügbar",
@@ -130,8 +130,8 @@
       "verMenos": "Weniger anzeigen"
     },
     "obras": {
-      "titulo": "Obras",
-      "vazia": "Auf AniList sind keine Obras vom Typ Manga oder Roman eingetragen."
+      "titulo": "Werke",
+      "vazia": "Auf AniList sind keine Werke vom Typ Manga oder Roman eingetragen."
     }
   },
   "catalogo": {
@@ -139,9 +139,9 @@
       "titulo": "Katalog"
     },
     "titulo": "Katalog",
-    "subtitulo": "Such die Obra, stell sie ins Regal und deine Lektüre zählt ab sofort mit.",
+    "subtitulo": "Such das Werk, stell es ins Regal und deine Lektüre zählt ab sofort mit.",
     "busca": {
-      "rotulo": "Obra suchen",
+      "rotulo": "Werk suchen",
       "placeholder": "Lookism, Solo Leveling, Berserk…",
       "buscando": "Wird gesucht…"
     },
@@ -168,7 +168,7 @@
     },
     "destaques": "Gerade beliebt",
     "cartao": {
-      "formatoGenerico": "Obra",
+      "formatoGenerico": "Werk",
       "capitulos": "{n, plural, one {{n} Kapitel} other {{n} Kapitel}}"
     },
     "botaoEstante": {
@@ -207,12 +207,12 @@
       "titulo": "Regal"
     },
     "titulo": "Regal",
-    "descricao": "Deine Obras, nach Status. Deinen Lesefortschritt siehst nur du.",
-    "vazia": "Hier ist noch nichts. <catalogo>Suche im Katalog</catalogo> und füge die erste Obra hinzu.",
-    "obra": "Obra",
+    "descricao": "Deine Werke, nach Status. Deinen Lesefortschritt siehst nur du.",
+    "vazia": "Hier ist noch nichts. <catalogo>Suche im Katalog</catalogo> und füge das erste Werk hinzu.",
+    "obra": "Werk",
     "capitulos": "{capitulo} Kapitel",
     "lendoEm": "Gelesen auf {host}",
-    "seletorStatus": "Status der Obra",
+    "seletorStatus": "Status des Werks",
     "filtros": {
       "rotulo": "Nach Status filtern",
       "tudo": "Alle"
@@ -227,7 +227,7 @@
       "cancelar": "abbrechen"
     },
     "continuar": {
-      "abrirObra": "Obra öffnen ↗",
+      "abrirObra": "Werk öffnen ↗",
       "abrindo": "Wird geöffnet…",
       "proximo": "Weiter mit Kap. {capitulo} →",
       "ouCap": "oder Kap.",
@@ -252,10 +252,10 @@
       "derivar": "Ableiten",
       "confirmar": "Öffnet dieser Link Kapitel 2? Dann:",
       "usar": "Diese Lesequelle verwenden",
-      "paginaComCandidatos": "Keiner davon öffnet Kapitel 2? Manche Websites schreiben die Nummer nicht in die URL — speichere die Seite der Obra, und dein Fortschritt wird genauso festgehalten:",
-      "paginaSemCandidatos": "Diese Website schreibt die Kapitelnummer nicht in die URL. Speichere die Seite der Obra: Der Button öffnet die Seite, und das Kapitel trägst du hier ein.",
-      "paginaDica": "Tipp: Um die Seite der Serie zu speichern (und kein Kapitel), füge die URL der Obra oben ins Feld ein und leite noch einmal ab.",
-      "salvarPagina": "Seite der Obra speichern"
+      "paginaComCandidatos": "Keiner davon öffnet Kapitel 2? Manche Websites schreiben die Nummer nicht in die URL — speichere die Seite des Werks, und dein Fortschritt wird genauso festgehalten:",
+      "paginaSemCandidatos": "Diese Website schreibt die Kapitelnummer nicht in die URL. Speichere die Seite des Werks: Der Button öffnet die Seite, und das Kapitel trägst du hier ein.",
+      "paginaDica": "Tipp: Um die Seite der Serie zu speichern (und kein Kapitel), füge die URL des Werks oben ins Feld ein und leite noch einmal ab.",
+      "salvarPagina": "Seite des Werks speichern"
     },
     "erros": {
       "banco": "Das Regal hängt von der Datenbank ab, die gerade nicht geantwortet hat. Versuche es gleich noch einmal.",
@@ -290,8 +290,8 @@
     "boasVindas": {
       "titulo": "Viel Spaß beim Lesen, {username}.",
       "continuarLendo": "Weiterlesen",
-      "semFonte": "Gerade hat keine Obra, die du liest, eine Lesequelle — markiere eine Obra als „Am Lesen“ und stelle die Lesequelle im <estante>Regal</estante> ein, dann erscheint hier der Button zum Weiterlesen.",
-      "estanteVazia": "Dein Regal ist leer — <catalogo>such im Katalog</catalogo> und füge die erste Obra hinzu."
+      "semFonte": "Gerade hat kein Werk, das du liest, eine Lesequelle — markiere ein Werk als „Am Lesen“ und stelle die Lesequelle im <estante>Regal</estante> ein, dann erscheint hier der Button zum Weiterlesen.",
+      "estanteVazia": "Dein Regal ist leer — <catalogo>such im Katalog</catalogo> und füge das erste Werk hinzu."
     },
     "apresentacao": {
       "descricao": "Halte deine Lektüre von Manga, Manhwa und Romanen fest. Automatischer Fortschritt, privater Leseverlauf, dein eigenes Regal.",
@@ -319,7 +319,7 @@
     },
     "resenha": {
       "notaAria": "Bewertung {nota} von 5",
-      "spoiler": "Enthält Spoiler — lies die Rezension auf der Seite der Obra.",
+      "spoiler": "Enthält Spoiler — lies die Rezension auf der Seite des Werks.",
       "spoilerMostrar": "Enthält Spoiler — anzeigen"
     },
     "feed": {
@@ -327,7 +327,7 @@
       "criouLista": "erstellte die Liste"
     },
     "contagem": {
-      "obras": "{n, plural, one {Obra} other {Obras}}",
+      "obras": "{n, plural, one {Werk} other {Werke}}",
       "curtidas": "{n, plural, one {Like} other {Likes}}",
       "curtidasLeitorDeTela": "{n, plural, one {Like} other {Likes}}"
     },
@@ -372,8 +372,8 @@
       "meta": {
         "titulo": "Liste"
       },
-      "autoria": "von <autor>{username}</autor> · {n, plural, one {# Obra} other {# Obras}}",
-      "vazia": "Leere Liste — füge Obras über den Listen-Button auf der Seite jeder Obra hinzu.",
+      "autoria": "von <autor>{username}</autor> · {n, plural, one {# Werk} other {# Werke}}",
+      "vazia": "Leere Liste — füge Werke über den Listen-Button auf der Seite jedes Werks hinzu.",
       "remover": "entfernen",
       "curtida": {
         "curtir": "die Liste liken",
@@ -399,13 +399,13 @@
   },
   "obra": {
     "meta": {
-      "titulo": "Obra"
+      "titulo": "Werk"
     },
-    "indisponivel": "AniList hat gerade nicht geantwortet und diese Obra ist noch nicht in unserem Cache. Versuch es gleich noch mal.",
+    "indisponivel": "AniList hat gerade nicht geantwortet und dieses Werk ist noch nicht in unserem Cache. Versuch es gleich noch mal.",
     "autoria": "von",
-    "formatoDesconhecido": "Obra",
+    "formatoDesconhecido": "Werk",
     "curiosidades": "Wissenswertes",
-    "similares": "Ähnliche Obras",
+    "similares": "Ähnliche Werke",
     "contagem": {
       "capitulos": "{n, plural, one {{n} Kapitel} other {{n} Kapitel}}",
       "aberturas": "{n, plural, one {{n} Aufruf} other {{n} Aufrufe}}",
@@ -414,8 +414,8 @@
       "comentarios": "{n, plural, one {{n} Kommentar} other {{n} Kommentare}}"
     },
     "painel": {
-      "convite": "<entrar>Melde dich an</entrar>, um sie ins Regal zu stellen, zu bewerten und deine Lektüre festzuhalten.",
-      "adicionar": "Stell sie ins Regal, um sie zu bewerten und deine Lektüre festzuhalten."
+      "convite": "<entrar>Melde dich an</entrar>, um es ins Regal zu stellen, zu bewerten und deine Lektüre festzuhalten.",
+      "adicionar": "Stell es ins Regal, um es zu bewerten und deine Lektüre festzuhalten."
     },
     "historico": {
       "titulo": "Leseverlauf",
@@ -516,9 +516,9 @@
     },
     "avaliadas": {
       "titulo": "Bewertet",
-      "vaziaComFiltro": "Keine Obra mit diesem Filter.",
-      "vaziaPropria": "Du hast noch nichts bewertet. Bewerte eine Obra und sie erscheint hier.",
-      "vaziaOutro": "{username} hat noch keine Obra bewertet."
+      "vaziaComFiltro": "Kein Werk mit diesem Filter.",
+      "vaziaPropria": "Du hast noch nichts bewertet. Bewerte ein Werk und es erscheint hier.",
+      "vaziaOutro": "{username} hat noch kein Werk bewertet."
     },
     "filtros": {
       "ordenar": "Sortieren",
@@ -534,7 +534,7 @@
     },
     "resenhas": {
       "titulo": "Neueste Rezensionen",
-      "vaziaPropria": "Du hast noch keine Rezension geschrieben. Bewerte eine Obra mit Text und sie erscheint hier.",
+      "vaziaPropria": "Du hast noch keine Rezension geschrieben. Bewerte ein Werk mit Text und es erscheint hier.",
       "vaziaOutro": "{username} hat noch keine Rezension geschrieben.",
       "spoiler": "Enthält Spoiler — anzeigen",
       "curtidas": "{n, plural, one {{valor} Like} other {{valor} Likes}}"
@@ -543,7 +543,7 @@
       "titulo": "Listen",
       "vaziaPropria": "Du hast noch keine Liste erstellt. <link>Erstelle die erste</link>",
       "vaziaOutro": "{username} hat noch keine Liste erstellt.",
-      "obras": "{n, plural, one {{valor} Obra} other {{valor} Obras}}"
+      "obras": "{n, plural, one {{valor} Werk} other {{valor} Werke}}"
     }
   }
 }
