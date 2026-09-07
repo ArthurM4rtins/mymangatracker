@@ -33,8 +33,110 @@ function folhas(arvore: Arvore, prefixo = ""): Map<string, string> {
   return mapa;
 }
 
+/**
+ * Os nomes de argumento de uma mensagem ICU, em ordem.
+ *
+ * Não dá para fazer isso com regex: em `{n, plural, =1 {curtida} other
+ * {curtidas}}` as chaves de `{curtida}` são o corpo do ramo, não um argumento,
+ * e uma regex de `{palavra}` conta as duas coisas igual. Então o texto é lido
+ * de verdade — chave em posição de argumento é argumento, chave depois de um
+ * seletor de plural abre corpo de mensagem, que pode ter argumentos dentro
+ * (é o caso de `{n, plural, one {<forte>{valor}</forte> lista} ...}`).
+ */
+function argumentosIcu(mensagem: string): string[] {
+  const nomes: string[] = [];
+
+  const espacos = (i: number) => {
+    while (i < mensagem.length && /\s/.test(mensagem[i])) i += 1;
+    return i;
+  };
+
+  const palavra = (i: number) => {
+    let fim = i;
+    while (fim < mensagem.length && /[^\s,{}]/.test(mensagem[fim])) fim += 1;
+    return fim;
+  };
+
+  /** Corpo de mensagem: `{` aqui abre um argumento. Para no `}` que o fecha. */
+  function texto(i: number): number {
+    while (i < mensagem.length) {
+      if (mensagem[i] === "}") return i;
+      if (mensagem[i] === "{") i = argumento(i + 1);
+      else i += 1;
+    }
+    return i;
+  }
+
+  /** Já dentro de `{`: lê o nome e, se houver, o tipo e as opções. */
+  function argumento(i: number): number {
+    i = espacos(i);
+    const fim = palavra(i);
+    nomes.push(mensagem.slice(i, fim));
+    i = espacos(fim);
+
+    if (mensagem[i] !== ",") return i + 1;
+
+    i = espacos(i + 1);
+    const fimDoTipo = palavra(i);
+    const tipo = mensagem.slice(i, fimDoTipo);
+    i = espacos(fimDoTipo);
+
+    if (mensagem[i] !== ",") return i + 1;
+
+    i = espacos(i + 1);
+
+    if (tipo !== "plural" && tipo !== "select" && tipo !== "selectordinal") {
+      // Estilo simples (`{quando, date, short}`): segue até fechar.
+      while (i < mensagem.length && mensagem[i] !== "}") i += 1;
+      return i + 1;
+    }
+
+    // `seletor {corpo}` até fechar o argumento.
+    while (i < mensagem.length && mensagem[i] !== "}") {
+      i = espacos(palavra(espacos(i)));
+
+      if (mensagem[i] !== "{") return i;
+
+      i = texto(i + 1) + 1;
+      i = espacos(i);
+    }
+
+    return i + 1;
+  }
+
+  texto(0);
+
+  return nomes.sort();
+}
+
 const CAMINHOS_PT = caminhos(ptBR as Arvore);
 const CAMINHOS_EN = caminhos(en as Arvore);
+
+describe("leitura de argumentos ICU", () => {
+  it("acha o argumento simples", () => {
+    expect(argumentosIcu("Nada encontrado para {termo}.")).toEqual(["termo"]);
+  });
+
+  it("não confunde corpo de ramo do plural com argumento", () => {
+    expect(argumentosIcu("{n, plural, =1 {curtida} other {curtidas}}")).toEqual(["n"]);
+    expect(argumentosIcu("{n, plural, one {like} other {likes}}")).toEqual(["n"]);
+  });
+
+  it("acha argumento dentro do ramo, junto da marcação", () => {
+    expect(
+      argumentosIcu("{n, plural, one {<forte>{valor}</forte> lista} other {<forte>{valor}</forte> listas}}"),
+    ).toEqual(["n", "valor", "valor"]);
+  });
+
+  it("separa quem realmente diverge", () => {
+    const pt = argumentosIcu("por <autor>{username}</autor> · {n, plural, =1 {# obra} other {# obras}}");
+    const bom = argumentosIcu("by <autor>{username}</autor> · {n, plural, one {# obra} other {# obras}}");
+    const ruim = argumentosIcu("by <autor>{user}</autor> · {n, plural, one {# obra} other {# obras}}");
+
+    expect(bom).toEqual(pt);
+    expect(ruim).not.toEqual(pt);
+  });
+});
 
 describe("catálogos de mensagens", () => {
   it("tem pelo menos uma chave", () => {
@@ -65,16 +167,12 @@ describe("catálogos de mensagens", () => {
     const pt = folhas(ptBR as Arvore);
     const emIngles = folhas(en as Arvore);
 
-    // `{n}`, `{n, plural, ...}` — só o nome do argumento importa para a paridade.
-    const argumentos = (mensagem: string) =>
-      [...mensagem.matchAll(/\{\s*(\w+)\s*[,}]/g)].map((m) => m[1]).sort();
-
     const divergentes = [...pt].filter(([caminho, valor]) => {
       const outro = emIngles.get(caminho);
 
       return (
         outro !== undefined &&
-        argumentos(valor).join("|") !== argumentos(outro).join("|")
+        argumentosIcu(valor).join("|") !== argumentosIcu(outro).join("|")
       );
     });
 
