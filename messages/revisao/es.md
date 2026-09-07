@@ -10,6 +10,21 @@ os agentes marcaram, chave a chave, onde a tradução foi arriscada e por quê.
 Corrigir é trocar um valor em `messages/es.json`. As chaves são as mesmas em
 todos os idiomas, e `tests/i18n/` impede que a correção quebre os outros.
 
+
+> **ATUALIZAÇÃO — duas pendências deste guia já foram RESOLVIDAS.**
+>
+> **1. O termo `obra`.** Quando este guia foi escrito, `obra` estava mantida em
+> português em todos os idiomas, e várias entradas abaixo comentam isso. A decisão
+> mudou: **cada idioma passou a usar a palavra dele.** Não afeta o espanhol: `obra` já é palavra do espanhol e foi mantida.
+> Ignore as observações abaixo que pedem para "manter obra" ou que a marcam como
+> pendente.
+>
+> **2. `comum.formato.NOVEL`.** Agora é **`Novel`** em todos os idiomas, pelo mesmo
+> motivo de manga/manhwa/manhua: é empréstimo do nicho, não palavra a traduzir.
+> As entradas abaixo que discutem `Novela`/`Roman` estão superadas.
+>
+> O resto do guia continua válido.
+
 | tipo | chaves |
 |---|---|
 | Falso amigo — o mais perigoso | 13 |
