@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { Link } from "@/i18n/navigation";
+import { alternativasDeIdioma, Link } from "@/i18n/navigation";
 import { idiomaDoSegmento } from "@/i18n/routing";
 import { autorParaPaginaDoSistema } from "@/server/services/autor.service";
 import { BioDoAutor } from "./bio-do-autor";
@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   if (!Number.isInteger(id) || id <= 0)
   {
-    return { title: t("meta.titulo") };
+    return { title: t("meta.titulo"), alternates: alternativasDeIdioma(`/autor/${staffId}`) };
   }
 
   const resultado = await carregarAutor(id);

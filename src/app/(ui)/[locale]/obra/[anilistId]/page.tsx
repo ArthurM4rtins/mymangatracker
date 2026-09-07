@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { Link } from "@/i18n/navigation";
+import { alternativasDeIdioma, Link } from "@/i18n/navigation";
 import {
   obraParaPaginaDoSistema,
   type MinhaRelacao,
@@ -52,7 +52,7 @@ export async function generateMetadata({
 
   if (!Number.isInteger(id) || id <= 0)
   {
-    return { title: t("meta.titulo") };
+    return { title: t("meta.titulo"), alternates: alternativasDeIdioma(`/obra/${anilistId}`) };
   }
 
   const userId = await usuarioDaSessao();
@@ -63,6 +63,7 @@ export async function generateMetadata({
       resultado.estado === "ok"
         ? resultado.obra.titleEnglish ?? resultado.obra.titleRomaji
         : t("meta.titulo"),
+    alternates: alternativasDeIdioma(`/obra/${anilistId}`),
   };
 }
 

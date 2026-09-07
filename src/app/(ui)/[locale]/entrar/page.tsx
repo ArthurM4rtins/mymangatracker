@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { Link } from "@/i18n/navigation";
+import { alternativasDeIdioma, Link } from "@/i18n/navigation";
 import { FormularioDeLogin } from "./formulario";
 import { idiomaDoSegmento } from "@/i18n/routing";
 
@@ -12,7 +12,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "entrar" });
 
-  return { title: t("meta.titulo") };
+  return { title: t("meta.titulo"), alternates: alternativasDeIdioma("/entrar") };
 }
 
 type Props = {

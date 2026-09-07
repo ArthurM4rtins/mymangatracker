@@ -6,7 +6,7 @@ import {
   type EntradaDaEstante,
   type StatusDaEstante,
 } from "@/server/services/estante.service";
-import { Link, redirect } from "@/i18n/navigation";
+import { alternativasDeIdioma, Link, redirect } from "@/i18n/navigation";
 import { idiomaDoSegmento } from "@/i18n/routing";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { Avaliar } from "./avaliar";
@@ -25,7 +25,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "estante" });
 
-  return { title: t("meta.titulo") };
+  return { title: t("meta.titulo"), alternates: alternativasDeIdioma("/estante") };
 }
 
 /** Os países que têm rótulo de formato; qualquer outro fica sem selo. */
