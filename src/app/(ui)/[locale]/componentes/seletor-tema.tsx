@@ -1,14 +1,16 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useSyncExternalStore } from "react";
 
 // Cada tema vira uma bolinha de duas metades: fundo à esquerda, acento à
 // direita — as cores são as NOSSAS variáveis de tema (swatch funcional, não o
 // trio do Letterboxd; ver lessons.md).
+// O nome de cada tema vem do catálogo, pela chave `tema.nomes.<id>`.
 const TEMAS = [
-  { id: "sumi", rotulo: "Sumi", fundo: "#faf7f2", acento: "#d6402b" },
-  { id: "noturno", rotulo: "Noturno", fundo: "#12141f", acento: "#f0a842" },
-  { id: "matcha", rotulo: "Matcha", fundo: "#343a2f", acento: "#a3c585" },
+  { id: "sumi", fundo: "#faf7f2", acento: "#d6402b" },
+  { id: "noturno", fundo: "#12141f", acento: "#f0a842" },
+  { id: "matcha", fundo: "#343a2f", acento: "#a3c585" },
 ] as const;
 
 type Tema = (typeof TEMAS)[number]["id"];
@@ -48,11 +50,13 @@ function escolher(tema: Tema) {
 
 export function SeletorTema() {
   const ativo = useSyncExternalStore(assinar, lerTemaAtivo, lerTemaNoServidor);
+  const t = useTranslations("componentes");
 
   return (
-    <div role="group" aria-label="Tema do site" className="flex items-center gap-1.5">
+    <div role="group" aria-label={t("tema.grupo")} className="flex items-center gap-1.5">
       {TEMAS.map(function (tema) {
         const selecionado = ativo === tema.id;
+        const rotulo = t(`tema.nomes.${tema.id}`);
         return (
           <button
             key={tema.id}
@@ -61,8 +65,8 @@ export function SeletorTema() {
               escolher(tema.id);
             }}
             aria-pressed={selecionado}
-            aria-label={`Tema ${tema.rotulo}`}
-            title={tema.rotulo}
+            aria-label={t("tema.escolher", { nome: rotulo })}
+            title={rotulo}
             className={`h-5 w-5 rounded-full border transition-transform hover:scale-110 ${
               selecionado ? "border-acento ring-2 ring-acento/50" : "border-borda"
             }`}

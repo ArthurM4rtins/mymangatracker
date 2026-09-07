@@ -1,4 +1,6 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+
+import { Link } from "@/i18n/navigation";
 
 // Marca do Kidoku: o double-check do "visualizado" (primeiro visto no acento do
 // tema, segundo na cor do texto), o nome desenhado no mesmo traço monolinha do
@@ -10,12 +12,14 @@ import Link from "next/link";
 // Métrica do desenho, numa caixa de 100 de altura: ascendente em y=8, altura-x
 // em y=36, base em y=84. As barrigas do d, do o e do u são traço, não
 // preenchimento — o anel passa da base de propósito, como no estudo.
-export function Logo() {
+export async function Logo() {
+  const t = await getTranslations("componentes");
+
   return (
     <Link
       href="/"
       className="inline-flex items-center gap-[7px]"
-      aria-label="Kidoku — início"
+      aria-label={t("logo.rotulo")}
     >
       <svg
         viewBox="0 0 76 36"

@@ -5,12 +5,15 @@
  * histórico do navegador. Na home não aparece, e sem histórico (página aberta
  * direto) leva para a home em vez de sair do site.
  */
-import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+
+import { usePathname, useRouter } from "@/i18n/navigation";
 
 export function BotaoVoltar()
 {
   const roteador = useRouter();
   const caminho = usePathname();
+  const t = useTranslations("comum");
 
   if (caminho === "/")
   {
@@ -32,8 +35,8 @@ export function BotaoVoltar()
     <button
       type="button"
       onClick={voltar}
-      aria-label="Voltar"
-      title="Voltar"
+      aria-label={t("voltar")}
+      title={t("voltar")}
       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-texto transition-colors hover:text-acento"
     >
       <svg

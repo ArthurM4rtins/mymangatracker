@@ -7,6 +7,7 @@
  * e no foco, setas nas laterais, loop cíclico. `prefers-reduced-motion`
  * desliga o avanço automático. Os cards já vêm renderizados do servidor.
  */
+import { useTranslations } from "next-intl";
 import {
   useCallback,
   useEffect,
@@ -159,11 +160,13 @@ export function Carrossel({
 
 function Seta({ lado, aoClicar }: { lado: "esquerda" | "direita"; aoClicar: () => void })
 {
+  const t = useTranslations("componentes");
+
   return (
     <button
       type="button"
       onClick={aoClicar}
-      aria-label={lado === "esquerda" ? "Anterior" : "Próximo"}
+      aria-label={lado === "esquerda" ? t("carrossel.anterior") : t("carrossel.proximo")}
       // "Liquid glass": vidro translúcido com blur do que passa atrás, borda
       // clara fina e um fio de luz na parte de cima.
       className={`absolute top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-texto shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(0,0,0,0.15),0_8px_24px_rgba(0,0,0,0.35)] backdrop-blur-md backdrop-saturate-150 transition-all hover:scale-105 hover:border-white/40 hover:bg-white/20 hover:text-acento active:scale-95 ${

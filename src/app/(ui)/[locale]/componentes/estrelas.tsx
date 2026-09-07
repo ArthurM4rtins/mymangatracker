@@ -7,6 +7,7 @@
  *
  * O glyph vive num lugar só: trocar SIMBOLO muda o site inteiro.
  */
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 export const SIMBOLO = "✦";
@@ -22,13 +23,14 @@ export function SeletorDeEstrelas({
 })
 {
   const [preview, setPreview] = useState<number | null>(null);
+  const t = useTranslations("componentes");
   const exibida = preview ?? nota;
 
   return (
     <div className="flex items-center gap-2">
       <div
         role="group"
-        aria-label="Nota de 0,5 a 5"
+        aria-label={t("estrelas.grupo")}
         className="flex"
         onMouseLeave={function () { setPreview(null); }}
       >
@@ -55,7 +57,7 @@ export function SeletorDeEstrelas({
               )}
               <button
                 type="button"
-                aria-label={`${posicao - 0.5} de 5`}
+                aria-label={t("estrelas.nota", { nota: `${posicao - 0.5}` })}
                 onMouseEnter={function () { setPreview(posicao - 0.5); }}
                 onFocus={function () { setPreview(posicao - 0.5); }}
                 onClick={function () { aoEscolher(posicao - 0.5); }}
@@ -63,7 +65,7 @@ export function SeletorDeEstrelas({
               />
               <button
                 type="button"
-                aria-label={`${posicao} de 5`}
+                aria-label={t("estrelas.nota", { nota: `${posicao}` })}
                 onMouseEnter={function () { setPreview(posicao); }}
                 onFocus={function () { setPreview(posicao); }}
                 onClick={function () { aoEscolher(posicao); }}
@@ -74,7 +76,7 @@ export function SeletorDeEstrelas({
         })}
       </div>
       <span className="text-xs tabular-nums text-texto-suave">
-        {exibida === null ? "sem nota" : exibida.toLocaleString("pt-BR")}
+        {exibida === null ? t("estrelas.semNota") : exibida.toLocaleString("pt-BR")}
       </span>
       {nota !== null && (
         <button
@@ -82,7 +84,7 @@ export function SeletorDeEstrelas({
           onClick={function () { aoEscolher(null); }}
           className="text-xs text-texto-suave underline underline-offset-4"
         >
-          limpar
+          {t("estrelas.limpar")}
         </button>
       )}
     </div>

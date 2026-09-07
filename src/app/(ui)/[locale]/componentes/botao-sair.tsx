@@ -1,13 +1,16 @@
 "use client";
 
 /** Sair apaga o cookie de fato (DELETE /api/v1/sessao), não só redireciona. */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+
+import { useRouter } from "@/i18n/navigation";
 
 export function BotaoSair()
 {
   const roteador = useRouter();
   const [saindo, setSaindo] = useState(false);
+  const t = useTranslations("componentes");
 
   async function sair()
   {
@@ -29,8 +32,8 @@ export function BotaoSair()
       type="button"
       onClick={sair}
       disabled={saindo}
-      aria-label="Sair"
-      title="Sair"
+      aria-label={t("sair")}
+      title={t("sair")}
       className="flex h-8 w-8 items-center justify-center rounded-md text-texto-suave transition-colors hover:text-texto disabled:opacity-60"
     >
       <IconeLogout />
