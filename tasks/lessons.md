@@ -285,3 +285,61 @@ versionado no vault (`Obsidian/04. BUGS/Criar Issue Antes de Fazer/` quando os
 achados precisam virar issue antes de alguem pegar) mais uma issue por achado,
 com o `.md` como fonte de verdade e a issue apontando para ele. Nao propor
 artifact para entregavel que o time vai perseguir depois.
+
+
+## `--delete-branch` mata a PR de cima numa pilha (07/09/2026)
+
+**O que tentei:** mergear seis PRs empilhados com
+`gh pr merge <n> --merge --delete-branch`, na ordem.
+
+**O que aconteceu:** o merge do primeiro apagou `feature/i18n-infra`, que era a
+BASE do segundo. O GitHub nao retargetou o #150 para a `main` — **fechou** ele.
+E PR fechada com base inexistente nao reabre: `reopenPullRequest` responde
+"Could not open the pull request". Foi preciso abrir um PR novo (#155) da mesma
+branch para a `main`.
+
+**A regra:** em pilha de PRs, **retargetar antes de mergear**, e so apagar branch
+no fim.
+
+```bash
+# ordem certa
+gh pr edit 151 --base main
+gh pr edit 152 --base main   # todas de uma vez, antes de qualquer merge
+gh pr merge 150 --merge      # SEM --delete-branch
+gh pr merge 151 --merge
+...
+git push origin --delete feature/x  # limpeza so no fim
+```
+
+Nenhum commit se perde nesse acidente — a branch de cima continua intacta —, mas
+o PR e sua descricao vao junto, e a auditoria do historico fica com um numero
+fechado sem merge no meio.
+
+
+## Verde em lint, teste e build nao prova que a saida esta certa (07/09/2026)
+
+Tres defeitos da #116 passaram pelos tres portoes. Todos apareceram so ao olhar
+o que o servidor de verdade devolveu:
+
+1. **O matcher do proxy barrava todo link antigo.** `/catalogo` dava 404: o ponto
+   escapado virou ponto solto no literal TypeScript (`"\."` -> `"."`) e o
+   lookahead negativo passou a excluir quase toda rota. O teste que consertou
+   **le `src/proxy.ts`**, nao uma copia — `matcher` e analisado estaticamente
+   pelo Next, entao a copia pode estar certa enquanto o que roda esta errado.
+   Foi exatamente o que aconteceu na primeira tentativa de conserto, com a
+   constante importada sendo ignorada em silencio.
+2. **Trocar de idioma apagava o tema escolhido.** O `lang` do `<html>` muda, o
+   React re-renderiza o elemento e leva junto o `data-theme` posto pelo script
+   inline. `suppressHydrationWarning` so vale na hidratacao, nao em update.
+3. **O `hreflang` saia com URL relativa e era ignorado pelo buscador.** Sem
+   `metadataBase` o Next deixa `alternates.languages` relativo, e o build nao
+   reclama. A tag estava no HTML sem servir para nada.
+
+**A regra:** feature que muda ROTA, CABECALHO ou METADATA so esta pronta depois
+de `curl` na resposta de verdade. Os tres portoes leem o codigo; nenhum le a
+saida.
+
+Corolario do escape: quando um padrao precisa de barra invertida dentro de string
+(regex em `matcher`, por exemplo), preferir a forma que dispensa o escape —
+`[.]` no lugar de `\.` — e um nivel a menos de coisa para errar sem ninguem ver.
+
