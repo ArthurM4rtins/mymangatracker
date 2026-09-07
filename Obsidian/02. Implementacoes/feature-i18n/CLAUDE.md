@@ -317,6 +317,89 @@ export type CodigoDeErro = (typeof ERROS)[keyof typeof ERROS];
 O mesmo arquivo alimenta o namespace `erros` das messages e o `_locales/` da
 extensão. Código sem tradução quebra o teste de paridade da D4.
 
+## Fase 2 — o inglês de verdade (07/09/2026)
+
+Branch `feature/i18n-en`. `en.json` deixa de ser cópia; 306 chaves traduzidas.
+
+### Glossário fixado antes de traduzir
+
+Consistência vale mais que elegância: a mesma coisa com o mesmo nome em toda a
+interface. O glossário foi entregue pronto a quem traduziu, junto com o texto.
+
+| pt-BR | en |
+|---|---|
+| estante | shelf |
+| catálogo | catalog (americano, sem `ue`) |
+| capítulo | chapter (`ch.` onde o pt usa `cap.`) |
+| resenha | review |
+| avaliação (a nota) / avaliar | rating / rate |
+| fonte de leitura | reading source |
+| curtida / descurtir | like / unlike |
+| seguir / seguidor / seguindo | follow / follower / following |
+| entrar / sair | sign in / sign out |
+| cadastrar | sign up |
+| e-mail | email |
+
+Status da estante, **estilo MyAnimeList** (decidido em 07/09): `READING`→Reading,
+`COMPLETED`→Completed, `PLANNED`→**Plan to Read**, `PAUSED`→**On Hold**,
+`DROPPED`→Dropped. Conferido na tela: as seis abas continuam numa linha só, e o
+container é `flex-wrap` de qualquer forma — rótulo longo quebra linha, não estoura.
+
+### PENDÊNCIA ABERTA — "obra" não foi traduzida
+
+**Decisão de 07/09 do dono do repo: manter `obra`/`obras` em português também no
+inglês, com esta observação registrada para rediscutir depois.**
+
+O que isso produz hoje, na tela em inglês:
+
+- `Your shelf is empty — search the catalog and add your first obra.`
+- `Your obras, by status. Reading progress stays private to you.`
+- `12 obras`
+
+Para quem lê inglês, `obra` não é um termo de produto reconhecível como "Kidoku"
+ou "manga" — lê como palavra portuguesa não traduzida. As três candidatas
+descartadas na hora da decisão, para quando a conversa voltar:
+
+| candidata | a favor | contra |
+|---|---|---|
+| `series` | cobre os quatro formatos, é o que leitor de mangá usa em inglês | nenhum forte |
+| `title` | é o termo do AniList e do MAL, que são a fonte dos dados | colide com o nome da obra e com `titleEnglish`/`titleRomaji` no código |
+| `work` | literal e neutra quanto a formato | soa acadêmica para um app de leitura casual |
+
+Trocar depois é barato **enquanto for só o catálogo**: é `en.json`, não é código.
+Fica caro no dia em que a palavra entrar em URL, slug ou nome de coluna.
+
+### Outros pontos levantados por quem traduziu
+
+- `meta.descricao` usa `novels` no plural (`manga, manhwa, and novels`): em inglês
+  `and novel` no singular não fecha a lista, embora `manga` e `manhwa` sejam
+  invariáveis. O rótulo de formato `comum.formato.NOVEL` continua `Novel`.
+- Apóstrofo: o inglês usa o ASCII reto (`'`) em `Don't`/`couldn't`. O pt-BR não tem
+  apóstrofo, então não havia precedente no arquivo.
+
+### Dois defeitos achados rodando o app, não pelo CI
+
+Os dois passaram por lint, teste e build verdes. Foram para o PR da fase 1, que
+é onde nasceram.
+
+1. **O matcher do proxy barrava todo link antigo.** `/catalogo` dava 404 em vez de
+   redirecionar: o ponto escapado virou ponto solto no literal TypeScript, e o
+   lookahead negativo passou a excluir praticamente toda rota. Consertado com a
+   classe `[.]` — um nível de escape a menos — e coberto por
+   `tests/i18n/proxy-matcher.test.ts`, que **lê `src/proxy.ts`** em vez de importar
+   uma cópia: `matcher` é analisado estaticamente pelo Next, então a cópia poderia
+   estar certa enquanto o que roda está errado. Foi exatamente o que aconteceu na
+   primeira tentativa de conserto, com a constante importada sendo ignorada em
+   silêncio e `/api/v1/health` recebendo redirect de idioma.
+2. **Trocar de idioma apagava o tema escolhido.** Trocar o idioma muda o `lang` do
+   `<html>`, o React re-renderiza o elemento e leva junto o `data-theme` que o
+   script inline tinha posto ali — `suppressHydrationWarning` só vale na hidratação,
+   não em update. O seletor passou a recarregar o documento em vez de navegar pelo
+   cliente, e o script inline roda de novo.
+
+Lição para as fases 3 a 5: **lint, teste e build verdes não são prova de que a
+tela funciona.** Os dois defeitos eram invisíveis para os três.
+
 ## Pendências
 
 Nenhuma de desenho. As cinco de 05/09 foram decididas (D1, D2, D5, D8, ordem
