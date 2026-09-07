@@ -169,7 +169,7 @@
     "destaques": "Popular right now",
     "cartao": {
       "formatoGenerico": "Obra",
-      "capitulos": "{n, plural, one {# chapter} other {# chapters}}"
+      "capitulos": "{n, plural, one {{n} chapter} other {{n} chapters}}"
     },
     "botaoEstante": {
       "naEstante": "On shelf",
@@ -407,7 +407,7 @@
     "curiosidades": "Trivia",
     "similares": "Similar obras",
     "contagem": {
-      "capitulos": "{n, plural, one {# chapter} other {# chapters}}",
+      "capitulos": "{n, plural, one {{n} chapter} other {{n} chapters}}",
       "aberturas": "{n, plural, one {{n} read} other {{n} reads}}",
       "avaliacoes": "{n, plural, one {{n} rating} other {{n} ratings}}",
       "curtidas": "{n, plural, one {{n} like} other {{n} likes}}",
