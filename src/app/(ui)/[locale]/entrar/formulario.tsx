@@ -5,14 +5,17 @@
  * página nunca vê o token. Credencial inválida é UMA mensagem só, igual para
  * e-mail inexistente e senha errada.
  */
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+
+import { useRouter } from "@/i18n/navigation";
 
 export function FormularioDeLogin()
 {
   const roteador = useRouter();
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const t = useTranslations("entrar");
 
   async function enviar(evento: React.FormEvent<HTMLFormElement>)
   {
@@ -41,11 +44,11 @@ export function FormularioDeLogin()
       }
 
       const corpo = (await resposta.json()) as { erros?: { _geral?: string } };
-      setErro(corpo.erros?._geral ?? "não foi possível entrar");
+      setErro(corpo.erros?._geral ?? t("erros.geral"));
     }
     catch
     {
-      setErro("sem conexão com o servidor — tente de novo");
+      setErro(t("erros.conexao"));
     }
     finally
     {
@@ -56,7 +59,7 @@ export function FormularioDeLogin()
   return (
     <form onSubmit={enviar} className="flex flex-col gap-4" noValidate>
       <label className="flex flex-col gap-1.5 text-sm">
-        <span className="font-medium">E-mail</span>
+        <span className="font-medium">{t("campos.email")}</span>
         <input
           name="email"
           type="email"
@@ -67,7 +70,7 @@ export function FormularioDeLogin()
       </label>
 
       <label className="flex flex-col gap-1.5 text-sm">
-        <span className="font-medium">Senha</span>
+        <span className="font-medium">{t("campos.senha")}</span>
         <input
           name="senha"
           type="password"
@@ -88,7 +91,7 @@ export function FormularioDeLogin()
         disabled={enviando}
         className="rounded-md bg-acento px-4 py-2 text-sm font-medium text-acento-contraste transition-opacity disabled:opacity-60"
       >
-        {enviando ? "Entrando…" : "Entrar"}
+        {enviando ? t("acoes.enviando") : t("acoes.enviar")}
       </button>
     </form>
   );
