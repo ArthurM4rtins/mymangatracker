@@ -15,5 +15,24 @@
       "pt-BR": "Português",
       "en": "English"
     }
+  },
+  "comum": {
+    "salvar": "Salvar",
+    "salvando": "Salvando…",
+    "cancelar": "Cancelar",
+    "voltar": "Voltar",
+    "status": {
+      "READING": "Lendo",
+      "COMPLETED": "Concluído",
+      "PLANNED": "Planejado",
+      "PAUSED": "Pausado",
+      "DROPPED": "Largado"
+    },
+    "formato": {
+      "JP": "Mangá",
+      "KR": "Manhwa",
+      "CN": "Manhua",
+      "NOVEL": "Novel"
+    }
   }
 }
