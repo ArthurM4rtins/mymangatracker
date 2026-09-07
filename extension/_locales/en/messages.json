@@ -1,0 +1,55 @@
+{
+  "nome": { "message": "Kidoku" },
+  "descricao": {
+    "message": "Logs the chapter you're reading to your Kidoku shelf, without leaving the tab."
+  },
+  "acaoTitulo": { "message": "Kidoku — log reading" },
+
+  "abrirSite": { "message": "open the site" },
+  "carregando": { "message": "loading…" },
+  "campoObra": { "message": "Obra" },
+  "filtroPlaceholder": { "message": "filter by name" },
+  "campoCapitulo": { "message": "Chapter" },
+  "registrar": { "message": "Log reading" },
+  "semSessao": { "message": "Sign in to Kidoku to log your reading." },
+  "entrar": { "message": "Sign in" },
+
+  "semResposta": { "message": "Kidoku didn't respond just now — try again" },
+  "estanteNaoCarregou": { "message": "couldn't load your shelf — try again" },
+  "estanteVazia": { "message": "your shelf has no open obra — add one on the site." },
+  "escolhaObra": { "message": "pick the obra" },
+  "informeCapitulo": { "message": "enter the chapter" },
+  "registrando": { "message": "logging…" },
+
+  "capituloLido": { "message": "read from the tab title — check it" },
+  "capituloNaoLido": { "message": "couldn't find the chapter in the tab title — type it" },
+
+  "obraNoCapitulo": {
+    "message": " — on ch. $capitulo$",
+    "placeholders": { "capitulo": { "content": "$1" } }
+  },
+  "registradoAlcancou": {
+    "message": "ch. $capitulo$ logged — shelf now on $progresso$",
+    "placeholders": {
+      "capitulo": { "content": "$1" },
+      "progresso": { "content": "$2" }
+    }
+  },
+  "registradoSegue": {
+    "message": "ch. $capitulo$ logged — shelf stays on $progresso$",
+    "placeholders": {
+      "capitulo": { "content": "$1" },
+      "progresso": { "content": "$2" }
+    }
+  },
+
+  "erroPadrao": { "message": "couldn't log that" },
+  "erroCorpoInvalido": { "message": "couldn't log that" },
+  "erroPedidoInvalido": { "message": "couldn't log that" },
+  "erroEntradaNaoEncontrada": { "message": "that obra is no longer on your shelf" },
+  "erroCapituloInvalido": { "message": "invalid chapter" },
+  "erroUrlInvalida": { "message": "this page doesn't work as a reading source" },
+  "erroSemFonte": { "message": "set up the reading source first" },
+  "erroLimiteExcedido": { "message": "too many logs in a short time — wait a bit" },
+  "erroFalhaInterna": { "message": "Kidoku couldn't log that right now" }
+}

@@ -1,4 +1,4 @@
-// O popup: tela única (decisão 4 do desenho). Extratores só pré-preenchem obra
+// O popup: tela unica (decisao 4 do desenho). Extratores só pré-preenchem obra
 // e capítulo; quem confirma é a pessoa, num clique. Nada é gravado sem o clique,
 // e o capítulo gravado é sempre o que está visível no campo.
 
@@ -47,7 +47,9 @@ function preencherObras(entradas, filtro, selecionada)
 
     const opcao = document.createElement("option");
     opcao.value = entrada.entradaId;
-    const cap = entrada.progressChapter === null ? "" : ` — no cap. ${entrada.progressChapter}`;
+    const cap = entrada.progressChapter === null
+      ? ""
+      : KIDOKU_I18N.texto("obraNoCapitulo", [String(entrada.progressChapter)]);
     opcao.textContent = `${titulo}${cap}`;
     opcao.selected = entrada.entradaId === selecionada;
     el.obra.append(opcao);
@@ -80,7 +82,7 @@ async function iniciar()
   }
   catch
   {
-    mostrar("o Kidoku não respondeu agora — tente de novo");
+    mostrar(KIDOKU_I18N.texto("semResposta"));
     return;
   }
 
@@ -93,7 +95,7 @@ async function iniciar()
 
   if (!resposta.ok)
   {
-    mostrar("não deu para carregar a estante — tente de novo");
+    mostrar(KIDOKU_I18N.texto("estanteNaoCarregou"));
     return;
   }
 
@@ -103,7 +105,7 @@ async function iniciar()
 
   if (abertas.length === 0)
   {
-    mostrar("sua estante não tem obra em aberto — adicione uma no site.");
+    mostrar(KIDOKU_I18N.texto("estanteVazia"));
     return;
   }
 
@@ -120,9 +122,9 @@ async function iniciar()
   el.pagina.title = aba && aba.url ? aba.url : "";
   preencherObras(abertas, "", pareada);
   el.capitulo.value = capitulo === null ? "" : String(capitulo);
-  el.origem.textContent = capitulo === null
-    ? "não achei o capítulo no título da aba — digite"
-    : "lido do título da aba — confira";
+  el.origem.textContent = KIDOKU_I18N.texto(
+    capitulo === null ? "capituloNaoLido" : "capituloLido",
+  );
 
   el.estado.hidden = true;
   el.formulario.hidden = false;
@@ -154,21 +156,21 @@ el.formulario.addEventListener("submit", async function (evento)
   if (!entradaId)
   {
     el.resultado.className = "resultado erro";
-    el.resultado.textContent = "escolha a obra";
+    el.resultado.textContent = KIDOKU_I18N.texto("escolhaObra");
     return;
   }
 
   if (el.capitulo.value.trim() === "" || !Number.isFinite(capitulo) || capitulo <= 0)
   {
     el.resultado.className = "resultado erro";
-    el.resultado.textContent = "informe o capítulo";
+    el.resultado.textContent = KIDOKU_I18N.texto("informeCapitulo");
     el.capitulo.focus();
     return;
   }
 
   el.registrar.disabled = true;
   el.resultado.className = "resultado";
-  el.resultado.textContent = "registrando…";
+  el.resultado.textContent = KIDOKU_I18N.texto("registrando");
 
   try
   {
@@ -193,14 +195,17 @@ el.formulario.addEventListener("submit", async function (evento)
     if (!resposta.ok)
     {
       el.resultado.className = "resultado erro";
-      el.resultado.textContent = (corpo.erros && corpo.erros._geral) || "não deu para registrar";
+      // A API responde codigo, nunca frase (fase 3 da #116): quem escolhe a
+      // frase, no idioma de quem esta lendo, e quem mostra.
+      el.resultado.textContent = KIDOKU_I18N.erro(corpo.erros && corpo.erros._geral);
       return;
     }
 
     el.resultado.className = "resultado ok";
-    el.resultado.textContent = corpo.progresso === corpo.capitulo
-      ? `cap. ${corpo.capitulo} registrado — estante no ${corpo.progresso}`
-      : `cap. ${corpo.capitulo} registrado — estante segue no ${corpo.progresso}`;
+    el.resultado.textContent = KIDOKU_I18N.texto(
+      corpo.progresso === corpo.capitulo ? "registradoAlcancou" : "registradoSegue",
+      [String(corpo.capitulo), String(corpo.progresso)],
+    );
 
     if (contexto.chave !== null)
     {
@@ -216,7 +221,7 @@ el.formulario.addEventListener("submit", async function (evento)
   catch
   {
     el.resultado.className = "resultado erro";
-    el.resultado.textContent = "o Kidoku não respondeu agora — tente de novo";
+    el.resultado.textContent = KIDOKU_I18N.texto("semResposta");
   }
   finally
   {
@@ -224,4 +229,5 @@ el.formulario.addEventListener("submit", async function (evento)
   }
 });
 
+KIDOKU_I18N.aplicar();
 void iniciar();
