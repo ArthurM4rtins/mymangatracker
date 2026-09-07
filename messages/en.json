@@ -10,11 +10,7 @@
     "estante": "Shelf",
     "perfil": "Profile",
     "entrar": "Sign in",
-    "idioma": "Language",
-    "idiomas": {
-      "pt-BR": "Português",
-      "en": "English"
-    }
+    "idioma": "Language"
   },
   "comum": {
     "salvar": "Save",
@@ -44,6 +40,12 @@
     "comentario_invalido": "invalid comment",
     "cursor_invalido": "pass antesDe with the comment id",
     "nome_invalido": "name must be 1 to 100 characters",
+    "username_curto": "at least 3 characters",
+    "username_longo": "at most 30 characters",
+    "username_caracteres": "only letters, numbers, period, hyphen and underscore",
+    "email_invalido": "invalid email",
+    "senha_curta": "at least 8 characters",
+    "senha_longa": "at most 72 characters",
     "credenciais_invalidas": "wrong email or password",
     "sessao_necessaria": "sign in to continue",
     "obra_nao_encontrada": "obra not found",
@@ -89,7 +91,8 @@
     },
     "erros": {
       "geral": "couldn't sign in",
-      "conexao": "no connection to the server — try again"
+      "conexao": "no connection to the server — try again",
+      "falhaInterna": "couldn't sign in right now"
     }
   },
   "cadastrar": {
@@ -110,7 +113,8 @@
     },
     "erros": {
       "geral": "couldn't complete sign-up",
-      "conexao": "no connection to the server — try again"
+      "conexao": "no connection to the server — try again",
+      "falhaInterna": "couldn't complete sign-up right now"
     }
   },
   "autor": {
@@ -260,7 +264,8 @@
       "derivar": "couldn't derive — check the link",
       "capituloInvalido": "invalid chapter",
       "acao": "didn't work — try again",
-      "rede": "didn't work just now — try again"
+      "rede": "didn't work just now — try again",
+      "registrar": "couldn't record that right now"
     }
   },
   "home": {
@@ -375,7 +380,9 @@
       },
       "editar": {
         "abrir": "Edit",
-        "erro": "couldn't save"
+        "erro": "couldn't save",
+        "sessao": "sign in to use lists",
+        "nomeInvalido": "1 to 100 characters"
       },
       "apagar": {
         "abrir": "Delete list",
@@ -494,7 +501,8 @@
       "remover": "remove",
       "erros": {
         "geral": "couldn't do that right now",
-        "leitura": "couldn't read that image"
+        "leitura": "couldn't read that image",
+        "sessao": "sign in to change your photo"
       }
     },
     "estante": {

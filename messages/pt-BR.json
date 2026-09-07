@@ -10,11 +10,7 @@
     "estante": "Estante",
     "perfil": "Perfil",
     "entrar": "Entrar",
-    "idioma": "Idioma",
-    "idiomas": {
-      "pt-BR": "Português",
-      "en": "English"
-    }
+    "idioma": "Idioma"
   },
   "comum": {
     "salvar": "Salvar",
@@ -44,6 +40,12 @@
     "comentario_invalido": "comentário inválido",
     "cursor_invalido": "informe antesDe com o id do comentário",
     "nome_invalido": "nome de 1 a 100 caracteres",
+    "username_curto": "no mínimo 3 caracteres",
+    "username_longo": "no máximo 30 caracteres",
+    "username_caracteres": "só letras, números, ponto, hífen e underline",
+    "email_invalido": "e-mail inválido",
+    "senha_curta": "no mínimo 8 caracteres",
+    "senha_longa": "no máximo 72 caracteres",
     "credenciais_invalidas": "e-mail ou senha incorretos",
     "sessao_necessaria": "entre para continuar",
     "obra_nao_encontrada": "obra não encontrada",
@@ -89,7 +91,8 @@
     },
     "erros": {
       "geral": "não foi possível entrar",
-      "conexao": "sem conexão com o servidor — tente de novo"
+      "conexao": "sem conexão com o servidor — tente de novo",
+      "falhaInterna": "não foi possível entrar agora"
     }
   },
   "cadastrar": {
@@ -110,7 +113,8 @@
     },
     "erros": {
       "geral": "não foi possível concluir o cadastro",
-      "conexao": "sem conexão com o servidor — tente de novo"
+      "conexao": "sem conexão com o servidor — tente de novo",
+      "falhaInterna": "não foi possível concluir o cadastro agora"
     }
   },
   "autor": {
@@ -260,7 +264,8 @@
       "derivar": "não deu para derivar — confira o link",
       "capituloInvalido": "capítulo inválido",
       "acao": "não deu — tente de novo",
-      "rede": "não deu agora — tente de novo"
+      "rede": "não deu agora — tente de novo",
+      "registrar": "não foi possível registrar agora"
     }
   },
   "home": {
@@ -375,7 +380,9 @@
       },
       "editar": {
         "abrir": "Editar",
-        "erro": "não foi possível salvar"
+        "erro": "não foi possível salvar",
+        "sessao": "entre para usar listas",
+        "nomeInvalido": "de 1 a 100 caracteres"
       },
       "apagar": {
         "abrir": "Apagar lista",
@@ -494,7 +501,8 @@
       "remover": "remover",
       "erros": {
         "geral": "não foi possível agora",
-        "leitura": "não deu para ler essa imagem"
+        "leitura": "não deu para ler essa imagem",
+        "sessao": "entre para trocar a foto"
       }
     },
     "estante": {

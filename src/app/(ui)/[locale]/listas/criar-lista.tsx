@@ -7,13 +7,26 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { ERRO, type CodigoDeErro } from "@/app/api/v1/_shared/erros";
 import { useRouter } from "@/i18n/navigation";
+
+/**
+ * A API responde código, não frase — a tela escolhe a frase. Código que esta
+ * versão da tela não conhece cai na frase genérica, nunca aparece cru.
+ */
+const CODIGOS: ReadonlySet<string> = new Set(Object.values(ERRO));
+
+function ehCodigo(valor: unknown): valor is CodigoDeErro
+{
+  return typeof valor === "string" && CODIGOS.has(valor);
+}
 
 export function CriarLista()
 {
   const roteador = useRouter();
   const t = useTranslations("listas");
   const c = useTranslations("comum");
+  const erros = useTranslations("erros");
   const [aberto, setAberto] = useState(false);
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -52,7 +65,8 @@ export function CriarLista()
 
       if (!resposta.ok)
       {
-        setErro(corpo?.erros?._geral ?? t("indice.criar.erros.falhou"));
+        const codigo: unknown = corpo?.erros?._geral;
+        setErro(ehCodigo(codigo) ? erros(codigo) : t("indice.criar.erros.falhou"));
         return;
       }
 

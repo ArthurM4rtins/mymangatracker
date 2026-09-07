@@ -4,11 +4,21 @@
  * Formulário de login. `POST /api/v1/sessao` grava o cookie httpOnly — o JS da
  * página nunca vê o token. Credencial inválida é UMA mensagem só, igual para
  * e-mail inexistente e senha errada.
+ *
+ * A API responde código de erro, não frase — quem escolhe o texto é a tela.
  */
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { ERRO, type CodigoDeErro } from "@/app/api/v1/_shared/erros";
 import { useRouter } from "@/i18n/navigation";
+
+const CODIGOS: ReadonlySet<string> = new Set(Object.values(ERRO));
+
+function ehCodigo(valor: unknown): valor is CodigoDeErro
+{
+  return typeof valor === "string" && CODIGOS.has(valor);
+}
 
 export function FormularioDeLogin()
 {
@@ -16,6 +26,28 @@ export function FormularioDeLogin()
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const t = useTranslations("entrar");
+  const vocabulario = useTranslations("erros");
+
+  /**
+   * Código vira frase. `falha_interna` é genérico demais no vocabulário ("não
+   * foi possível agora") e aqui a frase é a do login. Código que esta tela não
+   * conhece — API mais nova, resposta estranha — cai na frase genérica: código
+   * cru nunca chega ao usuário.
+   */
+  function frase(codigo: string | undefined): string
+  {
+    if (!ehCodigo(codigo))
+    {
+      return t("erros.geral");
+    }
+
+    if (codigo === ERRO.FALHA_INTERNA)
+    {
+      return t("erros.falhaInterna");
+    }
+
+    return vocabulario(codigo);
+  }
 
   async function enviar(evento: React.FormEvent<HTMLFormElement>)
   {
@@ -44,7 +76,7 @@ export function FormularioDeLogin()
       }
 
       const corpo = (await resposta.json()) as { erros?: { _geral?: string } };
-      setErro(corpo.erros?._geral ?? t("erros.geral"));
+      setErro(frase(corpo.erros?._geral));
     }
     catch
     {

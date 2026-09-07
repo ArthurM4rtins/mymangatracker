@@ -8,9 +8,21 @@
  */
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
+import { ERRO, type CodigoDeErro } from "@/app/api/v1/_shared/erros";
 import { useRouter } from "@/i18n/navigation";
 
 const LADO = 256;
+
+/**
+ * A API responde código, não frase — a tela escolhe a frase. Código que esta
+ * versão da tela não conhece cai na frase genérica, nunca aparece cru.
+ */
+const CODIGOS: ReadonlySet<string> = new Set(Object.values(ERRO));
+
+function ehCodigo(valor: unknown): valor is CodigoDeErro
+{
+  return typeof valor === "string" && CODIGOS.has(valor);
+}
 
 export function FotoDePerfil({
   username,
@@ -26,8 +38,23 @@ export function FotoDePerfil({
   const roteador = useRouter();
   const entrada = useRef<HTMLInputElement>(null);
   const t = useTranslations("perfil");
+  const erros = useTranslations("erros");
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+
+  /**
+   * `sessao_necessaria` ganha a frase desta tela — o catálogo diz "entre para
+   * continuar", e aqui sempre se leu "entre para trocar a foto".
+   */
+  function fraseDoErro(codigo: unknown): string
+  {
+    if (codigo === ERRO.SESSAO_NECESSARIA)
+    {
+      return t("foto.erros.sessao");
+    }
+
+    return ehCodigo(codigo) ? erros(codigo) : t("foto.erros.geral");
+  }
 
   const url = versao === null
     ? null
@@ -52,7 +79,7 @@ export function FotoDePerfil({
         const corpo = (await resposta.json().catch(function () { return null; })) as
           | { erros?: { _geral?: string } }
           | null;
-        setErro(corpo?.erros?._geral ?? t("foto.erros.geral"));
+        setErro(fraseDoErro(corpo?.erros?._geral));
         return;
       }
 

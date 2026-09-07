@@ -6,7 +6,19 @@
  */
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { ERRO, type CodigoDeErro } from "@/app/api/v1/_shared/erros";
 import { useRouter } from "@/i18n/navigation";
+
+/**
+ * A API responde código, não frase — a tela escolhe a frase. Código que esta
+ * versão da tela não conhece cai na frase genérica, nunca aparece cru.
+ */
+const CODIGOS: ReadonlySet<string> = new Set(Object.values(ERRO));
+
+function ehCodigo(valor: unknown): valor is CodigoDeErro
+{
+  return typeof valor === "string" && CODIGOS.has(valor);
+}
 
 export function ContinuarLeitura({
   entradaId,
@@ -27,9 +39,24 @@ export function ContinuarLeitura({
 {
   const roteador = useRouter();
   const t = useTranslations("estante");
+  const erros = useTranslations("erros");
   const [capituloManual, setCapituloManual] = useState("");
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+
+  /**
+   * `falha_interna` ganha a frase desta tela — o catálogo diz "não foi possível
+   * agora", e aqui sempre se leu "não foi possível registrar agora".
+   */
+  function fraseDoErro(codigo: unknown): string
+  {
+    if (codigo === ERRO.FALHA_INTERNA)
+    {
+      return t("erros.registrar");
+    }
+
+    return ehCodigo(codigo) ? erros(codigo) : t("erros.acao");
+  }
 
   async function abrir(capitulo?: number)
   {
@@ -56,7 +83,7 @@ export function ContinuarLeitura({
 
       if (!resposta.ok)
       {
-        setErro(corpo?.erros?._geral ?? t("erros.acao"));
+        setErro(fraseDoErro(corpo?.erros?._geral));
         return;
       }
 
