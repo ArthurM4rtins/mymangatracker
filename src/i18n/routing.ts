@@ -8,7 +8,7 @@ import { defineRouting } from "next-intl/routing";
  * `pt` e `pt-PT` caem em `pt-BR` pela negociação do `Accept-Language`.
  */
 export const routing = defineRouting({
-  locales: ["pt-BR", "en"],
+  locales: ["pt-BR", "en", "es"],
   defaultLocale: "en",
   localePrefix: "always",
 });
@@ -33,6 +33,9 @@ export const PLURAL_DOBRADO_EM_OUTRO: Partial<Record<Idioma, readonly string[]>>
   // `many` em português só vale para 1e6 e acima ("1 milhão de obras"), e o
   // substantivo tem a mesma forma de `other` — "2 obras", "1000000 obras".
   "pt-BR": ["many"],
+  // Espanhol é o mesmo caso do português: `many` é a categoria de 1e6 e acima
+  // ("un millón de obras"), e o substantivo não muda de forma.
+  es: ["many"],
 };
 
 /**

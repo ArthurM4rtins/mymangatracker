@@ -1,0 +1,55 @@
+{
+  "nome": { "message": "Kidoku" },
+  "descricao": {
+    "message": "Registra en tu estantería de Kidoku el capítulo que estás leyendo, sin salir de la pestaña."
+  },
+  "acaoTitulo": { "message": "Kidoku — registrar lectura" },
+
+  "abrirSite": { "message": "abrir el sitio" },
+  "carregando": { "message": "cargando…" },
+  "campoObra": { "message": "Obra" },
+  "filtroPlaceholder": { "message": "filtrar por nombre" },
+  "campoCapitulo": { "message": "Capítulo" },
+  "registrar": { "message": "Registrar lectura" },
+  "semSessao": { "message": "Inicia sesión en Kidoku para registrar tu lectura." },
+  "entrar": { "message": "Iniciar sesión" },
+
+  "semResposta": { "message": "Kidoku no respondió ahora — inténtalo de nuevo" },
+  "estanteNaoCarregou": { "message": "no se pudo cargar tu estantería — inténtalo de nuevo" },
+  "estanteVazia": { "message": "tu estantería no tiene ninguna obra sin terminar — agrega una en el sitio." },
+  "escolhaObra": { "message": "elige la obra" },
+  "informeCapitulo": { "message": "indica el capítulo" },
+  "registrando": { "message": "registrando…" },
+
+  "capituloLido": { "message": "leído del título de la pestaña — compruébalo" },
+  "capituloNaoLido": { "message": "no encontré el capítulo en el título de la pestaña — escríbelo" },
+
+  "obraNoCapitulo": {
+    "message": " — en el cap. $capitulo$",
+    "placeholders": { "capitulo": { "content": "$1" } }
+  },
+  "registradoAlcancou": {
+    "message": "cap. $capitulo$ registrado — la estantería va por el $progresso$",
+    "placeholders": {
+      "capitulo": { "content": "$1" },
+      "progresso": { "content": "$2" }
+    }
+  },
+  "registradoSegue": {
+    "message": "cap. $capitulo$ registrado — la estantería sigue en el $progresso$",
+    "placeholders": {
+      "capitulo": { "content": "$1" },
+      "progresso": { "content": "$2" }
+    }
+  },
+
+  "erroPadrao": { "message": "no se pudo registrar" },
+  "erroCorpoInvalido": { "message": "no se pudo registrar" },
+  "erroPedidoInvalido": { "message": "no se pudo registrar" },
+  "erroEntradaNaoEncontrada": { "message": "esa obra ya no está en tu estantería" },
+  "erroCapituloInvalido": { "message": "capítulo inválido" },
+  "erroUrlInvalida": { "message": "esta página no sirve como fuente de lectura" },
+  "erroSemFonte": { "message": "configura primero la fuente de lectura" },
+  "erroLimiteExcedido": { "message": "demasiados registros en poco tiempo — espera un momento" },
+  "erroFalhaInterna": { "message": "Kidoku no pudo registrarlo ahora" }
+}
