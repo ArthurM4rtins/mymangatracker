@@ -1,55 +1,119 @@
 {
-  "nome": { "message": "Kidoku" },
+  "nome": {
+    "message": "Kidoku"
+  },
   "descricao": {
     "message": "Registra na sua estante do Kidoku o capítulo que você está lendo, sem sair da aba."
   },
-  "acaoTitulo": { "message": "Kidoku — registrar leitura" },
-
-  "abrirSite": { "message": "abrir o site" },
-  "carregando": { "message": "carregando…" },
-  "campoObra": { "message": "Obra" },
-  "filtroPlaceholder": { "message": "filtrar pelo nome" },
-  "campoCapitulo": { "message": "Capítulo" },
-  "registrar": { "message": "Registrar leitura" },
-  "semSessao": { "message": "Entre no Kidoku para registrar a leitura." },
-  "entrar": { "message": "Entrar" },
-
-  "semResposta": { "message": "o Kidoku não respondeu agora — tente de novo" },
-  "estanteNaoCarregou": { "message": "não deu para carregar a estante — tente de novo" },
-  "estanteVazia": { "message": "sua estante não tem obra em aberto — adicione uma no site." },
-  "escolhaObra": { "message": "escolha a obra" },
-  "informeCapitulo": { "message": "informe o capítulo" },
-  "registrando": { "message": "registrando…" },
-
-  "capituloLido": { "message": "lido do título da aba — confira" },
-  "capituloNaoLido": { "message": "não achei o capítulo no título da aba — digite" },
-
+  "acaoTitulo": {
+    "message": "Kidoku — registrar leitura"
+  },
+  "abrirSite": {
+    "message": "abrir o site"
+  },
+  "carregando": {
+    "message": "carregando…"
+  },
+  "campoObra": {
+    "message": "Obra"
+  },
+  "filtroPlaceholder": {
+    "message": "filtrar pelo nome"
+  },
+  "campoCapitulo": {
+    "message": "Capítulo"
+  },
+  "registrar": {
+    "message": "Registrar leitura"
+  },
+  "semSessao": {
+    "message": "Entre no Kidoku para registrar a leitura."
+  },
+  "entrar": {
+    "message": "Entrar"
+  },
+  "semResposta": {
+    "message": "o Kidoku não respondeu agora — tente de novo"
+  },
+  "estanteNaoCarregou": {
+    "message": "não deu para carregar a estante — tente de novo"
+  },
+  "estanteVazia": {
+    "message": "sua estante não tem obra em aberto — adicione uma no site."
+  },
+  "escolhaObra": {
+    "message": "escolha a obra"
+  },
+  "informeCapitulo": {
+    "message": "informe o capítulo"
+  },
+  "registrando": {
+    "message": "registrando…"
+  },
+  "capituloLido": {
+    "message": "lido do título da aba — confira"
+  },
+  "capituloNaoLido": {
+    "message": "não achei o capítulo no título da aba — digite"
+  },
+  "obraPeloTitulo": {
+    "message": "obra reconhecida pelo título da aba — confira"
+  },
   "obraNoCapitulo": {
     "message": " — no cap. $capitulo$",
-    "placeholders": { "capitulo": { "content": "$1" } }
+    "placeholders": {
+      "capitulo": {
+        "content": "$1"
+      }
+    }
   },
   "registradoAlcancou": {
     "message": "cap. $capitulo$ registrado — estante no $progresso$",
     "placeholders": {
-      "capitulo": { "content": "$1" },
-      "progresso": { "content": "$2" }
+      "capitulo": {
+        "content": "$1"
+      },
+      "progresso": {
+        "content": "$2"
+      }
     }
   },
   "registradoSegue": {
     "message": "cap. $capitulo$ registrado — estante segue no $progresso$",
     "placeholders": {
-      "capitulo": { "content": "$1" },
-      "progresso": { "content": "$2" }
+      "capitulo": {
+        "content": "$1"
+      },
+      "progresso": {
+        "content": "$2"
+      }
     }
   },
-
-  "erroPadrao": { "message": "não deu para registrar" },
-  "erroCorpoInvalido": { "message": "não deu para registrar" },
-  "erroPedidoInvalido": { "message": "não deu para registrar" },
-  "erroEntradaNaoEncontrada": { "message": "essa obra não está mais na sua estante" },
-  "erroCapituloInvalido": { "message": "capítulo inválido" },
-  "erroUrlInvalida": { "message": "esta página não serve como fonte de leitura" },
-  "erroSemFonte": { "message": "configure a fonte de leitura primeiro" },
-  "erroLimiteExcedido": { "message": "muitos registros em pouco tempo — aguarde" },
-  "erroFalhaInterna": { "message": "o Kidoku não conseguiu registrar agora" }
+  "erroPadrao": {
+    "message": "não deu para registrar"
+  },
+  "erroCorpoInvalido": {
+    "message": "não deu para registrar"
+  },
+  "erroPedidoInvalido": {
+    "message": "não deu para registrar"
+  },
+  "erroEntradaNaoEncontrada": {
+    "message": "essa obra não está mais na sua estante"
+  },
+  "erroCapituloInvalido": {
+    "message": "capítulo inválido"
+  },
+  "erroUrlInvalida": {
+    "message": "esta página não serve como fonte de leitura"
+  },
+  "erroSemFonte": {
+    "message": "configure a fonte de leitura primeiro"
+  },
+  "erroLimiteExcedido": {
+    "message": "muitos registros em pouco tempo — aguarde"
+  },
+  "erroFalhaInterna": {
+    "message": "o Kidoku não conseguiu registrar agora"
+  }
 }

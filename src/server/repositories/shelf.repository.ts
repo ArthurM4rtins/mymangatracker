@@ -13,6 +13,7 @@ export type EntradaComObra = {
     anilistId: number;
     titleRomaji: string;
     titleEnglish: string | null;
+    titleNative: string | null;
     coverImageUrl: string | null;
     type: "MANGA" | "NOVEL";
     countryOfOrigin: string | null;
@@ -43,6 +44,7 @@ export async function listarEntradasDoUsuario(
           anilistId: true,
           titleRomaji: true,
           titleEnglish: true,
+          titleNative: true,
           coverImageUrl: true,
           type: true,
           countryOfOrigin: true,

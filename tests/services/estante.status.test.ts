@@ -15,6 +15,7 @@ const OBRA = {
   anilistId: 30013,
   titleRomaji: "Vinland Saga",
   titleEnglish: null,
+  titleNative: null,
   coverImageUrl: null,
   type: "MANGA" as const,
   countryOfOrigin: "JP",
