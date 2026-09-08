@@ -7,6 +7,17 @@
 /** A API do AniList e publica e sem chave, entao o default e util de verdade. */
 const ANILIST_PADRAO = "https://graphql.anilist.co";
 
+/**
+ * Quantos proxies confiaveis anexam ao `x-forwarded-for` antes de o pedido
+ * chegar ao app (#141). Um na Vercel. Fora de um inteiro positivo, vale 1.
+ */
+export function hopsConfiaveis(): number
+{
+  const bruto = Number(process.env.IP_HOPS_CONFIAVEIS ?? "1");
+
+  return Number.isInteger(bruto) && bruto >= 1 ? bruto : 1;
+}
+
 export function anilistEndpoint(): string
 {
   return process.env.ANILIST_ENDPOINT?.trim() || ANILIST_PADRAO;

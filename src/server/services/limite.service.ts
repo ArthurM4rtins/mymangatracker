@@ -14,6 +14,7 @@
  * entrando na dele. O balde por conta nunca é zerado pelo sucesso.
  */
 import { interpretarIdentificador } from "@/server/domain/identificador-de-login";
+import { hopsConfiaveis } from "@/server/infra/config";
 import {
   avaliarLimite,
   chaveDeTentativa,
@@ -183,4 +184,14 @@ export function limitarCadastro(pedido: { ip: string }): Promise<Veredito>
     },
     DEPS_DE_PRODUCAO,
   );
+}
+
+/**
+ * Quantos proxies confiaveis anexam ao `x-forwarded-for` (#141). O IP e insumo
+ * do limitador, e a config e infra: o controller so chega nela pela porta do
+ * servico, como o health faz com `sessaoConfigurada`.
+ */
+export function proxiesConfiaveis(): number
+{
+  return hopsConfiaveis();
 }
