@@ -1,12 +1,19 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import {
   apagarHistoricoEZerarProgresso,
-  contarAberturas,
+  contarAberturasPorObra,
   maiorCapitulo,
   registrarAbertura,
 } from "@/server/repositories/reading-progress.repository";
 import { getPrisma } from "@/server/repositories/prisma";
 import { limparBanco, semearMedia, semearUsuario } from "./apoio";
+
+async function contarAberturas(userId: string, mediaId: string): Promise<number>
+{
+  const totais = await contarAberturasPorObra(userId);
+
+  return totais.find(function (t) { return t.mediaId === mediaId; })?.total ?? 0;
+}
 
 // O reset de leitura (#172) e a primeira exclusao de ReadingProgress do
 // sistema. Duas coisas so se provam no banco: que a transacao zera TAMBEM o

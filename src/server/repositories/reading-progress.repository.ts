@@ -167,13 +167,24 @@ export async function aberturaMaisAvancadaDaObra(
 }
 
 /**
- * Quantas aberturas a pessoa tem nesta obra. E o numero que a confirmacao do
- * reset mostra (#172): o historico da pagina e limitado a 20 e nao serve como
- * total. Privado do dono: carrega userId.
+ * Total de aberturas de CADA obra do usuario, numa consulta so: a estante lista
+ * varias obras e a confirmacao do reset precisa do numero de cada uma (#172).
+ * Privado do dono: carrega userId.
  */
-export function contarAberturas(userId: string, mediaId: string): Promise<number>
+export async function contarAberturasPorObra(
+  userId: string,
+): Promise<Array<{ mediaId: string; total: number }>>
 {
-  return getPrisma().readingProgress.count({ where: { userId, mediaId } });
+  const grupos = await getPrisma().readingProgress.groupBy({
+    by: ["mediaId"],
+    where: { userId },
+    _count: { _all: true },
+  });
+
+  return grupos.map(function (grupo)
+  {
+    return { mediaId: grupo.mediaId, total: grupo._count._all };
+  });
 }
 
 /**
