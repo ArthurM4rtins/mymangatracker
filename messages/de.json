@@ -1,4 +1,22 @@
 {
+  "colecao": {
+    "visualizacao": "Sammlungsansicht",
+    "grade": "Raster",
+    "prateleira": "Bücherregal",
+    "contagem": "{n, plural, one {# Werk} other {# Werke}}",
+    "dica": "Erkunde die Buchrücken. Nutze die Pfeile, ziehe oder wische. Wähle ein Werk aus, um Details zu sehen.",
+    "anterior": "Im Regal {grupo} zurückblättern",
+    "proxima": "Im Regal {grupo} weiterblättern",
+    "abrir": "Details zu {titulo} ansehen",
+    "detalhes": "Im Regal · {titulo}",
+    "fechar": "Details schließen",
+    "laboratorio": "Eine neue Art zu entdecken",
+    "descricaoLaboratorio": "Ein erster Blick auf dein Bücherregal. Erkunde diese Beispielsammlung und wechsle zwischen den beiden Ansichten.",
+    "avisoLaboratorio": "Demosammlung · dein Bücherregal bleibt unverändert",
+    "selecao": "Zum Entdecken",
+    "favoritos": "Geschichten zum Behalten",
+    "verObra": "Werkseite ansehen"
+  },
   "meta": {
     "titulo": "Kidoku",
     "descricao": "Ein Letterboxd für Manga, Manhwa und Novel, mit automatischem und privatem Lesefortschritt."

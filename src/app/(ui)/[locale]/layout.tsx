@@ -136,9 +136,9 @@ export default async function RootLayout({
               <BotaoVoltar />
             </div>
             {/* Mesma largura da home (max-w-5xl): o logo alinha com o conteúdo. */}
-            <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
+            <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 py-4 pr-6 pl-14 sm:px-6">
               <Logo />
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-4">
                 <nav aria-label={t("navegacao")} className="flex items-center gap-3">
                   <LinkDoHeader href="/catalogo">{t("catalogo")}</LinkDoHeader>
                   <LinkDoHeader href="/listas">{t("listas")}</LinkDoHeader>

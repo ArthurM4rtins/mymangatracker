@@ -11,6 +11,7 @@ import { BotaoEstante } from "./botao-estante";
 import { BuscaCatalogo } from "./busca-catalogo";
 import { FiltrosCatalogo } from "./filtros-catalogo";
 import { idiomaDoSegmento } from "@/i18n/routing";
+import { ColecaoVisual } from "../componentes/colecao-visual";
 
 // A busca depende do termo da URL e do AniList: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -43,6 +44,13 @@ export default async function Catalogo({ searchParams }: Props)
     idsNaEstante(),
   ]);
   const t = await getTranslations("catalogo");
+  const itens = (resultado.estado === "ok" || resultado.estado === "destaques")
+    ? resultado.obras.map((obra) => ({
+      id: obra.anilistId,
+      titulo: obra.titleEnglish ?? obra.titleRomaji,
+      capa: obra.coverImageUrl ?? null,
+      detalhe: <Obra obra={obra} jaNaEstante={naEstante.has(obra.anilistId)} />,
+    })) : [];
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
@@ -83,18 +91,9 @@ export default async function Catalogo({ searchParams }: Props)
               {t("destaques")}
             </h2>
           )}
-          <ul className="grid gap-5 sm:grid-cols-2">
-            {resultado.obras.map(function (obra)
-            {
-              return (
-                <Obra
-                  key={obra.anilistId}
-                  obra={obra}
-                  jaNaEstante={naEstante.has(obra.anilistId)}
-                />
-              );
-            })}
-          </ul>
+          <ColecaoVisual itens={itens} titulo={t("titulo")} grupos={[
+            { id: "catalogo", titulo: resultado.estado === "destaques" ? t("destaques") : t("titulo"), itens },
+          ]} />
         </section>
       )}
     </main>

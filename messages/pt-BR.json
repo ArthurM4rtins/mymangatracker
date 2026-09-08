@@ -1,4 +1,22 @@
 {
+  "colecao": {
+    "visualizacao": "Visualização da coleção",
+    "grade": "Grade",
+    "prateleira": "Prateleira",
+    "contagem": "{n, plural, =1 {# obra} other {# obras}}",
+    "dica": "Explore as lombadas. Use as setas, arraste ou deslize. Selecione uma obra para ver os detalhes.",
+    "anterior": "Voltar na prateleira {grupo}",
+    "proxima": "Avançar na prateleira {grupo}",
+    "abrir": "Ver detalhes de {titulo}",
+    "detalhes": "Na sua prateleira · {titulo}",
+    "fechar": "Fechar detalhes",
+    "laboratorio": "Uma nova forma de explorar",
+    "descricaoLaboratorio": "Um ensaio para a sua estante. Explore esta coleção de exemplo e alterne entre as duas visualizações.",
+    "avisoLaboratorio": "Coleção de demonstração · não altera sua estante",
+    "selecao": "Para descobrir",
+    "favoritos": "Histórias para guardar",
+    "verObra": "Ver página da obra"
+  },
   "meta": {
     "titulo": "Kidoku",
     "descricao": "Um Letterboxd para mangá, manhwa e novel, com progresso de leitura automático e privado."

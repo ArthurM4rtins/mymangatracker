@@ -14,6 +14,7 @@ import { ContinuarLeitura } from "./continuar-leitura";
 import { ResetarLeitura } from "./resetar-leitura";
 import { EditarProgresso } from "./editar-progresso";
 import { SeletorStatus } from "./seletor-status";
+import { ColecaoVisual } from "../componentes/colecao-visual";
 
 // Estante é da sessão e do banco: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -74,6 +75,18 @@ export default async function Estante({ searchParams }: Props)
 
   const t = await getTranslations("estante");
   const c = await getTranslations("comum");
+  const itens = (entradas ?? []).map((entrada) => ({
+    id: entrada.obra.anilistId,
+    titulo: entrada.obra.titleEnglish ?? entrada.obra.titleRomaji,
+    capa: entrada.obra.coverImageUrl,
+    detalhe: <Entrada entrada={entrada} />,
+    status: entrada.status,
+  }));
+  const grupos = ABAS.filter((aba) => aba !== undefined).map((status) => ({
+    id: status,
+    titulo: c(`status.${status}`),
+    itens: itens.filter((item) => item.status === status),
+  }));
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
@@ -128,12 +141,7 @@ export default async function Estante({ searchParams }: Props)
       )}
 
       {entradas !== null && entradas.length > 0 && (
-        <ul className="grid gap-4 sm:grid-cols-2">
-          {entradas.map(function (entrada)
-          {
-            return <Entrada key={entrada.entradaId} entrada={entrada} />;
-          })}
-        </ul>
+        <ColecaoVisual itens={itens} grupos={grupos} titulo={t("titulo")} />
       )}
     </main>
   );

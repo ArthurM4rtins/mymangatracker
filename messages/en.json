@@ -1,4 +1,22 @@
 {
+  "colecao": {
+    "visualizacao": "Collection view",
+    "grade": "Grid",
+    "prateleira": "Bookshelf",
+    "contagem": "{n, plural, one {# series} other {# series}}",
+    "dica": "Explore the spines. Use the arrows, drag or swipe. Select a series to see its details.",
+    "anterior": "Scroll back on {grupo}",
+    "proxima": "Scroll forward on {grupo}",
+    "abrir": "View details for {titulo}",
+    "detalhes": "On the shelf · {titulo}",
+    "fechar": "Close details",
+    "laboratorio": "A new way to explore",
+    "descricaoLaboratorio": "A first look at your bookshelf. Explore this sample collection and switch between the two views.",
+    "avisoLaboratorio": "Demo collection · your bookshelf stays as it is",
+    "selecao": "Worth discovering",
+    "favoritos": "Stories to keep",
+    "verObra": "View series page"
+  },
   "meta": {
     "titulo": "Kidoku",
     "descricao": "A Letterboxd for manga, manhwa, and novels, with automatic, private reading progress."
