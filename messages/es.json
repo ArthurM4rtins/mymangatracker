@@ -84,6 +84,7 @@
     "arquivo_grande_demais": "la imagen supera los 512 KB",
     "tipo_de_arquivo_invalido": "envía una imagen JPEG, PNG o WebP",
     "capitulo_invalido": "capítulo inválido",
+    "lista_cheia": "la lista llegó al límite de 500 obras",
     "avaliacao_invalida": "valoración inválida — nota de 0,5 a 5 en medias estrellas, o reseña",
     "url_invalida": "URL de lectura inválida",
     "url_de_capitulo_invalida": "pega la URL completa del capítulo 1, con https://",

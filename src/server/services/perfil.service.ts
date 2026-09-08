@@ -13,12 +13,14 @@ import {
 } from "@/server/domain/perfil";
 import {
   listarListasDoUsuario,
+  contarListasDoUsuario,
   type ListaPublica,
 } from "@/server/repositories/lista.repository";
 import {
   contarCurtidasDadas,
   contarResenhas,
   listarAvaliadas,
+  contarAvaliadas,
   listarResenhasRecentes,
   type AvaliadaDoPerfil,
   type ResenhaDoPerfil,
@@ -34,6 +36,9 @@ import {
 } from "@/server/repositories/usuario.repository";
 
 const RESENHAS_RECENTES = 5;
+// Tetos das leituras públicas do perfil (#135): os números vêm de COUNT.
+const AVALIADAS_NO_PERFIL = 200;
+const LISTAS_NO_PERFIL = 50;
 
 export type EntradaDaEstanteDoDono = {
   entradaId: string;
@@ -83,11 +88,13 @@ export type PedidoDePerfil = {
 
 export type DependenciasDePerfil = {
   buscarPorUsername: (username: string) => Promise<UsuarioDoPerfil | null>;
-  listarAvaliadas: (userId: string) => Promise<AvaliadaDoPerfil[]>;
+  listarAvaliadas: (userId: string, limite: number) => Promise<AvaliadaDoPerfil[]>;
+  contarAvaliadas: (userId: string) => Promise<number>;
   contarResenhas: (userId: string) => Promise<number>;
   contarCurtidasDadas: (userId: string) => Promise<number>;
   listarResenhas: (userId: string, limite: number) => Promise<ResenhaDoPerfil[]>;
-  listarListas: (userId: string) => Promise<ListaPublica[]>;
+  listarListas: (userId: string, limite: number) => Promise<ListaPublica[]>;
+  contarListas: (userId: string) => Promise<number>;
   listarEstante: (userId: string) => Promise<EntradaDaEstanteDoDono[]>;
   resumoSocial: (userId: string, viewerId: string | null) => Promise<ResumoSocial>;
 };
@@ -106,13 +113,15 @@ export async function perfilDoUsuario(
 
   const souEu = pedido.viewerId === usuario.id;
 
-  const [avaliadas, resenhas, curtidasDadas, resenhasRecentes, listas, entradas, social] =
+  const [avaliadas, totalDeAvaliadas, resenhas, curtidasDadas, resenhasRecentes, listas, totalDeListas, entradas, social] =
     await Promise.all([
-      deps.listarAvaliadas(usuario.id),
+      deps.listarAvaliadas(usuario.id, AVALIADAS_NO_PERFIL),
+      deps.contarAvaliadas(usuario.id),
       deps.contarResenhas(usuario.id),
       deps.contarCurtidasDadas(usuario.id),
       deps.listarResenhas(usuario.id, RESENHAS_RECENTES),
-      deps.listarListas(usuario.id),
+      deps.listarListas(usuario.id, LISTAS_NO_PERFIL),
+      deps.contarListas(usuario.id),
       souEu ? deps.listarEstante(usuario.id) : Promise.resolve(null),
       deps.resumoSocial(usuario.id, pedido.viewerId),
     ]);
@@ -123,9 +132,9 @@ export async function perfilDoUsuario(
     souEu,
     avatarVersao: usuario.avatarUpdatedAt?.getTime() ?? null,
     numeros: {
-      avaliadas: avaliadas.length,
+      avaliadas: totalDeAvaliadas,
       resenhas,
-      listas: listas.length,
+      listas: totalDeListas,
       curtidasDadas,
     },
     avaliadas: ordenarAvaliadas(avaliadas, pedido.filtro),
@@ -147,10 +156,12 @@ export function perfilDoUsuarioDoSistema(
   return perfilDoUsuario(pedido, {
     buscarPorUsername: buscarUsuarioPorUsername,
     listarAvaliadas,
+    contarAvaliadas,
     contarResenhas,
     contarCurtidasDadas,
     listarResenhas: listarResenhasRecentes,
     listarListas: listarListasDoUsuario,
+    contarListas: contarListasDoUsuario,
     resumoSocial,
     listarEstante: async function (userId)
     {

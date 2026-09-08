@@ -33,11 +33,17 @@ const SELECT_DA_OBRA = {
   coverImageUrl: true,
 } as const;
 
-/** Todas as obras que o usuário deu nota. Ordem e filtro são do domínio. */
-export async function listarAvaliadas(userId: string): Promise<AvaliadaDoPerfil[]>
+/**
+ * As obras que o usuário deu nota, as `limite` mais recentes (#135): o perfil
+ * de quem inflou a conta não materializa tudo a cada visita. Ordem e filtro
+ * finos continuam no domínio, dentro dessa página.
+ */
+export async function listarAvaliadas(userId: string, limite: number): Promise<AvaliadaDoPerfil[]>
 {
   const linhas = await getPrisma().entry.findMany({
     where: { userId, rating: { not: null } },
+    orderBy: { reviewedAt: "desc" },
+    take: limite,
     select: { rating: true, reviewedAt: true, media: { select: SELECT_DA_OBRA } },
   });
 
@@ -98,4 +104,10 @@ export async function listarResenhasRecentes(
       curtidas: linha._count.likes,
     };
   });
+}
+
+/** Quantas obras o usuário deu nota — o número do perfil, sem materializar (#135). */
+export function contarAvaliadas(userId: string): Promise<number>
+{
+  return getPrisma().entry.count({ where: { userId, rating: { not: null } } });
 }

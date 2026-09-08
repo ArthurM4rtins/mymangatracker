@@ -92,7 +92,7 @@ describe("perfil público", function ()
   {
     const { dona } = await semearLeitora();
 
-    const avaliadas = await listarAvaliadas(dona.id);
+    const avaliadas = await listarAvaliadas(dona.id, 200);
     expect(avaliadas.map(function (a) { return [a.anilistId, a.rating]; })).toEqual(
       expect.arrayContaining([
         [30002, 5],

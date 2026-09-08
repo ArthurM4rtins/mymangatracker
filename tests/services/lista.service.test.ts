@@ -62,14 +62,14 @@ describe("alternarObraNaLista", function ()
 {
   function fakeDeps(cenario: {
     media?: { id: string } | null;
-    adicionar?: { jaExistia: boolean } | null;
+    adicionar?: { jaExistia: boolean } | { cheia: true } | null;
   })
   {
     const buscarMedia = vi.fn(async function ()
     {
       return cenario.media === undefined ? { id: "m1", syncedAt: new Date() } : cenario.media;
     });
-    const adicionar = vi.fn(async function ()
+    const adicionar = vi.fn(async function (): Promise<{ jaExistia: boolean } | { cheia: true } | null>
     {
       return cenario.adicionar === undefined ? { jaExistia: false } : cenario.adicionar;
     });
@@ -80,6 +80,15 @@ describe("alternarObraNaLista", function ()
 
     return { deps: { buscarMedia, adicionar, remover }, buscarMedia, adicionar, remover };
   }
+
+  it("lista lotada nao recebe mais: lista_cheia (#135)", async function ()
+  {
+    const { deps, remover } = fakeDeps({ adicionar: { cheia: true } });
+
+    await expect(alternarObraNaLista({ userId: "u1", listaId: "l1", anilistId: 1 }, deps))
+      .resolves.toEqual({ estado: "lista_cheia" });
+    expect(remover).not.toHaveBeenCalled();
+  });
 
   it("obra fora da lista entra", async function ()
   {
