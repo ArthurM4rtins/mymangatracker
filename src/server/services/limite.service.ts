@@ -7,6 +7,7 @@
  * que se quer proteger. Login que deu certo zera as chaves: quem entra de
  * verdade não acumula.
  */
+import { interpretarIdentificador } from "@/server/domain/identificador-de-login";
 import {
   avaliarLimite,
   chaveDeTentativa,
@@ -96,15 +97,30 @@ const DEPS_DE_PRODUCAO: DependenciasDeLimite = {
   limpar: limparTentativas,
 };
 
-function chavesDoLogin(ip: string, email: string)
+/**
+ * O balde do par usa o identificador NORMALIZADO (#166): sem isso "A@x.com" e
+ * "a@x.com" caem em baldes diferentes, e cada variação de maiúscula rende
+ * tentativas extras contra a mesma conta.
+ *
+ * E-mail e nome de usuário continuam sendo duas strings para a mesma conta,
+ * então alternar entre elas dobra o balde do par. De um IP só isso não rende
+ * nada — o balde por IP (30/h) já é o gargalo. Distribuído, o buraco é a
+ * ausência de teto por conta, que é o achado 3 da auditoria (#133).
+ */
+function chavesDoLogin(ip: string, identificador: string)
 {
-  return { par: chaveDeTentativa([ip, email]), ip: chaveDeTentativa([ip]) };
+  const normalizado = interpretarIdentificador(identificador);
+
+  return {
+    par: chaveDeTentativa([ip, normalizado?.valor ?? ""]),
+    ip: chaveDeTentativa([ip]),
+  };
 }
 
 /** A composição de produção. Antes de tentar entrar. */
-export function limitarLogin(pedido: { ip: string; email: string }): Promise<Veredito>
+export function limitarLogin(pedido: { ip: string; identificador: string }): Promise<Veredito>
 {
-  const { par, ip } = chavesDoLogin(pedido.ip, pedido.email);
+  const { par, ip } = chavesDoLogin(pedido.ip, pedido.identificador);
 
   return verificarERegistrar(
     {
@@ -116,9 +132,9 @@ export function limitarLogin(pedido: { ip: string; email: string }): Promise<Ver
 }
 
 /** A composição de produção. Depois de entrar com sucesso. */
-export function liberarLogin(pedido: { ip: string; email: string }): Promise<void>
+export function liberarLogin(pedido: { ip: string; identificador: string }): Promise<void>
 {
-  const { par, ip } = chavesDoLogin(pedido.ip, pedido.email);
+  const { par, ip } = chavesDoLogin(pedido.ip, pedido.identificador);
 
   return zerar({ escopo: "login", chaves: [par, ip] }, DEPS_DE_PRODUCAO);
 }

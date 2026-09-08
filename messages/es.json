@@ -83,7 +83,7 @@
     "contaCriada": "Cuenta creada. Ahora inicia sesión.",
     "semConta": "¿Aún no tienes cuenta? <link>Crear cuenta</link>",
     "campos": {
-      "email": "Correo electrónico",
+      "identificador": "Correo o nombre de usuario",
       "senha": "Contraseña"
     },
     "acoes": {

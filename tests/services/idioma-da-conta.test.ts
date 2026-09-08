@@ -17,11 +17,15 @@ import { salvarIdioma, type DependenciasDoIdioma } from "@/server/services/idiom
 async function depsDeLogin(hash: string, idiomaSalvo: string | null)
 {
   const deps: DependenciasDaSessao = {
-    buscarCredenciais: async function (email)
+    buscarPorEmail: async function (email)
     {
       return email === "existe@exemplo.test"
         ? { id: "u1", passwordHash: hash, locale: idiomaSalvo }
         : null;
+    },
+    buscarPorUsername: async function ()
+    {
+      return null;
     },
     assinarToken: async function (userId)
     {
@@ -40,7 +44,7 @@ describe("entrar devolve o idioma da conta", function ()
     const deps = await depsDeLogin(hash, "pt-BR");
 
     const sessao = await entrar(
-      { email: "existe@exemplo.test", senha: "senha-certa-123" },
+      { identificador: "existe@exemplo.test", senha: "senha-certa-123" },
       deps,
     );
 
@@ -53,7 +57,7 @@ describe("entrar devolve o idioma da conta", function ()
     const deps = await depsDeLogin(hash, null);
 
     const sessao = await entrar(
-      { email: "existe@exemplo.test", senha: "senha-certa-123" },
+      { identificador: "existe@exemplo.test", senha: "senha-certa-123" },
       deps,
     );
 
@@ -65,9 +69,9 @@ describe("entrar devolve o idioma da conta", function ()
     const hash = await gerarHashDeSenha("senha-certa-123");
     const deps = await depsDeLogin(hash, "pt-BR");
 
-    const naoExiste = await entrar({ email: "nao@existe.test", senha: "x" }, deps);
+    const naoExiste = await entrar({ identificador: "nao@existe.test", senha: "x" }, deps);
     const senhaErrada = await entrar(
-      { email: "existe@exemplo.test", senha: "senha-errada" },
+      { identificador: "existe@exemplo.test", senha: "senha-errada" },
       deps,
     );
 

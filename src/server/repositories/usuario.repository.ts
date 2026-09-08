@@ -138,6 +138,21 @@ export function buscarCredenciaisPorEmail(
 }
 
 /**
+ * A mesma busca pela outra porta de entrada (#166). A chave é
+ * `usernameNormalizado`, única desde a #114 — nunca `username`, que guarda o
+ * que a pessoa digitou e existe só para exibição.
+ */
+export function buscarCredenciaisPorUsername(
+  usernameNormalizado: string,
+): Promise<CredenciaisDeLogin | null>
+{
+  return getPrisma().user.findUnique({
+    where: { usernameNormalizado },
+    select: { id: true, passwordHash: true, locale: true },
+  });
+}
+
+/**
  * P2002 é violação de unicidade. Qual índice estourou não tem forma estável no
  * Prisma 7: com driver adapter o nome vem fundo em
  * `meta.driverAdapterError.cause.constraint.index` ("User_username_key"), no

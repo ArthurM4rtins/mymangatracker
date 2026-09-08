@@ -63,7 +63,7 @@ export function FormularioDeLogin()
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: formulario.get("email"),
+          identificador: formulario.get("identificador"),
           senha: formulario.get("senha"),
         }),
       });
@@ -91,11 +91,13 @@ export function FormularioDeLogin()
   return (
     <form onSubmit={enviar} className="flex flex-col gap-4" noValidate>
       <label className="flex flex-col gap-1.5 text-sm">
-        <span className="font-medium">{t("campos.email")}</span>
+        <span className="font-medium">{t("campos.identificador")}</span>
+        {/* Aceita e-mail ou nome de usuario (#166): `type="text"`, porque
+            `type="email"` faria o navegador recusar "roca" antes de enviar. */}
         <input
-          name="email"
-          type="email"
-          autoComplete="email"
+          name="identificador"
+          type="text"
+          autoComplete="username"
           required
           className="rounded-md border border-borda bg-superficie px-3 py-2 outline-none focus:border-acento"
         />
