@@ -1,4 +1,22 @@
 {
+  "colecao": {
+    "visualizacao": "Collection view",
+    "grade": "Grid",
+    "prateleira": "Bookshelf",
+    "contagem": "{n, plural, one {# series} other {# series}}",
+    "dica": "Explore the spines. Use the arrows, drag or swipe. Select a series to see its details.",
+    "anterior": "Scroll back on {grupo}",
+    "proxima": "Scroll forward on {grupo}",
+    "abrir": "View details for {titulo}",
+    "detalhes": "On the shelf · {titulo}",
+    "fechar": "Close details",
+    "laboratorio": "A new way to explore",
+    "descricaoLaboratorio": "A first look at your bookshelf. Explore this sample collection and switch between the two views.",
+    "avisoLaboratorio": "Demo collection · your bookshelf stays as it is",
+    "selecao": "Worth discovering",
+    "favoritos": "Stories to keep",
+    "verObra": "View series page"
+  },
   "meta": {
     "titulo": "Kidoku",
     "descricao": "A Letterboxd for manga, manhwa, and novels, with automatic, private reading progress."
@@ -58,6 +76,8 @@
     "avaliacao_nao_encontrada": "rating not found",
     "usuario_nao_encontrado": "user not found",
     "ja_em_uso": "already taken",
+    "origem_recusada": "the request did not come from Kidoku",
+    "conteudo_nao_json": "the request must be JSON",
     "nao_avanca": "that chapter does not go past your shelf progress — to go back, use reset",
     "sem_fonte": "set up the reading source first",
     "arquivo_grande_demais": "the image is over 512 KB",

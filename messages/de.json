@@ -1,4 +1,22 @@
 {
+  "colecao": {
+    "visualizacao": "Sammlungsansicht",
+    "grade": "Raster",
+    "prateleira": "Bücherregal",
+    "contagem": "{n, plural, one {# Werk} other {# Werke}}",
+    "dica": "Erkunde die Buchrücken. Nutze die Pfeile, ziehe oder wische. Wähle ein Werk aus, um Details zu sehen.",
+    "anterior": "Im Regal {grupo} zurückblättern",
+    "proxima": "Im Regal {grupo} weiterblättern",
+    "abrir": "Details zu {titulo} ansehen",
+    "detalhes": "Im Regal · {titulo}",
+    "fechar": "Details schließen",
+    "laboratorio": "Eine neue Art zu entdecken",
+    "descricaoLaboratorio": "Ein erster Blick auf dein Bücherregal. Erkunde diese Beispielsammlung und wechsle zwischen den beiden Ansichten.",
+    "avisoLaboratorio": "Demosammlung · dein Bücherregal bleibt unverändert",
+    "selecao": "Zum Entdecken",
+    "favoritos": "Geschichten zum Behalten",
+    "verObra": "Werkseite ansehen"
+  },
   "meta": {
     "titulo": "Kidoku",
     "descricao": "Ein Letterboxd für Manga, Manhwa und Novel, mit automatischem und privatem Lesefortschritt."
@@ -58,6 +76,8 @@
     "avaliacao_nao_encontrada": "Bewertung nicht gefunden",
     "usuario_nao_encontrado": "Benutzer nicht gefunden",
     "ja_em_uso": "schon vergeben",
+    "origem_recusada": "die Anfrage kam nicht von Kidoku",
+    "conteudo_nao_json": "die Anfrage muss JSON sein",
     "nao_avanca": "dieses Kapitel liegt nicht über deinem Regal-Fortschritt — zum Zurückgehen nutze das Zurücksetzen",
     "sem_fonte": "richte zuerst die Lesequelle ein",
     "arquivo_grande_demais": "das Bild ist größer als 512 KB",

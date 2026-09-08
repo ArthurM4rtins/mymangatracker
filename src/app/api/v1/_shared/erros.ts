@@ -56,7 +56,11 @@ export const ERRO = {
   NAO_AVANCA: "nao_avanca",
   SEM_FONTE: "sem_fonte",
 
-  // 413/415 — o arquivo enviado.
+  // 403 — o pedido veio de outro site (#131). So nas rotas que gravam cookie.
+  ORIGEM_RECUSADA: "origem_recusada",
+
+  // 413/415 — o arquivo enviado, ou corpo que nao e JSON (#131).
+  CONTEUDO_NAO_JSON: "conteudo_nao_json",
   ARQUIVO_GRANDE_DEMAIS: "arquivo_grande_demais",
   TIPO_DE_ARQUIVO_INVALIDO: "tipo_de_arquivo_invalido",
 
