@@ -12,6 +12,13 @@
 
 * { box-sizing: border-box; }
 
+/*
+ * O `hidden` do HTML so vale `display: none` na folha do navegador, e qualquer
+ * regra de autor com `display` ganha dela — era o caso de `.formulario`, que
+ * nunca escondia (#168). Regra geral para o proximo elemento nao repetir.
+ */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   width: 320px;
