@@ -18,6 +18,9 @@ export function RemoverDaLista({
 {
   const roteador = useRouter();
   const t = useTranslations("listas");
+  // Dois passos (#139): um clique so era o alvo mais facil de clickjacking, e
+  // remover e irreversivel do ponto de vista de quem nao lembra a ordem da lista.
+  const [confirmando, setConfirmando] = useState(false);
   const [ocupado, setOcupado] = useState(false);
 
   async function remover()
@@ -37,18 +40,42 @@ export function RemoverDaLista({
     finally
     {
       setOcupado(false);
+      setConfirmando(false);
     }
   }
 
+  if (!confirmando)
+  {
+    return (
+      <button
+        type="button"
+        onClick={function () { setConfirmando(true); }}
+        className="text-xs text-texto-suave underline underline-offset-4 hover:text-texto"
+      >
+        {t("detalhe.remover")}
+      </button>
+    );
+  }
+
   return (
-    <button
-      type="button"
-      onClick={function () { void remover(); }}
-      disabled={ocupado}
-      className="text-xs text-texto-suave underline underline-offset-4 hover:text-texto disabled:opacity-60"
-    >
-      {t("detalhe.remover")}
-    </button>
+    <span className="flex items-center gap-2 text-xs">
+      <span className="text-texto-suave">{t("detalhe.removerConfirmacao")}</span>
+      <button
+        type="button"
+        onClick={function () { void remover(); }}
+        disabled={ocupado}
+        className="text-acento underline underline-offset-4 disabled:opacity-60"
+      >
+        {t("detalhe.apagar.sim")}
+      </button>
+      <button
+        type="button"
+        onClick={function () { setConfirmando(false); }}
+        className="text-texto-suave hover:text-texto"
+      >
+        {t("detalhe.apagar.nao")}
+      </button>
+    </span>
   );
 }
 

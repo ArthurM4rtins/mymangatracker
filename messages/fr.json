@@ -384,6 +384,7 @@
       "autoria": "par <autor>{username}</autor> · {n, plural, one {# œuvre} other {# œuvres}}",
       "vazia": "Liste vide — ajoute des œuvres avec le bouton de liste sur la page de chaque œuvre.",
       "remover": "retirer",
+      "removerConfirmacao": "Retirer cette œuvre de la liste ?",
       "curtida": {
         "curtir": "aimer la liste",
         "descurtir": "retirer le j’aime de la liste"

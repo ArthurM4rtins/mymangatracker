@@ -384,6 +384,7 @@
       "autoria": "von <autor>{username}</autor> · {n, plural, one {# Werk} other {# Werke}}",
       "vazia": "Leere Liste — füge Werke über den Listen-Button auf der Seite jedes Werks hinzu.",
       "remover": "entfernen",
+      "removerConfirmacao": "Dieses Werk aus der Liste entfernen?",
       "curtida": {
         "curtir": "die Liste liken",
         "descurtir": "Like von der Liste entfernen"
