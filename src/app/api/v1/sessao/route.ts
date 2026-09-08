@@ -6,7 +6,7 @@
  */
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { entrarNoSistema } from "@/server/services/sessao.service";
+import { entrarNoSistema, sairDoSistema } from "@/server/services/sessao.service";
 import { liberarLogin, limitarLogin } from "@/server/services/limite.service";
 import { hasLocale } from "next-intl";
 import { routing } from "@/i18n/routing";
@@ -18,6 +18,7 @@ import {
   apagarSessaoDoCookie,
   escreverIdiomaNoCookie,
   escreverSessaoNoCookie,
+  usuarioDaSessao,
 } from "../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -118,7 +119,28 @@ export async function POST(request: Request)
 
 export async function DELETE()
 {
-  // Sair apaga o cookie de fato — maxAge 0 — não só redireciona.
+  // Sair REVOGA (#137): incrementa a versão do token antes de apagar o cookie,
+  // e todo JWT assinado antes — inclusive um copiado — deixa de valer. Sem
+  // sessão válida não há o que revogar; só limpa.
+  const userId = await usuarioDaSessao();
+
+  if (userId !== null)
+  {
+    try
+    {
+      await sairDoSistema(userId);
+    }
+    catch (erro)
+    {
+      console.error("[sessao] falha ao revogar:", erro instanceof Error ? erro.message : erro);
+      return NextResponse.json(
+        { erros: { _geral: ERRO.FALHA_INTERNA } },
+        { status: 500 },
+      );
+    }
+  }
+
+  // Apaga o cookie de fato — maxAge 0 — não só redireciona.
   const resposta = NextResponse.json({ ok: true }, { status: 200 });
   apagarSessaoDoCookie(resposta);
   return resposta;

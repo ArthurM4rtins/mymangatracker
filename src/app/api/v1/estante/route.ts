@@ -26,7 +26,8 @@ const ESQUEMA_ESTANTE = z.object({
 
 export async function GET(request: Request)
 {
-  const userId = await usuarioDaSessao();
+  // A extensão lê a estante por Bearer (#52); é uma das duas rotas que aceitam (#137).
+  const userId = await usuarioDaSessao({ aceitarBearer: true });
 
   if (!userId)
   {
