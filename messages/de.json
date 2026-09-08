@@ -227,7 +227,7 @@
     },
     "continuar": {
       "continuar": "Weiterlesen ↗",
-      "ultimoCapitulo": "zuletzt: Kap. {capitulo} auf {host}",
+      "capituloEm": "Kap. {capitulo} auf {host}",
       "semLeitura": "Registriere ein Kapitel mit der Erweiterung, um hier weiterzumachen"
     },
     "avaliacao": {

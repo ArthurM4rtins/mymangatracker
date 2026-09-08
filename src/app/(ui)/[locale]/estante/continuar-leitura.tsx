@@ -12,17 +12,17 @@
 import { useTranslations } from "next-intl";
 
 export function ContinuarLeitura({
-  ultimaLeitura,
+  continuarEm,
   compacto = false,
 }: {
-  ultimaLeitura: { url: string; host: string; capitulo: string } | null;
+  continuarEm: { url: string; host: string; capitulo: string } | null;
   /** Na home o card é pequeno: sem a linha de ajuda. */
   compacto?: boolean;
 })
 {
   const t = useTranslations("estante");
 
-  if (ultimaLeitura === null)
+  if (continuarEm === null)
   {
     return compacto ? null : (
       <p className="text-xs text-texto-suave">{t("continuar.semLeitura")}</p>
@@ -32,7 +32,7 @@ export function ContinuarLeitura({
   return (
     <div className="flex flex-col gap-1">
       <a
-        href={ultimaLeitura.url}
+        href={continuarEm.url}
         target="_blank"
         rel="noopener noreferrer"
         className="w-fit rounded-md bg-acento px-3 py-1.5 text-sm font-medium text-acento-contraste"
@@ -42,9 +42,9 @@ export function ContinuarLeitura({
 
       {!compacto && (
         <span className="text-xs text-texto-suave">
-          {t("continuar.ultimoCapitulo", {
-            capitulo: ultimaLeitura.capitulo,
-            host: ultimaLeitura.host,
+          {t("continuar.capituloEm", {
+            capitulo: continuarEm.capitulo,
+            host: continuarEm.host,
           })}
         </span>
       )}

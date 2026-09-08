@@ -84,7 +84,7 @@ function fakeDeps(cenario: {
     return { entradaId: "e1", status: "READING", progressChapter: "57.5" };
   });
   // O destino do "Continuar leitura" e a ultima abertura da extensao (#170).
-  const buscarUltimaLeitura = vi.fn(async function ()
+  const buscarLeituraMaisAvancada = vi.fn(async function ()
   {
     return {
       resolvedUrl: "https://mangafire.to/title/qnlvj-vagabond22/chapter/7180252",
@@ -157,7 +157,7 @@ function fakeDeps(cenario: {
       salvarMedia,
       buscarSimilares,
       buscarEntrada,
-      buscarUltimaLeitura,
+      buscarLeituraMaisAvancada,
       buscarAvaliacao,
       listarReviews,
       contarNotas,
@@ -357,7 +357,7 @@ describe("obraParaPagina", function ()
       entradaId: "e1",
       status: "READING",
       progressChapter: "57.5",
-      ultimaLeitura: {
+      continuarEm: {
         url: "https://mangafire.to/title/qnlvj-vagabond22/chapter/7180252",
         host: "mangafire.to",
         capitulo: "70",

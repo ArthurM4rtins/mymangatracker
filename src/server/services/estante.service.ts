@@ -20,7 +20,7 @@ import {
   listarAnilistIdsDaEstante,
   listarEntradasDoUsuario,
 } from "@/server/repositories/shelf.repository";
-import { listarUltimasAberturas } from "@/server/repositories/reading-progress.repository";
+import { listarAberturasMaisAvancadas } from "@/server/repositories/reading-progress.repository";
 import { listarAvaliacoes } from "@/server/repositories/avaliacao.repository";
 
 export type StatusDaEstante =
@@ -121,11 +121,11 @@ export type EntradaDaEstante = {
     chapters: number | null;
   };
   /**
-   * A última abertura registrada pela extensão: para onde o "Continuar
-   * leitura" leva. `null` quando ainda não houve nenhuma — a tela não tem
-   * para onde continuar, e diz isso em vez de inventar destino (#170).
+   * Para onde o "Continuar leitura" leva: a abertura mais avançada que a
+   * extensão registrou. `null` quando ainda não houve nenhuma — a tela não
+   * tem para onde continuar, e diz isso em vez de inventar destino (#170).
    */
-  ultimaLeitura: { url: string; host: string; capitulo: string } | null;
+  continuarEm: { url: string; host: string; capitulo: string } | null;
   /** A avaliação do dono — nota e/ou resenha, estilo Letterboxd. */
   avaliacao: {
     rating: string | null;
@@ -141,7 +141,7 @@ export type FiltroDaEstante = {
 
 type EntradaNoRepositorio = Omit<
   EntradaDaEstante,
-  "ultimaLeitura" | "avaliacao"
+  "continuarEm" | "avaliacao"
 > & {
   mediaId: string;
 };
@@ -151,7 +151,7 @@ export type DependenciasDeListagem = {
     userId: string,
     status?: StatusDaEstante,
   ) => Promise<EntradaNoRepositorio[]>;
-  listarUltimasLeituras: (
+  listarLeiturasMaisAvancadas: (
     userId: string,
   ) => Promise<Array<{ mediaId: string; resolvedUrl: string; chapter: string }>>;
   listarAvaliacoes: (
@@ -179,7 +179,7 @@ export async function listarEstante(
 {
   const [entradas, leituras, avaliacoes] = await Promise.all([
     deps.listarEntradas(filtro.userId, filtro.status),
-    deps.listarUltimasLeituras(filtro.userId),
+    deps.listarLeiturasMaisAvancadas(filtro.userId),
     deps.listarAvaliacoes(filtro.userId),
   ]);
 
@@ -200,7 +200,7 @@ export async function listarEstante(
       status: entrada.status,
       progressChapter: entrada.progressChapter,
       obra: entrada.obra,
-      ultimaLeitura: leitura === null ? null : recorteDaLeitura(leitura),
+      continuarEm: leitura === null ? null : recorteDaLeitura(leitura),
       avaliacao:
         avaliacao === null
           ? null
@@ -219,7 +219,7 @@ export async function listarEstante(
 function recorteDaLeitura(leitura: {
   resolvedUrl: string;
   chapter: string;
-}): NonNullable<EntradaDaEstante["ultimaLeitura"]>
+}): NonNullable<EntradaDaEstante["continuarEm"]>
 {
   return {
     url: leitura.resolvedUrl,
@@ -343,7 +343,7 @@ export function listarEstanteDoSistema(
 {
   return listarEstante(filtro, {
     listarEntradas: listarEntradasDoUsuario,
-    listarUltimasLeituras: listarUltimasAberturas,
+    listarLeiturasMaisAvancadas: listarAberturasMaisAvancadas,
     listarAvaliacoes,
   });
 }

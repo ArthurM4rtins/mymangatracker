@@ -21,7 +21,7 @@ import {
 import { buscarEntradaPorMedia } from "@/server/repositories/shelf.repository";
 import {
   listarAberturas,
-  ultimaLeituraDaObra,
+  aberturaMaisAvancadaDaObra,
   type AberturaDoHistorico,
 } from "@/server/repositories/reading-progress.repository";
 import {
@@ -63,8 +63,8 @@ export type MinhaRelacao = {
   entradaId: string;
   status: "READING" | "COMPLETED" | "PLANNED" | "PAUSED" | "DROPPED";
   progressChapter: string | null;
-  /** Para onde o "Continuar leitura" leva: a última abertura da extensão (#170). */
-  ultimaLeitura: { url: string; host: string; capitulo: string } | null;
+  /** Para onde o "Continuar leitura" leva: a abertura mais avançada (#170). */
+  continuarEm: { url: string; host: string; capitulo: string } | null;
   /** O histórico de aberturas DO DONO (issue #54), do mais recente ao mais antigo. */
   historico: AberturaDoHistorico[];
 };
@@ -106,7 +106,7 @@ export type DependenciasDaObra = {
     status: MinhaRelacao["status"];
     progressChapter: string | null;
   } | null>;
-  buscarUltimaLeitura: (
+  buscarLeituraMaisAvancada: (
     userId: string,
     mediaId: string,
   ) => Promise<{ resolvedUrl: string; chapter: string } | null>;
@@ -293,7 +293,7 @@ async function minhaRelacao(
   }
 
   const [ultima, historico] = await Promise.all([
-    deps.buscarUltimaLeitura(userId, mediaId),
+    deps.buscarLeituraMaisAvancada(userId, mediaId),
     // Histórico falhando não derruba o painel — a lista some.
     deps
       .listarAberturas(userId, mediaId, LIMITE_DO_HISTORICO)
@@ -306,7 +306,7 @@ async function minhaRelacao(
     progressChapter: entrada.progressChapter,
     historico,
     // O host sai da propria URL: uma verdade so, a que a extensao atualiza.
-    ultimaLeitura:
+    continuarEm:
       ultima === null
         ? null
         : {
@@ -329,7 +329,7 @@ export function obraParaPaginaDoSistema(
     salvarMedia: salvarMediaDoAniList,
     buscarSimilares,
     buscarEntrada: buscarEntradaPorMedia,
-    buscarUltimaLeitura: ultimaLeituraDaObra,
+    buscarLeituraMaisAvancada: aberturaMaisAvancadaDaObra,
     buscarAvaliacao,
     listarReviews: listarReviewsDaObra,
     contarNotas: contarNotasPorValor,

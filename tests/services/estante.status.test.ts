@@ -32,7 +32,7 @@ const NO_REPOSITORIO = {
 const vazio = async function () { return []; };
 
 // O ultimo link vem da extensao, nunca de fonte configurada (#170).
-const ULTIMA_LEITURA = {
+const MAIS_AVANCADA = {
   mediaId: "m1",
   resolvedUrl: "https://mangafire.to/title/qnlvj-vagabond22/chapter/7180252",
   chapter: "70",
@@ -43,7 +43,7 @@ describe("listarEstante", function ()
   it("compõe a entrada com a ultima leitura e a avaliação, sem vazar mediaId", async function ()
   {
     const listarEntradas = vi.fn(async function () { return [NO_REPOSITORIO]; });
-    const listarUltimasLeituras = vi.fn(async function () { return [ULTIMA_LEITURA]; });
+    const listarLeiturasMaisAvancadas = vi.fn(async function () { return [MAIS_AVANCADA]; });
     const listarAvaliacoes = vi.fn(async function ()
     {
       return [
@@ -53,11 +53,11 @@ describe("listarEstante", function ()
 
     const entradas = await listarEstante(
       { userId: "u1", status: "READING" },
-      { listarEntradas, listarUltimasLeituras, listarAvaliacoes },
+      { listarEntradas, listarLeiturasMaisAvancadas, listarAvaliacoes },
     );
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", "READING");
-    expect(listarUltimasLeituras).toHaveBeenCalledWith("u1");
+    expect(listarLeiturasMaisAvancadas).toHaveBeenCalledWith("u1");
     expect(listarAvaliacoes).toHaveBeenCalledWith("u1");
     expect(entradas).toEqual([
       {
@@ -65,7 +65,7 @@ describe("listarEstante", function ()
         status: "READING",
         progressChapter: "57.5",
         obra: OBRA,
-        ultimaLeitura: {
+        continuarEm: {
           url: "https://mangafire.to/title/qnlvj-vagabond22/chapter/7180252",
           host: "mangafire.to",
           capitulo: "70",
@@ -79,7 +79,7 @@ describe("listarEstante", function ()
   it("o host sai da propria URL: e o que a tela mostra como 'lendo em'", async function ()
   {
     const listarEntradas = vi.fn(async function () { return [NO_REPOSITORIO]; });
-    const listarUltimasLeituras = vi.fn(async function ()
+    const listarLeiturasMaisAvancadas = vi.fn(async function ()
     {
       return [
         {
@@ -92,10 +92,10 @@ describe("listarEstante", function ()
 
     const entradas = await listarEstante(
       { userId: "u1" },
-      { listarEntradas, listarUltimasLeituras, listarAvaliacoes: vazio },
+      { listarEntradas, listarLeiturasMaisAvancadas, listarAvaliacoes: vazio },
     );
 
-    expect(entradas[0].ultimaLeitura).toEqual({
+    expect(entradas[0].continuarEm).toEqual({
       url: "https://mangadex.org/chapter/ff963efd-8ea1-44a3-90f6-bf743b1dbf59",
       host: "mangadex.org",
       capitulo: "94",
@@ -109,15 +109,15 @@ describe("listarEstante", function ()
     {
       return [{ ...NO_REPOSITORIO, progressChapter: null }];
     });
-    const listarUltimasLeituras = vi.fn(async function () { return []; });
+    const listarLeiturasMaisAvancadas = vi.fn(async function () { return []; });
 
     const entradas = await listarEstante(
       { userId: "u1" },
-      { listarEntradas, listarUltimasLeituras, listarAvaliacoes: vazio },
+      { listarEntradas, listarLeiturasMaisAvancadas, listarAvaliacoes: vazio },
     );
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", undefined);
-    expect(entradas[0]).toMatchObject({ ultimaLeitura: null, avaliacao: null });
+    expect(entradas[0]).toMatchObject({ continuarEm: null, avaliacao: null });
   });
 });
 

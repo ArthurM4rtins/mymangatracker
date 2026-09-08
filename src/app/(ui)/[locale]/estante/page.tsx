@@ -192,7 +192,7 @@ async function Entrada({ entrada }: { entrada: EntradaDaEstante })
         </p>
 
         <div className="mt-auto flex flex-col gap-2 pt-2">
-          <ContinuarLeitura ultimaLeitura={entrada.ultimaLeitura} />
+          <ContinuarLeitura continuarEm={entrada.continuarEm} />
 
           <div className="flex flex-wrap items-center gap-3">
             <SeletorStatus entradaId={entrada.entradaId} status={entrada.status} />

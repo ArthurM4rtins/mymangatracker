@@ -227,7 +227,7 @@
     },
     "continuar": {
       "continuar": "Reprendre la lecture ↗",
-      "ultimoCapitulo": "dernier : ch. {capitulo} sur {host}",
+      "capituloEm": "ch. {capitulo} sur {host}",
       "semLeitura": "enregistre un chapitre avec l’extension pour reprendre d’ici"
     },
     "avaliacao": {

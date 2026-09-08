@@ -381,7 +381,7 @@ async function PainelDoUsuario({
         <AdicionarALista anilistId={anilistId} />
       </div>
 
-      <ContinuarLeitura ultimaLeitura={minha.ultimaLeitura} />
+      <ContinuarLeitura continuarEm={minha.continuarEm} />
 
       {minha.historico.length > 0 && <HistoricoDeLeitura historico={minha.historico} />}
     </section>

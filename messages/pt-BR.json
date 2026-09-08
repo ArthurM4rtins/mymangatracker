@@ -227,7 +227,7 @@
     },
     "continuar": {
       "continuar": "Continuar leitura ↗",
-      "ultimoCapitulo": "último: cap. {capitulo} em {host}",
+      "capituloEm": "cap. {capitulo} em {host}",
       "semLeitura": "registre um capítulo pela extensão para continuar daqui"
     },
     "avaliacao": {
