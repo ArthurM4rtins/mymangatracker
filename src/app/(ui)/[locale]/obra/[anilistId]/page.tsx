@@ -18,7 +18,6 @@ import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "../../catalogo/botao-estante";
 import { DataHora } from "../../componentes/data-hora";
 import { ContinuarLeitura } from "../../estante/continuar-leitura";
-import { ResetarLeitura } from "./resetar-leitura";
 import { EditarProgresso } from "../../estante/editar-progresso";
 import { SeletorStatus } from "../../estante/seletor-status";
 import { idiomaDoSegmento } from "@/i18n/routing";
@@ -273,12 +272,7 @@ export default async function PaginaDaObra({ params }: Props)
           </section>
         )}
 
-        <PainelDoUsuario
-          anilistId={obra.anilistId}
-          titulo={obra.titleRomaji}
-          minha={minha}
-          logado={userId !== null}
-        />
+        <PainelDoUsuario anilistId={obra.anilistId} minha={minha} logado={userId !== null} />
 
         <section className="flex flex-col gap-4">
           <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
@@ -334,13 +328,10 @@ export default async function PaginaDaObra({ params }: Props)
 
 async function PainelDoUsuario({
   anilistId,
-  titulo,
   minha,
   logado,
 }: {
   anilistId: number;
-  /** Para o modal do reset nomear a obra (#172). */
-  titulo: string;
   minha: MinhaRelacao | null;
   logado: boolean;
 })
@@ -393,16 +384,6 @@ async function PainelDoUsuario({
       <ContinuarLeitura continuarEm={minha.continuarEm} />
 
       {minha.historico.length > 0 && <HistoricoDeLeitura historico={minha.historico} />}
-
-      {/* O desfazer da extensao (#172): so aparece quando ha o que zerar. */}
-      {(minha.totalDeAberturas > 0 || minha.progressChapter !== null) && (
-        <ResetarLeitura
-          entradaId={minha.entradaId}
-          titulo={titulo}
-          totalDeAberturas={minha.totalDeAberturas}
-          progressChapter={minha.progressChapter}
-        />
-      )}
     </section>
   );
 }

@@ -11,6 +11,7 @@ import { idiomaDoSegmento } from "@/i18n/routing";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { Avaliar } from "./avaliar";
 import { ContinuarLeitura } from "./continuar-leitura";
+import { ResetarLeitura } from "./resetar-leitura";
 import { EditarProgresso } from "./editar-progresso";
 import { SeletorStatus } from "./seletor-status";
 
@@ -196,6 +197,15 @@ async function Entrada({ entrada }: { entrada: EntradaDaEstante })
 
           <div className="flex flex-wrap items-center gap-3">
             <SeletorStatus entradaId={entrada.entradaId} status={entrada.status} />
+            {/* O desfazer da extensao (#172): so quando ha o que zerar. */}
+            {(entrada.totalDeAberturas > 0 || entrada.progressChapter !== null) && (
+              <ResetarLeitura
+                entradaId={entrada.entradaId}
+                titulo={entrada.obra.titleRomaji}
+                totalDeAberturas={entrada.totalDeAberturas}
+                progressChapter={entrada.progressChapter}
+              />
+            )}
           </div>
 
           <Avaliar anilistId={entrada.obra.anilistId} avaliacao={entrada.avaliacao} />

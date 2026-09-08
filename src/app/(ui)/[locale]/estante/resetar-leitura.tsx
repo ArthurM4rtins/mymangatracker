@@ -2,7 +2,8 @@
 
 /**
  * O desfazer da extensão (#172): apaga o histórico de leitura desta obra e
- * zera o progresso, para a pessoa marcar de novo o capítulo certo.
+ * zera o progresso, para a pessoa marcar de novo o capítulo certo. Mora na
+ * estante, que é onde a leitura é gerida — a página da obra é vitrine.
  *
  * Confirmação com número — quantas aberturas somem e onde o progresso está
  * hoje —, no modal do site (padrão de `botao-sair.tsx`), nunca `confirm()`.
