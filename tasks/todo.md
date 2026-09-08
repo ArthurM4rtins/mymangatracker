@@ -1104,3 +1104,36 @@ reais, duas contas. Cinco PRs na `main`, todos com o job do CI verde antes do me
   propria quando estiver comprovadamente sem uso; esperar a #172.
 - **Nao testado na extensao**: os 5 idiomas (exige trocar o idioma do Chrome) e
   producao (`host_permissions` aponta para a Vercel, so testamos em localhost).
+
+## Sessao 08/09 — continuacao: #171, #172 e o que abriu no caminho
+
+### Fechado
+
+- **#171** — o popup pre-seleciona a obra pelo nome no titulo da aba. Casa TODOS os
+  pedacos do titulo com romaji, ingles e nativo (em `1 | Chapter 68 - Berserk -
+  MangaDex` o maior pedaco e o site, nao a obra — foi o primeiro teste a falhar).
+  `titleNative` entrou no DTO da estante para o caso do site em outra lingua.
+  Detalhe que so o teste pegou: NFC depois de tirar acentos latinos, senao o Hangul
+  fica em jamo solto. Dominio em `obra-do-titulo.ts`, espelhado em `comum.js`.
+- **#172** — mudou de forma no meio: o desenho original era "corrigir para N com
+  contagem por faixa"; o usuario preferiu **reset + marcacao manual**. Parte 2 (#183):
+  reset no card da estante, apaga o historico E zera o `progressChapter` na mesma
+  transacao (o progresso e o MAX dos dois — apagar um lado so nao corrige nada), com
+  confirmacao numerica. Parte 1 (#184): a extensao so registra capitulo que avanca,
+  regra no SERVIDOR (`nao_avanca` 409 com o progresso); releitura deixou de existir.
+  Ordem deliberada: o reset entrou antes para nunca haver intervalo sem desfazer.
+- **#166, #175** — login por nome de usuario; confirmar antes de sair.
+
+### Aberto
+
+- **#173** — registro automatico. Destravado: "so avanca" + reset cumprem a decisao 10
+  do desenho da extensao. Inverte tambem a decisao 8 (background nunca escreve).
+  Pede desenho no Obsidian.
+- **#181** — badge acende com par salvo por OUTRA conta no mesmo navegador. O popup
+  ja checa o `entradaId` contra a estante logada; o `background.js` nao.
+- **#176** — recuperacao de senha; **#182** — ideia da estante de lombadas; **#165**.
+
+### Dado de teste
+
+Conta `provadona` (`provadona@teste.local`): senha regravada nesta sessao, so no banco
+local, anotada em `tasks/lessons.md`. Berserk esta no cap. 3 depois dos testes.
