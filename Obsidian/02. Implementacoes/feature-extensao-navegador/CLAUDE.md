@@ -64,6 +64,12 @@ Fora:
    separadas. A extensão acompanha as abas para reconhecer a obra pareada e acender o badge
    antes do clique; o registro continua acontecendo só quando o usuário clica. Custo: o aviso
    de "ler seu histórico de navegação" na instalação.
+
+   **Atualização 08/09/2026 (#173):** com a chave "registrar automaticamente" ligada, o
+   `background.js` passa a escrever no servidor — sob seis condições (chave ligada, obra
+   pareada da sessão atual, capítulo no título, aba ativa em janela focada, 20 s na página,
+   uma vez por aba/obra/capítulo). O servidor continua decidindo se avança. Desenho em
+   `feature-extensao-auto-registro/CLAUDE.md`.
 9. **Um clique por sessão de leitura, não por capítulo.** Progresso é o MAIOR capítulo aberto,
    então quem leu do 3 ao 10 clica uma vez no 10 e a estante vai a 10. O que se perde é
    granularidade do histórico: os capítulos pulados nunca existiram para a tela de histórico.
