@@ -46,7 +46,7 @@
     "email_invalido": "correo electrónico inválido",
     "senha_curta": "mínimo 8 caracteres",
     "senha_longa": "máximo 72 caracteres",
-    "credenciais_invalidas": "correo electrónico o contraseña incorrectos",
+    "credenciais_invalidas": "correo, nombre de usuario o contraseña incorrectos",
     "sessao_necessaria": "inicia sesión para continuar",
     "obra_nao_encontrada": "obra no encontrada",
     "obra_fora_do_catalogo": "obra no encontrada en el catálogo",

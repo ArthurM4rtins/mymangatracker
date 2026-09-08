@@ -46,7 +46,7 @@
     "email_invalido": "invalid email",
     "senha_curta": "at least 8 characters",
     "senha_longa": "at most 72 characters",
-    "credenciais_invalidas": "wrong email or password",
+    "credenciais_invalidas": "wrong email, username or password",
     "sessao_necessaria": "sign in to continue",
     "obra_nao_encontrada": "series not found",
     "obra_fora_do_catalogo": "series not found in the catalog",
