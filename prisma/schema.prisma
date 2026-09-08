@@ -48,6 +48,9 @@ model User {
   usernameNormalizado String @unique
   email        String   @unique
   passwordHash String
+  // Versão do token de sessão (#137): sair incrementa, e todo JWT assinado com
+  // a versão antiga deixa de valer. Nunca sai em DTO.
+  tokenVersion Int      @default(0)
   role         Role     @default(USER)
   // Idioma da interface escolhido pela pessoa (#116, fase 5). Nulo = nunca
   // escolheu, e a negociacao por Accept-Language decide.
