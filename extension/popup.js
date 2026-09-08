@@ -5,7 +5,8 @@
 const el = {
   estado: document.getElementById("estado"),
   formulario: document.getElementById("formulario"),
-  pagina: document.getElementById("pagina"),
+  paginaUrl: document.getElementById("pagina-url"),
+  paginaTitulo: document.getElementById("pagina-titulo"),
   filtro: document.getElementById("filtro"),
   obra: document.getElementById("obra"),
   capitulo: document.getElementById("capitulo"),
@@ -118,8 +119,10 @@ async function iniciar()
 
   contexto = { aba, sessao, abertas, chave };
 
-  el.pagina.textContent = aba && aba.title ? aba.title : "";
-  el.pagina.title = aba && aba.url ? aba.url : "";
+  // A string que sai do navegador fica na tela antes do clique: e ela, nao o
+  // titulo, que e gravada para sempre em ReadingProgress (issue #142).
+  el.paginaUrl.textContent = aba && aba.url ? aba.url : "";
+  el.paginaTitulo.textContent = aba && aba.title ? aba.title : "";
   preencherObras(abertas, "", pareada);
   el.capitulo.value = capitulo === null ? "" : String(capitulo);
   el.origem.textContent = KIDOKU_I18N.texto(

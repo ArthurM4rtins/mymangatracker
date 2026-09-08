@@ -40,9 +40,30 @@ body {
 
 .formulario { display: flex; flex-direction: column; gap: 10px; }
 
+/*
+ * A URL vai inteira para o banco e nunca mais sai de la (issue #142), entao ela
+ * aparece por extenso antes do clique: quebra no meio da string e ate 3 linhas,
+ * porque o que costuma ser segredo (?token=, ?code=) mora no fim.
+ */
 .pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   margin: 0;
+}
+
+.pagina-url {
   font-size: 12px;
+  color: var(--texto);
+  word-break: break-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pagina-titulo {
+  font-size: 11px;
   color: var(--texto-suave);
   overflow: hidden;
   text-overflow: ellipsis;
