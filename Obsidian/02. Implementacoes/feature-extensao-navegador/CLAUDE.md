@@ -72,6 +72,10 @@ Fora:
    Erro para baixo é inofensivo. Por isso badge chamando + um clique confirmando, e registro
    cego só depois que existir o desfazer.
 
+   **Atualização 08/09/2026 (#172):** o desfazer existe — reset de leitura na página da obra,
+   que apaga o histórico e zera o progresso com confirmação numérica. A condição desta
+   decisão está cumprida; o registro automático (#173) pode partir daqui.
+
 ## Achados do teste em navegador (04/09/2026)
 
 Testado com o capítulo 2 de Vagabond nos dois sites que pareciam impossíveis.

@@ -166,6 +166,52 @@ export async function aberturaMaisAvancadaDaObra(
     : { resolvedUrl: linha.resolvedUrl, chapter: linha.chapter.toString() };
 }
 
+/**
+ * Total de aberturas de CADA obra do usuario, numa consulta so: a estante lista
+ * varias obras e a confirmacao do reset precisa do numero de cada uma (#172).
+ * Privado do dono: carrega userId.
+ */
+export async function contarAberturasPorObra(
+  userId: string,
+): Promise<Array<{ mediaId: string; total: number }>>
+{
+  const grupos = await getPrisma().readingProgress.groupBy({
+    by: ["mediaId"],
+    where: { userId },
+    _count: { _all: true },
+  });
+
+  return grupos.map(function (grupo)
+  {
+    return { mediaId: grupo.mediaId, total: grupo._count._all };
+  });
+}
+
+/**
+ * O reset de leitura (#172, parte 2): apaga o historico da obra E zera o
+ * capitulo marcado a mao, na MESMA transacao. O progresso e o maior entre os
+ * dois, entao apagar so um lado nao corrige nada. O status fica.
+ *
+ * Privado do dono: as duas escritas carregam userId.
+ */
+export async function apagarHistoricoEZerarProgresso(
+  userId: string,
+  mediaId: string,
+): Promise<{ removidas: number }>
+{
+  const prisma = getPrisma();
+
+  const [apagadas] = await prisma.$transaction([
+    prisma.readingProgress.deleteMany({ where: { userId, mediaId } }),
+    prisma.shelfEntry.updateMany({
+      where: { userId, mediaId },
+      data: { progressChapter: null },
+    }),
+  ]);
+
+  return { removidas: apagadas.count };
+}
+
 export type AberturaDoHistorico = {
   id: string;
   chapter: string;
