@@ -26,6 +26,12 @@
   "registrar": {
     "message": "Enregistrer la lecture"
   },
+  "autoRegistro": {
+    "message": "enregistrer automatiquement"
+  },
+  "autoRegistroAjuda": {
+    "message": "uniquement les œuvres déjà associées, après 20 s sur la page du chapitre"
+  },
   "semSessao": {
     "message": "Connecte-toi à Kidoku pour enregistrer ta lecture."
   },
@@ -77,6 +83,17 @@
         "content": "$2"
       }
     }
+  },
+  "registradoAutomatico": {
+    "message": "ch. $capitulo$ enregistré automatiquement",
+    "placeholders": {
+      "capitulo": {
+        "content": "$1"
+      }
+    }
+  },
+  "desfazer": {
+    "message": "annuler"
   },
   "erroPadrao": {
     "message": "enregistrement impossible"

@@ -114,3 +114,10 @@ button[type="submit"]:disabled { opacity: 0.6; cursor: default; }
 .resultado { margin: 0; min-height: 1.4em; font-size: 13px; color: var(--texto-suave); }
 .resultado.ok { color: var(--acento); }
 .resultado.erro { color: var(--erro); }
+
+/* A chave do registro automatico (#173): desligada por padrao, um toque para ligar. */
+.chave { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; cursor: pointer; }
+.chave input { width: auto; margin: 3px 0 0; accent-color: var(--acento); }
+.chave span { display: flex; flex-direction: column; gap: 2px; }
+#auto-aviso { margin-bottom: 10px; }
+#auto-aviso a { margin-left: 6px; }

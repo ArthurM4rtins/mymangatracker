@@ -26,6 +26,12 @@
   "registrar": {
     "message": "Registrar leitura"
   },
+  "autoRegistro": {
+    "message": "registrar automaticamente"
+  },
+  "autoRegistroAjuda": {
+    "message": "só obras já pareadas, depois de 20 s na página do capítulo"
+  },
   "semSessao": {
     "message": "Entre no Kidoku para registrar a leitura."
   },
@@ -77,6 +83,17 @@
         "content": "$2"
       }
     }
+  },
+  "registradoAutomatico": {
+    "message": "cap. $capitulo$ registrado automaticamente",
+    "placeholders": {
+      "capitulo": {
+        "content": "$1"
+      }
+    }
+  },
+  "desfazer": {
+    "message": "desfazer"
   },
   "erroPadrao": {
     "message": "não deu para registrar"

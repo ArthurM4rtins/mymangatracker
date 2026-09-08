@@ -26,6 +26,12 @@
   "registrar": {
     "message": "Lektüre eintragen"
   },
+  "autoRegistro": {
+    "message": "automatisch eintragen"
+  },
+  "autoRegistroAjuda": {
+    "message": "nur bereits gekoppelte Werke, nach 20 s auf der Kapitelseite"
+  },
   "semSessao": {
     "message": "Melde dich bei Kidoku an, um deine Lektüre einzutragen."
   },
@@ -77,6 +83,17 @@
         "content": "$2"
       }
     }
+  },
+  "registradoAutomatico": {
+    "message": "Kap. $capitulo$ automatisch eingetragen",
+    "placeholders": {
+      "capitulo": {
+        "content": "$1"
+      }
+    }
+  },
+  "desfazer": {
+    "message": "rückgängig"
   },
   "erroPadrao": {
     "message": "Eintragen nicht möglich"
