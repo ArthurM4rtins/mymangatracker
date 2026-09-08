@@ -4,7 +4,7 @@
  * muda, e o ETag é a versão.
  */
 import { NextResponse } from "next/server";
-import { avatarDoUsuarioDoSistema } from "@/server/services/avatar.service";
+import { avatarDoUsuarioDoSistema, versaoDoAvatarDoSistema } from "@/server/services/avatar.service";
 
 export const dynamic = "force-dynamic";
 
@@ -17,18 +17,27 @@ export async function GET(
 
   try
   {
+    // Versão primeiro (#135): 404 e 304 se decidem sem ler os até 512 KB do
+    // BYTEA — revalidação de navegador bem-comportado custava a leitura inteira.
+    const versao = await versaoDoAvatarDoSistema(username);
+
+    if (versao === null)
+    {
+      return new NextResponse(null, { status: 404 });
+    }
+
+    const etag = `"${versao.versao}"`;
+
+    if (request.headers.get("if-none-match") === etag)
+    {
+      return new NextResponse(null, { status: 304, headers: { ETag: etag } });
+    }
+
     const foto = await avatarDoUsuarioDoSistema(username);
 
     if (foto === null)
     {
       return new NextResponse(null, { status: 404 });
-    }
-
-    const etag = `"${foto.versao}"`;
-
-    if (request.headers.get("if-none-match") === etag)
-    {
-      return new NextResponse(null, { status: 304, headers: { ETag: etag } });
     }
 
     return new NextResponse(new Uint8Array(foto.bytes), {

@@ -75,14 +75,21 @@ function comentarioParaDto(linha: LinhaDeComentario, userId: string | null): Com
  * As resenhas públicas da obra: mais curtidas primeiro, desempate recente.
  * `userId` (opcional) só marca "curti/meu" — não filtra nada.
  */
+/**
+ * As `limite` resenhas mais curtidas da obra (#135): antes vinham TODAS, e uma
+ * obra popular com muitas resenhas de 20 KB virava dezenas de MB por render
+ * anônimo. Primeira página; carregar mais é evolução.
+ */
 export async function listarReviewsDaObra(
   mediaId: string,
   userId: string | null,
+  limite: number,
 ): Promise<ReviewPublica[]>
 {
   const linhas = await getPrisma().entry.findMany({
     where: { mediaId, review: { not: null } },
     orderBy: [{ likes: { _count: "desc" } }, { reviewedAt: "desc" }],
+    take: limite,
     select: {
       id: true,
       userId: true,

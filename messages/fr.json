@@ -84,6 +84,7 @@
     "arquivo_grande_demais": "l’image dépasse 512 Ko",
     "tipo_de_arquivo_invalido": "envoie une image JPEG, PNG ou WebP",
     "capitulo_invalido": "chapitre invalide",
+    "lista_cheia": "la liste a atteint sa limite de 500 œuvres",
     "avaliacao_invalida": "note invalide — donne une note de 0,5 à 5 par demi-étoile, ou une critique",
     "url_invalida": "URL de lecture invalide",
     "url_de_capitulo_invalida": "colle l’URL complète du chapitre 1, avec https://",

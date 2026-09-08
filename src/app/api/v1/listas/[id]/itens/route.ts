@@ -78,6 +78,14 @@ export async function POST(
       );
     }
 
+    if (resultado.estado === "lista_cheia")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.LISTA_CHEIA } },
+        { status: 422 },
+      );
+    }
+
     return NextResponse.json({ contem: resultado.contem }, { status: 200 });
   }
   catch (erro)

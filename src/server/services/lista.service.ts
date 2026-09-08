@@ -20,6 +20,7 @@ import {
   reordenarItens,
   type ListaComItens,
   type ListaPublica,
+  buscarNomeDaLista,
 } from "@/server/repositories/lista.repository";
 
 import type { OrdemDasListas } from "@/server/domain/lista-listagem";
@@ -71,7 +72,7 @@ export type DependenciasDeToggle = {
     userId: string,
     listaId: string,
     mediaId: string,
-  ) => Promise<{ jaExistia: boolean } | null>;
+  ) => Promise<{ jaExistia: boolean } | { cheia: true } | null>;
   remover: (
     userId: string,
     listaId: string,
@@ -90,6 +91,7 @@ export async function alternarObraNaLista(
   | { estado: "ok"; contem: boolean }
   | { estado: "nao_encontrada" }
   | { estado: "obra_desconhecida" }
+  | { estado: "lista_cheia" }
 >
 {
   const media = await deps.buscarMedia(pedido.anilistId);
@@ -104,6 +106,11 @@ export async function alternarObraNaLista(
   if (adicionado === null)
   {
     return { estado: "nao_encontrada" };
+  }
+
+  if ("cheia" in adicionado)
+  {
+    return { estado: "lista_cheia" };
   }
 
   if (!adicionado.jaExistia)
@@ -353,4 +360,10 @@ export function reordenarItensDoSistema(pedido: {
 export function curtirListaDoSistema(pedido: { userId: string; listaId: string })
 {
   return curtirLista(pedido, { alternar: alternarCurtidaDaLista });
+}
+
+/** Só o nome da lista, para metadata (#135): não carrega os itens duas vezes por visita. */
+export function nomeDaListaDoSistema(listaId: string): Promise<string | null>
+{
+  return buscarNomeDaLista(listaId);
 }

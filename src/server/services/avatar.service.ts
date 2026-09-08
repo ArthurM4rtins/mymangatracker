@@ -7,6 +7,7 @@ import { validarAvatar, type ErroDoAvatar } from "@/server/domain/avatar";
 import {
   apagarAvatar,
   buscarAvatarPorUsername,
+  buscarVersaoDoAvatarPorUsername,
   salvarAvatar,
   type AvatarDoUsuario,
 } from "@/server/repositories/usuario.repository";
@@ -19,6 +20,8 @@ export type DependenciasDoAvatar = {
   limitar: (userId: string) => Promise<Veredito>;
   apagar: (userId: string) => Promise<void>;
   buscarPorUsername: (username: string) => Promise<AvatarDoUsuario | null>;
+  /** Só versão e tipo (#135): a rota decide 404 e 304 sem os bytes. */
+  buscarVersaoPorUsername: (username: string) => Promise<{ mime: string; avatarUpdatedAt: Date } | null>;
 };
 
 export type ResultadoDeDefinir =
@@ -62,6 +65,17 @@ export async function removerAvatar(
 
 export type AvatarServido = { bytes: Uint8Array; mime: string; versao: number };
 
+/** A versão da foto sem os bytes (#135). `null` sem foto. */
+export async function versaoDoAvatar(
+  username: string,
+  deps: DependenciasDoAvatar,
+): Promise<{ mime: string; versao: number } | null>
+{
+  const foto = await deps.buscarVersaoPorUsername(username);
+
+  return foto === null ? null : { mime: foto.mime, versao: foto.avatarUpdatedAt.getTime() };
+}
+
 export async function avatarDoUsuario(
   username: string,
   deps: DependenciasDoAvatar,
@@ -82,6 +96,7 @@ const DEPS_DO_SISTEMA: DependenciasDoAvatar = {
   limitar: function (userId) { return limitarAvatar({ userId }); },
   apagar: apagarAvatar,
   buscarPorUsername: buscarAvatarPorUsername,
+  buscarVersaoPorUsername: buscarVersaoDoAvatarPorUsername,
 };
 
 /** As composições de produção. */
@@ -98,4 +113,9 @@ export function removerAvatarDoSistema(pedido: { userId: string })
 export function avatarDoUsuarioDoSistema(username: string)
 {
   return avatarDoUsuario(username, DEPS_DO_SISTEMA);
+}
+
+export function versaoDoAvatarDoSistema(username: string)
+{
+  return versaoDoAvatar(username, DEPS_DO_SISTEMA);
 }

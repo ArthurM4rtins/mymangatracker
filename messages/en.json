@@ -84,6 +84,7 @@
     "arquivo_grande_demais": "the image is over 512 KB",
     "tipo_de_arquivo_invalido": "send a JPEG, PNG or WebP image",
     "capitulo_invalido": "invalid chapter",
+    "lista_cheia": "the list has reached its 500-series limit",
     "avaliacao_invalida": "invalid rating — 0.5 to 5 in half stars, or a review",
     "url_invalida": "invalid reading URL",
     "url_de_capitulo_invalida": "paste the full URL of chapter 1, with https://",

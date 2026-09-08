@@ -72,6 +72,8 @@ export const ERRO = {
 
   // 422 — o pedido faz sentido, o conteúdo não passa na regra.
   CAPITULO_INVALIDO: "capitulo_invalido",
+  /** A lista chegou ao teto de obras (#135). */
+  LISTA_CHEIA: "lista_cheia",
   AVALIACAO_INVALIDA: "avaliacao_invalida",
   URL_INVALIDA: "url_invalida",
   URL_DE_CAPITULO_INVALIDA: "url_de_capitulo_invalida",

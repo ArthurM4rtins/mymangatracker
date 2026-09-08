@@ -211,3 +211,24 @@ export async function incrementarVersaoDoToken(userId: string): Promise<void>
     data: { tokenVersion: { increment: 1 } },
   });
 }
+
+/**
+ * Só a versão e o tipo da foto (#135): o 404 e o 304 se decidem sem ler os
+ * até 512 KB do BYTEA. `null` quando o usuário não existe ou não tem foto.
+ */
+export async function buscarVersaoDoAvatarPorUsername(
+  username: string,
+): Promise<{ mime: string; avatarUpdatedAt: Date } | null>
+{
+  const linha = await getPrisma().user.findUnique({
+    where: { usernameNormalizado: normalizarUsername(username) },
+    select: { avatarMime: true, avatarUpdatedAt: true },
+  });
+
+  if (linha === null || linha.avatarMime === null || linha.avatarUpdatedAt === null)
+  {
+    return null;
+  }
+
+  return { mime: linha.avatarMime, avatarUpdatedAt: linha.avatarUpdatedAt };
+}
