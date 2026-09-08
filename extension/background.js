@@ -111,7 +111,7 @@ async function agendarAutoRegistro(tabId, url, titulo)
   const timer = setTimeout(function ()
   {
     pendentes.delete(tabId);
-    void tentarAutoRegistro({ tabId, url, titulo, chave, capitulo, entradaId, marca });
+    void tentarAutoRegistro({ tabId, url, titulo, capitulo, entradaId, marca });
   }, AUTO_ESPERA_MS);
 
   pendentes.set(tabId, timer);
@@ -141,7 +141,7 @@ async function aindaNaPagina(tabId, url, capitulo)
   return janela.focused === true && janela.id === aba.windowId;
 }
 
-async function tentarAutoRegistro({ tabId, url, titulo, chave, capitulo, entradaId, marca })
+async function tentarAutoRegistro({ tabId, url, titulo, capitulo, entradaId, marca })
 {
   try
   {
