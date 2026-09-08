@@ -52,6 +52,12 @@ export const ERRO = {
 
   // 409 — conflito com o estado que já existe.
   JA_EM_USO: "ja_em_uso",
+  /**
+   * Cadastro que não pôde ser concluído, sem dizer por quê (#140): e-mail já
+   * cadastrado responde isto, com o MESMO status das validações, para o 409
+   * não confirmar quem tem conta. Username duplicado continua nomeado — é público.
+   */
+  CADASTRO_NAO_CONCLUIDO: "cadastro_nao_concluido",
   /** Capítulo que não passa do progresso da estante: nada foi gravado (#172). */
   NAO_AVANCA: "nao_avanca",
   SEM_FONTE: "sem_fonte",

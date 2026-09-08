@@ -65,7 +65,9 @@ export async function POST(request: Request)
 
   try
   {
-    // Cadastro em massa (#108) e enumeração de e-mail por 409 (#113) param aqui.
+    // Cadastro em massa (#108) para aqui. A enumeração de e-mail (#113, #140) é
+    // contida em dois níveis: a resposta não nomeia o e-mail (abaixo), e este
+    // medidor limita a sondagem que sobra pelo status.
     const limite = await limitarCadastro({ ip: ipDoPedido(request) });
 
     if (limite.bloqueado)
@@ -83,9 +85,20 @@ export async function POST(request: Request)
   {
     if (erro instanceof ErroCampoDuplicado)
     {
+      // Username é público em /u/<username>: dizer "já está em uso" não revela
+      // nada. E-mail não é — o 409 nomeado confirmava quem tem conta (#140).
+      // Vai como falha genérica, no status das validações, sem nomear o campo.
+      if (erro.campo === "username")
+      {
+        return NextResponse.json(
+          { erros: { username: ERRO.JA_EM_USO } },
+          { status: 409 },
+        );
+      }
+
       return NextResponse.json(
-        { erros: { [erro.campo]: ERRO.JA_EM_USO } },
-        { status: 409 },
+        { erros: { _geral: ERRO.CADASTRO_NAO_CONCLUIDO } },
+        { status: 400 },
       );
     }
 
