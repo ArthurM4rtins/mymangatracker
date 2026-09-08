@@ -108,6 +108,64 @@ export function ultimaAbertura(
   });
 }
 
+export type UltimaAbertura = {
+  mediaId: string;
+  resolvedUrl: string;
+  chapter: string;
+};
+
+/**
+ * A abertura mais recente de CADA obra do usuário — uma linha por obra. É o
+ * que a estante, a home e a página da obra usam como destino do "Continuar
+ * leitura" (#170).
+ *
+ * `distinct` sobre `mediaId` com a ordenação por `openedAt desc` na frente:
+ * o Postgres devolve a primeira linha de cada grupo, que é a mais recente.
+ * Mesma consulta que o índice `[userId, mediaId, openedAt desc]` serve.
+ *
+ * Privado do dono como toda leitura de progresso: a consulta carrega `userId`.
+ */
+export async function listarUltimasAberturas(
+  userId: string,
+): Promise<UltimaAbertura[]>
+{
+  const linhas = await getPrisma().readingProgress.findMany({
+    where: { userId },
+    orderBy: [{ mediaId: "asc" }, { openedAt: "desc" }],
+    distinct: ["mediaId"],
+    select: { mediaId: true, resolvedUrl: true, chapter: true },
+  });
+
+  return linhas.map(function (linha)
+  {
+    return {
+      mediaId: linha.mediaId,
+      resolvedUrl: linha.resolvedUrl,
+      chapter: linha.chapter.toString(),
+    };
+  });
+}
+
+/**
+ * A última abertura NESTA obra — destino do "Continuar leitura" na página da
+ * obra (#170). Mesmo índice de `ultimaAbertura`, recorte menor.
+ */
+export async function ultimaLeituraDaObra(
+  userId: string,
+  mediaId: string,
+): Promise<{ resolvedUrl: string; chapter: string } | null>
+{
+  const linha = await getPrisma().readingProgress.findFirst({
+    where: { userId, mediaId },
+    orderBy: { openedAt: "desc" },
+    select: { resolvedUrl: true, chapter: true },
+  });
+
+  return linha === null
+    ? null
+    : { resolvedUrl: linha.resolvedUrl, chapter: linha.chapter.toString() };
+}
+
 export type AberturaDoHistorico = {
   id: string;
   chapter: string;
