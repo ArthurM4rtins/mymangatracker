@@ -7,6 +7,8 @@
  */
 import { cacheEstaFresco } from "@/server/domain/media-cache";
 import { capituloValido } from "@/server/domain/progresso";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import { limitarEntrada } from "./limite.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId } from "@/server/infra/anilist";
 import {
@@ -42,7 +44,8 @@ export type PedidoDeEstante = {
 export type ResultadoDaEstante =
   | { estado: "ok"; entradaId: string }
   | { estado: "obra_desconhecida" }
-  | { estado: "indisponivel" };
+  | { estado: "indisponivel" }
+  | { estado: "limitado"; esperarSegundos: number };
 
 export type DependenciasDaEstante = {
   buscarMediaNoBanco: (
@@ -58,6 +61,8 @@ export type DependenciasDaEstante = {
     mediaId: string;
     status: StatusDaEstante;
   }) => Promise<{ id: string }>;
+  /** Teto de entradas por usuário na janela (#136). Antes do AniList: é I/O de terceiro. */
+  limitar: (userId: string) => Promise<Veredito>;
   relogio?: () => Date;
 };
 
@@ -67,6 +72,13 @@ export async function adicionarNaEstante(
 ): Promise<ResultadoDaEstante>
 {
   const agora = deps.relogio?.() ?? new Date();
+
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "limitado", esperarSegundos: limite.esperarSegundos };
+  }
 
   const emCache = await deps.buscarMediaNoBanco(pedido.anilistId);
 
@@ -384,5 +396,6 @@ export function adicionarNaEstanteDoSistema(
     salvarMedia: salvarMediaDoAniList,
     buscarNoAniList: buscarMediaPorId,
     gravarEntrada: adicionarOuAtualizarEntrada,
+    limitar: function (userId) { return limitarEntrada({ userId }); },
   });
 }

@@ -10,16 +10,21 @@ import {
   salvarAvatar,
   type AvatarDoUsuario,
 } from "@/server/repositories/usuario.repository";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import { limitarAvatar } from "./limite.service";
 
 export type DependenciasDoAvatar = {
   salvar: (userId: string, mime: string, bytes: Uint8Array) => Promise<{ avatarUpdatedAt: Date }>;
+  /** Teto de gravações por usuário (#136): 512 KB por chamada sem teto era DoS barato. */
+  limitar: (userId: string) => Promise<Veredito>;
   apagar: (userId: string) => Promise<void>;
   buscarPorUsername: (username: string) => Promise<AvatarDoUsuario | null>;
 };
 
 export type ResultadoDeDefinir =
   | { estado: "ok"; versao: number }
-  | { estado: "invalido"; motivo: ErroDoAvatar };
+  | { estado: "invalido"; motivo: ErroDoAvatar }
+  | { estado: "limitado"; esperarSegundos: number };
 
 export async function definirAvatar(
   pedido: { userId: string; mime: string; bytes: Uint8Array },
@@ -31,6 +36,13 @@ export async function definirAvatar(
   if (motivo !== null)
   {
     return { estado: "invalido", motivo };
+  }
+
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "limitado", esperarSegundos: limite.esperarSegundos };
   }
 
   const salvo = await deps.salvar(pedido.userId, pedido.mime, pedido.bytes);
@@ -67,6 +79,7 @@ export async function avatarDoUsuario(
 
 const DEPS_DO_SISTEMA: DependenciasDoAvatar = {
   salvar: salvarAvatar,
+  limitar: function (userId) { return limitarAvatar({ userId }); },
   apagar: apagarAvatar,
   buscarPorUsername: buscarAvatarPorUsername,
 };
