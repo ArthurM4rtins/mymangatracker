@@ -78,17 +78,6 @@
       }
     }
   },
-  "registradoSegue": {
-    "message": "ch. $capitulo$ logged — shelf stays on $progresso$",
-    "placeholders": {
-      "capitulo": {
-        "content": "$1"
-      },
-      "progresso": {
-        "content": "$2"
-      }
-    }
-  },
   "erroPadrao": {
     "message": "couldn't log that"
   },
@@ -109,6 +98,14 @@
   },
   "erroSemFonte": {
     "message": "set up the reading source first"
+  },
+  "erroNaoAvanca": {
+    "message": "your shelf is already at ch. $progresso$ — to go back, use reset on the site",
+    "placeholders": {
+      "progresso": {
+        "content": "$1"
+      }
+    }
   },
   "erroLimiteExcedido": {
     "message": "too many logs in a short time — wait a bit"

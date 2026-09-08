@@ -25,15 +25,16 @@ globalThis.KIDOKU_I18N = (function ()
     capitulo_invalido: "erroCapituloInvalido",
     url_invalida: "erroUrlInvalida",
     sem_fonte: "erroSemFonte",
+    nao_avanca: "erroNaoAvanca",
     limite_excedido: "erroLimiteExcedido",
     falha_interna: "erroFalhaInterna",
   };
 
-  function erro(codigo)
+  function erro(codigo, argumentos)
   {
     const nome = FRASE_DO_ERRO[codigo];
 
-    return (nome && texto(nome)) || texto("erroPadrao");
+    return (nome && texto(nome, argumentos)) || texto("erroPadrao");
   }
 
   /** Preenche tudo que o HTML marcou, e o `lang` do documento. */

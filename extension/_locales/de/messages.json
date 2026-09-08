@@ -78,17 +78,6 @@
       }
     }
   },
-  "registradoSegue": {
-    "message": "Kap. $capitulo$ eingetragen — das Regal bleibt bei $progresso$",
-    "placeholders": {
-      "capitulo": {
-        "content": "$1"
-      },
-      "progresso": {
-        "content": "$2"
-      }
-    }
-  },
   "erroPadrao": {
     "message": "Eintragen nicht möglich"
   },
@@ -109,6 +98,14 @@
   },
   "erroSemFonte": {
     "message": "richte zuerst die Lesequelle ein"
+  },
+  "erroNaoAvanca": {
+    "message": "dein Regal steht schon bei Kap. $progresso$ — zum Zurückgehen nutze das Zurücksetzen auf der Website",
+    "placeholders": {
+      "progresso": {
+        "content": "$1"
+      }
+    }
   },
   "erroLimiteExcedido": {
     "message": "zu viele Einträge in kurzer Zeit — warte einen Moment"
