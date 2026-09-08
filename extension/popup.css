@@ -12,6 +12,13 @@
 
 * { box-sizing: border-box; }
 
+/*
+ * O `hidden` do HTML so vale `display: none` na folha do navegador, e qualquer
+ * regra de autor com `display` ganha dela — era o caso de `.formulario`, que
+ * nunca escondia (#168). Regra geral para o proximo elemento nao repetir.
+ */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   width: 320px;
@@ -40,9 +47,34 @@ body {
 
 .formulario { display: flex; flex-direction: column; gap: 10px; }
 
+/*
+ * A URL vai inteira para o banco e nunca mais sai de la (issue #142), entao ela
+ * aparece por extenso antes do clique, quebrando no meio da string.
+ *
+ * Altura travada em 3 linhas e o resto ROLA, em vez de ser cortado: o que
+ * costuma ser segredo (?token=, ?code=) mora no fim da URL, e corte esconderia
+ * de novo justamente o que esta correcao existe para mostrar. Travar a altura
+ * mantem o botao de registrar sempre visivel.
+ */
 .pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   margin: 0;
+}
+
+.pagina-url {
   font-size: 12px;
+  line-height: 1.4;
+  color: var(--texto);
+  word-break: break-all;
+  max-height: calc(3 * 1.4em);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.pagina-titulo {
+  font-size: 11px;
   color: var(--texto-suave);
   overflow: hidden;
   text-overflow: ellipsis;

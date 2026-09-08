@@ -52,5 +52,10 @@ export function normalizarUrlVisitada(valor: string): string | null
     return null;
   }
 
+  // O fragmento marca posição na página, nunca capitulo — `fonte.service.ts`
+  // já trata hash assim. Como `resolvedUrl` é permanente e o usuário não
+  // escolheu a string (issue #142), o que não serve não entra.
+  url.hash = "";
+
   return url.toString();
 }

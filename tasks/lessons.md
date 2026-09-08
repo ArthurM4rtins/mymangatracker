@@ -343,3 +343,26 @@ Corolario do escape: quando um padrao precisa de barra invertida dentro de strin
 (regex em `matcher`, por exemplo), preferir a forma que dispensa o escape —
 `[.]` no lugar de `\.` — e um nivel a menos de coisa para errar sem ninguem ver.
 
+
+## Senha de conta de teste morre com a sessao (08/09/2026)
+
+`tasks/todo.md:607` registrou "senha no historico da sessao, nao aqui" ao criar a
+conta `provadona`. A decisao de nao versionar credencial esta certa, mas a
+consequencia so apareceu tres dias depois: sessao nova, senha inacessivel, e a
+unica conta com estante pronta virou intestavel. Como o `passwordHash` e scrypt,
+nao ha leitura de volta.
+
+Custou uma excecao consciente a uma regra absoluta: alterar o banco a mao para
+regravar o hash. Feita so no banco `localhost` (o script recusa qualquer outra
+string de conexao), com `gerarHashDeSenha` do proprio dominio em vez de hash
+inventado, e provada com `curl` no `POST /api/v1/sessao` — 200 e cookie emitido.
+
+**A regra:** conta de teste que precisa sobreviver a sessao nasce por script
+versionado (seed), nao por cadastro manual com senha no chat. Enquanto nao
+existir seed, criar a conta com senha deterministica anotada no `.env.example`
+como valor de exemplo — nunca com senha que so o historico guarda.
+
+Corolario: dependencia de terceiro fora (AniList, 08/09/2026) transforma
+"e so criar outra conta" em bloqueio — `estante.service.ts:88` recusa adicionar
+obra sem AniList, e sem estante o popup da extensao nem abre o formulario. O seed
+resolveria os dois de uma vez.
