@@ -179,6 +179,12 @@
   },
   "componentes": {
     "sair": "Sign out",
+    "confirmarSaida": {
+      "titulo": "Log out",
+      "pergunta": "You’ll need to log in again to keep tracking your progress.",
+      "confirmar": "Log out",
+      "saindo": "Logging out…"
+    },
     "logo": {
       "rotulo": "Kidoku — home"
     },

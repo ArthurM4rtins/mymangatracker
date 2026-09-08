@@ -179,6 +179,12 @@
   },
   "componentes": {
     "sair": "Sair",
+    "confirmarSaida": {
+      "titulo": "Sair da conta",
+      "pergunta": "Você vai precisar entrar de novo para continuar seu progresso.",
+      "confirmar": "Sair",
+      "saindo": "Saindo…"
+    },
     "logo": {
       "rotulo": "Kidoku — início"
     },

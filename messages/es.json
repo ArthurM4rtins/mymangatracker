@@ -179,6 +179,12 @@
   },
   "componentes": {
     "sair": "Cerrar sesión",
+    "confirmarSaida": {
+      "titulo": "Cerrar sesión",
+      "pergunta": "Tendrás que iniciar sesión de nuevo para seguir con tu progreso.",
+      "confirmar": "Cerrar sesión",
+      "saindo": "Cerrando sesión…"
+    },
     "logo": {
       "rotulo": "Kidoku — inicio"
     },

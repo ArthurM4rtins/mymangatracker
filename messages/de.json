@@ -179,6 +179,12 @@
   },
   "componentes": {
     "sair": "Abmelden",
+    "confirmarSaida": {
+      "titulo": "Abmelden",
+      "pergunta": "Du musst dich neu anmelden, um deinen Fortschritt weiter zu verfolgen.",
+      "confirmar": "Abmelden",
+      "saindo": "Wird abgemeldet…"
+    },
     "logo": {
       "rotulo": "Kidoku — Startseite"
     },

@@ -179,6 +179,12 @@
   },
   "componentes": {
     "sair": "Se déconnecter",
+    "confirmarSaida": {
+      "titulo": "Se déconnecter",
+      "pergunta": "Tu devras te reconnecter pour continuer à suivre ta progression.",
+      "confirmar": "Se déconnecter",
+      "saindo": "Déconnexion…"
+    },
     "logo": {
       "rotulo": "Kidoku — accueil"
     },
