@@ -6,12 +6,7 @@
  * cache alimentado pelo cliente seria dado forjável.
  */
 import { cacheEstaFresco } from "@/server/domain/media-cache";
-import {
-  capituloValido,
-  proximoCapitulo,
-  tipoDaFonte,
-  urlDaPagina,
-} from "@/server/domain/progresso";
+import { capituloValido } from "@/server/domain/progresso";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId } from "@/server/infra/anilist";
 import {
@@ -25,7 +20,7 @@ import {
   listarAnilistIdsDaEstante,
   listarEntradasDoUsuario,
 } from "@/server/repositories/shelf.repository";
-import { listarFontesAtivas } from "@/server/repositories/reading-source.repository";
+import { listarUltimasAberturas } from "@/server/repositories/reading-progress.repository";
 import { listarAvaliacoes } from "@/server/repositories/avaliacao.repository";
 
 export type StatusDaEstante =
@@ -126,14 +121,11 @@ export type EntradaDaEstante = {
     chapters: number | null;
   };
   /**
-   * A fonte de leitura ativa. `urlDaObra` só existe no tipo página: a tela
-   * abre direto, sem fingir registro de capítulo que não controla.
+   * A última abertura registrada pela extensão: para onde o "Continuar
+   * leitura" leva. `null` quando ainda não houve nenhuma — a tela não tem
+   * para onde continuar, e diz isso em vez de inventar destino (#170).
    */
-  fonte:
-    | { sourceHost: string; tipo: "template" }
-    | { sourceHost: string; tipo: "pagina"; urlDaObra: string }
-    | null;
-  proximoCapitulo: number;
+  ultimaLeitura: { url: string; host: string; capitulo: string } | null;
   /** A avaliação do dono — nota e/ou resenha, estilo Letterboxd. */
   avaliacao: {
     rating: string | null;
@@ -149,7 +141,7 @@ export type FiltroDaEstante = {
 
 type EntradaNoRepositorio = Omit<
   EntradaDaEstante,
-  "fonte" | "proximoCapitulo" | "avaliacao"
+  "ultimaLeitura" | "avaliacao"
 > & {
   mediaId: string;
 };
@@ -159,9 +151,9 @@ export type DependenciasDeListagem = {
     userId: string,
     status?: StatusDaEstante,
   ) => Promise<EntradaNoRepositorio[]>;
-  listarFontes: (
+  listarUltimasLeituras: (
     userId: string,
-  ) => Promise<Array<{ mediaId: string; sourceHost: string; urlTemplate: string }>>;
+  ) => Promise<Array<{ mediaId: string; resolvedUrl: string; chapter: string }>>;
   listarAvaliacoes: (
     userId: string,
   ) => Promise<
@@ -178,21 +170,21 @@ export type DependenciasDeListagem = {
  * A estante é privada do dono: o userId vem da sessão resolvida no controller
  * e é obrigatório aqui por tipo — não existe caminho de listar sem ele.
  *
- * O DTO compõe a fonte ativa e o próximo capítulo; o mediaId interno não sai.
+ * O DTO compõe a última abertura; o mediaId interno não sai.
  */
 export async function listarEstante(
   filtro: FiltroDaEstante,
   deps: DependenciasDeListagem,
 ): Promise<EntradaDaEstante[]>
 {
-  const [entradas, fontes, avaliacoes] = await Promise.all([
+  const [entradas, leituras, avaliacoes] = await Promise.all([
     deps.listarEntradas(filtro.userId, filtro.status),
-    deps.listarFontes(filtro.userId),
+    deps.listarUltimasLeituras(filtro.userId),
     deps.listarAvaliacoes(filtro.userId),
   ]);
 
-  const fontePorMedia = new Map(
-    fontes.map(function (fonte) { return [fonte.mediaId, fonte] as const; }),
+  const leituraPorMedia = new Map(
+    leituras.map(function (leitura) { return [leitura.mediaId, leitura] as const; }),
   );
   const avaliacaoPorMedia = new Map(
     avaliacoes.map(function (avaliacao) { return [avaliacao.mediaId, avaliacao] as const; }),
@@ -200,18 +192,15 @@ export async function listarEstante(
 
   return entradas.map(function (entrada)
   {
-    const fonte = fontePorMedia.get(entrada.mediaId) ?? null;
+    const leitura = leituraPorMedia.get(entrada.mediaId) ?? null;
     const avaliacao = avaliacaoPorMedia.get(entrada.mediaId) ?? null;
-    const maior =
-      entrada.progressChapter === null ? null : Number(entrada.progressChapter);
 
     return {
       entradaId: entrada.entradaId,
       status: entrada.status,
       progressChapter: entrada.progressChapter,
       obra: entrada.obra,
-      fonte: fonte === null ? null : recorteDaFonte(fonte),
-      proximoCapitulo: proximoCapitulo(maior),
+      ultimaLeitura: leitura === null ? null : recorteDaLeitura(leitura),
       avaliacao:
         avaliacao === null
           ? null
@@ -224,20 +213,18 @@ export async function listarEstante(
   });
 }
 
-function recorteDaFonte(fonte: {
-  sourceHost: string;
-  urlTemplate: string;
-}): NonNullable<EntradaDaEstante["fonte"]>
+// O host sai da propria URL gravada, nao de coluna a parte: uma verdade so.
+// A URL passou por `normalizarUrlVisitada` antes de entrar no banco, entao
+// `new URL` aqui nao levanta.
+function recorteDaLeitura(leitura: {
+  resolvedUrl: string;
+  chapter: string;
+}): NonNullable<EntradaDaEstante["ultimaLeitura"]>
 {
-  if (tipoDaFonte(fonte.urlTemplate) === "template")
-  {
-    return { sourceHost: fonte.sourceHost, tipo: "template" };
-  }
-
   return {
-    sourceHost: fonte.sourceHost,
-    tipo: "pagina",
-    urlDaObra: urlDaPagina(fonte.sourceHost, fonte.urlTemplate),
+    url: leitura.resolvedUrl,
+    host: new URL(leitura.resolvedUrl).host,
+    capitulo: leitura.chapter,
   };
 }
 
@@ -356,7 +343,7 @@ export function listarEstanteDoSistema(
 {
   return listarEstante(filtro, {
     listarEntradas: listarEntradasDoUsuario,
-    listarFontes: listarFontesAtivas,
+    listarUltimasLeituras: listarUltimasAberturas,
     listarAvaliacoes,
   });
 }

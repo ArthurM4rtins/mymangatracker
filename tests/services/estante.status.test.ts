@@ -31,19 +31,19 @@ const NO_REPOSITORIO = {
 
 const vazio = async function () { return []; };
 
-const FONTE_ATIVA = {
-  id: "f1",
+// O ultimo link vem da extensao, nunca de fonte configurada (#170).
+const ULTIMA_LEITURA = {
   mediaId: "m1",
-  sourceHost: "mangalivre.blog",
-  urlTemplate: "/title/Vinland-Saga/chapter/{chapter}/1",
+  resolvedUrl: "https://mangafire.to/title/qnlvj-vagabond22/chapter/7180252",
+  chapter: "70",
 };
 
 describe("listarEstante", function ()
 {
-  it("compõe a entrada com fonte, avaliação e próximo capítulo, sem vazar mediaId", async function ()
+  it("compõe a entrada com a ultima leitura e a avaliação, sem vazar mediaId", async function ()
   {
     const listarEntradas = vi.fn(async function () { return [NO_REPOSITORIO]; });
-    const listarFontes = vi.fn(async function () { return [FONTE_ATIVA]; });
+    const listarUltimasLeituras = vi.fn(async function () { return [ULTIMA_LEITURA]; });
     const listarAvaliacoes = vi.fn(async function ()
     {
       return [
@@ -53,11 +53,11 @@ describe("listarEstante", function ()
 
     const entradas = await listarEstante(
       { userId: "u1", status: "READING" },
-      { listarEntradas, listarFontes, listarAvaliacoes },
+      { listarEntradas, listarUltimasLeituras, listarAvaliacoes },
     );
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", "READING");
-    expect(listarFontes).toHaveBeenCalledWith("u1");
+    expect(listarUltimasLeituras).toHaveBeenCalledWith("u1");
     expect(listarAvaliacoes).toHaveBeenCalledWith("u1");
     expect(entradas).toEqual([
       {
@@ -65,56 +65,59 @@ describe("listarEstante", function ()
         status: "READING",
         progressChapter: "57.5",
         obra: OBRA,
-        fonte: { sourceHost: "mangalivre.blog", tipo: "template" },
-        proximoCapitulo: 58,
+        ultimaLeitura: {
+          url: "https://mangafire.to/title/qnlvj-vagabond22/chapter/7180252",
+          host: "mangafire.to",
+          capitulo: "70",
+        },
         avaliacao: { rating: "4.5", review: "obra-prima", containsSpoilers: false },
       } satisfies EntradaDaEstante,
     ]);
     expect(entradas[0]).not.toHaveProperty("mediaId");
   });
 
-  it("fonte de página da obra expõe a URL para a tela abrir direto", async function ()
+  it("o host sai da propria URL: e o que a tela mostra como 'lendo em'", async function ()
   {
     const listarEntradas = vi.fn(async function () { return [NO_REPOSITORIO]; });
-    const listarFontes = vi.fn(async function ()
+    const listarUltimasLeituras = vi.fn(async function ()
     {
       return [
         {
-          id: "f2",
           mediaId: "m1",
-          sourceHost: "mangafire.to",
-          urlTemplate: "/title/4mx-vagabondd",
+          resolvedUrl: "https://mangadex.org/chapter/ff963efd-8ea1-44a3-90f6-bf743b1dbf59",
+          chapter: "94",
         },
       ];
     });
 
     const entradas = await listarEstante(
       { userId: "u1" },
-      { listarEntradas, listarFontes, listarAvaliacoes: vazio },
+      { listarEntradas, listarUltimasLeituras, listarAvaliacoes: vazio },
     );
 
-    expect(entradas[0].fonte).toEqual({
-      sourceHost: "mangafire.to",
-      tipo: "pagina",
-      urlDaObra: "https://mangafire.to/title/4mx-vagabondd",
+    expect(entradas[0].ultimaLeitura).toEqual({
+      url: "https://mangadex.org/chapter/ff963efd-8ea1-44a3-90f6-bf743b1dbf59",
+      host: "mangadex.org",
+      capitulo: "94",
     });
   });
 
-  it("sem fonte nem avaliação, ambos são null e o próximo capítulo é 1", async function ()
+  it("sem abertura registrada nem avaliação, ambos são null", async function ()
   {
+    // Sem extensao ninguem registrou nada: a tela nao tem para onde continuar.
     const listarEntradas = vi.fn(async function ()
     {
       return [{ ...NO_REPOSITORIO, progressChapter: null }];
     });
-    const listarFontes = vi.fn(async function () { return []; });
+    const listarUltimasLeituras = vi.fn(async function () { return []; });
 
     const entradas = await listarEstante(
       { userId: "u1" },
-      { listarEntradas, listarFontes, listarAvaliacoes: vazio },
+      { listarEntradas, listarUltimasLeituras, listarAvaliacoes: vazio },
     );
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", undefined);
-    expect(entradas[0]).toMatchObject({ fonte: null, avaliacao: null, proximoCapitulo: 1 });
+    expect(entradas[0]).toMatchObject({ ultimaLeitura: null, avaliacao: null });
   });
 });
 
