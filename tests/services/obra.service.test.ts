@@ -83,9 +83,13 @@ function fakeDeps(cenario: {
   {
     return { entradaId: "e1", status: "READING", progressChapter: "57.5" };
   });
-  const buscarFonte = vi.fn(async function ()
+  // O destino do "Continuar leitura" e a ultima abertura da extensao (#170).
+  const buscarLeituraMaisAvancada = vi.fn(async function ()
   {
-    return { id: "f1", sourceHost: "mangafire.to", urlTemplate: "/title/4mx-vagabondd" };
+    return {
+      resolvedUrl: "https://mangafire.to/title/qnlvj-vagabond22/chapter/7180252",
+      chapter: "70",
+    };
   });
   const buscarAvaliacao = vi.fn(async function ()
   {
@@ -153,7 +157,7 @@ function fakeDeps(cenario: {
       salvarMedia,
       buscarSimilares,
       buscarEntrada,
-      buscarFonte,
+      buscarLeituraMaisAvancada,
       buscarAvaliacao,
       listarReviews,
       contarNotas,
@@ -336,7 +340,7 @@ describe("obraParaPagina", function ()
     expect(resultado.minha?.historico).toEqual([]);
   });
 
-  it("com sessão, compõe o recorte do usuário com fonte e avaliação", async function ()
+  it("com sessão, compõe o recorte do usuário com a ultima leitura e a avaliação", async function ()
   {
     const { deps, buscarEntrada, listarAberturas } = fakeDeps({ noCache: NO_CACHE });
 
@@ -353,11 +357,10 @@ describe("obraParaPagina", function ()
       entradaId: "e1",
       status: "READING",
       progressChapter: "57.5",
-      proximoCapitulo: 58,
-      fonte: {
-        sourceHost: "mangafire.to",
-        tipo: "pagina",
-        urlDaObra: "https://mangafire.to/title/4mx-vagabondd",
+      continuarEm: {
+        url: "https://mangafire.to/title/qnlvj-vagabond22/chapter/7180252",
+        host: "mangafire.to",
+        capitulo: "70",
       },
       // O histórico é do dono (issue #54): capítulo, quando e por qual fonte.
       historico: [

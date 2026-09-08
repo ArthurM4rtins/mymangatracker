@@ -366,3 +366,14 @@ Corolario: dependencia de terceiro fora (AniList, 08/09/2026) transforma
 "e so criar outra conta" em bloqueio — `estante.service.ts:88` recusa adicionar
 obra sem AniList, e sem estante o popup da extensao nem abre o formulario. O seed
 resolveria os dois de uma vez.
+
+## Mergear deixa o repo na `main`, e o proximo commit cai la (08/09/2026)
+
+Depois de `gh pr merge` + `git checkout main` + `git pull` para atualizar, o commit
+seguinte foi para a `main` direto — a regra absoluta que o CLAUDE.md lista primeiro.
+Nada tinha sido enviado, entao bastou `git branch <nova>` no commit e
+`git reset --hard origin/main` na `main`.
+
+**A regra:** terminar todo merge criando a branch da proxima tarefa na hora, ou conferir
+`git branch --show-current` antes do primeiro `git add` de qualquer trabalho novo. O
+estado "acabei de mergear" e exatamente onde a inercia leva para o lugar errado.

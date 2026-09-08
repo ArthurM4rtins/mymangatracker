@@ -185,7 +185,7 @@ async function dadosDeLeitura(userId: string): Promise<DadosDeLeitura | null>
     return {
       username: perfil.username,
       continuar: lendo
-        .filter(function (entrada) { return entrada.fonte !== null; })
+        .filter(function (entrada) { return entrada.continuarEm !== null; })
         .slice(0, LIMITE_CONTINUAR),
       temEstante: estante.length > 0,
     };
@@ -390,13 +390,7 @@ function CardContinuar({ entrada }: { entrada: EntradaDaEstante })
         </Link>
       </p>
 
-      <ContinuarLeitura
-        entradaId={entrada.entradaId}
-        proximoCapitulo={entrada.proximoCapitulo}
-        tipoDaFonte={entrada.fonte?.tipo}
-        urlDaObra={entrada.fonte?.tipo === "pagina" ? entrada.fonte.urlDaObra : undefined}
-        compacto
-      />
+      <ContinuarLeitura continuarEm={entrada.continuarEm} compacto />
     </li>
   );
 }

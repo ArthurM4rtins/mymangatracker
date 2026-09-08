@@ -211,7 +211,6 @@
     "vazia": "Nada por aquí todavía. <catalogo>Busca en el catálogo</catalogo> y añade la primera obra.",
     "obra": "Obra",
     "capitulos": "{capitulo} capítulos",
-    "lendoEm": "leyendo en {host}",
     "seletorStatus": "Estado de la obra",
     "filtros": {
       "rotulo": "Filtrar por estado",
@@ -227,12 +226,9 @@
       "cancelar": "cancelar"
     },
     "continuar": {
-      "abrirObra": "Abrir la obra ↗",
-      "abrindo": "Abriendo…",
-      "proximo": "Continuar cap. {capitulo} →",
-      "ouCap": "o cap.",
-      "campo": "Capítulo específico",
-      "abrir": "abrir"
+      "continuar": "Continuar lectura ↗",
+      "capituloEm": "cap. {capitulo} en {host}",
+      "semLeitura": "registra un capítulo con la extensión para continuar desde aquí"
     },
     "avaliacao": {
       "nota": "Valoración {nota} de 5",
@@ -242,20 +238,6 @@
       "resenha": "Escribe la reseña (opcional)",
       "spoiler": "contiene spoiler",
       "remover": "Eliminar"
-    },
-    "fonte": {
-      "trocar": "Cambiar fuente de lectura",
-      "configurar": "Configurar fuente de lectura",
-      "rotuloUrl": "Pega el enlace del capítulo 1 del sitio donde lees",
-      "exemploUrl": "https://site.com/obra/capitulo/1",
-      "derivando": "Derivando…",
-      "derivar": "Derivar",
-      "confirmar": "¿Este enlace abre el capítulo 2? Entonces:",
-      "usar": "Usar esta fuente de lectura",
-      "paginaComCandidatos": "¿Ninguno de estos abre el capítulo 2? Algunos sitios no ponen el número en la URL — guarda la página de la obra y el registro sigue igual:",
-      "paginaSemCandidatos": "Este sitio no pone el número del capítulo en la URL. Guarda la página de la obra: el botón abre la página y tú registras el capítulo aquí.",
-      "paginaDica": "Consejo: para guardar la página de la obra (y no un capítulo), pega la URL de la obra en el campo de arriba y deriva de nuevo.",
-      "salvarPagina": "Guardar página de la obra"
     },
     "erros": {
       "banco": "La estantería depende de la base de datos, que no responde ahora mismo. Inténtalo de nuevo en unos instantes.",

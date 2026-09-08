@@ -211,7 +211,6 @@
     "vazia": "Hier ist noch nichts. <catalogo>Suche im Katalog</catalogo> und füge das erste Werk hinzu.",
     "obra": "Werk",
     "capitulos": "{capitulo} Kapitel",
-    "lendoEm": "Gelesen auf {host}",
     "seletorStatus": "Status des Werks",
     "filtros": {
       "rotulo": "Nach Status filtern",
@@ -227,12 +226,9 @@
       "cancelar": "abbrechen"
     },
     "continuar": {
-      "abrirObra": "Werk öffnen ↗",
-      "abrindo": "Wird geöffnet…",
-      "proximo": "Weiter mit Kap. {capitulo} →",
-      "ouCap": "oder Kap.",
-      "campo": "Bestimmtes Kapitel",
-      "abrir": "öffnen"
+      "continuar": "Weiterlesen ↗",
+      "capituloEm": "Kap. {capitulo} auf {host}",
+      "semLeitura": "Registriere ein Kapitel mit der Erweiterung, um hier weiterzumachen"
     },
     "avaliacao": {
       "nota": "Bewertung {nota} von 5",
@@ -242,20 +238,6 @@
       "resenha": "Schreibe die Rezension (optional)",
       "spoiler": "enthält Spoiler",
       "remover": "Entfernen"
-    },
-    "fonte": {
-      "trocar": "Lesequelle wechseln",
-      "configurar": "Lesequelle einrichten",
-      "rotuloUrl": "Füge den Link zu Kapitel 1 von der Website ein, auf der du liest",
-      "exemploUrl": "https://site.com/obra/capitulo/1",
-      "derivando": "Wird abgeleitet…",
-      "derivar": "Ableiten",
-      "confirmar": "Öffnet dieser Link Kapitel 2? Dann:",
-      "usar": "Diese Lesequelle verwenden",
-      "paginaComCandidatos": "Keiner davon öffnet Kapitel 2? Manche Websites schreiben die Nummer nicht in die URL — speichere die Seite des Werks, und dein Fortschritt wird genauso festgehalten:",
-      "paginaSemCandidatos": "Diese Website schreibt die Kapitelnummer nicht in die URL. Speichere die Seite des Werks: Der Button öffnet die Seite, und das Kapitel trägst du hier ein.",
-      "paginaDica": "Tipp: Um die Seite der Serie zu speichern (und kein Kapitel), füge die URL des Werks oben ins Feld ein und leite noch einmal ab.",
-      "salvarPagina": "Seite des Werks speichern"
     },
     "erros": {
       "banco": "Das Regal hängt von der Datenbank ab, die gerade nicht geantwortet hat. Versuche es gleich noch einmal.",

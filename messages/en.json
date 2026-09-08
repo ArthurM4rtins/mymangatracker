@@ -211,7 +211,6 @@
     "vazia": "Nothing here yet. <catalogo>Search the catalog</catalogo> and add your first series.",
     "obra": "Series",
     "capitulos": "{capitulo} chapters",
-    "lendoEm": "reading on {host}",
     "seletorStatus": "Series status",
     "filtros": {
       "rotulo": "Filter by status",
@@ -227,12 +226,9 @@
       "cancelar": "cancel"
     },
     "continuar": {
-      "abrirObra": "Open the series ↗",
-      "abrindo": "Opening…",
-      "proximo": "Continue ch. {capitulo} →",
-      "ouCap": "or ch.",
-      "campo": "Specific chapter",
-      "abrir": "open"
+      "continuar": "Continue reading ↗",
+      "capituloEm": "ch. {capitulo} on {host}",
+      "semLeitura": "register a chapter with the extension to continue from here"
     },
     "avaliacao": {
       "nota": "Rating {nota} of 5",
@@ -242,20 +238,6 @@
       "resenha": "Write your review (optional)",
       "spoiler": "contains spoiler",
       "remover": "Remove"
-    },
-    "fonte": {
-      "trocar": "Change reading source",
-      "configurar": "Set up reading source",
-      "rotuloUrl": "Paste the link to chapter 1 on the site where you read",
-      "exemploUrl": "https://site.com/obra/capitulo/1",
-      "derivando": "Deriving…",
-      "derivar": "Derive",
-      "confirmar": "Does this link open chapter 2? Then:",
-      "usar": "Use this reading source",
-      "paginaComCandidatos": "None of these open chapter 2? Some sites don't put the number in the URL — save the series page and tracking works the same:",
-      "paginaSemCandidatos": "This site doesn't put the chapter number in the URL. Save the series page: the button opens the page and you record the chapter here.",
-      "paginaDica": "Tip: to save the series page (and not a chapter), paste the series URL in the field above and derive again.",
-      "salvarPagina": "Save series page"
     },
     "erros": {
       "banco": "The shelf depends on the database, which didn't respond just now. Try again in a moment.",

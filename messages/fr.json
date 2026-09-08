@@ -211,7 +211,6 @@
     "vazia": "Rien par ici pour l’instant. <catalogo>Recherche dans le catalogue</catalogo> et ajoute ta première œuvre.",
     "obra": "Œuvre",
     "capitulos": "{capitulo} chapitres",
-    "lendoEm": "en lecture sur {host}",
     "seletorStatus": "Statut de l’œuvre",
     "filtros": {
       "rotulo": "Filtrer par statut",
@@ -227,12 +226,9 @@
       "cancelar": "annuler"
     },
     "continuar": {
-      "abrirObra": "Ouvrir l’œuvre ↗",
-      "abrindo": "Ouverture…",
-      "proximo": "Continuer au ch. {capitulo} →",
-      "ouCap": "ou ch.",
-      "campo": "Chapitre précis",
-      "abrir": "ouvrir"
+      "continuar": "Reprendre la lecture ↗",
+      "capituloEm": "ch. {capitulo} sur {host}",
+      "semLeitura": "enregistre un chapitre avec l’extension pour reprendre d’ici"
     },
     "avaliacao": {
       "nota": "Note {nota} sur 5",
@@ -242,20 +238,6 @@
       "resenha": "Écris ta critique (facultatif)",
       "spoiler": "contient un spoiler",
       "remover": "Supprimer"
-    },
-    "fonte": {
-      "trocar": "Changer de source",
-      "configurar": "Configurer la lecture",
-      "rotuloUrl": "Colle le lien du chapitre 1 sur le site où tu lis",
-      "exemploUrl": "https://site.com/obra/capitulo/1",
-      "derivando": "Dérivation…",
-      "derivar": "Dériver",
-      "confirmar": "Ce lien ouvre le chapitre 2 ? Alors :",
-      "usar": "Utiliser cette source",
-      "paginaComCandidatos": "Aucun de ces liens n’ouvre le chapitre 2 ? Certains sites ne mettent pas le numéro dans l’URL — enregistre la page de l’œuvre et le suivi reste le même :",
-      "paginaSemCandidatos": "Ce site ne met pas le numéro du chapitre dans l’URL. Enregistre la page de l’œuvre : le bouton ouvre la page et tu indiques le chapitre ici.",
-      "paginaDica": "Astuce : pour enregistrer la page de la série (et non un chapitre), colle l’URL de l’œuvre dans le champ ci-dessus et dérive à nouveau.",
-      "salvarPagina": "Enregistrer la page de l’œuvre"
     },
     "erros": {
       "banco": "La bibliothèque dépend de la base de données, qui n’a pas répondu à l’instant. Réessaie dans un moment.",

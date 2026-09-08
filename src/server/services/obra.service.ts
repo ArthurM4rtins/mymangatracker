@@ -11,11 +11,6 @@ import {
   type ContagemDeNota,
   type ResumoDeNotas,
 } from "@/server/domain/nota-media";
-import {
-  proximoCapitulo,
-  tipoDaFonte,
-  urlDaPagina,
-} from "@/server/domain/progresso";
 import type { AutorDaObra, MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId, buscarSimilares } from "@/server/infra/anilist";
 import {
@@ -24,9 +19,9 @@ import {
   type MediaCompleta,
 } from "@/server/repositories/media.repository";
 import { buscarEntradaPorMedia } from "@/server/repositories/shelf.repository";
-import { buscarFonteAtiva } from "@/server/repositories/reading-source.repository";
 import {
   listarAberturas,
+  aberturaMaisAvancadaDaObra,
   type AberturaDoHistorico,
 } from "@/server/repositories/reading-progress.repository";
 import {
@@ -68,11 +63,8 @@ export type MinhaRelacao = {
   entradaId: string;
   status: "READING" | "COMPLETED" | "PLANNED" | "PAUSED" | "DROPPED";
   progressChapter: string | null;
-  proximoCapitulo: number;
-  fonte:
-    | { sourceHost: string; tipo: "template" }
-    | { sourceHost: string; tipo: "pagina"; urlDaObra: string }
-    | null;
+  /** Para onde o "Continuar leitura" leva: a abertura mais avançada (#170). */
+  continuarEm: { url: string; host: string; capitulo: string } | null;
   /** O histórico de aberturas DO DONO (issue #54), do mais recente ao mais antigo. */
   historico: AberturaDoHistorico[];
 };
@@ -114,10 +106,10 @@ export type DependenciasDaObra = {
     status: MinhaRelacao["status"];
     progressChapter: string | null;
   } | null>;
-  buscarFonte: (
+  buscarLeituraMaisAvancada: (
     userId: string,
     mediaId: string,
-  ) => Promise<{ id: string; sourceHost: string; urlTemplate: string } | null>;
+  ) => Promise<{ resolvedUrl: string; chapter: string } | null>;
   buscarAvaliacao: (
     userId: string,
     mediaId: string,
@@ -300,33 +292,28 @@ async function minhaRelacao(
     return null;
   }
 
-  const [fonte, historico] = await Promise.all([
-    deps.buscarFonte(userId, mediaId),
+  const [ultima, historico] = await Promise.all([
+    deps.buscarLeituraMaisAvancada(userId, mediaId),
     // Histórico falhando não derruba o painel — a lista some.
     deps
       .listarAberturas(userId, mediaId, LIMITE_DO_HISTORICO)
       .catch(function (): AberturaDoHistorico[] { return []; }),
   ]);
 
-  const maior =
-    entrada.progressChapter === null ? null : Number(entrada.progressChapter);
-
   return {
     entradaId: entrada.entradaId,
     status: entrada.status,
     progressChapter: entrada.progressChapter,
-    proximoCapitulo: proximoCapitulo(maior),
     historico,
-    fonte:
-      fonte === null
+    // O host sai da propria URL: uma verdade so, a que a extensao atualiza.
+    continuarEm:
+      ultima === null
         ? null
-        : tipoDaFonte(fonte.urlTemplate) === "template"
-          ? { sourceHost: fonte.sourceHost, tipo: "template" }
-          : {
-              sourceHost: fonte.sourceHost,
-              tipo: "pagina",
-              urlDaObra: urlDaPagina(fonte.sourceHost, fonte.urlTemplate),
-            },
+        : {
+            url: ultima.resolvedUrl,
+            host: new URL(ultima.resolvedUrl).host,
+            capitulo: ultima.chapter,
+          },
   };
 }
 
@@ -342,7 +329,7 @@ export function obraParaPaginaDoSistema(
     salvarMedia: salvarMediaDoAniList,
     buscarSimilares,
     buscarEntrada: buscarEntradaPorMedia,
-    buscarFonte: buscarFonteAtiva,
+    buscarLeituraMaisAvancada: aberturaMaisAvancadaDaObra,
     buscarAvaliacao,
     listarReviews: listarReviewsDaObra,
     contarNotas: contarNotasPorValor,

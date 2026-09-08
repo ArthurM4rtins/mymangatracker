@@ -17,7 +17,6 @@ import { ReviewSocial } from "./review-social";
 import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "../../catalogo/botao-estante";
 import { DataHora } from "../../componentes/data-hora";
-import { ConfigurarFonte } from "../../estante/configurar-fonte";
 import { ContinuarLeitura } from "../../estante/continuar-leitura";
 import { EditarProgresso } from "../../estante/editar-progresso";
 import { SeletorStatus } from "../../estante/seletor-status";
@@ -379,18 +378,10 @@ async function PainelDoUsuario({
             progressChapter={minha.progressChapter}
           />
         </span>
-        <ConfigurarFonte entradaId={minha.entradaId} temFonte={minha.fonte !== null} />
         <AdicionarALista anilistId={anilistId} />
       </div>
 
-      {minha.fonte && (
-        <ContinuarLeitura
-          entradaId={minha.entradaId}
-          proximoCapitulo={minha.proximoCapitulo}
-          tipoDaFonte={minha.fonte.tipo}
-          urlDaObra={minha.fonte.tipo === "pagina" ? minha.fonte.urlDaObra : undefined}
-        />
-      )}
+      <ContinuarLeitura continuarEm={minha.continuarEm} />
 
       {minha.historico.length > 0 && <HistoricoDeLeitura historico={minha.historico} />}
     </section>
