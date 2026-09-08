@@ -5,14 +5,15 @@
 // `agendarAutoRegistro`, e o servidor continua sendo quem decide se avança.
 importScripts("comum.js");
 
-const COR_DO_BADGE = "#d6402b";
-const COR_DO_REGISTRADO = "#3c9d5d";
+// Tres estados, tres cores: pareada (ambar, a do site), registrado sozinho
+// (verde) e falhou ao registrar (vermelho). Os dois ultimos ficam ate a aba
+// trocar de pagina — e o que a pessoa ve ao voltar para a aba.
+const COR_PAREADA = "#f0a842";
+const COR_REGISTRADO = "#3c9d5d";
+const COR_FALHOU = "#d6402b";
 
 /** Quanto tempo a pessoa precisa ficar na página antes do registro automático. */
 const AUTO_ESPERA_MS = 20_000;
-
-/** Quanto tempo o badge fica em "registrado" antes de voltar ao de pareada. */
-const AUTO_BADGE_MS = 4_000;
 
 /** Timers pendentes por aba: um agendamento novo cancela o anterior da mesma aba. */
 const pendentes = new Map();
@@ -33,6 +34,18 @@ async function atualizarBadge(tabId, url, titulo)
       return;
     }
 
+    // O que o registro automatico fez NESTA aba, NESTA pagina, ganha do "pareada":
+    // trocar de pagina e o que limpa (o mapa e por URL).
+    const { autoResultado = {} } = await chrome.storage.session.get("autoResultado");
+    const resultado = autoResultado[tabId];
+
+    if (resultado !== undefined && resultado.url === url)
+    {
+      await chrome.action.setBadgeText({ tabId, text: resultado.ok ? "✓" : "!" });
+      await chrome.action.setBadgeBackgroundColor({ tabId, color: resultado.ok ? COR_REGISTRADO : COR_FALHOU });
+      return;
+    }
+
     const pares = await KIDOKU.paresSalvos();
     const pareada = Object.prototype.hasOwnProperty.call(pares, chave);
 
@@ -40,7 +53,7 @@ async function atualizarBadge(tabId, url, titulo)
 
     if (pareada)
     {
-      await chrome.action.setBadgeBackgroundColor({ tabId, color: COR_DO_BADGE });
+      await chrome.action.setBadgeBackgroundColor({ tabId, color: COR_PAREADA });
     }
   }
   catch
@@ -175,11 +188,13 @@ async function tentarAutoRegistro({ tabId, url, titulo, chave, capitulo, entrada
       body: JSON.stringify({ entradaId, capitulo, url }),
     });
 
-    // 200 registrou; 409 é `nao_avanca`, resposta normal. Os dois fecham a
-    // marca — não há por que tentar de novo o mesmo capítulo nesta aba. Erro
-    // de rede não fecha: a próxima mudança de título tenta outra vez.
+    // 200 registrou; 409 é `nao_avanca`, resposta normal e silenciosa. Os dois
+    // fecham a marca — não há por que tentar de novo o mesmo capítulo nesta aba.
+    // Qualquer outra resposta é falha: badge vermelho, e a próxima mudança de
+    // título tenta outra vez.
     if (resposta.status !== 200 && resposta.status !== 409)
     {
+      await marcarResultado(tabId, url, titulo, false);
       return;
     }
 
@@ -194,15 +209,23 @@ async function tentarAutoRegistro({ tabId, url, titulo, chave, capitulo, entrada
     autoUltimo[tabId] = { capitulo, chave };
     await chrome.storage.session.set({ autoUltimo });
 
-    await chrome.action.setBadgeText({ tabId, text: "✓" });
-    await chrome.action.setBadgeBackgroundColor({ tabId, color: COR_DO_REGISTRADO });
-
-    setTimeout(function () { void atualizarBadge(tabId, url, titulo); }, AUTO_BADGE_MS);
+    await marcarResultado(tabId, url, titulo, true);
   }
   catch
   {
-    // Aba fechou, rede caiu, worker foi dormir: nada grava, a pessoa clica.
+    // Aba fechou, worker foi dormir: nada grava, a pessoa clica. Rede caida
+    // no meio do fetch cai aqui tambem — vale como falha visivel.
+    await marcarResultado(tabId, url, titulo, false).catch(function () {});
   }
+}
+
+/** Guarda o resultado por aba e URL e repinta o badge: verde ficou, vermelho falhou. */
+async function marcarResultado(tabId, url, titulo, ok)
+{
+  const { autoResultado = {} } = await chrome.storage.session.get("autoResultado");
+  autoResultado[tabId] = { url, ok };
+  await chrome.storage.session.set({ autoResultado });
+  await atualizarBadge(tabId, url, titulo);
 }
 
 async function lembrarFeito(marca)
