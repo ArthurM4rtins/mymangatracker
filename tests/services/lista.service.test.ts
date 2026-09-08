@@ -1,4 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+
+// Teto de listas por usuario (#136); livre por padrao, bloqueado so no caso que o pede.
+const limitar = vi.fn(async function (): Promise<Veredito> { return { bloqueado: false }; });
 import {
   alternarObraNaLista,
   removerObraDaLista,
@@ -10,13 +14,23 @@ import {
 
 describe("criarListaDoUsuario", function ()
 {
+  it("acima do teto por usuario nao cria e diz quanto esperar (#136)", async function ()
+  {
+    const criar = vi.fn(async function () { return { id: "l1" }; });
+    limitar.mockResolvedValueOnce({ bloqueado: true, esperarSegundos: 90 });
+
+    await expect(criarListaDoUsuario({ userId: "u1", nome: "isekai", descricao: null }, { criar, limitar }))
+      .resolves.toEqual({ estado: "limitado", esperarSegundos: 90 });
+    expect(criar).not.toHaveBeenCalled();
+  });
+
   it("cria com nome aparado e descrição em branco virando null", async function ()
   {
     const criar = vi.fn(async function () { return { id: "l1" }; });
 
     const resultado = await criarListaDoUsuario(
       { userId: "u1", nome: "  isekai de qualidade  ", descricao: "   " },
-      { criar },
+      { criar, limitar },
     );
 
     expect(criar).toHaveBeenCalledWith({
@@ -32,12 +46,12 @@ describe("criarListaDoUsuario", function ()
     const criar = vi.fn();
 
     await expect(
-      criarListaDoUsuario({ userId: "u1", nome: "   ", descricao: null }, { criar }),
+      criarListaDoUsuario({ userId: "u1", nome: "   ", descricao: null }, { criar, limitar }),
     ).resolves.toEqual({ estado: "lista_invalida" });
     await expect(
       criarListaDoUsuario(
         { userId: "u1", nome: "x".repeat(101), descricao: null },
-        { criar },
+        { criar, limitar },
       ),
     ).resolves.toEqual({ estado: "lista_invalida" });
     expect(criar).not.toHaveBeenCalled();

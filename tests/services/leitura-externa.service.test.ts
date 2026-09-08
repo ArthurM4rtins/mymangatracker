@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import type { StatusDaEstante } from "@/server/domain/perfil";
 import { registrarLeituraExterna } from "@/server/services/leitura-externa.service";
 
@@ -38,12 +39,15 @@ function fakeDeps(cenario: {
     return cenario.maior ?? null;
   });
   const registrarComProgresso = vi.fn(async function () { return { id: "p1" }; });
+  // Teto de registros por usuario (#136).
+  const limitar = vi.fn(async function (): Promise<Veredito> { return { bloqueado: false }; });
 
   return {
-    deps: { buscarEntrada, maiorCapitulo, registrarComProgresso },
+    deps: { buscarEntrada, maiorCapitulo, registrarComProgresso, limitar },
     buscarEntrada,
     maiorCapitulo,
     registrarComProgresso,
+    limitar,
   };
 }
 
@@ -61,6 +65,20 @@ function pedido(extra: Partial<{ capitulo: number; urlVisitada: string }> = {})
 // #61 vale aqui também: o progresso atual é o maior entre o capítulo marcado à
 // mão e o histórico. Registrar pela extensão um capítulo abaixo do marcado não
 // pode regredir a estante.
+describe("registrarLeituraExterna — teto por usuario (#136)", function ()
+{
+  it("acima do teto nao grava e diz quanto esperar, antes de tocar o banco", async function ()
+  {
+    const { deps, limitar, buscarEntrada, registrarComProgresso } = fakeDeps({});
+    limitar.mockResolvedValueOnce({ bloqueado: true, esperarSegundos: 45 });
+
+    await expect(registrarLeituraExterna(pedido({ capitulo: 3 }), deps))
+      .resolves.toEqual({ estado: "limitado", esperarSegundos: 45 });
+    expect(buscarEntrada).not.toHaveBeenCalled();
+    expect(registrarComProgresso).not.toHaveBeenCalled();
+  });
+});
+
 describe("registrarLeituraExterna — estante editada à mão", function ()
 {
   it("capítulo abaixo do marcado não avança: nada é gravado e a resposta diz onde a estante está", async function ()

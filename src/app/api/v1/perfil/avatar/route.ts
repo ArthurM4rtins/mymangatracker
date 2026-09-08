@@ -52,6 +52,14 @@ export async function PUT(request: Request)
       );
     }
 
+    if (resultado.estado === "limitado")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
+        { status: 429, headers: { "Retry-After": String(resultado.esperarSegundos) } },
+      );
+    }
+
     return NextResponse.json({ versao: resultado.versao }, { status: 200 });
   }
   catch (erro)

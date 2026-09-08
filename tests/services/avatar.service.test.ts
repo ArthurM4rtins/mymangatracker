@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import {
   avatarDoUsuario,
   definirAvatar,
@@ -13,6 +14,8 @@ function fakeDeps()
 {
   return {
     salvar: vi.fn(async function () { return { avatarUpdatedAt: new Date("2026-09-03T10:00:00Z") }; }),
+    // Teto por usuario (#136): 512 KB por chamada sem teto era negacao de servico barata.
+    limitar: vi.fn(async function (): Promise<Veredito> { return { bloqueado: false }; }),
     apagar: vi.fn(async function () { return undefined; }),
     buscarPorUsername: vi.fn(async function ()
     {
@@ -23,6 +26,16 @@ function fakeDeps()
 
 describe("definirAvatar", function ()
 {
+  it("acima do teto por usuario nao salva e diz quanto esperar (#136)", async function ()
+  {
+    const deps = fakeDeps();
+    deps.limitar.mockResolvedValueOnce({ bloqueado: true, esperarSegundos: 120 });
+
+    await expect(definirAvatar({ userId: "u1", mime: "image/jpeg", bytes: Buffer.alloc(10) }, deps))
+      .resolves.toEqual({ estado: "limitado", esperarSegundos: 120 });
+    expect(deps.salvar).not.toHaveBeenCalled();
+  });
+
   it("salva jpeg dentro do limite e devolve a versão", async function ()
   {
     const deps = fakeDeps();

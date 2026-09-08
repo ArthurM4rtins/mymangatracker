@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import {
   adicionarNaEstante,
@@ -55,21 +56,35 @@ function fakeDeps(cenario: {
     return { id: "e1", ...dados };
   });
 
+  // Teto de entradas por usuario (#136).
+  const limitar = vi.fn(async function (): Promise<Veredito> { return { bloqueado: false }; });
+
   const deps: DependenciasDaEstante = {
     buscarMediaNoBanco,
     salvarMedia,
     buscarNoAniList,
     gravarEntrada,
+    limitar,
     relogio: function () { return AGORA; },
   };
 
-  return { deps, buscarMediaNoBanco, salvarMedia, buscarNoAniList, gravarEntrada };
+  return { deps, buscarMediaNoBanco, salvarMedia, buscarNoAniList, gravarEntrada, limitar };
 }
 
 const PEDIDO = { userId: "u1", anilistId: 30013, status: "PLANNED" as const };
 
 describe("adicionarNaEstante", function ()
 {
+  it("acima do teto por usuario nao grava nem consulta o AniList (#136)", async function ()
+  {
+    const { deps, limitar, buscarNoAniList, gravarEntrada } = fakeDeps({});
+    limitar.mockResolvedValueOnce({ bloqueado: true, esperarSegundos: 30 });
+
+    await expect(adicionarNaEstante(PEDIDO, deps)).resolves.toEqual({ estado: "limitado", esperarSegundos: 30 });
+    expect(buscarNoAniList).not.toHaveBeenCalled();
+    expect(gravarEntrada).not.toHaveBeenCalled();
+  });
+
   it("cache fresco: não chama o AniList e usa o media do banco", async function ()
   {
     const { deps, buscarNoAniList, salvarMedia, gravarEntrada } = fakeDeps({

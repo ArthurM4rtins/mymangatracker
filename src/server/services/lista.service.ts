@@ -3,6 +3,8 @@
  * a partir da página da obra). Quem resolve a sessão é o controller.
  */
 import { mesmoConjunto } from "@/server/domain/lista-ordem";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import { limitarLista } from "./limite.service";
 import { buscarMediaPorAnilistId } from "@/server/repositories/media.repository";
 import {
   adicionarItem,
@@ -30,12 +32,18 @@ export type DependenciasDeCriacao = {
     nome: string;
     descricao: string | null;
   }) => Promise<{ id: string }>;
+  /** Teto de listas por usuário na janela (#136). */
+  limitar: (userId: string) => Promise<Veredito>;
 };
 
 export async function criarListaDoUsuario(
   pedido: { userId: string; nome: string; descricao: string | null },
   deps: DependenciasDeCriacao,
-): Promise<{ estado: "ok"; listaId: string } | { estado: "lista_invalida" }>
+): Promise<
+  | { estado: "ok"; listaId: string }
+  | { estado: "lista_invalida" }
+  | { estado: "limitado"; esperarSegundos: number }
+>
 {
   const nome = pedido.nome.trim();
   const descricao = pedido.descricao?.trim() || null;
@@ -43,6 +51,13 @@ export async function criarListaDoUsuario(
   if (nome === "" || nome.length > NOME_MAXIMO)
   {
     return { estado: "lista_invalida" };
+  }
+
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "limitado", esperarSegundos: limite.esperarSegundos };
   }
 
   const criada = await deps.criar({ userId: pedido.userId, nome, descricao });
@@ -134,7 +149,10 @@ export function criarListaDoSistema(pedido: {
   descricao: string | null;
 })
 {
-  return criarListaDoUsuario(pedido, { criar: criarLista });
+  return criarListaDoUsuario(pedido, {
+    criar: criarLista,
+    limitar: function (userId) { return limitarLista({ userId }); },
+  });
 }
 
 /** A composição de produção. */

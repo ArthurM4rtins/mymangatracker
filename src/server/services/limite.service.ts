@@ -103,6 +103,13 @@ const LOGIN_POR_CONTA: RegraDeLimite = { maximo: 20, janelaMs: 60 * 60_000 };
 const CADASTRO_POR_IP: RegraDeLimite = { maximo: 5, janelaMs: 60 * 60_000 };
 // Comentário (#109): escrita autenticada sem teto era negação de serviço barata.
 const COMENTARIOS_POR_USUARIO: RegraDeLimite = { maximo: 30, janelaMs: 60 * 60_000 };
+// As outras escritas autenticadas (#136, achado 6): cada uma custava banco sem
+// teto — avatar reescreve 512 KB por chamada; leitura, lista e estante inserem
+// linha. Os numeros sao folgados para uso humano e apertados para script.
+const LEITURAS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 };
+const AVATARES_POR_USUARIO: RegraDeLimite = { maximo: 10, janelaMs: 60 * 60_000 };
+const LISTAS_POR_USUARIO: RegraDeLimite = { maximo: 20, janelaMs: 60 * 60_000 };
+const ENTRADAS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 };
 
 const DEPS_DE_PRODUCAO: DependenciasDeLimite = {
   contar: contarTentativas,
@@ -172,6 +179,39 @@ export function limitarComentario(pedido: { userId: string }): Promise<Veredito>
     },
     DEPS_DE_PRODUCAO,
   );
+}
+
+/** Uma escrita autenticada qualquer, chaveada pelo usuario (#136). */
+function limitarPorUsuario(escopo: string, regra: RegraDeLimite, userId: string): Promise<Veredito>
+{
+  return verificarERegistrar(
+    { escopo, chaves: [{ chave: chaveDeTentativa([userId]), regra }] },
+    DEPS_DE_PRODUCAO,
+  );
+}
+
+/** A composição de produção. Antes de registrar uma leitura pela extensão. */
+export function limitarLeitura(pedido: { userId: string }): Promise<Veredito>
+{
+  return limitarPorUsuario("leitura", LEITURAS_POR_USUARIO, pedido.userId);
+}
+
+/** A composição de produção. Antes de gravar um avatar. */
+export function limitarAvatar(pedido: { userId: string }): Promise<Veredito>
+{
+  return limitarPorUsuario("avatar", AVATARES_POR_USUARIO, pedido.userId);
+}
+
+/** A composição de produção. Antes de criar uma lista. */
+export function limitarLista(pedido: { userId: string }): Promise<Veredito>
+{
+  return limitarPorUsuario("lista", LISTAS_POR_USUARIO, pedido.userId);
+}
+
+/** A composição de produção. Antes de adicionar à estante. */
+export function limitarEntrada(pedido: { userId: string }): Promise<Veredito>
+{
+  return limitarPorUsuario("estante", ENTRADAS_POR_USUARIO, pedido.userId);
 }
 
 /** A composição de produção. Antes de cadastrar. */

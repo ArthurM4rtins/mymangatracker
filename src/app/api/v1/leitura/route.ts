@@ -93,6 +93,14 @@ export async function POST(request: Request)
       );
     }
 
+    if (resultado.estado === "limitado")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
+        { status: 429, headers: { "Retry-After": String(resultado.esperarSegundos) } },
+      );
+    }
+
     if (resultado.estado === "nao_avanca")
     {
       // O progresso vai junto: a extensão diz onde a estante está, não só "não".
