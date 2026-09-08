@@ -7,7 +7,9 @@ import {
 // #108: login e cadastro sao rotas publicas de escrita sem contagem de
 // tentativas, e cada login paga um scrypt caro. A regra e pura: dado quantas
 // tentativas houve na janela e quando foi a mais antiga, bloqueia ou nao, e
-// diz quanto esperar.
+// diz quanto esperar. Desde a #132 a contagem JA INCLUI a tentativa atual (o
+// servico grava antes de contar), entao a de numero `maximo` passa e a
+// `maximo + 1` bloqueia.
 
 const AGORA = new Date("2026-09-05T12:00:00.000Z");
 const REGRA = { maximo: 5, janelaMs: 15 * 60_000 };
@@ -26,10 +28,17 @@ describe("avaliarLimite", function ()
     expect(avaliarLimite(0, null, AGORA, REGRA)).toEqual({ bloqueado: false });
   });
 
-  it("no maximo, bloqueia e diz quanto falta para a mais antiga sair da janela", function ()
+  it("exatamente no maximo, passa: e a propria tentativa de numero `maximo`", function ()
+  {
+    expect(avaliarLimite(5, new Date("2026-09-05T11:50:00.000Z"), AGORA, REGRA)).toEqual({
+      bloqueado: false,
+    });
+  });
+
+  it("uma acima do maximo, bloqueia e diz quanto falta para a mais antiga sair da janela", function ()
   {
     // Mais antiga as 11:50; janela de 15 min termina as 12:05; agora 12:00 -> 300 s.
-    expect(avaliarLimite(5, new Date("2026-09-05T11:50:00.000Z"), AGORA, REGRA)).toEqual({
+    expect(avaliarLimite(6, new Date("2026-09-05T11:50:00.000Z"), AGORA, REGRA)).toEqual({
       bloqueado: true,
       esperarSegundos: 300,
     });

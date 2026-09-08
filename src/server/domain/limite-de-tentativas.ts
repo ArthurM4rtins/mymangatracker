@@ -8,7 +8,11 @@
 import { createHash } from "node:crypto";
 
 export type RegraDeLimite = {
-  /** Tentativas permitidas dentro da janela. A de número `maximo + 1` bloqueia. */
+  /**
+   * Tentativas permitidas dentro da janela. A de número `maximo + 1` bloqueia.
+   * A contagem que chega aqui JÁ inclui a tentativa atual (#132): o serviço
+   * grava antes de contar, para que pedidos em paralelo se enxerguem.
+   */
   maximo: number;
   janelaMs: number;
 };
@@ -24,7 +28,7 @@ export function avaliarLimite(
   regra: RegraDeLimite,
 ): Veredito
 {
-  if (tentativasNaJanela < regra.maximo || maisAntigaNaJanela === null)
+  if (tentativasNaJanela <= regra.maximo || maisAntigaNaJanela === null)
   {
     return { bloqueado: false };
   }
