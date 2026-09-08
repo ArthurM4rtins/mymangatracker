@@ -342,7 +342,7 @@ describe("obraParaPagina", function ()
 
   it("com sessão, compõe o recorte do usuário com a ultima leitura e a avaliação", async function ()
   {
-    const { deps, buscarEntrada, listarAberturas } = fakeDeps({ noCache: NO_CACHE });
+    const { deps, buscarEntrada, listarAberturas, listarReviews } = fakeDeps({ noCache: NO_CACHE });
 
     const resultado = await obraParaPagina(30656, "u1", deps);
 
@@ -353,6 +353,8 @@ describe("obraParaPagina", function ()
 
     expect(buscarEntrada).toHaveBeenCalledWith("u1", "m1");
     expect(listarAberturas).toHaveBeenCalledWith("u1", "m1", 20);
+    // Resenhas da obra com teto (#135): a primeira pagina, nao todas.
+    expect(listarReviews).toHaveBeenCalledWith("m1", "u1", 20);
     expect(resultado.minha).toEqual({
       entradaId: "e1",
       status: "READING",

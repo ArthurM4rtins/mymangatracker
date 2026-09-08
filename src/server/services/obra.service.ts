@@ -122,6 +122,7 @@ export type DependenciasDaObra = {
   listarReviews: (
     mediaId: string,
     userId: string | null,
+    limite: number,
   ) => Promise<ReviewPublica[]>;
   contarNotas: (mediaId: string) => Promise<ContagemDeNota[]>;
   listarAberturas: (
@@ -134,6 +135,8 @@ export type DependenciasDaObra = {
 
 /** Quantas aberturas o painel da obra mostra. O resto fica no banco. */
 const LIMITE_DO_HISTORICO = 20;
+/** Quantas resenhas a página carrega (#135): as mais curtidas; o resto fica no banco. */
+const REVIEWS_NA_OBRA = 20;
 
 export async function obraParaPagina(
   anilistId: number,
@@ -221,7 +224,7 @@ export async function obraParaPagina(
               };
         }),
     // Social falhando não derruba a obra — a seção some.
-    deps.listarReviews(cache.id, userId).catch(function () { return []; }),
+    deps.listarReviews(cache.id, userId, REVIEWS_NA_OBRA).catch(function () { return []; }),
     // Agregado falhando não derruba a obra — a nota some.
     deps.contarNotas(cache.id).catch(function (): ContagemDeNota[] { return []; }),
   ]);
