@@ -52,6 +52,8 @@ export const ERRO = {
 
   // 409 — conflito com o estado que já existe.
   JA_EM_USO: "ja_em_uso",
+  /** Capítulo que não passa do progresso da estante: nada foi gravado (#172). */
+  NAO_AVANCA: "nao_avanca",
   SEM_FONTE: "sem_fonte",
 
   // 413/415 — o arquivo enviado.

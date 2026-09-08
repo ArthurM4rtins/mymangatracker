@@ -95,6 +95,15 @@ export async function POST(request: Request)
       );
     }
 
+    if (resultado.estado === "nao_avanca")
+    {
+      // O progresso vai junto: a extensão diz onde a estante está, não só "não".
+      return NextResponse.json(
+        { erros: { _geral: ERRO.NAO_AVANCA }, progresso: resultado.progresso },
+        { status: 409 },
+      );
+    }
+
     return NextResponse.json(
       {
         url: resultado.url,
