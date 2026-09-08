@@ -21,10 +21,26 @@ describe("normalizarUrlVisitada", function ()
     expect(normalizarUrlVisitada("http://site.com/ler/2")).toBe("http://site.com/ler/2");
   });
 
-  it("preserva query e âncora, que em alguns sites levam o capítulo", function ()
+  it("preserva a query, que em alguns sites leva o capítulo", function ()
   {
+    expect(normalizarUrlVisitada("https://site.com/ler?cap=2"))
+      .toBe("https://site.com/ler?cap=2");
+  });
+
+  it("descarta a âncora: é posição na página, não identidade do capítulo", function ()
+  {
+    // Achado 12 da auditoria de 06/09/2026 (issue #142): a URL da aba vai
+    // inteira para `ReadingProgress.resolvedUrl` e nunca mais sai de lá. O
+    // fragmento não identifica capitulo nenhum — `fonte.service.ts` já trata
+    // hash como posição — então guardar custa risco sem pagar nada.
     expect(normalizarUrlVisitada("https://site.com/ler?cap=2#pagina-3"))
-      .toBe("https://site.com/ler?cap=2#pagina-3");
+      .toBe("https://site.com/ler?cap=2");
+  });
+
+  it("descarta a âncora também quando ela é o único segredo da URL", function ()
+  {
+    expect(normalizarUrlVisitada("https://site.com/painel#access_token=abc123"))
+      .toBe("https://site.com/painel");
   });
 
   it("ignora espaço em volta", function ()
