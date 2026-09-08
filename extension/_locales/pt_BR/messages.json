@@ -11,6 +11,12 @@
   "abrirSite": {
     "message": "abrir o site"
   },
+  "verLink": {
+    "message": "ver link"
+  },
+  "ocultarLink": {
+    "message": "ocultar link"
+  },
   "carregando": {
     "message": "carregando…"
   },

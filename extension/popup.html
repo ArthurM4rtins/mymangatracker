@@ -29,8 +29,12 @@
 
       <form id="formulario" class="formulario" hidden>
         <div class="pagina">
-          <span id="pagina-url" class="pagina-url"></span>
           <span id="pagina-titulo" class="pagina-titulo"></span>
+          <!-- A URL que vai para o banco (#142) continua a um toque: escondida por
+               padrao porque o reset ja apaga o que subiu, e o registro automatico
+               grava sem o popup abrir — mostrar sempre virou ruido (#173). -->
+          <button id="ver-link" type="button" class="discreto ver-link" data-i18n="verLink"></button>
+          <span id="pagina-url" class="pagina-url" hidden></span>
         </div>
 
         <label class="campo">

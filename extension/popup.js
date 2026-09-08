@@ -6,6 +6,7 @@ const el = {
   estado: document.getElementById("estado"),
   formulario: document.getElementById("formulario"),
   paginaUrl: document.getElementById("pagina-url"),
+  verLink: document.getElementById("ver-link"),
   paginaTitulo: document.getElementById("pagina-titulo"),
   filtro: document.getElementById("filtro"),
   obra: document.getElementById("obra"),
@@ -264,6 +265,12 @@ el.formulario.addEventListener("submit", async function (evento)
   {
     el.registrar.disabled = false;
   }
+});
+
+el.verLink.addEventListener("click", function ()
+{
+  el.paginaUrl.hidden = !el.paginaUrl.hidden;
+  el.verLink.textContent = KIDOKU_I18N.texto(el.paginaUrl.hidden ? "verLink" : "ocultarLink");
 });
 
 el.auto.addEventListener("change", function ()
