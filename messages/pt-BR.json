@@ -211,7 +211,6 @@
     "vazia": "Nada por aqui ainda. <catalogo>Busque no catálogo</catalogo> e adicione a primeira obra.",
     "obra": "Obra",
     "capitulos": "{capitulo} capítulos",
-    "lendoEm": "lendo em {host}",
     "seletorStatus": "Status da obra",
     "filtros": {
       "rotulo": "Filtrar por status",
@@ -227,12 +226,9 @@
       "cancelar": "cancelar"
     },
     "continuar": {
-      "abrirObra": "Abrir a obra ↗",
-      "abrindo": "Abrindo…",
-      "proximo": "Continuar cap. {capitulo} →",
-      "ouCap": "ou cap.",
-      "campo": "Capítulo específico",
-      "abrir": "abrir"
+      "continuar": "Continuar leitura ↗",
+      "ultimoCapitulo": "último: cap. {capitulo} em {host}",
+      "semLeitura": "registre um capítulo pela extensão para continuar daqui"
     },
     "avaliacao": {
       "nota": "Nota {nota} de 5",
@@ -242,20 +238,6 @@
       "resenha": "Escreva a resenha (opcional)",
       "spoiler": "contém spoiler",
       "remover": "Remover"
-    },
-    "fonte": {
-      "trocar": "Trocar fonte",
-      "configurar": "Configurar leitura",
-      "rotuloUrl": "Cole o link do capítulo 1 no site onde você lê",
-      "exemploUrl": "https://site.com/obra/capitulo/1",
-      "derivando": "Derivando…",
-      "derivar": "Derivar",
-      "confirmar": "Esse link abre o capítulo 2? Então:",
-      "usar": "Usar esta fonte",
-      "paginaComCandidatos": "Nenhum desses abre o capítulo 2? Alguns sites não colocam o número na URL — salve a página da obra e o registro continua igual:",
-      "paginaSemCandidatos": "Esse site não coloca o número do capítulo na URL. Salve a página da obra: o botão abre a página e você registra o capítulo aqui.",
-      "paginaDica": "Dica: para salvar a página da série (e não um capítulo), cole a URL da obra no campo acima e derive de novo.",
-      "salvarPagina": "Salvar página da obra"
     },
     "erros": {
       "banco": "A estante depende do banco de dados, que não respondeu agora. Tente de novo em instantes.",
