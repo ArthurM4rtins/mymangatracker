@@ -12,6 +12,7 @@ import {
 
 async function fakeDeps(hash: string)
 {
+  // O token novo nasce com a versao ATUAL do banco (#137): ja valido.
   const assinarToken = vi.fn(async function (userId: string)
   {
     return `token-de-${userId}`;
@@ -21,13 +22,13 @@ async function fakeDeps(hash: string)
     buscarPorEmail: async function (email)
     {
       return email === "existe@exemplo.test"
-        ? { id: "u1", passwordHash: hash, locale: null }
+        ? { id: "u1", passwordHash: hash, locale: null, tokenVersion: 4 }
         : null;
     },
     buscarPorUsername: async function (username)
     {
       return username === "roca"
-        ? { id: "u1", passwordHash: hash, locale: null }
+        ? { id: "u1", passwordHash: hash, locale: null, tokenVersion: 4 }
         : null;
     },
     assinarToken,
@@ -49,7 +50,7 @@ describe("entrar", function ()
     );
 
     expect(sessao).toEqual({ token: "token-de-u1", locale: null });
-    expect(assinarToken).toHaveBeenCalledExactlyOnceWith("u1");
+    expect(assinarToken).toHaveBeenCalledExactlyOnceWith("u1", 4);
   });
 
   it("senha errada devolve null, sem assinar nada", async function ()
@@ -121,7 +122,7 @@ describe("entrar", function ()
     const sessao = await entrar({ identificador: "roca", senha: "senha-certa-123" }, deps);
 
     expect(sessao).toEqual({ token: "token-de-u1", locale: null });
-    expect(assinarToken).toHaveBeenCalledExactlyOnceWith("u1");
+    expect(assinarToken).toHaveBeenCalledExactlyOnceWith("u1", 4);
   });
 
   it("username normaliza como no cadastro: maiúscula e espaço não impedem entrar", async function ()
