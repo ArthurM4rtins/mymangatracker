@@ -384,6 +384,7 @@
       "autoria": "por <autor>{username}</autor> · {n, plural, =1 {# obra} other {# obras}}",
       "vazia": "Lista vazia — adicione obras pelo botão de lista na página de cada obra.",
       "remover": "remover",
+      "removerConfirmacao": "Remover esta obra da lista?",
       "curtida": {
         "curtir": "curtir a lista",
         "descurtir": "descurtir a lista"
