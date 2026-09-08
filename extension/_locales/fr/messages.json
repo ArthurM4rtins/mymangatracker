@@ -90,17 +90,6 @@
       }
     }
   },
-  "registradoAutomatico": {
-    "message": "ch. $capitulo$ enregistré automatiquement",
-    "placeholders": {
-      "capitulo": {
-        "content": "$1"
-      }
-    }
-  },
-  "desfazer": {
-    "message": "annuler"
-  },
   "erroPadrao": {
     "message": "enregistrement impossible"
   },

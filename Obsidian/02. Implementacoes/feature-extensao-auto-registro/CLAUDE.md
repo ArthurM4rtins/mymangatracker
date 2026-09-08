@@ -33,8 +33,8 @@ O servidor continua sendo quem decide se avança. O `background.js` não sabe o 
 
 ## O que a pessoa vê
 
-- **Badge** da aba vira `✓` (verde) por alguns segundos quando registrou; volta ao `●` de pareada depois.
-- **Popup** aberto naquela aba mostra no topo: *"cap. 68 registrado automaticamente"* com o link "desfazer" que leva ao card da estante (o reset). Guardado em `chrome.storage.session` por aba.
+- **Badge** da aba vira `✓` verde quando registrou e **fica** até a aba trocar de página; `!` vermelho quando tentou e falhou (rede, servidor); `●` âmbar é pareada sem registro. `nao_avanca` não muda o badge.
+- **Popup** não mostra aviso. Existiu na primeira versão ("cap. 68 registrado automaticamente" + "desfazer") e saiu a pedido do usuário em 08/09: o badge já diz que registrou, e o desfazer é o reset na estante, que o "abrir o site" do topo alcança.
 - **Sem notificação do sistema.** Custaria a permissão `notifications` e o aviso na instalação; o badge basta.
 
 ## O que NÃO muda
@@ -49,7 +49,7 @@ MV3 encerra o service worker ocioso. A espera de 20 segundos vive num `setTimeou
 
 ## Escopo
 
-Dentro: chave no popup (persistida em `chrome.storage.local`), a lógica no `background.js`, a memória por aba, o badge `✓`, o aviso no popup, textos nos cinco `_locales`.
+Dentro: chave no popup (persistida em `chrome.storage.local`), a lógica no `background.js`, a memória por aba, o badge em três estados, textos nos cinco `_locales`. A URL da aba passou a ficar escondida por padrão no popup ("ver link"): o reset apaga o que subiu e o automático grava sem o popup abrir, então mostrar sempre virou ruído.
 
 Fora: qualquer mudança no servidor; corrigir o #181 (fica como está, mas a condição 2 já não repete o erro dele no caminho novo).
 

@@ -15,9 +15,6 @@ const el = {
   origem: document.getElementById("origem"),
   registrar: document.getElementById("registrar"),
   auto: document.getElementById("auto"),
-  autoAviso: document.getElementById("auto-aviso"),
-  autoAvisoTexto: document.getElementById("auto-aviso-texto"),
-  autoDesfazer: document.getElementById("auto-desfazer"),
   resultado: document.getElementById("resultado"),
   semSessao: document.getElementById("sem-sessao"),
   entrar: document.getElementById("entrar"),
@@ -75,18 +72,6 @@ async function iniciar()
   // A chave do registro automatico (#173) vive no navegador, nao na conta.
   const { autoRegistro } = await chrome.storage.local.get("autoRegistro");
   el.auto.checked = autoRegistro === true;
-
-  // O que o background registrou sozinho NESTA aba, com o desfazer (o reset
-  // no card da estante). Some quando a aba fecha: e memoria de sessao.
-  const { autoUltimo = {} } = await chrome.storage.session.get("autoUltimo");
-  const feito = aba ? autoUltimo[aba.id] : undefined;
-
-  if (feito !== undefined)
-  {
-    el.autoAvisoTexto.textContent = KIDOKU_I18N.texto("registradoAutomatico", [String(feito.capitulo)]);
-    el.autoDesfazer.href = base + "/estante";
-    el.autoAviso.hidden = false;
-  }
 
   if (sessao === null)
   {

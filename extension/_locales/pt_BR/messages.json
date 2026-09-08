@@ -90,17 +90,6 @@
       }
     }
   },
-  "registradoAutomatico": {
-    "message": "cap. $capitulo$ registrado automaticamente",
-    "placeholders": {
-      "capitulo": {
-        "content": "$1"
-      }
-    }
-  },
-  "desfazer": {
-    "message": "desfazer"
-  },
   "erroPadrao": {
     "message": "não deu para registrar"
   },

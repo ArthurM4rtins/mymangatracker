@@ -90,17 +90,6 @@
       }
     }
   },
-  "registradoAutomatico": {
-    "message": "ch. $capitulo$ registered automatically",
-    "placeholders": {
-      "capitulo": {
-        "content": "$1"
-      }
-    }
-  },
-  "desfazer": {
-    "message": "undo"
-  },
   "erroPadrao": {
     "message": "couldn't log that"
   },

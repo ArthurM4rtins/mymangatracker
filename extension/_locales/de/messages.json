@@ -90,17 +90,6 @@
       }
     }
   },
-  "registradoAutomatico": {
-    "message": "Kap. $capitulo$ automatisch eingetragen",
-    "placeholders": {
-      "capitulo": {
-        "content": "$1"
-      }
-    }
-  },
-  "desfazer": {
-    "message": "rückgängig"
-  },
   "erroPadrao": {
     "message": "Eintragen nicht möglich"
   },

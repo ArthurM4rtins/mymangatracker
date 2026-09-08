@@ -205,10 +205,8 @@ async function tentarAutoRegistro({ tabId, url, titulo, chave, capitulo, entrada
       return;
     }
 
-    const { autoUltimo = {} } = await chrome.storage.session.get("autoUltimo");
-    autoUltimo[tabId] = { capitulo, chave };
-    await chrome.storage.session.set({ autoUltimo });
-
+    // O badge verde e o sinal; o desfazer e o reset na estante, que o popup ja
+    // alcanca pelo "abrir o site". Sem aviso a mais no popup, por decisao do usuario.
     await marcarResultado(tabId, url, titulo, true);
   }
   catch

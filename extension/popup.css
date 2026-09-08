@@ -148,5 +148,3 @@ button[type="submit"]:disabled { opacity: 0.6; cursor: default; }
 .chave input:checked::before { transform: translateX(14px); background: var(--acento-contraste); }
 .chave input:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
 .chave span { display: flex; flex-direction: column; gap: 2px; }
-#auto-aviso { margin-bottom: 10px; }
-#auto-aviso a { margin-left: 6px; }
