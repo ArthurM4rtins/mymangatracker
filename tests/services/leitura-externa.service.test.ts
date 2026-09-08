@@ -5,7 +5,10 @@ import { registrarLeituraExterna } from "@/server/services/leitura-externa.servi
 // A leitura que a extensão (issue #52) registra: o usuário está NA página do
 // capítulo, num site sem template. Diferença para `abrirCapitulo`: aqui não
 // existe fonte configurada e a URL não nasce no servidor — ela é a aba aberta.
-// O que NÃO muda é a regra do progresso: o maior capítulo manda, releitura vira
+// O que NÃO muda é a regra do progresso: o maior capítulo manda. O que mudou na
+// #172 (parte 1): capítulo que não avança NÃO grava nada — a extensão só registra
+// o que avança, e voltar atrás é o reset no site. Releitura deixou de existir:
+// o maior capítulo manda, e o que não passa dele vira
 // histórico e não regride a estante.
 
 const URL_REAL = "https://mangafire.to/title/4mx-vagabondd/chapter/4745884";
@@ -35,14 +38,12 @@ function fakeDeps(cenario: {
     return cenario.maior ?? null;
   });
   const registrarComProgresso = vi.fn(async function () { return { id: "p1" }; });
-  const registrarReleitura = vi.fn(async function () { return { id: "p2" }; });
 
   return {
-    deps: { buscarEntrada, maiorCapitulo, registrarComProgresso, registrarReleitura },
+    deps: { buscarEntrada, maiorCapitulo, registrarComProgresso },
     buscarEntrada,
     maiorCapitulo,
     registrarComProgresso,
-    registrarReleitura,
   };
 }
 
@@ -62,17 +63,16 @@ function pedido(extra: Partial<{ capitulo: number; urlVisitada: string }> = {})
 // pode regredir a estante.
 describe("registrarLeituraExterna — estante editada à mão", function ()
 {
-  it("capítulo abaixo do marcado vira histórico e o progresso fica no marcado", async function ()
+  it("capítulo abaixo do marcado não avança: nada é gravado e a resposta diz onde a estante está", async function ()
   {
-    const { deps, registrarComProgresso, registrarReleitura } = fakeDeps({
+    const { deps, registrarComProgresso } = fakeDeps({
       maior: null,
       progressChapter: "100",
     });
 
     const resultado = await registrarLeituraExterna(pedido({ capitulo: 3 }), deps);
 
-    expect(resultado).toMatchObject({ estado: "ok", capitulo: 3, progresso: 100 });
-    expect(registrarReleitura).toHaveBeenCalledOnce();
+    expect(resultado).toEqual({ estado: "nao_avanca", progresso: 100 });
     expect(registrarComProgresso).not.toHaveBeenCalled();
   });
 
@@ -93,7 +93,7 @@ describe("registrarLeituraExterna", function ()
 {
   it("capítulo novo avança o progresso da estante", async function ()
   {
-    const { deps, registrarComProgresso, registrarReleitura } = fakeDeps({ maior: 1 });
+    const { deps, registrarComProgresso } = fakeDeps({ maior: 1 });
 
     const resultado = await registrarLeituraExterna(pedido({ capitulo: 2 }), deps);
 
@@ -104,7 +104,6 @@ describe("registrarLeituraExterna", function ()
       url: URL_REAL,
     });
     expect(registrarComProgresso).toHaveBeenCalledTimes(1);
-    expect(registrarReleitura).not.toHaveBeenCalled();
   });
 
   it("primeira leitura da obra progride", async function ()
@@ -117,14 +116,24 @@ describe("registrarLeituraExterna", function ()
     expect(registrarComProgresso).toHaveBeenCalledTimes(1);
   });
 
-  it("releitura entra no histórico sem regredir a estante", async function ()
+  it("capítulo abaixo do histórico não avança e não entra no histórico", async function ()
   {
-    const { deps, registrarComProgresso, registrarReleitura } = fakeDeps({ maior: 57.5 });
+    // Antes era releitura. Voltar atrás agora é o reset no site (#172, parte 2).
+    const { deps, registrarComProgresso } = fakeDeps({ maior: 57.5 });
 
     const resultado = await registrarLeituraExterna(pedido({ capitulo: 12 }), deps);
 
-    expect(resultado).toMatchObject({ estado: "ok", capitulo: 12, progresso: 57.5 });
-    expect(registrarReleitura).toHaveBeenCalledTimes(1);
+    expect(resultado).toEqual({ estado: "nao_avanca", progresso: 57.5 });
+    expect(registrarComProgresso).not.toHaveBeenCalled();
+  });
+
+  it("o mesmo capítulo do progresso também não avança", async function ()
+  {
+    const { deps, registrarComProgresso } = fakeDeps({ maior: 57.5 });
+
+    const resultado = await registrarLeituraExterna(pedido({ capitulo: 57.5 }), deps);
+
+    expect(resultado).toEqual({ estado: "nao_avanca", progresso: 57.5 });
     expect(registrarComProgresso).not.toHaveBeenCalled();
   });
 
@@ -168,14 +177,18 @@ describe("registrarLeituraExterna", function ()
     );
   });
 
-  it("obra pausada volta a lendo mesmo quando é releitura", async function ()
+  it("obra pausada só volta a lendo quando o capítulo avança", async function ()
   {
-    // O status muda porque a pessoa voltou a ler, não porque o progresso andou.
-    const { deps, registrarReleitura } = fakeDeps({ status: "PAUSED", maior: 57.5 });
+    // Sem gravação não há mudança de status: o que não avança não toca a estante.
+    const { deps, registrarComProgresso } = fakeDeps({ status: "PAUSED", maior: 57.5 });
 
-    await registrarLeituraExterna(pedido({ capitulo: 12 }), deps);
+    expect(await registrarLeituraExterna(pedido({ capitulo: 12 }), deps))
+      .toEqual({ estado: "nao_avanca", progresso: 57.5 });
+    expect(registrarComProgresso).not.toHaveBeenCalled();
 
-    expect(registrarReleitura).toHaveBeenCalledWith(
+    await registrarLeituraExterna(pedido({ capitulo: 58 }), deps);
+
+    expect(registrarComProgresso).toHaveBeenCalledWith(
       expect.objectContaining({ novoStatus: "READING" }),
     );
   });
@@ -193,11 +206,11 @@ describe("registrarLeituraExterna", function ()
 
   it("registrar em obra concluída não a desmarca", async function ()
   {
-    const { deps, registrarReleitura } = fakeDeps({ status: "COMPLETED", maior: 100 });
+    const { deps, registrarComProgresso } = fakeDeps({ status: "COMPLETED", maior: 100 });
 
-    await registrarLeituraExterna(pedido({ capitulo: 12 }), deps);
+    await registrarLeituraExterna(pedido({ capitulo: 120 }), deps);
 
-    expect(registrarReleitura).toHaveBeenCalledWith(
+    expect(registrarComProgresso).toHaveBeenCalledWith(
       expect.not.objectContaining({ novoStatus: expect.anything() }),
     );
   });
@@ -213,13 +226,12 @@ describe("registrarLeituraExterna", function ()
 
   it("entrada de outro usuário não é encontrada e nada é gravado", async function ()
   {
-    const { deps, registrarComProgresso, registrarReleitura } = fakeDeps({ entrada: null });
+    const { deps, registrarComProgresso } = fakeDeps({ entrada: null });
 
     const resultado = await registrarLeituraExterna(pedido(), deps);
 
     expect(resultado).toEqual({ estado: "nao_encontrada" });
     expect(registrarComProgresso).not.toHaveBeenCalled();
-    expect(registrarReleitura).not.toHaveBeenCalled();
   });
 
   it("URL fora de http(s) é recusada antes de tocar no banco", async function ()
