@@ -10,6 +10,8 @@ import { z } from "zod";
 import { ErroCampoDuplicado } from "@/server/domain/erros";
 import { cadastrarUsuarioNoSistema } from "@/server/services/cadastro.service";
 import { limitarCadastro } from "@/server/services/limite.service";
+import { lerJson } from "../_shared/corpo";
+import { mesmaOrigem } from "../_shared/origem";
 import { ERRO } from "../_shared/erros";
 import { ipDoPedido } from "../_shared/ip";
 
@@ -32,18 +34,24 @@ const ESQUEMA_CADASTRO = z.object({
 
 export async function POST(request: Request)
 {
-  let corpo: unknown;
-  try
-  {
-    corpo = await request.json();
-  }
-  catch
+  // CSRF (#131): esta rota grava cookie sem exigir cookie. Form de outro site
+  // nao passa daqui; o corpo nem chega a ser lido.
+  if (!mesmaOrigem(request))
   {
     return NextResponse.json(
-      { erros: { _geral: ERRO.CORPO_INVALIDO } },
-      { status: 400 },
+      { erros: { _geral: ERRO.ORIGEM_RECUSADA } },
+      { status: 403 },
     );
   }
+
+  const leitura = await lerJson(request);
+
+  if (!leitura.ok)
+  {
+    return leitura.resposta;
+  }
+
+  const corpo: unknown = leitura.corpo;
 
   const analise = ESQUEMA_CADASTRO.safeParse(corpo);
 

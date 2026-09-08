@@ -8,6 +8,7 @@ import {
   alternarObraNaListaDoSistema,
   removerObraDaListaDoSistema,
 } from "@/server/services/lista.service";
+import { lerJson } from "../../../_shared/corpo";
 import { ERRO } from "../../../_shared/erros";
 import { usuarioDaSessao } from "../../../_shared/sessao";
 
@@ -32,18 +33,14 @@ export async function POST(
     );
   }
 
-  let corpo: unknown;
-  try
+  const leitura = await lerJson(request);
+
+  if (!leitura.ok)
   {
-    corpo = await request.json();
+    return leitura.resposta;
   }
-  catch
-  {
-    return NextResponse.json(
-      { erros: { _geral: ERRO.CORPO_INVALIDO } },
-      { status: 400 },
-    );
-  }
+
+  const corpo: unknown = leitura.corpo;
 
   const analise = ESQUEMA.safeParse(corpo);
 
@@ -108,18 +105,14 @@ export async function DELETE(
     );
   }
 
-  let corpo: unknown;
-  try
+  const leitura = await lerJson(request);
+
+  if (!leitura.ok)
   {
-    corpo = await request.json();
+    return leitura.resposta;
   }
-  catch
-  {
-    return NextResponse.json(
-      { erros: { _geral: ERRO.CORPO_INVALIDO } },
-      { status: 400 },
-    );
-  }
+
+  const corpo: unknown = leitura.corpo;
 
   const analise = ESQUEMA.safeParse(corpo);
 
