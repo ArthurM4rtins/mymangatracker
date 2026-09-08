@@ -83,7 +83,7 @@
     "contaCriada": "Compte créé. Plus qu’à te connecter.",
     "semConta": "Tu n’as pas encore de compte ? <link>Créer un compte</link>",
     "campos": {
-      "email": "Adresse e-mail",
+      "identificador": "E-mail ou nom d’utilisateur",
       "senha": "Mot de passe"
     },
     "acoes": {

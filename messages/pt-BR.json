@@ -83,7 +83,7 @@
     "contaCriada": "Conta criada. Agora é entrar.",
     "semConta": "Ainda não tem conta? <link>Criar conta</link>",
     "campos": {
-      "email": "E-mail",
+      "identificador": "E-mail ou nome de usuário",
       "senha": "Senha"
     },
     "acoes": {
