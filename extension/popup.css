@@ -42,8 +42,12 @@ body {
 
 /*
  * A URL vai inteira para o banco e nunca mais sai de la (issue #142), entao ela
- * aparece por extenso antes do clique: quebra no meio da string e ate 3 linhas,
- * porque o que costuma ser segredo (?token=, ?code=) mora no fim.
+ * aparece por extenso antes do clique, quebrando no meio da string.
+ *
+ * Altura travada em 3 linhas e o resto ROLA, em vez de ser cortado: o que
+ * costuma ser segredo (?token=, ?code=) mora no fim da URL, e corte esconderia
+ * de novo justamente o que esta correcao existe para mostrar. Travar a altura
+ * mantem o botao de registrar sempre visivel.
  */
 .pagina {
   display: flex;
@@ -54,12 +58,12 @@ body {
 
 .pagina-url {
   font-size: 12px;
+  line-height: 1.4;
   color: var(--texto);
   word-break: break-all;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  max-height: calc(3 * 1.4em);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .pagina-titulo {
