@@ -399,3 +399,26 @@ novo. Custou um round-trip com o usuario e um print de "falha" que nao era.
 **A regra:** depois de rebase, merge ou troca de branch com o dev rodando, matar o
 processo, apagar `.next` e subir de novo ANTES de pedir teste manual. E provar com
 `curl` que a pagina serve o markup novo antes de mandar alguem olhar.
+
+## `grep -c "frase"` na pagina nao prova que o botao existe (08/09/2026)
+
+Sondando se o "Resetar leitura" tinha saido da pagina da obra, `grep -c` achou 1 —
+mas era o catalogo do `next-intl`, que embute o namespace inteiro no payload
+quando qualquer componente da pagina usa `useTranslations("obra")`. O botao ja
+nao estava la.
+
+**A regra:** sondar pelo MARKUP renderizado (`>Resetar leitura</button>`), nunca
+pela frase solta. Frase solta aparece no JSON de mensagens de qualquer pagina que
+carregue o namespace.
+
+## Script grande por heredoc quebra o shell antes de rodar (08/09/2026)
+
+Tres vezes na mesma sessao um bloco Python de 100+ linhas passado por `<<'PY'`
+morreu com "unexpected EOF while looking for matching quote" — e como o erro e de
+ANALISE, nada do comando roda, nem o que vinha antes. Custou round-trips e um
+commit que parecia feito e nao estava.
+
+**A regra:** edicao multi-arquivo vai para um `.py` no scratchpad (escrito pela
+ferramenta de arquivo, nao pelo shell) e roda com `python arquivo.py`. Heredoc so
+para bloco curto. E depois de qualquer falha de shell, `git status` antes de
+assumir que algo foi aplicado.
