@@ -20,6 +20,7 @@ import {
 } from "@/server/repositories/media.repository";
 import { buscarEntradaPorMedia } from "@/server/repositories/shelf.repository";
 import {
+  contarAberturas,
   listarAberturas,
   aberturaMaisAvancadaDaObra,
   type AberturaDoHistorico,
@@ -67,6 +68,8 @@ export type MinhaRelacao = {
   continuarEm: { url: string; host: string; capitulo: string } | null;
   /** O histórico de aberturas DO DONO (issue #54), do mais recente ao mais antigo. */
   historico: AberturaDoHistorico[];
+  /** Total real, não o recorte de 20: é o número que a confirmação do reset mostra (#172). */
+  totalDeAberturas: number;
 };
 
 /** Avaliar não exige estante (issue #45) — a avaliação anda separada. */
@@ -129,6 +132,7 @@ export type DependenciasDaObra = {
     mediaId: string,
     limite: number,
   ) => Promise<AberturaDoHistorico[]>;
+  contarAberturas: (userId: string, mediaId: string) => Promise<number>;
   relogio?: () => Date;
 };
 
@@ -292,12 +296,13 @@ async function minhaRelacao(
     return null;
   }
 
-  const [ultima, historico] = await Promise.all([
+  const [ultima, historico, totalDeAberturas] = await Promise.all([
     deps.buscarLeituraMaisAvancada(userId, mediaId),
     // Histórico falhando não derruba o painel — a lista some.
     deps
       .listarAberturas(userId, mediaId, LIMITE_DO_HISTORICO)
       .catch(function (): AberturaDoHistorico[] { return []; }),
+    deps.contarAberturas(userId, mediaId).catch(function () { return 0; }),
   ]);
 
   return {
@@ -305,6 +310,7 @@ async function minhaRelacao(
     status: entrada.status,
     progressChapter: entrada.progressChapter,
     historico,
+    totalDeAberturas,
     // O host sai da propria URL: uma verdade so, a que a extensao atualiza.
     continuarEm:
       ultima === null
@@ -330,6 +336,7 @@ export function obraParaPaginaDoSistema(
     buscarSimilares,
     buscarEntrada: buscarEntradaPorMedia,
     buscarLeituraMaisAvancada: aberturaMaisAvancadaDaObra,
+    contarAberturas,
     buscarAvaliacao,
     listarReviews: listarReviewsDaObra,
     contarNotas: contarNotasPorValor,

@@ -95,6 +95,8 @@ function fakeDeps(cenario: {
   {
     return { mediaId: "m1", rating: "4.5", review: null, containsSpoilers: false };
   });
+  // Total real, alem do recorte de 20 do historico (#172).
+  const contarAberturas = vi.fn(async function () { return 2; });
   const listarReviews = vi.fn(async function ()
   {
     return [
@@ -162,6 +164,7 @@ function fakeDeps(cenario: {
       listarReviews,
       contarNotas,
       listarAberturas,
+      contarAberturas,
       relogio: function () { return AGORA; },
     },
     buscarNoAniList,
@@ -362,6 +365,7 @@ describe("obraParaPagina", function ()
         host: "mangafire.to",
         capitulo: "70",
       },
+      totalDeAberturas: 2,
       // O histórico é do dono (issue #54): capítulo, quando e por qual fonte.
       historico: [
         {
