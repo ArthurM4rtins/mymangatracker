@@ -20,7 +20,10 @@ import {
   listarAnilistIdsDaEstante,
   listarEntradasDoUsuario,
 } from "@/server/repositories/shelf.repository";
-import { listarAberturasMaisAvancadas } from "@/server/repositories/reading-progress.repository";
+import {
+  contarAberturasPorObra,
+  listarAberturasMaisAvancadas,
+} from "@/server/repositories/reading-progress.repository";
 import { listarAvaliacoes } from "@/server/repositories/avaliacao.repository";
 
 export type StatusDaEstante =
@@ -128,6 +131,8 @@ export type EntradaDaEstante = {
    * tem para onde continuar, e diz isso em vez de inventar destino (#170).
    */
   continuarEm: { url: string; host: string; capitulo: string } | null;
+  /** Total de aberturas: e o numero que a confirmacao do reset mostra (#172). */
+  totalDeAberturas: number;
   /** A avaliação do dono — nota e/ou resenha, estilo Letterboxd. */
   avaliacao: {
     rating: string | null;
@@ -143,7 +148,7 @@ export type FiltroDaEstante = {
 
 type EntradaNoRepositorio = Omit<
   EntradaDaEstante,
-  "continuarEm" | "avaliacao"
+  "continuarEm" | "avaliacao" | "totalDeAberturas"
 > & {
   mediaId: string;
 };
@@ -156,6 +161,9 @@ export type DependenciasDeListagem = {
   listarLeiturasMaisAvancadas: (
     userId: string,
   ) => Promise<Array<{ mediaId: string; resolvedUrl: string; chapter: string }>>;
+  contarAberturasPorObra: (
+    userId: string,
+  ) => Promise<Array<{ mediaId: string; total: number }>>;
   listarAvaliacoes: (
     userId: string,
   ) => Promise<
@@ -179,11 +187,15 @@ export async function listarEstante(
   deps: DependenciasDeListagem,
 ): Promise<EntradaDaEstante[]>
 {
-  const [entradas, leituras, avaliacoes] = await Promise.all([
+  const [entradas, leituras, avaliacoes, totais] = await Promise.all([
     deps.listarEntradas(filtro.userId, filtro.status),
     deps.listarLeiturasMaisAvancadas(filtro.userId),
     deps.listarAvaliacoes(filtro.userId),
+    deps.contarAberturasPorObra(filtro.userId),
   ]);
+  const totalPorMedia = new Map(
+    totais.map(function (t) { return [t.mediaId, t.total] as const; }),
+  );
 
   const leituraPorMedia = new Map(
     leituras.map(function (leitura) { return [leitura.mediaId, leitura] as const; }),
@@ -203,6 +215,7 @@ export async function listarEstante(
       progressChapter: entrada.progressChapter,
       obra: entrada.obra,
       continuarEm: leitura === null ? null : recorteDaLeitura(leitura),
+      totalDeAberturas: totalPorMedia.get(entrada.mediaId) ?? 0,
       avaliacao:
         avaliacao === null
           ? null
@@ -346,6 +359,7 @@ export function listarEstanteDoSistema(
   return listarEstante(filtro, {
     listarEntradas: listarEntradasDoUsuario,
     listarLeiturasMaisAvancadas: listarAberturasMaisAvancadas,
+    contarAberturasPorObra,
     listarAvaliacoes,
   });
 }

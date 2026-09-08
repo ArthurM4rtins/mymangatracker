@@ -32,6 +32,9 @@ const NO_REPOSITORIO = {
 
 const vazio = async function () { return []; };
 
+// Total de aberturas por obra, para a confirmacao do reset (#172).
+const contarAberturasPorObra = async function () { return [{ mediaId: "m1", total: 8 }]; };
+
 // O ultimo link vem da extensao, nunca de fonte configurada (#170).
 const MAIS_AVANCADA = {
   mediaId: "m1",
@@ -54,7 +57,7 @@ describe("listarEstante", function ()
 
     const entradas = await listarEstante(
       { userId: "u1", status: "READING" },
-      { listarEntradas, listarLeiturasMaisAvancadas, listarAvaliacoes },
+      { listarEntradas, listarLeiturasMaisAvancadas, listarAvaliacoes, contarAberturasPorObra },
     );
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", "READING");
@@ -72,6 +75,7 @@ describe("listarEstante", function ()
           capitulo: "70",
         },
         avaliacao: { rating: "4.5", review: "obra-prima", containsSpoilers: false },
+        totalDeAberturas: 8,
       } satisfies EntradaDaEstante,
     ]);
     expect(entradas[0]).not.toHaveProperty("mediaId");
@@ -93,7 +97,7 @@ describe("listarEstante", function ()
 
     const entradas = await listarEstante(
       { userId: "u1" },
-      { listarEntradas, listarLeiturasMaisAvancadas, listarAvaliacoes: vazio },
+      { listarEntradas, listarLeiturasMaisAvancadas, listarAvaliacoes: vazio, contarAberturasPorObra: vazio },
     );
 
     expect(entradas[0].continuarEm).toEqual({
@@ -114,11 +118,11 @@ describe("listarEstante", function ()
 
     const entradas = await listarEstante(
       { userId: "u1" },
-      { listarEntradas, listarLeiturasMaisAvancadas, listarAvaliacoes: vazio },
+      { listarEntradas, listarLeiturasMaisAvancadas, listarAvaliacoes: vazio, contarAberturasPorObra: vazio },
     );
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", undefined);
-    expect(entradas[0]).toMatchObject({ continuarEm: null, avaliacao: null });
+    expect(entradas[0]).toMatchObject({ continuarEm: null, avaliacao: null, totalDeAberturas: 0 });
   });
 });
 
