@@ -5,16 +5,26 @@
  * MESMO custo de scrypt — diferenciar entregaria a lista de e-mails cadastrados,
  * pela resposta ou pelo tempo dela. A senha recebida não é logada em nenhum
  * caminho, nem de erro.
+ *
+ * O identificador é e-mail OU nome de usuário (#166), e a regra acima vale
+ * igual nas duas portas: nome de usuário inexistente também paga o scrypt
+ * contra o hash fantasma, senão o tempo de resposta vira sonda de quais nomes
+ * existem.
  */
+import { interpretarIdentificador } from "@/server/domain/identificador-de-login";
 import { verificarSenha } from "@/server/domain/senha";
 import {
   assinarSessao,
   segredoDaSessao,
 } from "@/server/infra/sessao";
-import { buscarCredenciaisPorEmail } from "@/server/repositories/usuario.repository";
+import {
+  buscarCredenciaisPorEmail,
+  buscarCredenciaisPorUsername,
+} from "@/server/repositories/usuario.repository";
 
 export type Login = {
-  email: string;
+  /** E-mail ou nome de usuário, como a pessoa digitou. */
+  identificador: string;
   senha: string;
 };
 
@@ -27,10 +37,11 @@ export type SessaoAberta = {
   locale: string | null;
 };
 
+type Credenciais = { id: string; passwordHash: string; locale: string | null };
+
 export type DependenciasDaSessao = {
-  buscarCredenciais: (
-    email: string,
-  ) => Promise<{ id: string; passwordHash: string; locale: string | null } | null>;
+  buscarPorEmail: (email: string) => Promise<Credenciais | null>;
+  buscarPorUsername: (usernameNormalizado: string) => Promise<Credenciais | null>;
   assinarToken: (userId: string) => Promise<string>;
   verificarHash?: (senha: string, hash: string) => Promise<boolean>;
 };
@@ -47,8 +58,19 @@ export async function entrar(
 ): Promise<SessaoAberta | null>
 {
   const verificarHash = deps.verificarHash ?? verificarSenha;
+  const identificador = interpretarIdentificador(login.identificador);
 
-  const credenciais = await deps.buscarCredenciais(login.email.toLowerCase());
+  if (identificador === null)
+  {
+    // Campo vazio não é tentativa de login: nada a consultar e nada a comparar.
+    return null;
+  }
+
+  const credenciais =
+    identificador.tipo === "email"
+      ? await deps.buscarPorEmail(identificador.valor)
+      : await deps.buscarPorUsername(identificador.valor);
+
   const hash = credenciais?.passwordHash ?? HASH_FANTASMA;
 
   const senhaConfere = await verificarHash(login.senha, hash);
@@ -68,7 +90,8 @@ export async function entrar(
 export function entrarNoSistema(login: Login): Promise<SessaoAberta | null>
 {
   return entrar(login, {
-    buscarCredenciais: buscarCredenciaisPorEmail,
+    buscarPorEmail: buscarCredenciaisPorEmail,
+    buscarPorUsername: buscarCredenciaisPorUsername,
     assinarToken: function (userId)
     {
       return assinarSessao(userId, { segredo: segredoDaSessao() });
