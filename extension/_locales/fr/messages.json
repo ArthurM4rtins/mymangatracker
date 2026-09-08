@@ -11,6 +11,12 @@
   "abrirSite": {
     "message": "ouvrir le site"
   },
+  "verLink": {
+    "message": "voir le lien"
+  },
+  "ocultarLink": {
+    "message": "masquer le lien"
+  },
   "carregando": {
     "message": "chargement…"
   },
@@ -25,6 +31,12 @@
   },
   "registrar": {
     "message": "Enregistrer la lecture"
+  },
+  "autoRegistro": {
+    "message": "enregistrer automatiquement"
+  },
+  "autoRegistroAjuda": {
+    "message": "uniquement les œuvres déjà associées, après 20 s sur la page du chapitre"
   },
   "semSessao": {
     "message": "Connecte-toi à Kidoku pour enregistrer ta lecture."

@@ -11,6 +11,12 @@
   "abrirSite": {
     "message": "abrir o site"
   },
+  "verLink": {
+    "message": "ver link"
+  },
+  "ocultarLink": {
+    "message": "ocultar link"
+  },
   "carregando": {
     "message": "carregando…"
   },
@@ -25,6 +31,12 @@
   },
   "registrar": {
     "message": "Registrar leitura"
+  },
+  "autoRegistro": {
+    "message": "registrar automaticamente"
+  },
+  "autoRegistroAjuda": {
+    "message": "só obras já pareadas, depois de 20 s na página do capítulo"
   },
   "semSessao": {
     "message": "Entre no Kidoku para registrar a leitura."

@@ -11,6 +11,12 @@
   "abrirSite": {
     "message": "open the site"
   },
+  "verLink": {
+    "message": "show link"
+  },
+  "ocultarLink": {
+    "message": "hide link"
+  },
   "carregando": {
     "message": "loading…"
   },
@@ -25,6 +31,12 @@
   },
   "registrar": {
     "message": "Log reading"
+  },
+  "autoRegistro": {
+    "message": "register automatically"
+  },
+  "autoRegistroAjuda": {
+    "message": "only paired series, after 20 s on the chapter page"
   },
   "semSessao": {
     "message": "Sign in to Kidoku to log your reading."

@@ -6,6 +6,7 @@ const el = {
   estado: document.getElementById("estado"),
   formulario: document.getElementById("formulario"),
   paginaUrl: document.getElementById("pagina-url"),
+  verLink: document.getElementById("ver-link"),
   paginaTitulo: document.getElementById("pagina-titulo"),
   filtro: document.getElementById("filtro"),
   obra: document.getElementById("obra"),
@@ -13,6 +14,7 @@ const el = {
   capitulo: document.getElementById("capitulo"),
   origem: document.getElementById("origem"),
   registrar: document.getElementById("registrar"),
+  auto: document.getElementById("auto"),
   resultado: document.getElementById("resultado"),
   semSessao: document.getElementById("sem-sessao"),
   entrar: document.getElementById("entrar"),
@@ -66,6 +68,10 @@ async function iniciar()
 
   el.abrirSite.href = base + "/estante";
   el.entrar.href = base + "/entrar";
+
+  // A chave do registro automatico (#173) vive no navegador, nao na conta.
+  const { autoRegistro } = await chrome.storage.local.get("autoRegistro");
+  el.auto.checked = autoRegistro === true;
 
   if (sessao === null)
   {
@@ -244,6 +250,17 @@ el.formulario.addEventListener("submit", async function (evento)
   {
     el.registrar.disabled = false;
   }
+});
+
+el.verLink.addEventListener("click", function ()
+{
+  el.paginaUrl.hidden = !el.paginaUrl.hidden;
+  el.verLink.textContent = KIDOKU_I18N.texto(el.paginaUrl.hidden ? "verLink" : "ocultarLink");
+});
+
+el.auto.addEventListener("change", function ()
+{
+  void chrome.storage.local.set({ autoRegistro: el.auto.checked });
 });
 
 KIDOKU_I18N.aplicar();

@@ -23,8 +23,12 @@
 
       <form id="formulario" class="formulario" hidden>
         <div class="pagina">
-          <span id="pagina-url" class="pagina-url"></span>
           <span id="pagina-titulo" class="pagina-titulo"></span>
+          <!-- A URL que vai para o banco (#142) continua a um toque: escondida por
+               padrao porque o reset ja apaga o que subiu, e o registro automatico
+               grava sem o popup abrir — mostrar sempre virou ruido (#173). -->
+          <button id="ver-link" type="button" class="discreto ver-link" data-i18n="verLink"></button>
+          <span id="pagina-url" class="pagina-url" hidden></span>
         </div>
 
         <label class="campo">
@@ -47,6 +51,14 @@
 
         <button id="registrar" type="submit" data-i18n="registrar"></button>
         <p id="resultado" class="resultado" role="status"></p>
+
+        <label class="chave">
+          <input id="auto" type="checkbox" />
+          <span>
+            <span data-i18n="autoRegistro"></span>
+            <small class="discreto" data-i18n="autoRegistroAjuda"></small>
+          </span>
+        </label>
       </form>
 
       <p id="sem-sessao" class="estado" hidden>
