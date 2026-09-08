@@ -58,6 +58,7 @@
     "avaliacao_nao_encontrada": "Bewertung nicht gefunden",
     "usuario_nao_encontrado": "Benutzer nicht gefunden",
     "ja_em_uso": "schon vergeben",
+    "nao_avanca": "dieses Kapitel liegt nicht über deinem Regal-Fortschritt — zum Zurückgehen nutze das Zurücksetzen",
     "sem_fonte": "richte zuerst die Lesequelle ein",
     "arquivo_grande_demais": "das Bild ist größer als 512 KB",
     "tipo_de_arquivo_invalido": "lade ein JPEG-, PNG- oder WebP-Bild hoch",

@@ -19,7 +19,6 @@ import { normalizarUrlVisitada } from "@/server/domain/url-visitada";
 import { buscarEntradaDoUsuario } from "@/server/repositories/shelf.repository";
 import {
   maiorCapitulo,
-  registrarAbertura,
   registrarAberturaComProgresso,
 } from "@/server/repositories/reading-progress.repository";
 
@@ -34,6 +33,8 @@ export type PedidoDeLeituraExterna = {
 
 export type ResultadoDeLeituraExterna =
   | { estado: "ok"; capitulo: number; progresso: number; url: string }
+  /** Capítulo que não passa do progresso: nada é gravado (#172, parte 1). */
+  | { estado: "nao_avanca"; progresso: number }
   | { estado: "nao_encontrada" }
   | { estado: "capitulo_invalido" }
   | { estado: "url_invalida" };
@@ -55,13 +56,6 @@ export type DependenciasDeLeituraExterna = {
     chapter: number;
     resolvedUrl: string;
     novoProgresso: number;
-    novoStatus?: StatusDaEstante;
-  }) => Promise<{ id: string }>;
-  registrarReleitura: (dados: {
-    userId: string;
-    mediaId: string;
-    chapter: number;
-    resolvedUrl: string;
     novoStatus?: StatusDaEstante;
   }) => Promise<{ id: string }>;
 };
@@ -113,16 +107,17 @@ export async function registrarLeituraExterna(
     ...(novoStatus !== null && { novoStatus }),
   };
 
-  if (progrideEstante(atual, capitulo))
+  // Só o que avança grava. Releitura deixou de existir: voltar atrás é o reset
+  // no site (#172), e um registro que não move a estante só sujaria o histórico.
+  // `atual` nunca é null aqui — sem progresso nenhum, qualquer capítulo avança.
+  if (!progrideEstante(atual, capitulo))
   {
-    await deps.registrarComProgresso({ ...registro, novoProgresso: capitulo });
-
-    return { estado: "ok", capitulo, progresso: capitulo, url };
+    return { estado: "nao_avanca", progresso: atual ?? capitulo };
   }
 
-  await deps.registrarReleitura(registro);
+  await deps.registrarComProgresso({ ...registro, novoProgresso: capitulo });
 
-  return { estado: "ok", capitulo, progresso: atual ?? capitulo, url };
+  return { estado: "ok", capitulo, progresso: capitulo, url };
 }
 
 /** A composição de produção. */
@@ -134,6 +129,5 @@ export function registrarLeituraExternaDoSistema(
     buscarEntrada: buscarEntradaDoUsuario,
     maiorCapitulo,
     registrarComProgresso: registrarAberturaComProgresso,
-    registrarReleitura: registrarAbertura,
   });
 }

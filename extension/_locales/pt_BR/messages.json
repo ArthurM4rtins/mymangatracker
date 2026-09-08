@@ -78,17 +78,6 @@
       }
     }
   },
-  "registradoSegue": {
-    "message": "cap. $capitulo$ registrado — estante segue no $progresso$",
-    "placeholders": {
-      "capitulo": {
-        "content": "$1"
-      },
-      "progresso": {
-        "content": "$2"
-      }
-    }
-  },
   "erroPadrao": {
     "message": "não deu para registrar"
   },
@@ -109,6 +98,14 @@
   },
   "erroSemFonte": {
     "message": "configure a fonte de leitura primeiro"
+  },
+  "erroNaoAvanca": {
+    "message": "sua estante já está no cap. $progresso$ — para voltar, use o reset no site",
+    "placeholders": {
+      "progresso": {
+        "content": "$1"
+      }
+    }
   },
   "erroLimiteExcedido": {
     "message": "muitos registros em pouco tempo — aguarde"

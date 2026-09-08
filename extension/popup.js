@@ -209,13 +209,18 @@ el.formulario.addEventListener("submit", async function (evento)
       el.resultado.className = "resultado erro";
       // A API responde codigo, nunca frase (fase 3 da #116): quem escolhe a
       // frase, no idioma de quem esta lendo, e quem mostra.
-      el.resultado.textContent = KIDOKU_I18N.erro(corpo.erros && corpo.erros._geral);
+      // `progresso` vem junto no nao_avanca: a frase diz onde a estante esta (#172).
+      el.resultado.textContent = KIDOKU_I18N.erro(
+        corpo.erros && corpo.erros._geral,
+        corpo.progresso === undefined ? undefined : [String(corpo.progresso)],
+      );
       return;
     }
 
     el.resultado.className = "resultado ok";
+    // So o que avanca grava (#172): registrado implica estante no capitulo.
     el.resultado.textContent = KIDOKU_I18N.texto(
-      corpo.progresso === corpo.capitulo ? "registradoAlcancou" : "registradoSegue",
+      "registradoAlcancou",
       [String(corpo.capitulo), String(corpo.progresso)],
     );
 

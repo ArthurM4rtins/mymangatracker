@@ -58,6 +58,7 @@
     "avaliacao_nao_encontrada": "avaliação não encontrada",
     "usuario_nao_encontrado": "usuário não encontrado",
     "ja_em_uso": "já está em uso",
+    "nao_avanca": "esse capítulo não passa do progresso da estante — para voltar, use o reset",
     "sem_fonte": "configure a fonte de leitura primeiro",
     "arquivo_grande_demais": "a imagem passou de 512 KB",
     "tipo_de_arquivo_invalido": "envie uma imagem JPEG, PNG ou WebP",
