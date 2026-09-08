@@ -16,10 +16,14 @@ import { verificarSenha } from "@/server/domain/senha";
 import {
   assinarSessao,
   segredoDaSessao,
+  verificarSessao,
+  type SessaoVerificada,
 } from "@/server/infra/sessao";
 import {
   buscarCredenciaisPorEmail,
   buscarCredenciaisPorUsername,
+  buscarVersaoDoToken,
+  incrementarVersaoDoToken,
 } from "@/server/repositories/usuario.repository";
 
 export type Login = {
@@ -37,12 +41,13 @@ export type SessaoAberta = {
   locale: string | null;
 };
 
-type Credenciais = { id: string; passwordHash: string; locale: string | null };
+type Credenciais = { id: string; passwordHash: string; locale: string | null; tokenVersion: number };
 
 export type DependenciasDaSessao = {
   buscarPorEmail: (email: string) => Promise<Credenciais | null>;
   buscarPorUsername: (usernameNormalizado: string) => Promise<Credenciais | null>;
-  assinarToken: (userId: string) => Promise<string>;
+  /** A versão atual vai no token: ele já nasce válido (#137). */
+  assinarToken: (userId: string, versao: number) => Promise<string>;
   verificarHash?: (senha: string, hash: string) => Promise<boolean>;
 };
 
@@ -81,7 +86,7 @@ export async function entrar(
   }
 
   return {
-    token: await deps.assinarToken(credenciais.id),
+    token: await deps.assinarToken(credenciais.id, credenciais.tokenVersion),
     locale: credenciais.locale,
   };
 }
@@ -92,9 +97,74 @@ export function entrarNoSistema(login: Login): Promise<SessaoAberta | null>
   return entrar(login, {
     buscarPorEmail: buscarCredenciaisPorEmail,
     buscarPorUsername: buscarCredenciaisPorUsername,
-    assinarToken: function (userId)
+    assinarToken: function (userId, versao)
     {
-      return assinarSessao(userId, { segredo: segredoDaSessao() });
+      return assinarSessao(userId, { segredo: segredoDaSessao(), versao });
     },
   });
+}
+
+// ---------------------------------------------------------------------------
+// Resolver a sessão e sair (#137). A comparação de versão mora aqui: infra não
+// lê repositório, e controller não contém regra.
+// ---------------------------------------------------------------------------
+
+export type DependenciasDoResolver = {
+  verificar: (token: string) => Promise<SessaoVerificada | null>;
+  buscarVersao: (userId: string) => Promise<number | null>;
+};
+
+/**
+ * O userId da sessão, ou `null`. Token inválido, expirado, de usuário que não
+ * existe mais, ou assinado antes do último "sair" — tudo é ausência de sessão,
+ * indistinguível de propósito.
+ */
+export async function resolverSessao(
+  token: string,
+  deps: DependenciasDoResolver,
+): Promise<string | null>
+{
+  const verificada = await deps.verificar(token);
+
+  if (verificada === null)
+  {
+    return null;
+  }
+
+  const versaoAtual = await deps.buscarVersao(verificada.userId);
+
+  if (versaoAtual === null || versaoAtual !== verificada.versao)
+  {
+    return null;
+  }
+
+  return verificada.userId;
+}
+
+export type DependenciasDoSair = {
+  incrementarVersao: (userId: string) => Promise<void>;
+};
+
+/** Sair revoga: incrementa a versão, e todo token assinado antes morre de uma vez. */
+export async function sair(userId: string, deps: DependenciasDoSair): Promise<void>
+{
+  await deps.incrementarVersao(userId);
+}
+
+/** A composição de produção. */
+export function resolverSessaoNoSistema(token: string): Promise<string | null>
+{
+  return resolverSessao(token, {
+    verificar: function (t)
+    {
+      return verificarSessao(t, { segredo: segredoDaSessao() });
+    },
+    buscarVersao: buscarVersaoDoToken,
+  });
+}
+
+/** A composição de produção. */
+export function sairDoSistema(userId: string): Promise<void>
+{
+  return sair(userId, { incrementarVersao: incrementarVersaoDoToken });
 }

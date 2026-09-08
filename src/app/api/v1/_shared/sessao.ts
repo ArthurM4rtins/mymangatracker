@@ -7,11 +7,8 @@
  */
 import { cookies, headers } from "next/headers";
 import type { NextResponse } from "next/server";
-import {
-  DURACAO_SESSAO_SEGUNDOS,
-  segredoDaSessao,
-  verificarSessao,
-} from "@/server/infra/sessao";
+import { DURACAO_SESSAO_SEGUNDOS } from "@/server/infra/sessao";
+import { resolverSessaoNoSistema } from "@/server/services/sessao.service";
 
 export const COOKIE_DE_SESSAO = "kidoku_sessao";
 
@@ -87,12 +84,21 @@ async function tokenDoHeader(): Promise<string | undefined>
  * sessão válida possível, então também é null.
  *
  * O cookie decide quando existe: o caminho do site continua o de sempre. O
- * header só é consultado na ausência dele.
+ * header só é consultado na ausência dele, e só onde a rota pediu
+ * (`aceitarBearer`): as duas que a extensão chama. Nas outras, token vazado
+ * sem navegador não serve para nada (#137).
+ *
+ * A verificação passa pelo serviço, que compara a versão do token com a do
+ * banco: quem saiu tem o token morto mesmo antes de expirar.
  */
-export async function usuarioDaSessao(): Promise<string | null>
+export async function usuarioDaSessao(
+  opcoes: { aceitarBearer?: boolean } = {},
+): Promise<string | null>
 {
   const jarra = await cookies();
-  const token = jarra.get(COOKIE_DE_SESSAO)?.value ?? (await tokenDoHeader());
+  const token =
+    jarra.get(COOKIE_DE_SESSAO)?.value ??
+    (opcoes.aceitarBearer ? await tokenDoHeader() : undefined);
 
   if (!token)
   {
@@ -101,10 +107,11 @@ export async function usuarioDaSessao(): Promise<string | null>
 
   try
   {
-    return await verificarSessao(token, { segredo: segredoDaSessao() });
+    return await resolverSessaoNoSistema(token);
   }
   catch
   {
+    // Sem SESSION_SECRET, ou banco fora: sem sessão válida possível.
     return null;
   }
 }

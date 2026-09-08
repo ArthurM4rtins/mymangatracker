@@ -20,7 +20,7 @@ async function depsDeLogin(hash: string, idiomaSalvo: string | null)
     buscarPorEmail: async function (email)
     {
       return email === "existe@exemplo.test"
-        ? { id: "u1", passwordHash: hash, locale: idiomaSalvo }
+        ? { id: "u1", passwordHash: hash, locale: idiomaSalvo, tokenVersion: 0 }
         : null;
     },
     buscarPorUsername: async function ()

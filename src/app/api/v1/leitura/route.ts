@@ -30,7 +30,8 @@ const ESQUEMA = z.object({
 
 export async function POST(request: Request)
 {
-  const userId = await usuarioDaSessao();
+  // A extensão registra por Bearer (#52); é uma das duas rotas que aceitam (#137).
+  const userId = await usuarioDaSessao({ aceitarBearer: true });
 
   if (!userId)
   {
