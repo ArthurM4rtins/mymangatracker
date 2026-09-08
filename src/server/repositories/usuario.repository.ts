@@ -27,6 +27,8 @@ export type CredenciaisDeLogin = {
   passwordHash: string;
   /** Idioma escolhido pela pessoa, ou null se ela nunca escolheu (#116). */
   locale: string | null;
+  /** Para o token novo nascer com a versão atual (#137). */
+  tokenVersion: number;
 };
 
 /**
@@ -133,7 +135,7 @@ export function buscarCredenciaisPorEmail(
 {
   return getPrisma().user.findUnique({
     where: { email },
-    select: { id: true, passwordHash: true, locale: true },
+    select: { id: true, passwordHash: true, locale: true, tokenVersion: true },
   });
 }
 
@@ -148,7 +150,7 @@ export function buscarCredenciaisPorUsername(
 {
   return getPrisma().user.findUnique({
     where: { usernameNormalizado },
-    select: { id: true, passwordHash: true, locale: true },
+    select: { id: true, passwordHash: true, locale: true, tokenVersion: true },
   });
 }
 
@@ -184,5 +186,28 @@ export async function salvarIdioma(userId: string, locale: string): Promise<void
   await getPrisma().user.update({
     where: { id: userId },
     data: { locale },
+  });
+}
+
+/**
+ * A versão que o token precisa carregar para valer (#137). `null` quando o
+ * usuário não existe mais — sessão de conta apagada não vale.
+ */
+export async function buscarVersaoDoToken(userId: string): Promise<number | null>
+{
+  const linha = await getPrisma().user.findUnique({
+    where: { id: userId },
+    select: { tokenVersion: true },
+  });
+
+  return linha === null ? null : linha.tokenVersion;
+}
+
+/** Sair: todo token assinado com a versão anterior deixa de valer (#137). */
+export async function incrementarVersaoDoToken(userId: string): Promise<void>
+{
+  await getPrisma().user.update({
+    where: { id: userId },
+    data: { tokenVersion: { increment: 1 } },
   });
 }

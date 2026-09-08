@@ -109,6 +109,7 @@ describe("buscarCredenciaisPorEmail", function ()
       id: criado.id,
       passwordHash: NOVO.passwordHash,
       locale: null,
+      tokenVersion: 0,
     });
   });
 
