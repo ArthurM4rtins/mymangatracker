@@ -46,7 +46,7 @@
     "email_invalido": "ungültige E-Mail",
     "senha_curta": "mindestens 8 Zeichen",
     "senha_longa": "höchstens 72 Zeichen",
-    "credenciais_invalidas": "E-Mail oder Passwort falsch",
+    "credenciais_invalidas": "E-Mail, Benutzername oder Passwort falsch",
     "sessao_necessaria": "melde dich an, um fortzufahren",
     "obra_nao_encontrada": "Werk nicht gefunden",
     "obra_fora_do_catalogo": "Werk nicht im Katalog gefunden",
@@ -179,6 +179,12 @@
   },
   "componentes": {
     "sair": "Abmelden",
+    "confirmarSaida": {
+      "titulo": "Abmelden",
+      "pergunta": "Du musst dich neu anmelden, um deinen Fortschritt weiter zu verfolgen.",
+      "confirmar": "Abmelden",
+      "saindo": "Wird abgemeldet…"
+    },
     "logo": {
       "rotulo": "Kidoku — Startseite"
     },

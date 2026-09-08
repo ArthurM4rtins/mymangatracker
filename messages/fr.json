@@ -46,7 +46,7 @@
     "email_invalido": "e-mail invalide",
     "senha_curta": "8 caractères minimum",
     "senha_longa": "72 caractères maximum",
-    "credenciais_invalidas": "e-mail ou mot de passe incorrect",
+    "credenciais_invalidas": "e-mail, nom d’utilisateur ou mot de passe incorrect",
     "sessao_necessaria": "connecte-toi pour continuer",
     "obra_nao_encontrada": "œuvre introuvable",
     "obra_fora_do_catalogo": "œuvre introuvable dans le catalogue",
@@ -179,6 +179,12 @@
   },
   "componentes": {
     "sair": "Se déconnecter",
+    "confirmarSaida": {
+      "titulo": "Se déconnecter",
+      "pergunta": "Tu devras te reconnecter pour continuer à suivre ta progression.",
+      "confirmar": "Se déconnecter",
+      "saindo": "Déconnexion…"
+    },
     "logo": {
       "rotulo": "Kidoku — accueil"
     },

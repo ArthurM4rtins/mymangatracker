@@ -46,7 +46,7 @@
     "email_invalido": "e-mail inválido",
     "senha_curta": "no mínimo 8 caracteres",
     "senha_longa": "no máximo 72 caracteres",
-    "credenciais_invalidas": "e-mail ou senha incorretos",
+    "credenciais_invalidas": "e-mail, nome de usuário ou senha incorretos",
     "sessao_necessaria": "entre para continuar",
     "obra_nao_encontrada": "obra não encontrada",
     "obra_fora_do_catalogo": "obra não encontrada no catálogo",
@@ -179,6 +179,12 @@
   },
   "componentes": {
     "sair": "Sair",
+    "confirmarSaida": {
+      "titulo": "Sair da conta",
+      "pergunta": "Você vai precisar entrar de novo para continuar seu progresso.",
+      "confirmar": "Sair",
+      "saindo": "Saindo…"
+    },
     "logo": {
       "rotulo": "Kidoku — início"
     },
