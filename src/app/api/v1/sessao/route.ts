@@ -20,8 +20,12 @@ import {
 
 export const dynamic = "force-dynamic";
 
+// Identificador é e-mail OU nome de usuário (#166), então o formato não é
+// validado aqui: recusar "não parece e-mail" daria resposta diferente para
+// entrada malformada, e o login responde igual para tudo que não entra. Quem
+// decide qual dos dois é o domínio.
 const ESQUEMA_LOGIN = z.object({
-  email: z.email("e-mail inválido").max(254),
+  identificador: z.string().min(1, "informe o e-mail ou nome de usuário").max(254),
   senha: z.string().min(1, "informe a senha").max(72),
 });
 
@@ -55,7 +59,7 @@ export async function POST(request: Request)
   try
   {
     // Antes do scrypt: é o custo que o limite protege (#108).
-    const limite = await limitarLogin({ ip, email: analise.data.email });
+    const limite = await limitarLogin({ ip, identificador: analise.data.identificador });
 
     if (limite.bloqueado)
     {
@@ -75,7 +79,7 @@ export async function POST(request: Request)
       );
     }
 
-    await liberarLogin({ ip, email: analise.data.email });
+    await liberarLogin({ ip, identificador: analise.data.identificador });
 
     const resposta = NextResponse.json({ ok: true }, { status: 200 });
     escreverSessaoNoCookie(resposta, sessao.token);
