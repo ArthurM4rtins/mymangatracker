@@ -56,6 +56,9 @@
   "capituloNaoLido": {
     "message": "couldn't find the chapter in the tab title — type it"
   },
+  "obraPeloTitulo": {
+    "message": "series recognized from the tab title — double-check"
+  },
   "obraNoCapitulo": {
     "message": " — on ch. $capitulo$",
     "placeholders": {

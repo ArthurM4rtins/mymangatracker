@@ -123,5 +123,84 @@ globalThis.KIDOKU = (function ()
     await chrome.storage.local.set({ pares });
   }
 
-  return { AMBIENTES, capituloDoTitulo, chaveDaObra, sessao, paresSalvos, salvarPar };
+  // --- Nome da obra (#171): o MESMO algoritmo de src/server/domain/obra-do-titulo.ts.
+  // Se um mudar, o outro muda junto.
+
+  // Capítulo escrito à japonesa/chinesa: "第68話", "第12章".
+  const CAPITULO_CJK = /第\s*\d+(?:[.,]\d+)?\s*[話话章]/;
+  const SEPARADOR = /\s*[|\-–—:·]\s*/;
+  // Ano entre parênteses no fim: "Berserk (2016)" é desambiguação de catálogo, não nome.
+  const ANO = /\s*\(\d{4}\)\s*$/;
+
+  /** Os pedaços do título que podem ser a obra, do maior para o menor. */
+  function pedacosDoTitulo(titulo)
+  {
+    return (titulo || "")
+      .replace(CAPITULO, " ")
+      .replace(CAPITULO_CJK, " ")
+      .split(SEPARADOR)
+      .map(function (parte) { return parte.trim(); })
+      .filter(function (parte) { return parte.length > 1 && !/^\d+$/.test(parte); })
+      .sort(function (a, b) { return b.length - a.length; });
+  }
+
+  /** Minúsculas, sem acento, sem pontuação, sem ano. NFC recompõe o Hangul. */
+  function normalizarNomeDeObra(nome)
+  {
+    return nome
+      .replace(ANO, "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .normalize("NFC")
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}\s]/gu, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  /**
+   * O entradaId cuja obra bate com algum pedaço do título, ou null. Empate
+   * (duas obras com o mesmo nome) é null: a pessoa escolhe. Errar aqui só
+   * pré-seleciona a obra errada, visível para corrigir antes do clique.
+   */
+  function casarObraPeloTitulo(titulo, entradas)
+  {
+    for (const pedaco of pedacosDoTitulo(titulo))
+    {
+      const alvo = normalizarNomeDeObra(pedaco);
+
+      if (alvo === "")
+      {
+        continue;
+      }
+
+      const candidatas = entradas.filter(function (entrada)
+      {
+        return [entrada.obra.titleRomaji, entrada.obra.titleEnglish, entrada.obra.titleNative]
+          .some(function (t) { return t && normalizarNomeDeObra(t) === alvo; });
+      });
+
+      if (candidatas.length === 1)
+      {
+        return candidatas[0].entradaId;
+      }
+
+      if (candidatas.length > 1)
+      {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
+  return {
+    AMBIENTES,
+    capituloDoTitulo,
+    chaveDaObra,
+    casarObraPeloTitulo,
+    sessao,
+    paresSalvos,
+    salvarPar,
+  };
 })();

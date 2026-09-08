@@ -9,6 +9,7 @@ const el = {
   paginaTitulo: document.getElementById("pagina-titulo"),
   filtro: document.getElementById("filtro"),
   obra: document.getElementById("obra"),
+  obraOrigem: document.getElementById("obra-origem"),
   capitulo: document.getElementById("capitulo"),
   origem: document.getElementById("origem"),
   registrar: document.getElementById("registrar"),
@@ -115,6 +116,12 @@ async function iniciar()
   const pareada = chave !== null && pares[chave] && abertas.some(function (e) { return e.entradaId === pares[chave]; })
     ? pares[chave]
     : null;
+  // Sem par salvo, o nome no título da aba decide (#171). Par salvo ganha:
+  // é o que a pessoa confirmou com um clique; o nome é só palpite.
+  const peloTitulo = pareada === null
+    ? KIDOKU.casarObraPeloTitulo(aba && aba.title, abertas)
+    : null;
+  const selecionada = pareada !== null ? pareada : peloTitulo;
   const capitulo = KIDOKU.capituloDoTitulo(aba && aba.title);
 
   contexto = { aba, sessao, abertas, chave };
@@ -123,7 +130,9 @@ async function iniciar()
   // titulo, que e gravada para sempre em ReadingProgress (issue #142).
   el.paginaUrl.textContent = aba && aba.url ? aba.url : "";
   el.paginaTitulo.textContent = aba && aba.title ? aba.title : "";
-  preencherObras(abertas, "", pareada);
+  preencherObras(abertas, "", selecionada);
+  el.obraOrigem.hidden = peloTitulo === null;
+  el.obraOrigem.textContent = peloTitulo === null ? "" : KIDOKU_I18N.texto("obraPeloTitulo");
   el.capitulo.value = capitulo === null ? "" : String(capitulo);
   el.origem.textContent = KIDOKU_I18N.texto(
     capitulo === null ? "capituloNaoLido" : "capituloLido",
@@ -131,7 +140,7 @@ async function iniciar()
 
   el.estado.hidden = true;
   el.formulario.hidden = false;
-  (pareada === null ? el.filtro : el.capitulo).focus();
+  (selecionada === null ? el.filtro : el.capitulo).focus();
 }
 
 el.filtro.addEventListener("input", function ()

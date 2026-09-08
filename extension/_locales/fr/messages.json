@@ -56,6 +56,9 @@
   "capituloNaoLido": {
     "message": "chapitre introuvable dans le titre de l’onglet — écris-le"
   },
+  "obraPeloTitulo": {
+    "message": "œuvre reconnue d’après le titre de l’onglet — vérifie"
+  },
   "obraNoCapitulo": {
     "message": " — au ch. $capitulo$",
     "placeholders": {
