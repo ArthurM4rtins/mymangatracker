@@ -108,30 +108,30 @@ export function ultimaAbertura(
   });
 }
 
-export type UltimaAbertura = {
+export type AberturaMaisAvancada = {
   mediaId: string;
   resolvedUrl: string;
   chapter: string;
 };
 
 /**
- * A abertura mais recente de CADA obra do usuário — uma linha por obra. É o
- * que a estante, a home e a página da obra usam como destino do "Continuar
- * leitura" (#170).
+ * A abertura MAIS AVANÇADA de cada obra do usuário — uma linha por obra. É o
+ * destino do "Continuar leitura" na estante e na home (#170).
  *
- * `distinct` sobre `mediaId` com a ordenação por `openedAt desc` na frente:
- * o Postgres devolve a primeira linha de cada grupo, que é a mais recente.
- * Mesma consulta que o índice `[userId, mediaId, openedAt desc]` serve.
+ * Maior capítulo, não o mais recente: quem releu o 2 depois de chegar no 94
+ * continua do 94, a mesma regra que o progresso da estante já segue. Empate no
+ * capítulo desempata pela abertura mais nova — o site onde a pessoa leu por
+ * último é o que ela quer reabrir.
  *
  * Privado do dono como toda leitura de progresso: a consulta carrega `userId`.
  */
-export async function listarUltimasAberturas(
+export async function listarAberturasMaisAvancadas(
   userId: string,
-): Promise<UltimaAbertura[]>
+): Promise<AberturaMaisAvancada[]>
 {
   const linhas = await getPrisma().readingProgress.findMany({
     where: { userId },
-    orderBy: [{ mediaId: "asc" }, { openedAt: "desc" }],
+    orderBy: [{ mediaId: "asc" }, { chapter: "desc" }, { openedAt: "desc" }],
     distinct: ["mediaId"],
     select: { mediaId: true, resolvedUrl: true, chapter: true },
   });
@@ -147,17 +147,17 @@ export async function listarUltimasAberturas(
 }
 
 /**
- * A última abertura NESTA obra — destino do "Continuar leitura" na página da
- * obra (#170). Mesmo índice de `ultimaAbertura`, recorte menor.
+ * A abertura mais avançada NESTA obra — destino do "Continuar leitura" na
+ * página da obra (#170). Mesma regra de `listarAberturasMaisAvancadas`.
  */
-export async function ultimaLeituraDaObra(
+export async function aberturaMaisAvancadaDaObra(
   userId: string,
   mediaId: string,
 ): Promise<{ resolvedUrl: string; chapter: string } | null>
 {
   const linha = await getPrisma().readingProgress.findFirst({
     where: { userId, mediaId },
-    orderBy: { openedAt: "desc" },
+    orderBy: [{ chapter: "desc" }, { openedAt: "desc" }],
     select: { resolvedUrl: true, chapter: true },
   });
 
