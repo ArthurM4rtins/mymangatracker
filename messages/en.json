@@ -76,6 +76,7 @@
     "avaliacao_nao_encontrada": "rating not found",
     "usuario_nao_encontrado": "user not found",
     "ja_em_uso": "already taken",
+    "cadastro_nao_concluido": "could not complete sign-up — check the details or, if you already have an account, log in",
     "origem_recusada": "the request did not come from Kidoku",
     "conteudo_nao_json": "the request must be JSON",
     "nao_avanca": "that chapter does not go past your shelf progress — to go back, use reset",

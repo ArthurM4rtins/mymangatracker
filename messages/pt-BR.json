@@ -76,6 +76,7 @@
     "avaliacao_nao_encontrada": "avaliação não encontrada",
     "usuario_nao_encontrado": "usuário não encontrado",
     "ja_em_uso": "já está em uso",
+    "cadastro_nao_concluido": "não foi possível concluir o cadastro — confira os dados ou, se já tem conta, entre",
     "origem_recusada": "o pedido não veio do Kidoku",
     "conteudo_nao_json": "o pedido precisa ser JSON",
     "nao_avanca": "esse capítulo não passa do progresso da estante — para voltar, use o reset",

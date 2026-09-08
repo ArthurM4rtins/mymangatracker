@@ -76,6 +76,7 @@
     "avaliacao_nao_encontrada": "note introuvable",
     "usuario_nao_encontrado": "utilisateur introuvable",
     "ja_em_uso": "indisponible",
+    "cadastro_nao_concluido": "impossible de finaliser l’inscription — vérifie les informations ou, si tu as déjà un compte, connecte-toi",
     "origem_recusada": "la requête ne vient pas de Kidoku",
     "conteudo_nao_json": "la requête doit être en JSON",
     "nao_avanca": "ce chapitre ne dépasse pas la progression de ton étagère — pour revenir en arrière, utilise la réinitialisation",

@@ -76,6 +76,7 @@
     "avaliacao_nao_encontrada": "Bewertung nicht gefunden",
     "usuario_nao_encontrado": "Benutzer nicht gefunden",
     "ja_em_uso": "schon vergeben",
+    "cadastro_nao_concluido": "die Registrierung konnte nicht abgeschlossen werden — prüfe die Angaben oder melde dich an, falls du schon ein Konto hast",
     "origem_recusada": "die Anfrage kam nicht von Kidoku",
     "conteudo_nao_json": "die Anfrage muss JSON sein",
     "nao_avanca": "dieses Kapitel liegt nicht über deinem Regal-Fortschritt — zum Zurückgehen nutze das Zurücksetzen",
