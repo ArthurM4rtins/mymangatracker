@@ -377,3 +377,25 @@ Nada tinha sido enviado, entao bastou `git branch <nova>` no commit e
 **A regra:** terminar todo merge criando a branch da proxima tarefa na hora, ou conferir
 `git branch --show-current` antes do primeiro `git add` de qualquer trabalho novo. O
 estado "acabei de mergear" e exatamente onde a inercia leva para o lugar errado.
+
+## Mudar o que um campo aceita e revisar TODA frase que o cita (08/09/2026)
+
+Na #166 o campo de entrar passou a aceitar nome de usuario. Rotulo atualizado nos
+cinco idiomas, contrato da API atualizado, testes verdes — e a mensagem de erro
+continuou "e-mail ou senha incorretos". So apareceu no teste manual do usuario.
+
+**A regra:** ao mudar o que um campo aceita ou significa, buscar no `messages/`
+TODA frase que o mencione — rotulo, placeholder, erro, ajuda, e-mail — nao so a
+que esta ao lado do input. `grep -rn "e-mail" messages/pt-BR.json` teria mostrado
+em segundos.
+
+## Dev rodando + rebase = bundle velho parecendo bug (08/09/2026)
+
+Depois de um rebase com o `pnpm dev` no ar, a tela mostrou a chave crua
+`entrar.campos.email` e o login por nome falhou. Parecia bug da #166 recem-mergeada;
+era o bundle do cliente antigo servindo o componente velho com o JSON de mensagens
+novo. Custou um round-trip com o usuario e um print de "falha" que nao era.
+
+**A regra:** depois de rebase, merge ou troca de branch com o dev rodando, matar o
+processo, apagar `.next` e subir de novo ANTES de pedir teste manual. E provar com
+`curl` que a pagina serve o markup novo antes de mandar alguem olhar.

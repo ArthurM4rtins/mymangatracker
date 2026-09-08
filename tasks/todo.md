@@ -1046,3 +1046,61 @@ zero para `one`, mas quem escreve em portugues diz "0 obras". Documentado.
   de subset cirilico e 4 formas de plural; ja/ko/zh precisam de subset; ar/he
   precisam de RTL (~29 classNames com lado fisico). Decidido parar em cinco.
 
+
+## Sessao 08/09 — teste manual da extensao, Continuar leitura, login por nome
+
+Comecou como "testar a #142" e virou a maior bateria manual da extensao ate aqui:
+13 casos no Chrome com a extensao carregada sem compactacao, MangaDex e MangaFire
+reais, duas contas. Cinco PRs na `main`, todos com o job do CI verde antes do merge.
+
+### Fechado
+
+- **#142** — a URL da aba aparece antes do clique (altura travada em 3 linhas, o
+  excesso ROLA em vez de cortar: o segredo mora no fim da string) e o fragmento
+  nao vai mais para o banco. `?token=…&code=…#pagina-3` gravou sem o `#pagina-3`;
+  `/painel#access_token=abc123` gravou `/painel`.
+- **#167, #168** — dois bugs pre-existentes da extensao que so apareceram porque o
+  popup foi usado de verdade: `No tab with id` no badge quando a aba fecha no
+  meio, e `.formulario { display: flex }` sobrepondo o atributo `hidden` — o
+  formulario NUNCA escondia, em nenhum estado de erro, desde a #91.
+- **#170** — o botao "Abrir a obra" usava a `ReadingSource` colada a mao e ignorava
+  o `resolvedUrl` que a extensao grava. Conta `Roca`: progresso no 94, botao
+  abrindo o capitulo 2. Decisao: a extensao vira a UNICA fonte do ultimo link,
+  o "Trocar fonte"/"Configurar leitura" sai inteiro, o botao vira "Continuar
+  leitura". Tracking passa a exigir a extensao; o site fica com estante, resenhas
+  e avaliacoes. Desenho em `Obsidian/02. Implementacoes/feature-continuar-leitura/`.
+- **#166** — entrar por e-mail OU nome de usuario no mesmo campo. A arroba decide,
+  no dominio. Nome inexistente paga o mesmo scrypt: 0,090s vs 0,099s medidos.
+- **#175** — confirmar antes de sair, modal do site, foco no Cancelar, Esc cancela.
+
+### O que os dados reais ensinaram
+
+- **"Ultimo" e "maior" sao coisas diferentes.** A primeira versao do Continuar
+  leitura ordenava por `openedAt`; a `Roca` tinha 94 no MangaDex e depois 70 no
+  MangaFire, e o botao voltaria para o 70. Trocado para o capitulo mais avancado,
+  com teste de BANCO — ordenacao so se prova no banco: como texto, "9.5" vem
+  depois de "57.5".
+- **Progresso pertence a obra, nao ao site** — a invariante do CLAUDE.md foi
+  verificada ponta a ponta pela primeira vez: 94 registrado no MangaDex apareceu
+  como "no cap. 94" ao abrir o MangaFire, e registrar o 70 la respondeu "estante
+  segue no 94".
+- **A regex do capitulo ignora o numero da pagina.** MangaDex poe `1 | Chapter 68`
+  no titulo; a exigencia da palavra `Chapter` antes do numero pegou o 68 e nao o 1.
+- **AniList desligou a API** (403 "temporarily disabled due to severe stability
+  issues"). Nao e rede nem rate limit. O catalogo degrada certo, mas fica vazio
+  mesmo com 15 obras em cache: #165.
+
+### Aberto
+
+- **#165** — cache-first no catalogo, so no fallback.
+- **#171 → #172 → #173** — serie da extensao: casar o nome do titulo com a
+  estante e pre-selecionar; corrigir progresso PARA TRAS apagando aberturas acima
+  do capitulo escolhido (marcar menor nao desce: `progressoAtual` e MAX); registro
+  automatico, bloqueado pela #172 porque sem desfazer o erro e permanente.
+- **#176** — recuperacao de senha por e-mail. Tres invariantes na issue: nao
+  enumerar, teto por pedido, e redefinir precisa encerrar sessoes — que depende
+  da #137 (sair nao revoga o JWT).
+- **`ReadingSource`** ficou no schema sem receber linhas novas. Remocao vira issue
+  propria quando estiver comprovadamente sem uso; esperar a #172.
+- **Nao testado na extensao**: os 5 idiomas (exige trocar o idioma do Chrome) e
+  producao (`host_permissions` aponta para a Vercel, so testamos em localhost).
