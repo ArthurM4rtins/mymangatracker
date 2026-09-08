@@ -10,7 +10,6 @@ import { alternativasDeIdioma, Link, redirect } from "@/i18n/navigation";
 import { idiomaDoSegmento } from "@/i18n/routing";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { Avaliar } from "./avaliar";
-import { ConfigurarFonte } from "./configurar-fonte";
 import { ContinuarLeitura } from "./continuar-leitura";
 import { EditarProgresso } from "./editar-progresso";
 import { SeletorStatus } from "./seletor-status";
@@ -193,28 +192,11 @@ async function Entrada({ entrada }: { entrada: EntradaDaEstante })
         </p>
 
         <div className="mt-auto flex flex-col gap-2 pt-2">
-          {entrada.fonte && (
-            <ContinuarLeitura
-              entradaId={entrada.entradaId}
-              proximoCapitulo={entrada.proximoCapitulo}
-              tipoDaFonte={entrada.fonte.tipo}
-              urlDaObra={entrada.fonte.tipo === "pagina" ? entrada.fonte.urlDaObra : undefined}
-            />
-          )}
+          <ContinuarLeitura ultimaLeitura={entrada.ultimaLeitura} />
 
           <div className="flex flex-wrap items-center gap-3">
             <SeletorStatus entradaId={entrada.entradaId} status={entrada.status} />
-            <ConfigurarFonte
-              entradaId={entrada.entradaId}
-              temFonte={entrada.fonte !== null}
-            />
           </div>
-
-          {entrada.fonte && (
-            <p className="text-xs text-texto-suave">
-              {t("lendoEm", { host: entrada.fonte.sourceHost })}
-            </p>
-          )}
 
           <Avaliar anilistId={entrada.obra.anilistId} avaliacao={entrada.avaliacao} />
         </div>
