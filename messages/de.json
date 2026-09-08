@@ -411,6 +411,16 @@
       "capitulo": "Kap. {n}",
       "fonteRemovida": "Lesequelle entfernt"
     },
+    "reset": {
+      "botao": "Lesestand zurücksetzen",
+      "titulo": "Lesestand von {titulo} zurücksetzen",
+      "texto": "Das löscht {n, plural, =0 {den Verlauf} =1 {1 Eintrag} other {# Einträge}} zu diesem Werk und setzt den Fortschritt zurück.",
+      "hoje": "Aktuell: Kap. {capitulo}.",
+      "depois": "Markiere danach das Kapitel, bei dem du bist.",
+      "confirmar": "Zurücksetzen",
+      "resetando": "Wird zurückgesetzt…",
+      "erro": "Zurücksetzen gerade nicht möglich. Versuch es noch einmal."
+    },
     "avaliacao": {
       "titulo": "Deine Bewertung",
       "resenhar": "Rezension schreiben…",

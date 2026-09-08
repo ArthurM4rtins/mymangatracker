@@ -411,6 +411,16 @@
       "capitulo": "cap. {n}",
       "fonteRemovida": "fuente eliminada"
     },
+    "reset": {
+      "botao": "Reiniciar lectura",
+      "titulo": "Reiniciar la lectura de {titulo}",
+      "texto": "Esto borra {n, plural, =0 {el historial} =1 {1 apertura} other {# aperturas}} de esta obra y pone el progreso a cero.",
+      "hoje": "Hoy: cap. {capitulo}.",
+      "depois": "Después, marca el capítulo en el que estás.",
+      "confirmar": "Reiniciar",
+      "resetando": "Reiniciando…",
+      "erro": "No se pudo reiniciar ahora. Inténtalo de nuevo."
+    },
     "avaliacao": {
       "titulo": "Tu valoración",
       "resenhar": "Escribir reseña…",

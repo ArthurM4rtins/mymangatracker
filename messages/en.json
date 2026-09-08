@@ -411,6 +411,16 @@
       "capitulo": "ch. {n}",
       "fonteRemovida": "reading source removed"
     },
+    "reset": {
+      "botao": "Reset reading",
+      "titulo": "Reset your reading of {titulo}",
+      "texto": "This deletes {n, plural, =0 {the history} =1 {1 opening} other {# openings}} for this series and clears your progress.",
+      "hoje": "Currently: ch. {capitulo}.",
+      "depois": "Afterwards, mark the chapter you are on.",
+      "confirmar": "Reset",
+      "resetando": "Resetting…",
+      "erro": "Could not reset right now. Try again."
+    },
     "avaliacao": {
       "titulo": "Your rating",
       "resenhar": "Write a review…",

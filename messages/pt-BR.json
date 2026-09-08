@@ -411,6 +411,16 @@
       "capitulo": "cap. {n}",
       "fonteRemovida": "fonte removida"
     },
+    "reset": {
+      "botao": "Resetar leitura",
+      "titulo": "Resetar a leitura de {titulo}",
+      "texto": "Isso apaga {n, plural, =0 {o histórico} =1 {1 abertura} other {# aberturas}} desta obra e zera o progresso.",
+      "hoje": "Hoje: cap. {capitulo}.",
+      "depois": "Depois, marque o capítulo em que você está.",
+      "confirmar": "Resetar",
+      "resetando": "Resetando…",
+      "erro": "Não deu para resetar agora. Tente de novo."
+    },
     "avaliacao": {
       "titulo": "Sua avaliação",
       "resenhar": "Resenhar…",

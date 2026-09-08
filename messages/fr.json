@@ -411,6 +411,16 @@
       "capitulo": "ch. {n}",
       "fonteRemovida": "source supprimée"
     },
+    "reset": {
+      "botao": "Réinitialiser la lecture",
+      "titulo": "Réinitialiser la lecture de {titulo}",
+      "texto": "Cela supprime {n, plural, =0 {l’historique} =1 {1 ouverture} other {# ouvertures}} de cette œuvre et remet la progression à zéro.",
+      "hoje": "Actuellement : ch. {capitulo}.",
+      "depois": "Ensuite, indique le chapitre où tu en es.",
+      "confirmar": "Réinitialiser",
+      "resetando": "Réinitialisation…",
+      "erro": "Impossible de réinitialiser pour le moment. Réessaie."
+    },
     "avaliacao": {
       "titulo": "Ta note",
       "resenhar": "Écrire une critique…",
