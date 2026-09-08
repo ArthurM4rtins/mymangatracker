@@ -61,7 +61,7 @@ Custo aceito na decisão 1: em site que carrega o número na URL (vários scanla
 `/capitulo-57`; Asura usa `-chapter-57`), hoje dá para digitar "capítulo 58" e abrir direto.
 Isso morre — passa a ser sempre "voltar para a última página lida".
 
-## Pendências — precisam de decisão antes de implementar
+## Pendências — todas resolvidas na implementação (issue #170)
 
 ### 1. O registro pelo site morre junto? — RESOLVIDO: sim (opção **a**)
 
@@ -76,7 +76,7 @@ A marcação manual do capítulo na estante (`ShelfEntry.progressChapter`, o "ma
 
 Consequência: `progresso.service.ts`, `POST /api/v1/progresso` e o teste do serviço saem junto.
 
-### 2. A tabela `ReadingSource` fica?
+### 2. A tabela `ReadingSource` fica? — RESOLVIDO: fica
 
 `ReadingProgress.readingSourceId` é FK para ela, e a leitura da extensão já grava sem fonte
 (`leitura-externa.service.ts`: "a leitura externa é justamente o caso sem fonte configurada").
@@ -86,12 +86,12 @@ Proposta: **manter no schema nesta tarefa**, sem escrever nela, e avaliar a remo
 própria depois que ela estiver comprovadamente sem uso. Migration destrutiva com FK não entra
 na mesma tarefa que a mudança de comportamento.
 
-### 3. De onde sai o "lendo em mangafire.to"?
+### 3. De onde sai o "lendo em mangafire.to"? — RESOLVIDO
 
-O rótulo na estante vem do `sourceHost` da fonte. Sem fonte, sai do host do `resolvedUrl` da
-última abertura — mesma informação, origem nova.
+Sai do host do próprio `resolvedUrl`, no serviço — uma verdade só, em vez de coluna à parte que
+pode divergir. Virou parte da mesma linha do capítulo: "cap. 94 em mangadex.org".
 
-### 4. Obra sem nenhuma abertura registrada
+### 4. Obra sem nenhuma abertura registrada — RESOLVIDO
 
 Não há último link. O botão some, ou aparece desabilitado com uma explicação? Precisa de texto
 novo nos 5 idiomas de qualquer forma.
@@ -100,7 +100,7 @@ novo nos 5 idiomas de qualquer forma.
 pela extensão habilita o "Continuar leitura". Botão desabilitado sem explicação é pior que
 ausência.
 
-### 5. Dados legados
+### 5. Dados legados — RESOLVIDO
 
 As fontes já cadastradas continuam no banco. Elas somem da tela junto com o "Trocar fonte" —
 nenhuma linha é apagada, nada quebra.
@@ -110,3 +110,20 @@ nenhuma linha é apagada, nada quebra.
 - Bug que originou: teste manual da #142, sessão de 08/09/2026
 - `Obsidian/02. Implementacoes/feature-extensao-navegador/CLAUDE.md` — o desenho da extensão
 - #52 (servidor da extensão), #91 (cliente)
+
+## Decisão tomada durante a implementação
+
+**O destino é o capítulo MAIS AVANÇADO, não a abertura mais recente.** A primeira versão
+ordenava por `openedAt`, e os dados reais da conta `Roca` mostraram o problema: 94 registrado no
+MangaDex e depois 70 no MangaFire fariam o botão voltar para o 70. A regra passou a ser a mesma
+que o progresso da estante já segue — o maior capítulo — com empate desempatado pela abertura
+mais nova, que é o site onde a pessoa leu por último.
+
+Provado com teste de banco (`tests/repositories/reading-progress.mais-avancada.test.ts`), porque
+ordenação só se prova no banco: como texto, "9.5" viria depois de "57.5".
+
+## Continua após esta tarefa
+
+- #171 — casar o nome da obra do título da aba e pré-selecionar
+- #172 — corrigir progresso para trás, apagando aberturas acima do capítulo escolhido
+- #173 — registro automático, bloqueado pela #172
