@@ -122,6 +122,14 @@ export async function POST(request: Request)
       );
     }
 
+    if (resultado.estado === "limitado")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
+        { status: 429, headers: { "Retry-After": String(resultado.esperarSegundos) } },
+      );
+    }
+
     return NextResponse.json({ ok: true, entradaId: resultado.entradaId }, { status: 200 });
   }
   catch (erro)
