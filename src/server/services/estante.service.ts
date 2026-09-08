@@ -115,6 +115,8 @@ export type EntradaDaEstante = {
     anilistId: number;
     titleRomaji: string;
     titleEnglish: string | null;
+    /** Para a extensão casar o nome em site de outra língua (#171). */
+    titleNative: string | null;
     coverImageUrl: string | null;
     type: "MANGA" | "NOVEL";
     countryOfOrigin: string | null;
