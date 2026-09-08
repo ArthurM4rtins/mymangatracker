@@ -1,8 +1,9 @@
 /**
  * Assinatura e verificação do token de sessão (JWT HS256, via `jose`).
  *
- * O payload carrega SÓ o `sub` (userId): o que estiver no token vaza para quem
- * tiver o cookie, então e-mail, papel e nome ficam fora. Token inválido ou
+ * O payload carrega o `sub` (userId) e o `ver` (versão para revogar, #137):
+ * o que estiver no token vaza para quem tiver o cookie, então e-mail, papel e
+ * nome ficam fora. `ver` é um inteiro sem significado fora da comparação. Token inválido ou
  * expirado é ausência de sessão (null), nunca erro — quem decide o que fazer
  * com isso é o controller.
  */
@@ -12,6 +13,8 @@ export const DURACAO_SESSAO_SEGUNDOS = 7 * 24 * 60 * 60;
 
 export type OpcoesDeSessao = {
   segredo: string;
+  /** `User.tokenVersion` no momento de assinar: sair incrementa e o token morre (#137). */
+  versao: number;
   /** Injetável para testar expiração sem esperar de verdade. */
   agoraEmSegundos?: () => number;
   duracaoSegundos?: number;
@@ -25,7 +28,7 @@ export async function assinarSessao(
   const agora = opcoes.agoraEmSegundos?.() ?? Math.floor(Date.now() / 1000);
   const duracao = opcoes.duracaoSegundos ?? DURACAO_SESSAO_SEGUNDOS;
 
-  return new SignJWT({})
+  return new SignJWT({ ver: opcoes.versao })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(userId)
     .setIssuedAt(agora)
@@ -33,10 +36,16 @@ export async function assinarSessao(
     .sign(new TextEncoder().encode(opcoes.segredo));
 }
 
+export type SessaoVerificada = {
+  userId: string;
+  /** Token assinado antes da #137 não tem `ver`: conta como 0, e morre no próximo sair. */
+  versao: number;
+};
+
 export async function verificarSessao(
   token: string,
   opcoes: Pick<OpcoesDeSessao, "segredo">,
-): Promise<string | null>
+): Promise<SessaoVerificada | null>
 {
   try
   {
@@ -46,7 +55,14 @@ export async function verificarSessao(
       { algorithms: ["HS256"] },
     );
 
-    return payload.sub ?? null;
+    if (!payload.sub)
+    {
+      return null;
+    }
+
+    const ver = payload.ver;
+
+    return { userId: payload.sub, versao: typeof ver === "number" ? ver : 0 };
   }
   catch
   {
