@@ -1,4 +1,22 @@
 {
+  "colecao": {
+    "visualizacao": "Affichage de la collection",
+    "grade": "Grille",
+    "prateleira": "Étagère",
+    "contagem": "{n, plural, one {# œuvre} other {# œuvres}}",
+    "dica": "Explorez les dos des livres. Utilisez les flèches ou faites glisser. Sélectionnez une œuvre pour voir ses détails.",
+    "anterior": "Reculer dans l’étagère {grupo}",
+    "proxima": "Avancer dans l’étagère {grupo}",
+    "abrir": "Voir les détails de {titulo}",
+    "detalhes": "Sur l’étagère · {titulo}",
+    "fechar": "Fermer les détails",
+    "laboratorio": "Une nouvelle façon d’explorer",
+    "descricaoLaboratorio": "Un aperçu de votre bibliothèque. Explorez cette collection d’exemple et alternez entre les deux affichages.",
+    "avisoLaboratorio": "Collection de démonstration · votre bibliothèque reste inchangée",
+    "selecao": "À découvrir",
+    "favoritos": "Des histoires à garder",
+    "verObra": "Voir la page de l’œuvre"
+  },
   "meta": {
     "titulo": "Kidoku",
     "descricao": "Un Letterboxd pour manga, manhwa et novel, avec une progression de lecture automatique et privée."
@@ -58,6 +76,8 @@
     "avaliacao_nao_encontrada": "note introuvable",
     "usuario_nao_encontrado": "utilisateur introuvable",
     "ja_em_uso": "indisponible",
+    "origem_recusada": "la requête ne vient pas de Kidoku",
+    "conteudo_nao_json": "la requête doit être en JSON",
     "nao_avanca": "ce chapitre ne dépasse pas la progression de ton étagère — pour revenir en arrière, utilise la réinitialisation",
     "sem_fonte": "configure d’abord ta source de lecture",
     "arquivo_grande_demais": "l’image dépasse 512 Ko",
