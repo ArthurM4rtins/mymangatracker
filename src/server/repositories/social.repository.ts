@@ -5,6 +5,7 @@
  * e-mail nem id de terceiros — só números e o estado de quem olha.
  */
 import { getPrisma } from "./prisma";
+import { Prisma } from "@/generated/prisma/client";
 
 export type ResultadoDoToggle = { ativo: boolean; total: number };
 
@@ -16,6 +17,44 @@ export type ResumoSocial = {
   sigo: boolean;
   curti: boolean;
 };
+
+/**
+ * O que significa a falha da escrita (#148, item 14).
+ *
+ * Antes o `catch` era nu e devolvia `null` para tudo: com o banco fora, TODO
+ * follow respondia 404 "usuário não encontrado" e nada era logado, porque o
+ * `console.error` da rota nunca disparava. Ninguém ganhava acesso — era
+ * observabilidade —, mas o sintoma apontava para o lugar errado.
+ *
+ * Agora só o que é de fato "alvo inválido" vira `null`; o resto sobe para a rota
+ * logar e responder 500. Mesma discriminação por código que
+ * `review-social.repository.ts` já faz.
+ *
+ * - P2003, violação de FK: o alvo não existe.
+ * - P2039, erro cru do driver: é como o CHECK de auto-relação chega. Conferido
+ *   contra o banco de verdade, não deduzido da documentação — o palpite era
+ *   P2010, e o teste de banco mostrou P2039. O serviço já barra a si mesmo
+ *   antes; isto é a rede embaixo.
+ * - P2002: já existe. P2025: já não existe. Ambos são corrida entre dois
+ *   cliques, e o estado final é o que a contagem disser.
+ */
+function alvoInvalido(erro: unknown): boolean
+{
+  if (!(erro instanceof Prisma.PrismaClientKnownRequestError))
+  {
+    return false;
+  }
+
+  return erro.code === "P2003" || erro.code === "P2039";
+}
+
+function corridaEntreCliques(erro: unknown): boolean
+{
+  return (
+    erro instanceof Prisma.PrismaClientKnownRequestError
+    && (erro.code === "P2002" || erro.code === "P2025")
+  );
+}
 
 export async function alternarSeguir(
   followerId: string,
@@ -40,10 +79,17 @@ export async function alternarSeguir(
       await prisma.follow.delete({ where: { id: existente.id } });
     }
   }
-  catch
+  catch (erro)
   {
-    // FK ou CHECK: alvo não existe ou é o próprio usuário.
-    return null;
+    if (alvoInvalido(erro))
+    {
+      return null;
+    }
+
+    if (!corridaEntreCliques(erro))
+    {
+      throw erro;
+    }
   }
 
   const total = await prisma.follow.count({ where: { followingId } });
@@ -74,9 +120,17 @@ export async function alternarCurtidaDoPerfil(
       await prisma.profileLike.delete({ where: { id: existente.id } });
     }
   }
-  catch
+  catch (erro)
   {
-    return null;
+    if (alvoInvalido(erro))
+    {
+      return null;
+    }
+
+    if (!corridaEntreCliques(erro))
+    {
+      throw erro;
+    }
   }
 
   const total = await prisma.profileLike.count({ where: { profileUserId } });

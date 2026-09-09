@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import * as clienteDoPrisma from "@/server/repositories/prisma";
 import { getPrisma } from "@/server/repositories/prisma";
 import {
   alternarCurtidaDoPerfil,
@@ -116,5 +117,32 @@ describe("social.repository", function ()
     });
     expect(await resumoSocial(b.id, c.id)).toMatchObject({ sigo: true, curti: false });
     expect(await resumoSocial(b.id, null)).toMatchObject({ sigo: false, curti: false });
+  });
+});
+
+// #148, item 14: o catch era nu e devolvia null para tudo. Com o banco fora,
+// TODO follow respondia 404 "usuario nao encontrado" e nada era logado, porque o
+// console.error da rota nunca disparava. Alvo invalido continua null; o resto
+// sobe para virar 500 logado.
+describe("falha que nao e alvo invalido sobe", function ()
+{
+  it("erro generico do banco vira excecao, nao null", async function ()
+  {
+    const dona = await semearUsuario("dona");
+    const alvo = await semearUsuario("alvo");
+    const real = getPrisma();
+
+    vi.spyOn(clienteDoPrisma, "getPrisma").mockReturnValue({
+      ...real,
+      follow: {
+        ...real.follow,
+        findUnique: async function () { return null; },
+        create: async function () { throw new Error("banco fora"); },
+      },
+    } as unknown as ReturnType<typeof getPrisma>);
+
+    await expect(alternarSeguir(dona.id, alvo.id)).rejects.toThrow("banco fora");
+
+    vi.restoreAllMocks();
   });
 });
