@@ -94,6 +94,7 @@
     "proprio_perfil": "impossible sur ton propre profil",
     "proprio_conteudo": "impossible sur ton propre contenu",
     "relato_indisponivel": "le canal de signalement est indisponible. Réessaie dans un instant.",
+    "confirmacao_invalida": "le nom saisi ne correspond pas à ton compte.",
     "idioma_invalido": "langue non disponible",
     "limite_excedido": "trop de tentatives — attends avant de réessayer",
     "falha_interna": "impossible pour le moment",
@@ -591,6 +592,25 @@
     },
     "erros": {
       "geral": "impossible d'envoyer maintenant. Réessaie dans un instant."
+    }
+  },
+  "conta": {
+    "meta": {
+      "titulo": "Compte"
+    },
+    "titulo": "Ton compte",
+    "subtitulo": "Réglages qui valent pour tout le compte.",
+    "linkDoPerfil": "compte",
+    "apagar": {
+      "titulo": "Supprimer le compte",
+      "oQueSome": "Tout disparaît : étagère, progression de lecture, notes, critiques, listes, mentions j'aime et commentaires — y compris les commentaires que d'autres ont écrits sur tes critiques. Irréversible.",
+      "nomeLivre": "Ton nom d'utilisateur redevient libre immédiatement, et quelqu'un d'autre peut l'enregistrer.",
+      "rotulo": "Pour confirmer, saisis {username}",
+      "botao": "Supprimer mon compte",
+      "apagando": "Suppression…"
+    },
+    "erros": {
+      "geral": "impossible pour le moment. Réessaie dans un instant."
     }
   }
 }

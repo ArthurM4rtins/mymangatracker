@@ -94,6 +94,7 @@
     "proprio_perfil": "doesn't apply to your own profile",
     "proprio_conteudo": "doesn't apply to your own content",
     "relato_indisponivel": "the reporting channel is down right now. Try again in a moment.",
+    "confirmacao_invalida": "the name you typed doesn't match your account.",
     "idioma_invalido": "language not available",
     "limite_excedido": "too many attempts — wait before trying again",
     "falha_interna": "couldn't do that right now",
@@ -591,6 +592,25 @@
     },
     "erros": {
       "geral": "couldn't send just now. Try again in a moment."
+    }
+  },
+  "conta": {
+    "meta": {
+      "titulo": "Account"
+    },
+    "titulo": "Your account",
+    "subtitulo": "Settings that apply to the whole account.",
+    "linkDoPerfil": "account",
+    "apagar": {
+      "titulo": "Delete account",
+      "oQueSome": "Everything goes: shelf, reading progress, ratings, reviews, lists, likes and comments — including comments other people wrote on your reviews. This can't be undone.",
+      "nomeLivre": "Your username becomes available again right away, and someone else can register it.",
+      "rotulo": "To confirm, type {username}",
+      "botao": "Delete my account",
+      "apagando": "Deleting…"
+    },
+    "erros": {
+      "geral": "couldn't do it just now. Try again in a moment."
     }
   }
 }

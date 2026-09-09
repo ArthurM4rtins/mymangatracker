@@ -69,6 +69,7 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
   const filtro = interpretarFiltroDasAvaliadas(await searchParams);
   const viewerId = await usuarioDaSessao();
   const t = await getTranslations("perfil");
+  const tConta = await getTranslations("conta");
   const idioma = await getLocale();
 
   let perfil;
@@ -141,6 +142,14 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
               </>
             )}
           </p>
+          {perfil.souEu && (
+            <p className="mt-1 text-sm">
+              {/* O caminho para apagar a conta (#208) mora fora da tela pública. */}
+              <Link href="/conta" className="underline underline-offset-4 text-texto-suave">
+                {tConta("linkDoPerfil")}
+              </Link>
+            </p>
+          )}
           {!perfil.souEu && (
             <div className="mt-1">
               <AcoesSociais

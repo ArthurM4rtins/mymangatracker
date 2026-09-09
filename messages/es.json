@@ -94,6 +94,7 @@
     "proprio_perfil": "no vale para tu propio perfil",
     "proprio_conteudo": "no vale para lo que es tuyo",
     "relato_indisponivel": "el canal de reportes está caído ahora. Inténtalo de nuevo en un momento.",
+    "confirmacao_invalida": "el nombre que escribiste no coincide con el de tu cuenta.",
     "idioma_invalido": "idioma no disponible",
     "limite_excedido": "demasiados intentos — espera antes de volver a intentarlo",
     "falha_interna": "ahora no es posible",
@@ -591,6 +592,25 @@
     },
     "erros": {
       "geral": "no se pudo enviar ahora. Inténtalo de nuevo en un momento."
+    }
+  },
+  "conta": {
+    "meta": {
+      "titulo": "Cuenta"
+    },
+    "titulo": "Tu cuenta",
+    "subtitulo": "Ajustes que valen para toda la cuenta.",
+    "linkDoPerfil": "cuenta",
+    "apagar": {
+      "titulo": "Eliminar la cuenta",
+      "oQueSome": "Se borra todo: estantería, progreso de lectura, valoraciones, reseñas, listas, me gusta y comentarios — incluidos los comentarios que otras personas escribieron en tus reseñas. No se puede deshacer.",
+      "nomeLivre": "Tu nombre de usuario queda libre al instante, y otra persona puede registrarlo.",
+      "rotulo": "Para confirmar, escribe {username}",
+      "botao": "Eliminar mi cuenta",
+      "apagando": "Eliminando…"
+    },
+    "erros": {
+      "geral": "no se pudo ahora. Inténtalo de nuevo en un momento."
     }
   }
 }
