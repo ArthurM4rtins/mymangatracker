@@ -59,6 +59,14 @@ export async function POST(request: Request)
       containsSpoilers: analise.data.containsSpoilers,
     });
 
+    if (resultado.estado === "muitos_pedidos")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
+        { status: 429, headers: { "Retry-After": String(resultado.esperarSegundos) } },
+      );
+    }
+
     if (resultado.estado === "obra_desconhecida")
     {
       return NextResponse.json(

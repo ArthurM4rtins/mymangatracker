@@ -161,6 +161,10 @@ const ENTRADAS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 
 // teto reescreve 500 linhas por pedido. Arrastar itens na tela salva a ordem
 // inteira a cada solta, então o teto é folgado para quem organiza de verdade.
 const ORDENS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 };
+// Avaliacao (#143): a rota nao tinha teto, e era ela que o truque de
+// apagar-e-reescrever repetia para subir no feed. A coluna carimbada uma vez ja
+// fecha aquilo; este teto protege a rota inteira, que grava linha por chamada.
+const AVALIACOES_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 };
 // Busca do catalogo (#134, achado 4): anonima, e cada termo novo e uma ida
 // real ao AniList pela cota compartilhada. Memo nao defende, porque a chave e
 // o `?q=` de quem pede. O teto e por IP e folgado: rede compartilhada cai num
@@ -269,6 +273,12 @@ export function limitarLista(pedido: { userId: string }): Promise<Veredito>
 export function limitarEntrada(pedido: { userId: string }): Promise<Veredito>
 {
   return limitarPorUsuario("estante", ENTRADAS_POR_USUARIO, pedido.userId);
+}
+
+/** A composição de produção. Antes de salvar uma avaliação. */
+export function limitarAvaliacao(pedido: { userId: string }): Promise<Veredito>
+{
+  return limitarPorUsuario("avaliacao", AVALIACOES_POR_USUARIO, pedido.userId);
 }
 
 /** A composição de produção. Antes de buscar no catálogo, sem sessão. */
