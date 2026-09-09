@@ -495,3 +495,31 @@ obrigatorio em `Dependencias*`, retorno com variante nova —, rodar `pnpm build
 antes do push, nao so `pnpm lint` e `pnpm test`. E preferir `{ ...fakeDeps(), x }`
 a montar o objeto inteiro em cada teste: uma fabrica so absorve o campo novo em
 um lugar, doze objetos literais nao.
+
+## Worktree com CRLF faz o Prisma pedir reset do banco de desenvolvimento (09/09/2026)
+
+`pnpm prisma migrate dev` na worktree respondeu que duas migrations de 01/09
+"foram modificadas depois de aplicadas" e que precisava **resetar o schema**,
+apagando o banco de desenvolvimento inteiro — com os dados de teste do usuario e
+o trabalho dele em andamento.
+
+Nao havia modificacao nenhuma: `git log` mostrava um commit por arquivo, sem
+alteracao posterior. A diferenca era o FIM DE LINHA. O `git worktree add` fez
+checkout com `core.autocrlf` ligado e gravou CRLF; a copia original tem LF, e foi
+dela que o checksum guardado em `_prisma_migrations` foi calculado. O Prisma
+compara o arquivo byte a byte.
+
+| copia | bytes | CRLF |
+|---|---|---|
+| original do usuario | 1500 | 1 |
+| worktree | 1543 | 44 |
+
+**A regra:** "migration modificada depois de aplicada" com `git log` limpo e
+Windows no meio e' fim de linha, nao corrupcao. NUNCA aceitar o reset para sair
+disso. Conferir com `python -c "print(open(f,'rb').read().count(b'\r\n'))"` nas
+duas copias e igualar os bytes — o que funcionou foi copiar os arquivos de
+migration da copia original para a worktree, rodar `migrate dev`, e restaurar os
+arquivos com `git checkout --` depois, para nao commitar troca de EOL.
+
+Antes disso: `git config core.autocrlf false` na worktree, senao o proximo
+checkout recria o problema.
