@@ -247,8 +247,15 @@ export async function listarItensParaOrdem(
 }
 
 /**
- * Grava a ordem inteira: `position = índice + 1`, numa transação. Quem
- * garante que `mediaIds` é permutação exata dos itens é o serviço.
+ * Grava a ordem inteira: `position = índice + 1`. Quem garante que `mediaIds`
+ * é permutação exata dos itens é o serviço.
+ *
+ * Um `UPDATE` só (#146). Antes era um `updateMany` por item dentro de uma
+ * transação: uma lista no teto do schema virava 500 statements segurando lock
+ * nas 500 linhas durante toda a ida e volta, e repetir o pedido prendia
+ * conexões do pool. `unnest` casa os dois arrays em uma tabela derivada, então
+ * o custo deixa de crescer em statements — e os ids continuam indo como
+ * parâmetro, nunca interpolados na string.
  */
 export async function reordenarItens(
   userId: string,
@@ -268,15 +275,17 @@ export async function reordenarItens(
     return null;
   }
 
-  await prisma.$transaction(
-    mediaIds.map(function (mediaId, indice)
-    {
-      return prisma.listItem.updateMany({
-        where: { listId: listaId, mediaId },
-        data: { position: indice + 1 },
-      });
-    }),
-  );
+  if (mediaIds.length > 0)
+  {
+    const posicoes = mediaIds.map(function (_, indice) { return indice + 1; });
+
+    await prisma.$executeRaw`
+      UPDATE "ListItem" AS item
+      SET position = nova.posicao
+      FROM unnest(${mediaIds}::text[], ${posicoes}::int[]) AS nova(media_id, posicao)
+      WHERE item."listId" = ${listaId} AND item."mediaId" = nova.media_id
+    `;
+  }
 
   return { reordenada: true };
 }
