@@ -81,6 +81,9 @@ export const ERRO = {
   ORDEM_INVALIDA: "ordem_invalida",
   COMENTARIO_TAMANHO_INVALIDO: "comentario_tamanho_invalido",
   PROPRIO_PERFIL: "proprio_perfil",
+  // Curtir o proprio conteudo (#148, item 4): a mesma recusa do proprio perfil,
+  // que existia so para Follow e ProfileLike.
+  PROPRIO_CONTEUDO: "proprio_conteudo",
   IDIOMA_INVALIDO: "idioma_invalido",
 
   // 429 — bateu no limitador.

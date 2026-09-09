@@ -142,6 +142,20 @@ export function contarListasDoUsuario(userId: string): Promise<number>
   return getPrisma().list.count({ where: { userId } });
 }
 
+/**
+ * De quem é a lista. `null` quando não existe. O serviço usa para recusar
+ * curtida na própria lista (#148, item 4).
+ */
+export async function donoDaLista(listaId: string): Promise<string | null>
+{
+  const linha = await getPrisma().list.findUnique({
+    where: { id: listaId },
+    select: { userId: true },
+  });
+
+  return linha?.userId ?? null;
+}
+
 /** Só o nome, para o `generateMetadata` não carregar a lista inteira duas vezes (#135). */
 export async function buscarNomeDaLista(listaId: string): Promise<string | null>
 {

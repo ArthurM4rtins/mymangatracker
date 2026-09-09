@@ -3,6 +3,7 @@
  * a partir da página da obra). Quem resolve a sessão é o controller.
  */
 import { mesmoConjunto } from "@/server/domain/lista-ordem";
+import { podeSeRelacionar } from "@/server/domain/social";
 import {
   FATOR_DE_BUSCA,
   MAXIMO_POR_AUTOR,
@@ -17,6 +18,7 @@ import {
   apagarLista,
   buscarListaComItens,
   criarLista,
+  donoDaLista,
   editarLista,
   listarItensParaOrdem,
   listarListasPublicas,
@@ -355,20 +357,40 @@ export async function reordenarItensDaLista(
 }
 
 export type DependenciasDeCurtidaDeLista = {
+  /** O dono da lista, ou null quando ela não existe. */
+  buscarDono: (listaId: string) => Promise<string | null>;
   alternar: (
     listaId: string,
     userId: string,
   ) => Promise<{ curtida: boolean; total: number } | null>;
 };
 
+/**
+ * Curtir a PRÓPRIA lista é recusado (#148, item 4), como curtir o próprio perfil
+ * já era desde a #74. Sem isso, quem cria a lista se somava no ranking por
+ * curtidas de `/listas`.
+ */
 export async function curtirLista(
   pedido: { userId: string; listaId: string },
   deps: DependenciasDeCurtidaDeLista,
 ): Promise<
   | { estado: "ok"; curtida: boolean; total: number }
   | { estado: "nao_encontrada" }
+  | { estado: "a_si_mesmo" }
 >
 {
+  const dono = await deps.buscarDono(pedido.listaId);
+
+  if (dono === null)
+  {
+    return { estado: "nao_encontrada" };
+  }
+
+  if (!podeSeRelacionar(pedido.userId, dono))
+  {
+    return { estado: "a_si_mesmo" };
+  }
+
   const resultado = await deps.alternar(pedido.listaId, pedido.userId);
 
   if (resultado === null)
@@ -407,7 +429,10 @@ export function reordenarItensDoSistema(pedido: {
 /** A composição de produção. */
 export function curtirListaDoSistema(pedido: { userId: string; listaId: string })
 {
-  return curtirLista(pedido, { alternar: alternarCurtidaDaLista });
+  return curtirLista(pedido, {
+    alternar: alternarCurtidaDaLista,
+    buscarDono: donoDaLista,
+  });
 }
 
 /** Só o nome da lista, para metadata (#135): não carrega os itens duas vezes por visita. */

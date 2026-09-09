@@ -1,4 +1,20 @@
 import { describe, expect, it, vi } from "vitest";
+import { LIMITE_DO_AVATAR_BYTES } from "@/server/domain/avatar";
+
+// #148, item 2: o dominio le a assinatura, entao byte de enchimento nao passa
+// mais por imagem. Os corpos daqui nascem com o cabecalho de verdade.
+function jpeg(tamanho: number): Buffer
+{
+  const bytes = Buffer.alloc(tamanho);
+
+  if (tamanho >= 4)
+  {
+    bytes.set([0xff, 0xd8, 0xff, 0xe0], 0);
+  }
+
+  return bytes;
+}
+
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import {
   avatarDoUsuario,
@@ -37,7 +53,7 @@ describe("definirAvatar", function ()
     const deps = fakeDeps();
     deps.limitar.mockResolvedValueOnce({ bloqueado: true, esperarSegundos: 120 });
 
-    await expect(definirAvatar({ userId: "u1", mime: "image/jpeg", bytes: Buffer.alloc(10) }, deps))
+    await expect(definirAvatar({ userId: "u1", mime: "image/jpeg", bytes: jpeg(10) }, deps))
       .resolves.toEqual({ estado: "limitado", esperarSegundos: 120 });
     expect(deps.salvar).not.toHaveBeenCalled();
   });
@@ -45,7 +61,7 @@ describe("definirAvatar", function ()
   it("salva jpeg dentro do limite e devolve a versão", async function ()
   {
     const deps = fakeDeps();
-    const bytes = Buffer.alloc(1000, 1);
+    const bytes = jpeg(1000);
 
     await expect(definirAvatar({ userId: "u1", mime: "image/jpeg", bytes }, deps)).resolves.toEqual({
       estado: "ok",
@@ -59,11 +75,19 @@ describe("definirAvatar", function ()
     const deps = fakeDeps();
 
     await expect(
-      definirAvatar({ userId: "u1", mime: "image/gif", bytes: Buffer.alloc(10) }, deps),
+      definirAvatar({ userId: "u1", mime: "image/gif", bytes: jpeg(10) }, deps),
     ).resolves.toEqual({ estado: "invalido", motivo: "tipo_invalido" });
+    // Assinatura certa e tipo certo: o que reprova aqui e so o tamanho.
     await expect(
-      definirAvatar({ userId: "u1", mime: "image/png", bytes: Buffer.alloc(0) }, deps),
+      definirAvatar(
+        { userId: "u1", mime: "image/jpeg", bytes: jpeg(LIMITE_DO_AVATAR_BYTES + 1) },
+        deps,
+      ),
     ).resolves.toEqual({ estado: "invalido", motivo: "tamanho_invalido" });
+    // Corpo vazio nao tem assinatura nenhuma, entao reprova como tipo.
+    await expect(
+      definirAvatar({ userId: "u1", mime: "image/png", bytes: jpeg(0) }, deps),
+    ).resolves.toEqual({ estado: "invalido", motivo: "tipo_invalido" });
     expect(deps.salvar).not.toHaveBeenCalled();
   });
 });

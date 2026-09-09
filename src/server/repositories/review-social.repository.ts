@@ -165,22 +165,31 @@ export async function listarComentariosAnteriores(
 }
 
 /**
- * A Entry existe E tem texto? A FK sozinha não responde isso: a linha sobrevive
- * ao dono apagar a resenha e manter a nota, e o id dela já circulou no HTML da
- * página da obra (#138). Sem esta checagem, curtida e comentário eram aceitos
- * numa resenha que não existe e ressurgiam colados no texto novo do dono.
+ * De quem é a resenha, se ela existe E tem texto. A FK sozinha não responde
+ * isso: a linha sobrevive ao dono apagar a resenha e manter a nota, e o id dela
+ * já circulou no HTML da página da obra (#138). Sem esta checagem, curtida e
+ * comentário eram aceitos numa resenha que não existe e ressurgiam colados no
+ * texto novo do dono.
+ *
+ * O dono sai junto porque o serviço precisa dele para recusar auto-curtida
+ * (#148, item 4) — é a mesma consulta, não uma segunda ida ao banco.
  *
  * Não é atômico com a escrita que vem depois — os catches de P2002 e P2003
  * continuam sendo o que fecha a corrida.
  */
-async function temResenha(entryId: string): Promise<boolean>
+export async function donoDaResenha(entryId: string): Promise<string | null>
 {
   const alvo = await getPrisma().entry.findFirst({
     where: { id: entryId, review: { not: null } },
-    select: { id: true },
+    select: { userId: true },
   });
 
-  return alvo !== null;
+  return alvo?.userId ?? null;
+}
+
+async function temResenha(entryId: string): Promise<boolean>
+{
+  return (await donoDaResenha(entryId)) !== null;
 }
 
 /**

@@ -47,6 +47,9 @@ export async function GET(
         "Content-Length": String(foto.bytes.byteLength),
         ETag: etag,
         "Cache-Control": "public, max-age=31536000, immutable",
+        // O MIME agora é conferido contra os bytes na gravação (#148, item 2),
+        // e o navegador fica proibido de adivinhar outro na leitura.
+        "X-Content-Type-Options": "nosniff",
       },
     });
   }
