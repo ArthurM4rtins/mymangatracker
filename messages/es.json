@@ -92,6 +92,7 @@
     "ordem_invalida": "el orden debe contener exactamente las obras de la lista",
     "comentario_tamanho_invalido": "comentario vacío o demasiado largo",
     "proprio_perfil": "no vale para tu propio perfil",
+    "proprio_conteudo": "no vale para lo que es tuyo",
     "idioma_invalido": "idioma no disponible",
     "limite_excedido": "demasiados intentos — espera antes de volver a intentarlo",
     "falha_interna": "ahora no es posible",

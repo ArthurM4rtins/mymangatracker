@@ -141,7 +141,11 @@ describe("curtirLista", function ()
   {
     const alternar = vi.fn(async function () { return { curtida: true, total: 3 }; });
 
-    await expect(curtirLista({ userId: "u1", listaId: "l1" }, { alternar })).resolves.toEqual({
+    const buscarDono = vi.fn(async function (): Promise<string | null> { return "dona"; });
+
+    await expect(
+      curtirLista({ userId: "u1", listaId: "l1" }, { alternar, buscarDono }),
+    ).resolves.toEqual({
       estado: "ok",
       curtida: true,
       total: 3,
@@ -152,8 +156,11 @@ describe("curtirLista", function ()
   it("lista inexistente é nao_encontrada", async function ()
   {
     const alternar = vi.fn(async function () { return null; });
+    const buscarDono = vi.fn(async function (): Promise<string | null> { return null; });
 
-    await expect(curtirLista({ userId: "u1", listaId: "nada" }, { alternar })).resolves.toEqual({
+    await expect(
+      curtirLista({ userId: "u1", listaId: "nada" }, { alternar, buscarDono }),
+    ).resolves.toEqual({
       estado: "nao_encontrada",
     });
   });
@@ -193,5 +200,31 @@ describe("listasPublicas", function ()
 
     expect(listar).toHaveBeenCalledWith(120, "curtidas");
     expect(publicas.map(function (l) { return l.username; })).toEqual(["spam", "spam", "bia"]);
+  });
+});
+
+// #148, item 4: mesma assimetria da resenha — quem cria a lista podia curtir a
+// propria e subir no ranking por curtidas de /listas.
+describe("curtir a propria lista", function ()
+{
+  it("e recusado, e nao chega a alternar", async function ()
+  {
+    const alternar = vi.fn(async function () { return { curtida: true, total: 1 }; });
+    const buscarDono = vi.fn(async function () { return "u1"; });
+
+    await expect(
+      curtirLista({ userId: "u1", listaId: "l1" }, { alternar, buscarDono }),
+    ).resolves.toEqual({ estado: "a_si_mesmo" });
+    expect(alternar).not.toHaveBeenCalled();
+  });
+
+  it("lista de outra pessoa continua passando", async function ()
+  {
+    const alternar = vi.fn(async function () { return { curtida: true, total: 3 }; });
+    const buscarDono = vi.fn(async function () { return "dona"; });
+
+    await expect(
+      curtirLista({ userId: "u1", listaId: "l1" }, { alternar, buscarDono }),
+    ).resolves.toEqual({ estado: "ok", curtida: true, total: 3 });
   });
 });

@@ -92,6 +92,7 @@
     "ordem_invalida": "the order must contain exactly the series in the list",
     "comentario_tamanho_invalido": "comment is empty or too long",
     "proprio_perfil": "doesn't apply to your own profile",
+    "proprio_conteudo": "doesn't apply to your own content",
     "idioma_invalido": "language not available",
     "limite_excedido": "too many attempts — wait before trying again",
     "falha_interna": "couldn't do that right now",

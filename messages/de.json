@@ -92,6 +92,7 @@
     "ordem_invalida": "die Reihenfolge muss genau die Werke der Liste enthalten",
     "comentario_tamanho_invalido": "Kommentar leer oder zu lang",
     "proprio_perfil": "gilt nicht für dein eigenes Profil",
+    "proprio_conteudo": "gilt nicht für deine eigenen Inhalte",
     "idioma_invalido": "Sprache nicht verfügbar",
     "limite_excedido": "zu viele Versuche — warte, bevor du es erneut versuchst",
     "falha_interna": "gerade nicht möglich",

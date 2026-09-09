@@ -4,8 +4,10 @@
  */
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import { limitarComentario } from "./limite.service";
+import { podeSeRelacionar } from "@/server/domain/social";
 import {
   alternarCurtida,
+  donoDaResenha,
   apagarComentario,
   comentarNaReview,
   listarComentariosAnteriores,
@@ -15,20 +17,40 @@ import {
 const TAMANHO_MAXIMO_DO_COMENTARIO = 2000;
 
 export type DependenciasDeCurtida = {
+  /** O dono da resenha, ou null quando ela não existe ou está sem texto. */
+  buscarDono: (entryId: string) => Promise<string | null>;
   alternar: (
     entryId: string,
     userId: string,
   ) => Promise<{ curtida: boolean; total: number } | null>;
 };
 
+/**
+ * Curtir a PRÓPRIA resenha é recusado (#148, item 4). Curtir o próprio perfil já
+ * era, desde a #74; a resenha ficou de fora, e a autora podia se somar no
+ * ranking por curtidas da página da obra. Mesma regra de domínio dos dois lados.
+ */
 export async function curtirReview(
   pedido: { userId: string; entryId: string },
   deps: DependenciasDeCurtida,
 ): Promise<
   | { estado: "ok"; curtida: boolean; total: number }
   | { estado: "nao_encontrada" }
+  | { estado: "a_si_mesmo" }
 >
 {
+  const dono = await deps.buscarDono(pedido.entryId);
+
+  if (dono === null)
+  {
+    return { estado: "nao_encontrada" };
+  }
+
+  if (!podeSeRelacionar(pedido.userId, dono))
+  {
+    return { estado: "a_si_mesmo" };
+  }
+
   const resultado = await deps.alternar(pedido.entryId, pedido.userId);
 
   if (resultado === null)
@@ -125,7 +147,7 @@ export async function apagarComentarioDaReview(
 /** A composição de produção. */
 export function curtirReviewDoSistema(pedido: { userId: string; entryId: string })
 {
-  return curtirReview(pedido, { alternar: alternarCurtida });
+  return curtirReview(pedido, { alternar: alternarCurtida, buscarDono: donoDaResenha });
 }
 
 /** A composição de produção. */
