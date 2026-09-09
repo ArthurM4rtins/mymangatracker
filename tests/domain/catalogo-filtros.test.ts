@@ -67,6 +67,17 @@ describe("interpretarFiltros", function ()
     });
   });
 
+  // #134: o termo vai cru para a query do AniList, e é escolhido por quem
+  // chama. Sem teto, `?q=<10 mil caracteres>` viraria corpo de requisição do
+  // mesmo tamanho contra a cota compartilhada.
+  it("corta o termo em 100 caracteres, depois de tirar o espaço das pontas", function ()
+  {
+    const gigante = `  ${"a".repeat(300)}  `;
+
+    expect(interpretarFiltros({ q: gigante }).termo).toHaveLength(100);
+    expect(interpretarFiltros({ q: "berserk" }).termo).toBe("berserk");
+  });
+
   it("array vazio é o mesmo que parâmetro ausente", function ()
   {
     expect(interpretarFiltros({ q: [], tipo: [], ordem: [] })).toEqual({
