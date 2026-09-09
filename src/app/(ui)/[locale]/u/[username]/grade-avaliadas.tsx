@@ -5,9 +5,9 @@
  * só por causa do glyph da estrela, que vive num módulo client.
  */
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { estrelasTexto } from "../../componentes/estrelas";
-import { Capa } from "./minha-estante";
+import { ColecaoVisual } from "../../componentes/colecao-visual";
+import { CartaoObra } from "../../componentes/cartao-obra";
 
 export type AvaliadaParaTela = {
   anilistId: number;
@@ -21,28 +21,20 @@ export function GradeAvaliadas({ avaliadas }: { avaliadas: AvaliadaParaTela[] })
   const t = useTranslations("perfil");
 
   return (
-    <ul className="grid grid-cols-3 gap-4 sm:grid-cols-5 md:grid-cols-6">
-      {avaliadas.map(function (obra)
-      {
-        return (
-          <li key={obra.anilistId}>
-            <Link
-              href={`/obra/${obra.anilistId}`}
-              className="group flex flex-col gap-1.5"
-              title={obra.titulo}
-            >
-              <Capa src={obra.coverImageUrl} />
-              <span className="truncate text-xs">{obra.titulo}</span>
-              <span
-                aria-label={t("notaAria", { nota: String(obra.rating) })}
-                className="text-xs text-acento"
-              >
-                {estrelasTexto(obra.rating)}
-              </span>
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
+    <ColecaoVisual titulo={t("avaliadas.titulo")}
+      classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-5 md:grid-cols-6"
+      itens={avaliadas.map((obra) => ({
+        id: obra.anilistId,
+        titulo: obra.titulo,
+        capa: obra.coverImageUrl,
+        detalhe: (
+          <CartaoObra anilistId={obra.anilistId} titulo={obra.titulo} capa={obra.coverImageUrl}>
+            <span aria-label={t("notaAria", { nota: String(obra.rating) })} className="text-xs text-acento">
+              {estrelasTexto(obra.rating)}
+            </span>
+          </CartaoObra>
+        ),
+      }))}
+    />
   );
 }

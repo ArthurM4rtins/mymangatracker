@@ -1,14 +1,15 @@
 import { getTranslations } from "next-intl/server";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { listaComItensDoSistema, nomeDaListaDoSistema } from "@/server/services/lista.service";
 import { Link, alternativasDeIdioma } from "@/i18n/navigation";
 import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
-import { ApagarLista, RemoverDaLista } from "./acoes-da-lista";
+import { ApagarLista } from "./acoes-da-lista";
 import { CurtirLista } from "./curtir-lista";
 import { EditarLista } from "./editar-lista";
 import { ItensOrdenaveis } from "./itens-ordenaveis";
 import { idiomaDoSegmento } from "@/i18n/routing";
+import { ColecaoVisual } from "../../componentes/colecao-visual";
+import { CartaoObra } from "../../componentes/cartao-obra";
 
 export const dynamic = "force-dynamic";
 
@@ -100,8 +101,9 @@ export default async function PaginaDaLista({ params }: PageProps<"/[locale]/lis
         </p>
       ) : lista.minha ? (
         <ItensOrdenaveis
-          key={lista.itens.map(function (i) { return i.anilistId; }).join(",")}
+          key={lista.listaId}
           listaId={lista.listaId}
+          titulo={lista.nome}
           itens={lista.itens.map(function (item)
           {
             return {
@@ -112,43 +114,16 @@ export default async function PaginaDaLista({ params }: PageProps<"/[locale]/lis
           })}
         />
       ) : (
-        <ul className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6">
-          {lista.itens.map(function (item)
-          {
-            return (
-              <li key={item.anilistId} className="flex flex-col gap-1">
-                <Link
-                  href={`/obra/${item.anilistId}`}
-                  className="group flex flex-col gap-1.5"
-                >
-                  {item.coverImageUrl ? (
-                    <Image
-                      src={item.coverImageUrl}
-                      alt=""
-                      width={144}
-                      height={216}
-                      className="aspect-[2/3] w-full rounded object-cover transition-opacity group-hover:opacity-80"
-                      unoptimized
-                    />
-                  ) : (
-                    <div
-                      aria-hidden
-                      className="flex aspect-[2/3] w-full items-center justify-center rounded bg-superficie text-texto-suave"
-                    >
-                      —
-                    </div>
-                  )}
-                  <span className="line-clamp-1 text-xs text-texto-suave group-hover:text-texto">
-                    {item.titleEnglish ?? item.titleRomaji}
-                  </span>
-                </Link>
-                {lista.minha && (
-                  <RemoverDaLista listaId={lista.listaId} anilistId={item.anilistId} />
-                )}
-              </li>
-            );
-          })}
-        </ul>
+        <ColecaoVisual titulo={lista.nome}
+          classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6"
+          itens={lista.itens.map((item) => ({
+            id: item.anilistId,
+            titulo: item.titleEnglish ?? item.titleRomaji,
+            capa: item.coverImageUrl,
+            detalhe: <CartaoObra anilistId={item.anilistId}
+              titulo={item.titleEnglish ?? item.titleRomaji} capa={item.coverImageUrl} />,
+          }))}
+        />
       )}
     </main>
   );

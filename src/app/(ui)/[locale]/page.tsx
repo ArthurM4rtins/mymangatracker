@@ -1,5 +1,4 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import Image from "next/image";
 // A rota de API não tem prefixo de idioma (D2 do desenho): o link do rodapé usa
 // o `Link` cru, não o de `@/i18n/navigation`, senão vira `/pt-BR/api/v1/health`.
 import LinkExterno from "next/link";
@@ -22,8 +21,9 @@ import {
   type VitrineDaHome,
 } from "@/server/services/vitrine.service";
 import { Carrossel } from "./componentes/carrossel";
+import { ColecaoVisual } from "./componentes/colecao-visual";
+import { CartaoObra } from "./componentes/cartao-obra";
 import { CardLista, CardResenha } from "./vitrine-cards";
-import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
 import { ContinuarLeitura } from "./estante/continuar-leitura";
 
@@ -97,19 +97,24 @@ export default async function Home()
       />
 
       <div className="grid gap-10 md:grid-cols-3">
-        <section className="flex flex-col gap-4 md:col-span-2">
+        <section className="flex min-w-0 flex-col gap-4 md:col-span-2">
           <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
             {t("populares.titulo")}
           </h2>
 
           {(populares.estado === "ok" || populares.estado === "destaques") ? (
             <>
-              <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-                {populares.obras.slice(0, LIMITE_POPULARES).map(function (obra)
-                {
-                  return <CapaPopular key={obra.anilistId} obra={obra} />;
-                })}
-              </ul>
+              <ColecaoVisual
+                titulo={t("populares.titulo")}
+                classeGrade="grid grid-cols-3 gap-3 sm:grid-cols-4"
+                itens={populares.obras.slice(0, LIMITE_POPULARES).map((obra) => ({
+                  id: obra.anilistId,
+                  titulo: obra.titleEnglish ?? obra.titleRomaji,
+                  capa: obra.coverImageUrl ?? null,
+                  detalhe: <CartaoObra anilistId={obra.anilistId}
+                    titulo={obra.titleEnglish ?? obra.titleRomaji} capa={obra.coverImageUrl ?? null} />,
+                }))}
+              />
               <Link
                 href="/catalogo"
                 className="self-end text-sm text-acento underline underline-offset-4"
@@ -211,12 +216,19 @@ async function BoasVindas({ leitura }: { leitura: DadosDeLeitura })
           <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
             {t("boasVindas.continuarLendo")}
           </h2>
-          <ul className="flex flex-wrap gap-4">
-            {leitura.continuar.map(function (entrada)
-            {
-              return <CardContinuar key={entrada.entradaId} entrada={entrada} />;
-            })}
-          </ul>
+          <ColecaoVisual
+            titulo={t("boasVindas.continuarLendo")}
+            classeGrade="grid grid-cols-2 gap-4 sm:grid-cols-4"
+            itens={leitura.continuar.map((entrada) => ({
+              id: entrada.obra.anilistId,
+              titulo: entrada.obra.titleEnglish ?? entrada.obra.titleRomaji,
+              capa: entrada.obra.coverImageUrl,
+              detalhe: <CartaoObra anilistId={entrada.obra.anilistId}
+                titulo={entrada.obra.titleEnglish ?? entrada.obra.titleRomaji}
+                capa={entrada.obra.coverImageUrl}
+                acoes={<ContinuarLeitura continuarEm={entrada.continuarEm} compacto />} />,
+            }))}
+          />
         </div>
       ) : (
         <p className="text-texto-suave">
@@ -359,73 +371,5 @@ async function Apresentacao()
         </Link>
       </div>
     </section>
-  );
-}
-
-function CardContinuar({ entrada }: { entrada: EntradaDaEstante })
-{
-  return (
-    <li className="flex w-44 flex-col gap-2 rounded-lg border border-borda bg-superficie p-3">
-      {entrada.obra.coverImageUrl ? (
-        <Image
-          src={entrada.obra.coverImageUrl}
-          alt=""
-          width={152}
-          height={228}
-          className="aspect-[2/3] w-full rounded object-cover"
-          unoptimized
-        />
-      ) : (
-        <div
-          aria-hidden
-          className="flex aspect-[2/3] w-full items-center justify-center rounded bg-fundo text-texto-suave"
-        >
-          —
-        </div>
-      )}
-
-      <p className="line-clamp-1 text-sm font-medium">
-        <Link href={`/obra/${entrada.obra.anilistId}`} className="hover:text-acento">
-          {entrada.obra.titleEnglish ?? entrada.obra.titleRomaji}
-        </Link>
-      </p>
-
-      <ContinuarLeitura continuarEm={entrada.continuarEm} compacto />
-    </li>
-  );
-}
-
-function CapaPopular({ obra }: { obra: MediaDoAniList })
-{
-  const titulo = obra.titleEnglish ?? obra.titleRomaji;
-
-  return (
-    <li>
-      <Link
-        href={`/obra/${obra.anilistId}`}
-        className="group flex flex-col gap-1.5"
-      >
-        {obra.coverImageUrl ? (
-          <Image
-            src={obra.coverImageUrl}
-            alt=""
-            width={144}
-            height={216}
-            className="aspect-[2/3] w-full rounded object-cover transition-opacity group-hover:opacity-80"
-            unoptimized
-          />
-        ) : (
-          <div
-            aria-hidden
-            className="flex aspect-[2/3] w-full items-center justify-center rounded bg-superficie text-texto-suave"
-          >
-            —
-          </div>
-        )}
-        <span className="line-clamp-1 text-xs text-texto-suave group-hover:text-texto">
-          {titulo}
-        </span>
-      </Link>
-    </li>
   );
 }

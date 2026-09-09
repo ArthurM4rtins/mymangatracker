@@ -17,6 +17,8 @@ import { ReviewSocial } from "./review-social";
 import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "../../catalogo/botao-estante";
 import { DataHora } from "../../componentes/data-hora";
+import { ColecaoVisual } from "../../componentes/colecao-visual";
+import { CartaoObra } from "../../componentes/cartao-obra";
 import { ContinuarLeitura } from "../../estante/continuar-leitura";
 import { EditarProgresso } from "../../estante/editar-progresso";
 import { SeletorStatus } from "../../estante/seletor-status";
@@ -439,40 +441,15 @@ async function Similares({ similares }: { similares: ObraSimilar[] })
       <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
         {t("similares")}
       </h2>
-      <ul className="grid grid-cols-3 gap-3 sm:grid-cols-6">
-        {similares.map(function (similar)
-        {
-          return (
-            <li key={similar.anilistId}>
-              <Link
-                href={`/obra/${similar.anilistId}`}
-                className="group flex flex-col gap-1.5"
-              >
-                {similar.coverImageUrl ? (
-                  <Image
-                    src={similar.coverImageUrl}
-                    alt=""
-                    width={144}
-                    height={216}
-                    className="aspect-[2/3] w-full rounded object-cover transition-opacity group-hover:opacity-80"
-                    unoptimized
-                  />
-                ) : (
-                  <div
-                    aria-hidden
-                    className="flex aspect-[2/3] w-full items-center justify-center rounded bg-superficie text-texto-suave"
-                  >
-                    —
-                  </div>
-                )}
-                <span className="line-clamp-1 text-xs text-texto-suave group-hover:text-texto">
-                  {similar.titleEnglish ?? similar.titleRomaji}
-                </span>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+      <ColecaoVisual titulo={t("similares")} classeGrade="grid grid-cols-3 gap-3 sm:grid-cols-6"
+        itens={similares.map((similar) => ({
+          id: similar.anilistId,
+          titulo: similar.titleEnglish ?? similar.titleRomaji,
+          capa: similar.coverImageUrl,
+          detalhe: <CartaoObra anilistId={similar.anilistId}
+            titulo={similar.titleEnglish ?? similar.titleRomaji} capa={similar.coverImageUrl} />,
+        }))}
+      />
     </section>
   );
 }
