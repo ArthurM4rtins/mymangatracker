@@ -93,6 +93,7 @@
     "comentario_tamanho_invalido": "commentaire vide ou trop long",
     "proprio_perfil": "impossible sur ton propre profil",
     "proprio_conteudo": "impossible sur ton propre contenu",
+    "relato_indisponivel": "le canal de signalement est indisponible. Réessaie dans un instant.",
     "idioma_invalido": "langue non disponible",
     "limite_excedido": "trop de tentatives — attends avant de réessayer",
     "falha_interna": "impossible pour le moment",
@@ -569,6 +570,27 @@
       "vaziaPropria": "Tu n’as pas encore créé de liste. <link>Créer la première</link>",
       "vaziaOutro": "{username} n’a pas encore créé de liste.",
       "obras": "{n, plural, one {{valor} œuvre} other {{valor} œuvres}}"
+    }
+  },
+  "relatar": {
+    "meta": {
+      "titulo": "Signaler une erreur de traduction"
+    },
+    "titulo": "Un texte mal traduit ?",
+    "subtitulo": "Kidoku parle cinq langues, et toutes n'ont pas de relecteur natif ici. Si quelque chose sonne faux, dis-le-nous.",
+    "avisoPublico": "Ce que tu écris devient une issue publique dans le dépôt du projet, avec ton nom d'utilisateur et l'écran où tu étais. N'y écris rien de personnel.",
+    "precisaEntrar": "Pour signaler, connecte-toi à ton compte.",
+    "entrar": "se connecter",
+    "linkDoRodape": "signaler une erreur de traduction",
+    "obrigado": "Bien reçu, merci. L'équipe le voit dans le dépôt.",
+    "enviar": "Envoyer le signalement",
+    "enviando": "Envoi…",
+    "campos": {
+      "texto": "Qu'est-ce qui ne va pas ?",
+      "sugestao": "Comment cela devrait-il être ? (facultatif)"
+    },
+    "erros": {
+      "geral": "impossible d'envoyer maintenant. Réessaie dans un instant."
     }
   }
 }

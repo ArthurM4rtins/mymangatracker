@@ -93,6 +93,7 @@
     "comentario_tamanho_invalido": "comentario vacío o demasiado largo",
     "proprio_perfil": "no vale para tu propio perfil",
     "proprio_conteudo": "no vale para lo que es tuyo",
+    "relato_indisponivel": "el canal de reportes está caído ahora. Inténtalo de nuevo en un momento.",
     "idioma_invalido": "idioma no disponible",
     "limite_excedido": "demasiados intentos — espera antes de volver a intentarlo",
     "falha_interna": "ahora no es posible",
@@ -569,6 +570,27 @@
       "vaziaPropria": "Todavía no has creado ninguna lista. <link>Crear la primera</link>",
       "vaziaOutro": "{username} todavía no ha creado ninguna lista.",
       "obras": "{n, plural, one {{valor} obra} other {{valor} obras}}"
+    }
+  },
+  "relatar": {
+    "meta": {
+      "titulo": "Reportar error de traducción"
+    },
+    "titulo": "¿Encontraste un texto mal traducido?",
+    "subtitulo": "Kidoku habla cinco idiomas, y no todos tienen un revisor nativo aquí. Si algo se lee raro, cuéntanos.",
+    "avisoPublico": "Lo que escribas se convierte en una issue pública en el repositorio del proyecto, junto con tu nombre de usuario y la pantalla en la que estabas. No escribas nada personal.",
+    "precisaEntrar": "Para reportar, entra en tu cuenta.",
+    "entrar": "entrar",
+    "linkDoRodape": "reportar error de traducción",
+    "obrigado": "Recibido, gracias. El equipo lo ve en el repositorio.",
+    "enviar": "Enviar reporte",
+    "enviando": "Enviando…",
+    "campos": {
+      "texto": "¿Qué está mal?",
+      "sugestao": "¿Cómo debería decir? (opcional)"
+    },
+    "erros": {
+      "geral": "no se pudo enviar ahora. Inténtalo de nuevo en un momento."
     }
   }
 }

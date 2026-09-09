@@ -93,6 +93,7 @@
     "comentario_tamanho_invalido": "Kommentar leer oder zu lang",
     "proprio_perfil": "gilt nicht für dein eigenes Profil",
     "proprio_conteudo": "gilt nicht für deine eigenen Inhalte",
+    "relato_indisponivel": "der Meldekanal ist gerade nicht erreichbar. Versuch es gleich noch mal.",
     "idioma_invalido": "Sprache nicht verfügbar",
     "limite_excedido": "zu viele Versuche — warte, bevor du es erneut versuchst",
     "falha_interna": "gerade nicht möglich",
@@ -569,6 +570,27 @@
       "vaziaPropria": "Du hast noch keine Liste erstellt. <link>Erstelle die erste</link>",
       "vaziaOutro": "{username} hat noch keine Liste erstellt.",
       "obras": "{n, plural, one {{valor} Werk} other {{valor} Werke}}"
+    }
+  },
+  "relatar": {
+    "meta": {
+      "titulo": "Übersetzungsfehler melden"
+    },
+    "titulo": "Ein Text stimmt nicht?",
+    "subtitulo": "Kidoku spricht fünf Sprachen, und nicht alle haben hier eine muttersprachliche Korrektur. Wenn etwas schief klingt, sag Bescheid.",
+    "avisoPublico": "Was du schreibst, wird ein öffentliches Issue im Repository des Projekts — zusammen mit deinem Benutzernamen und dem Bildschirm, auf dem du warst. Schreib nichts Persönliches hinein.",
+    "precisaEntrar": "Zum Melden bitte anmelden.",
+    "entrar": "anmelden",
+    "linkDoRodape": "Übersetzungsfehler melden",
+    "obrigado": "Angekommen, danke. Das Team sieht die Meldung im Repository.",
+    "enviar": "Meldung senden",
+    "enviando": "Senden…",
+    "campos": {
+      "texto": "Was stimmt nicht?",
+      "sugestao": "Wie müsste es heißen? (optional)"
+    },
+    "erros": {
+      "geral": "konnte gerade nicht gesendet werden. Versuch es gleich noch mal."
     }
   }
 }
