@@ -94,6 +94,7 @@
     "proprio_perfil": "gilt nicht für dein eigenes Profil",
     "proprio_conteudo": "gilt nicht für deine eigenen Inhalte",
     "relato_indisponivel": "der Meldekanal ist gerade nicht erreichbar. Versuch es gleich noch mal.",
+    "confirmacao_invalida": "der eingegebene Name passt nicht zu deinem Konto.",
     "idioma_invalido": "Sprache nicht verfügbar",
     "limite_excedido": "zu viele Versuche — warte, bevor du es erneut versuchst",
     "falha_interna": "gerade nicht möglich",
@@ -591,6 +592,25 @@
     },
     "erros": {
       "geral": "konnte gerade nicht gesendet werden. Versuch es gleich noch mal."
+    }
+  },
+  "conta": {
+    "meta": {
+      "titulo": "Konto"
+    },
+    "titulo": "Dein Konto",
+    "subtitulo": "Einstellungen für das ganze Konto.",
+    "linkDoPerfil": "Konto",
+    "apagar": {
+      "titulo": "Konto löschen",
+      "oQueSome": "Alles verschwindet: Regal, Lesefortschritt, Bewertungen, Rezensionen, Listen, Likes und Kommentare — auch die Kommentare, die andere unter deinen Rezensionen geschrieben haben. Nicht rückgängig zu machen.",
+      "nomeLivre": "Dein Benutzername wird sofort wieder frei, und jemand anderes kann ihn registrieren.",
+      "rotulo": "Zum Bestätigen {username} eingeben",
+      "botao": "Mein Konto löschen",
+      "apagando": "Wird gelöscht…"
+    },
+    "erros": {
+      "geral": "hat gerade nicht geklappt. Versuch es gleich noch mal."
     }
   }
 }

@@ -2,6 +2,9 @@
  * PATCH /api/v1/perfil — preferências da conta. Hoje, só o idioma da interface
  * (#116, fase 5).
  *
+ * DELETE /api/v1/perfil — apaga a conta (#208). Irreversível: leva tudo em
+ * cascata e libera o nome de usuário na hora.
+ *
  * Controller: valida com Zod, resolve a sessão, delega. Quem sabe QUAIS idiomas
  * o site tem é esta camada, que enxerga o `routing.locales`; o serviço só checa
  * a forma do código.
@@ -14,16 +17,21 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { routing } from "@/i18n/routing";
+import { apagarContaDoSistema } from "@/server/services/conta.service";
 import { salvarIdiomaDoSistema } from "@/server/services/idioma.service";
 
 import { lerJson } from "../_shared/corpo";
 import { ERRO } from "../_shared/erros";
-import { escreverIdiomaNoCookie, usuarioDaSessao } from "../_shared/sessao";
+import { apagarSessaoDoCookie, escreverIdiomaNoCookie, usuarioDaSessao } from "../_shared/sessao";
 
 export const dynamic = "force-dynamic";
 
 const ESQUEMA_PREFERENCIAS = z.object({
   locale: z.string().min(2).max(35),
+});
+
+const ESQUEMA_EXCLUSAO = z.object({
+  confirmacao: z.string().min(1).max(60),
 });
 
 export async function PATCH(request: Request)
@@ -89,6 +97,89 @@ export async function PATCH(request: Request)
   catch (erro)
   {
     console.error("[perfil] falha ao salvar idioma:", erro instanceof Error ? erro.message : erro);
+    return NextResponse.json(
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
+      { status: 500 },
+    );
+  }
+}
+
+/**
+ * Apaga a conta de quem está logado. A confirmação vem no corpo e é comparada
+ * com o username do banco, no serviço — o cliente não escolhe os dois lados.
+ *
+ * O cookie é apagado na resposta. Não é o que revoga a sessão (o token já
+ * morre porque o usuário não tem mais versão), é para o navegador não ficar
+ * carregando um cookie que não vale mais.
+ */
+export async function DELETE(request: Request)
+{
+  const userId = await usuarioDaSessao();
+
+  if (!userId)
+  {
+    return NextResponse.json(
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
+      { status: 401 },
+    );
+  }
+
+  const leitura = await lerJson(request);
+
+  if (!leitura.ok)
+  {
+    return leitura.resposta;
+  }
+
+  const analise = ESQUEMA_EXCLUSAO.safeParse(leitura.corpo);
+
+  if (!analise.success)
+  {
+    return NextResponse.json(
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
+      { status: 400 },
+    );
+  }
+
+  try
+  {
+    const resultado = await apagarContaDoSistema({
+      userId,
+      confirmacao: analise.data.confirmacao,
+    });
+
+    if (resultado.estado === "muitos_pedidos")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
+        { status: 429, headers: { "Retry-After": String(resultado.esperarSegundos) } },
+      );
+    }
+
+    if (resultado.estado === "confirmacao_invalida")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.CONFIRMACAO_INVALIDA } },
+        { status: 422 },
+      );
+    }
+
+    if (resultado.estado === "nao_encontrada")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
+        { status: 401 },
+      );
+    }
+
+    const resposta = NextResponse.json({ ok: true }, { status: 200 });
+    apagarSessaoDoCookie(resposta);
+
+    return resposta;
+  }
+  catch (erro)
+  {
+    console.error("[perfil] falha ao apagar conta:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
       { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },

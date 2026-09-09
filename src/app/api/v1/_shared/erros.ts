@@ -87,6 +87,8 @@ export const ERRO = {
   // Canal de relato desligado ou GitHub fora (#158): o relato NAO foi
   // registrado, e a tela precisa dizer isso.
   RELATO_INDISPONIVEL: "relato_indisponivel",
+  // Apagar conta (#208): o nome digitado nao bate com o da conta.
+  CONFIRMACAO_INVALIDA: "confirmacao_invalida",
   IDIOMA_INVALIDO: "idioma_invalido",
 
   // 429 — bateu no limitador.

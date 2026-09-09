@@ -86,6 +86,16 @@ export function buscarUsuarioPorUsername(
   });
 }
 
+/**
+ * Apaga a conta (#208). O `onDelete: Cascade` do schema leva o resto — estante,
+ * listas, avaliações, curtidas, comentários, progresso, fontes e as relações de
+ * seguir. Irreversível, e o nome de usuário volta a ficar livre na hora.
+ */
+export async function apagarUsuario(userId: string): Promise<void>
+{
+  await getPrisma().user.delete({ where: { id: userId } });
+}
+
 export async function salvarAvatar(
   userId: string,
   mime: string,
