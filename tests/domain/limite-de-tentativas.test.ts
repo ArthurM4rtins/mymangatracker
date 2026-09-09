@@ -71,3 +71,34 @@ describe("chaveDeTentativa", function ()
     expect(chaveDeTentativa(["203.0.113.9", "a@x"])).not.toBe(chaveDeTentativa(["203.0.113.9", "b@x"]));
   });
 });
+
+// #148, item 5: a chave era SHA-256 sem sal de entradas de baixissima entropia —
+// um IPv4 tem 2^32 possibilidades, e o docblock prometia que a tabela nao vira
+// lista de e-mails e IPs em claro. Com pepper, quem tiver o dump ainda precisa do
+// segredo, que nao mora no banco.
+describe("chaveDeTentativa com pepper", function ()
+{
+  it("o mesmo par com peppers diferentes da chaves diferentes", function ()
+  {
+    const a = chaveDeTentativa(["1.2.3.4"], "pepper-um");
+    const b = chaveDeTentativa(["1.2.3.4"], "pepper-dois");
+
+    expect(a).not.toEqual(b);
+  });
+
+  it("o mesmo par com o mesmo pepper e estavel", function ()
+  {
+    expect(chaveDeTentativa(["1.2.3.4"], "p")).toEqual(chaveDeTentativa(["1.2.3.4"], "p"));
+  });
+
+  it("continua normalizando: espaco nas pontas e maiuscula nao criam balde novo", function ()
+  {
+    expect(chaveDeTentativa([" A@X.COM "], "p")).toEqual(chaveDeTentativa(["a@x.com"], "p"));
+  });
+
+  it("sem pepper ainda produz chave estavel — dev sem a variavel nao quebra", function ()
+  {
+    expect(chaveDeTentativa(["1.2.3.4"])).toEqual(chaveDeTentativa(["1.2.3.4"]));
+    expect(chaveDeTentativa(["1.2.3.4"])).not.toEqual(chaveDeTentativa(["1.2.3.4"], "p"));
+  });
+});

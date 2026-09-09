@@ -4,6 +4,7 @@
 import { spawnSync } from "node:child_process";
 
 const url = process.env.DATABASE_URL;
+const ambiente = process.env.VERCEL_ENV;
 
 if (!url)
 {
@@ -14,7 +15,21 @@ if (!url)
   process.exit(0);
 }
 
-console.log("[migrate] DATABASE_URL presente — aplicando migrations.");
+// Segunda condicao (#148, item 8): so producao — ou fora da Vercel, que e' o
+// desenvolvimento local. A presenca da variavel era a UNICA condicao, entao um
+// Preview cujo DATABASE_URL apontasse para producao aplicaria DDL nao revisado
+// antes de qualquer review. O README promete branch Neon por PR, mas promessa de
+// configuracao nao e' guarda de codigo.
+if (ambiente !== undefined && ambiente !== "production")
+{
+  console.log(
+    `[migrate] VERCEL_ENV=${ambiente} — pulando \`prisma migrate deploy\`. ` +
+      "Migration so roda em producao; preview usa o banco que a integracao apontar, sem DDL.",
+  );
+  process.exit(0);
+}
+
+console.log("[migrate] DATABASE_URL presente e ambiente de producao — aplicando migrations.");
 
 const result = spawnSync(
   "prisma",

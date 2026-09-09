@@ -14,7 +14,7 @@
  * entrando na dele. O balde por conta nunca é zerado pelo sucesso.
  */
 import { interpretarIdentificador } from "@/server/domain/identificador-de-login";
-import { hopsConfiaveis } from "@/server/infra/config";
+import { hopsConfiaveis, pepperDoLimite } from "@/server/infra/config";
 import {
   avaliarLimite,
   chaveDeTentativa,
@@ -200,13 +200,13 @@ export function planoDoLogin(ip: string, identificador: string): PlanoDoLogin
 {
   const normalizado = interpretarIdentificador(identificador);
   const conta = normalizado?.valor ?? "";
-  const par = chaveDeTentativa([ip, conta]);
+  const par = chaveDeTentativa([ip, conta], pepperDoLimite());
 
   return {
     limitar: [
       { chave: par, regra: LOGIN_POR_PAR },
-      { chave: chaveDeTentativa([ip]), regra: LOGIN_POR_IP },
-      { chave: chaveDeTentativa([conta]), regra: LOGIN_POR_CONTA },
+      { chave: chaveDeTentativa([ip], pepperDoLimite()), regra: LOGIN_POR_IP },
+      { chave: chaveDeTentativa([conta], pepperDoLimite()), regra: LOGIN_POR_CONTA },
     ],
     liberar: [par],
   };
@@ -236,7 +236,7 @@ export function limitarComentario(pedido: { userId: string }): Promise<Veredito>
   return verificarERegistrar(
     {
       escopo: "comentario",
-      chaves: [{ chave: chaveDeTentativa([pedido.userId]), regra: COMENTARIOS_POR_USUARIO }],
+      chaves: [{ chave: chaveDeTentativa([pedido.userId], pepperDoLimite()), regra: COMENTARIOS_POR_USUARIO }],
     },
     DEPS_DE_PRODUCAO,
   );
@@ -246,7 +246,7 @@ export function limitarComentario(pedido: { userId: string }): Promise<Veredito>
 function limitarPorUsuario(escopo: string, regra: RegraDeLimite, userId: string): Promise<Veredito>
 {
   return verificarERegistrar(
-    { escopo, chaves: [{ chave: chaveDeTentativa([userId]), regra }] },
+    { escopo, chaves: [{ chave: chaveDeTentativa([userId], pepperDoLimite()), regra }] },
     DEPS_DE_PRODUCAO,
   );
 }
@@ -287,7 +287,7 @@ export function limitarBuscaDoCatalogo(pedido: { ip: string }): Promise<Veredito
   return verificarERegistrar(
     {
       escopo: "catalogo",
-      chaves: [{ chave: chaveDeTentativa([pedido.ip]), regra: BUSCAS_POR_IP }],
+      chaves: [{ chave: chaveDeTentativa([pedido.ip], pepperDoLimite()), regra: BUSCAS_POR_IP }],
     },
     DEPS_DE_PRODUCAO,
   );
@@ -305,7 +305,7 @@ export function limitarCadastro(pedido: { ip: string }): Promise<Veredito>
   return verificarERegistrar(
     {
       escopo: "cadastro",
-      chaves: [{ chave: chaveDeTentativa([pedido.ip]), regra: CADASTRO_POR_IP }],
+      chaves: [{ chave: chaveDeTentativa([pedido.ip], pepperDoLimite()), regra: CADASTRO_POR_IP }],
     },
     DEPS_DE_PRODUCAO,
   );
