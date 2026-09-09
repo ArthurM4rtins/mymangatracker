@@ -126,3 +126,70 @@ describe("lembrarPorChave", function ()
     expect(fn).toHaveBeenCalledOnce();
   });
 });
+
+// #148, item 11: falha nao ficava lembrada, entao durante uma indisponibilidade
+// do terceiro o memo ficava DESLIGADO e cada chamada virava requisicao nova —
+// mantendo a cota fixada em zero justo quando ela precisava se recuperar.
+describe("lembrarPorTempo com janela de falha", function ()
+{
+  it("lembra a falha pela janela curta, em vez de tentar a cada chamada", async function ()
+  {
+    let agora = 1000;
+    const fn = vi.fn(async function (): Promise<string> { throw new Error("fora"); });
+    const lembrada = lembrarPorTempo(fn, 30000, function () { return agora; }, 5000);
+
+    await expect(lembrada()).rejects.toThrow("fora");
+    agora += 1000;
+    await expect(lembrada()).rejects.toThrow("fora");
+
+    expect(fn).toHaveBeenCalledOnce();
+  });
+
+  it("passada a janela de falha, tenta de novo", async function ()
+  {
+    let agora = 1000;
+    const fn = vi
+      .fn<() => Promise<string>>()
+      .mockRejectedValueOnce(new Error("fora"))
+      .mockResolvedValue("ok");
+    const lembrada = lembrarPorTempo(fn, 30000, function () { return agora; }, 5000);
+
+    await expect(lembrada()).rejects.toThrow("fora");
+    agora += 5001;
+
+    await expect(lembrada()).resolves.toBe("ok");
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
+
+  it("a janela de falha e MAIS CURTA que a de sucesso, entao o sucesso volta rapido", async function ()
+  {
+    let agora = 1000;
+    const fn = vi
+      .fn<() => Promise<string>>()
+      .mockRejectedValueOnce(new Error("fora"))
+      .mockResolvedValue("ok");
+    const lembrada = lembrarPorTempo(fn, 30000, function () { return agora; }, 5000);
+
+    await expect(lembrada()).rejects.toThrow("fora");
+    agora += 6000;
+    await expect(lembrada()).resolves.toBe("ok");
+
+    // Agora o sucesso vale a janela cheia.
+    agora += 20000;
+    await expect(lembrada()).resolves.toBe("ok");
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
+
+  it("sem janela de falha, o comportamento antigo continua: tenta de novo na hora", async function ()
+  {
+    const fn = vi
+      .fn<() => Promise<string>>()
+      .mockRejectedValueOnce(new Error("fora"))
+      .mockResolvedValue("ok");
+    const lembrada = lembrarPorTempo(fn, 30000, function () { return 1000; });
+
+    await expect(lembrada()).rejects.toThrow("fora");
+    await expect(lembrada()).resolves.toBe("ok");
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
+});
