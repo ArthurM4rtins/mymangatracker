@@ -4,7 +4,8 @@ import { getLocale, getTranslations } from "next-intl/server";
 import LinkExterno from "next/link";
 import { Link } from "@/i18n/navigation";
 import { verificarSaudeDoSistema } from "@/server/services/sistema.service";
-import { buscarNoCatalogo } from "@/server/services/catalogo.service";
+import { buscarNoCatalogo, type ResultadoBusca } from "@/server/services/catalogo.service";
+import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
 import {
   listarEstanteDoSistema,
@@ -102,7 +103,12 @@ export default async function Home()
             {t("populares.titulo")}
           </h2>
 
-          {(populares.estado === "ok" || populares.estado === "destaques") ? (
+          {/*
+            Os quatro estados que trazem obras (#165, #219). A vitrine da home
+            ficou de fora quando o fallback entrou, e continuou mostrando "o
+            catálogo não respondeu" enquanto o /catalogo já servia do Kitsu.
+          */}
+          {temObras(populares) ? (
             <>
               <ColecaoVisual
                 titulo={t("populares.titulo")}
@@ -160,6 +166,17 @@ export default async function Home()
       </footer>
     </main>
   );
+}
+
+/** Os estados de `buscarNoCatalogo` que vêm com obras, venham de onde vierem. */
+function temObras(
+  resultado: ResultadoBusca,
+): resultado is Extract<ResultadoBusca, { obras: MediaDoAniList[] }>
+{
+  return resultado.estado === "ok"
+    || resultado.estado === "destaques"
+    || resultado.estado === "cache"
+    || resultado.estado === "kitsu";
 }
 
 type DadosDeLeitura = {
