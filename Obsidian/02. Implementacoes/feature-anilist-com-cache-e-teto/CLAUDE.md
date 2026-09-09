@@ -2,7 +2,7 @@
 
 Issue #134, achado 4 da auditoria de 06/09/2026, severidade média. Desenho aberto e **aprovado em 09/09/2026**.
 
-**Estado:** frentes 1 e 4 feitas. Frentes 2 e 3 dependem das pendências no fim deste arquivo.
+**Estado:** as quatro frentes feitas. As pendências que restavam foram decididas em 09/09/2026 — ver **Decisões tomadas**.
 
 ## Objetivo
 
@@ -26,13 +26,13 @@ Isso já existe no projeto e é usado **uma única vez**, na sonda do health (`s
 
 Onde: `catalogo.service.ts`, no módulo, não dentro da função — o memo tem que sobreviver entre requisições.
 
-### 2. Memo por id em similares e autor — PENDENTE
+### 2. Memo por id em similares e autor — FEITO
 
 `autor.service.ts` documenta no cabeçalho não ter cache nenhum. Mesma ideia, mas a chave é o id, então `lembrarPorTempo` (que guarda um valor só) não serve direto: precisa de um mapa de id para função lembrada, com teto de tamanho para o mapa não virar vazamento de memória — chave escolhida pelo visitante é chave sem limite.
 
 Decidir no desenho: `Map` com corte por tamanho, ou aceitar o vazamento por ser id numérico do AniList e processo serverless de vida curta. **Recomendação:** `Map` com teto e descarte do mais antigo, porque o id vem da URL.
 
-### 3. Teto por IP na busca do catálogo — PENDENTE
+### 3. Teto por IP na busca do catálogo — FEITO
 
 `buscarFiltrado` é o caso em que memo **não resolve**: `?q=<aleatório>` é chave escolhida por quem ataca, e cada valor novo é uma ida nova. Aqui a defesa é orçamento por IP, com `verificarERegistrar` num escopo novo, na forma dos limitadores que já existem.
 
@@ -60,6 +60,23 @@ Duas complicações reais:
 **A gravação anônima de `Media` fica como está** (decisão do usuário, 09/09/2026). A issue propunha fechar `deps.salvarMedia` para visitante anônimo em `obra.service.ts`, para caminhar por ids não inserir linhas sem limite. Mas é exatamente esse cache que a #165 quer servir quando o AniList está fora — que é o estado de hoje. Fechar a gravação esvaziaria a fonte da #165. O abuso é cortado na origem pelo memo e pelo teto por IP.
 
 ## Pendências
+
+Nenhuma aberta. As três que existiam foram decididas em 09/09/2026, com o usuário
+delegando a escolha técnica:
+
+1. **Memo por id foi de  com teto**, como a recomendação previa: a chave vem
+   da URL, e mapa que só cresce seria vazamento com a porta aberta. Duzentas
+   chaves, cinco minutos cada.
+2. **O recolhimento do  entrou junto** (item 1 da #148), não como
+   pré-requisito separado. Sem ele o teto por IP trocaria uma pressão por outra:
+   cada busca anônima grava linha numa tabela que ninguém recolhia. É amostrado —
+   uma fração pequena dos pedidos paga a limpeza, sem cron para manter.
+3. **A regra de qual IP vale mudou para o domínio.** A página não pode importar
+   da camada de controller: o  barra, e a exceção existente cobre só
+   sessão e códigos de erro. Como a regra é pura, o domínio é o lugar dela, e as
+   duas bordas viraram ponte.
+
+### Registro do que era pendência
 
 - Escolher entre `Map` com teto e memo simples no item 2.
 - Decidir se o item 1 da #148 (recolher `AuthAttempt`) entra junto com o item 3 ou vira pré-requisito.
