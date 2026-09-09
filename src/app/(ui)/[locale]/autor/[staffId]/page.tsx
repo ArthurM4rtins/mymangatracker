@@ -2,10 +2,12 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { alternativasDeIdioma, Link } from "@/i18n/navigation";
+import { alternativasDeIdioma } from "@/i18n/navigation";
 import { idiomaDoSegmento } from "@/i18n/routing";
 import { autorParaPaginaDoSistema } from "@/server/services/autor.service";
 import { BioDoAutor } from "./bio-do-autor";
+import { ColecaoVisual } from "../../componentes/colecao-visual";
+import { CartaoObra } from "../../componentes/cartao-obra";
 
 // AniList ao vivo: nada pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -114,45 +116,22 @@ export default async function PaginaDoAutor({ params }: Props)
             {t("obras.vazia")}
           </p>
         ) : (
-          <ul className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6">
-            {autor.obras.map(function (obra)
-            {
-              return (
-                <li key={obra.anilistId}>
-                  <Link
-                    href={`/obra/${obra.anilistId}`}
-                    className="group flex flex-col gap-1.5"
-                  >
-                    {obra.coverImageUrl ? (
-                      <Image
-                        src={obra.coverImageUrl}
-                        alt=""
-                        width={144}
-                        height={216}
-                        className="aspect-[2/3] w-full rounded object-cover transition-opacity group-hover:opacity-80"
-                        unoptimized
-                      />
-                    ) : (
-                      <div
-                        aria-hidden
-                        className="flex aspect-[2/3] w-full items-center justify-center rounded bg-superficie text-texto-suave"
-                      >
-                        —
-                      </div>
-                    )}
-                    <span className="line-clamp-1 text-xs text-texto-suave group-hover:text-texto">
-                      {obra.titleEnglish ?? obra.titleRomaji}
-                    </span>
-                    {obra.startYear !== null && (
-                      <span className="text-xs tabular-nums text-texto-suave">
-                        {obra.startYear}
-                      </span>
-                    )}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          <ColecaoVisual titulo={t("obras.titulo")}
+            classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6"
+            itens={autor.obras.map((obra) => ({
+              id: obra.anilistId,
+              titulo: obra.titleEnglish ?? obra.titleRomaji,
+              capa: obra.coverImageUrl,
+              detalhe: (
+                <CartaoObra anilistId={obra.anilistId} titulo={obra.titleEnglish ?? obra.titleRomaji}
+                  capa={obra.coverImageUrl}>
+                  {obra.startYear !== null && (
+                    <span className="text-xs tabular-nums text-texto-suave">{obra.startYear}</span>
+                  )}
+                </CartaoObra>
+              ),
+            }))}
+          />
         )}
       </section>
     </main>

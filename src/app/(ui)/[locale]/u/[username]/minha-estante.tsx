@@ -6,10 +6,11 @@
  * o serviço só entrega `estante` quando quem olha é o dono.
  */
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { useState } from "react";
 import { STATUS_DA_ESTANTE, type StatusDaEstante } from "@/server/domain/perfil";
 import { Link } from "@/i18n/navigation";
+import { ColecaoVisual } from "../../componentes/colecao-visual";
+import { CartaoObra } from "../../componentes/cartao-obra";
 
 export type EntradaParaTela = {
   entradaId: string;
@@ -77,45 +78,24 @@ export function MinhaEstante({
           {t("estante.vazia", { status: c(`status.${aba}`).toLowerCase() })}
         </p>
       ) : (
-        <ul className="grid grid-cols-3 gap-4 sm:grid-cols-5 md:grid-cols-6">
-          {visiveis.map(function (entrada)
-          {
-            return (
-              <li key={entrada.entradaId}>
-                <Link
-                  href={`/obra/${entrada.anilistId}`}
-                  className="group flex flex-col gap-1.5"
-                  title={entrada.titulo}
-                >
-                  <Capa src={entrada.coverImageUrl} />
-                  <span className="truncate text-xs">{entrada.titulo}</span>
-                  <span className="text-xs text-texto-suave">
-                    {entrada.progressChapter === null
-                      ? t("estante.semCapitulo")
-                      : t("estante.capitulo", { n: entrada.progressChapter })}
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+        <ColecaoVisual titulo={c(`status.${aba}`)}
+          classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-5 md:grid-cols-6"
+          itens={visiveis.map((entrada) => ({
+            id: entrada.anilistId,
+            titulo: entrada.titulo,
+            capa: entrada.coverImageUrl,
+            detalhe: (
+              <CartaoObra anilistId={entrada.anilistId} titulo={entrada.titulo} capa={entrada.coverImageUrl}>
+                <span className="text-xs text-texto-suave">
+                  {entrada.progressChapter === null
+                    ? t("estante.semCapitulo")
+                    : t("estante.capitulo", { n: entrada.progressChapter })}
+                </span>
+              </CartaoObra>
+            ),
+          }))}
+        />
       )}
     </section>
-  );
-}
-
-export function Capa({ src }: { src: string | null })
-{
-  return src ? (
-    <Image
-      src={src}
-      alt=""
-      width={160}
-      height={240}
-      className="aspect-[2/3] w-full rounded border border-borda object-cover transition-transform group-hover:scale-[1.02]"
-      unoptimized
-    />
-  ) : (
-    <div aria-hidden className="aspect-[2/3] w-full rounded border border-borda bg-fundo" />
   );
 }
