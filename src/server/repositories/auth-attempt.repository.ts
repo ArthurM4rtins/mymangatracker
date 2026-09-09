@@ -23,6 +23,16 @@ export async function registrarTentativa(escopo: string, chave: string): Promise
   await getPrisma().authAttempt.create({ data: { scope: escopo, key: chave } });
 }
 
+/**
+ * Apaga tudo que já saiu de toda janela (#148, item 1). Sem escopo de
+ * propósito: linha velha não conta para limite nenhum, venha de onde vier.
+ * Quem decide QUANDO chamar é o serviço — repositório não sorteia.
+ */
+export async function recolherTentativasAntigas(antesDe: Date): Promise<void>
+{
+  await getPrisma().authAttempt.deleteMany({ where: { createdAt: { lt: antesDe } } });
+}
+
 /** Login que deu certo zera o par: quem entra de verdade não acumula. */
 export async function limparTentativas(escopo: string, chave: string): Promise<void>
 {

@@ -183,7 +183,8 @@
       }
     },
     "erros": {
-      "indisponivel": "AniList n’a pas répondu. Réessaie dans un instant."
+      "indisponivel": "AniList n’a pas répondu. Réessaie dans un instant.",
+      "muitosPedidos": "Trop de recherches depuis ici. Patiente un instant et réessaie."
     },
     "vazio": {
       "semTermo": "Le catalogue n’a rien renvoyé. Réessaie dans un instant.",

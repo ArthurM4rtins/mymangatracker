@@ -38,3 +38,63 @@ export function lembrarPorTempo<T>(
     return promessa;
   };
 }
+
+/**
+ * O mesmo, mas por chave (#134). Similares e autor são leituras ao vivo do
+ * AniList e o id vem da URL, então um valor lembrado só não serve.
+ *
+ * `maximoDeChaves` não é detalhe: chave escolhida por quem visita é chave sem
+ * limite, e um mapa que só cresce seria vazamento de memória com a porta aberta.
+ * Ao encher, sai a chave mais antiga do mapa — a inserção mantém a ordem.
+ *
+ * Como em `lembrarPorTempo`: a promessa em voo é compartilhada, e falha não
+ * fica lembrada nem ocupa vaga.
+ */
+export function lembrarPorChave<K, T>(
+  fn: (chave: K) => Promise<T>,
+  janelaMs: number,
+  maximoDeChaves: number,
+  agora: () => number = Date.now,
+): (chave: K) => Promise<T>
+{
+  const lembradas = new Map<K, { promessa: Promise<T>; validaAte: number }>();
+
+  return function (chave: K)
+  {
+    const instante = agora();
+    const lembrada = lembradas.get(chave);
+
+    if (lembrada !== undefined && instante < lembrada.validaAte)
+    {
+      return lembrada.promessa;
+    }
+
+    const promessa = fn(chave);
+    const atual = { promessa, validaAte: instante + janelaMs };
+
+    lembradas.delete(chave);
+    lembradas.set(chave, atual);
+
+    while (lembradas.size > maximoDeChaves)
+    {
+      const maisAntiga = lembradas.keys().next();
+
+      if (maisAntiga.done === true)
+      {
+        break;
+      }
+
+      lembradas.delete(maisAntiga.value);
+    }
+
+    promessa.catch(function ()
+    {
+      if (lembradas.get(chave) === atual)
+      {
+        lembradas.delete(chave);
+      }
+    });
+
+    return promessa;
+  };
+}

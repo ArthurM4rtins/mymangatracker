@@ -183,7 +183,8 @@
       }
     },
     "erros": {
-      "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes."
+      "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes.",
+      "muitosPedidos": "Buscas demais a partir daqui. Espere um momento e tente de novo."
     },
     "vazio": {
       "semTermo": "O catálogo não respondeu nada agora. Tente de novo em instantes.",

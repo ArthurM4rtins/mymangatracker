@@ -183,7 +183,8 @@
       }
     },
     "erros": {
-      "indisponivel": "AniList no respondió. Inténtalo de nuevo en unos instantes."
+      "indisponivel": "AniList no respondió. Inténtalo de nuevo en unos instantes.",
+      "muitosPedidos": "Demasiadas búsquedas desde aquí. Espera un momento e inténtalo de nuevo."
     },
     "vazio": {
       "semTermo": "El catálogo no devolvió nada. Inténtalo de nuevo en unos instantes.",

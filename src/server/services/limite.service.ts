@@ -24,6 +24,7 @@ import {
 import {
   contarTentativas,
   limparTentativas,
+  recolherTentativasAntigas,
   registrarTentativa,
 } from "@/server/repositories/auth-attempt.repository";
 
@@ -35,7 +36,51 @@ export type DependenciasDeLimite = {
   ) => Promise<{ total: number; maisAntiga: Date | null }>;
   registrar: (escopo: string, chave: string) => Promise<void>;
   limpar: (escopo: string, chave: string) => Promise<void>;
+  /** Apaga o que já saiu de toda janela. Ausente = ninguém recolhe. */
+  recolher?: (antesDe: Date) => Promise<void>;
+  /** Injetável para o teste fixar a amostra. */
+  sortear?: () => number;
 };
+
+/**
+ * Recolhimento amostrado (#148, item 1).
+ *
+ * `limparTentativas` só é alcançado por login com SUCESSO, então linha de
+ * cadastro, comentário e das outras escritas nunca era recolhida — a tabela
+ * crescia sob tráfego legítimo, sem ninguém atacar. Pior agora, com a busca
+ * anônima do catálogo gravando também (#134).
+ *
+ * Uma fração pequena dos pedidos paga a limpeza, então não há cron para manter
+ * nem pedido esperando por ela com frequência. Falha do recolhimento não pode
+ * derrubar o pedido: é manutenção, não a regra.
+ */
+const JANELA_MAIS_LONGA_MS = 60 * 60_000;
+const CHANCE_DE_RECOLHER = 0.01;
+
+async function recolherDeVezEmQuando(
+  agora: Date,
+  deps: DependenciasDeLimite,
+): Promise<void>
+{
+  const recolher = deps.recolher;
+
+  if (recolher === undefined || (deps.sortear ?? Math.random)() >= CHANCE_DE_RECOLHER)
+  {
+    return;
+  }
+
+  try
+  {
+    await recolher(new Date(agora.getTime() - JANELA_MAIS_LONGA_MS));
+  }
+  catch (erro)
+  {
+    console.error(
+      "[limite] falha ao recolher tentativas antigas:",
+      erro instanceof Error ? erro.message : erro,
+    );
+  }
+}
 
 export async function verificarERegistrar(
   pedido: {
@@ -53,6 +98,8 @@ export async function verificarERegistrar(
   await Promise.all(
     pedido.chaves.map(function ({ chave }) { return deps.registrar(pedido.escopo, chave); }),
   );
+
+  await recolherDeVezEmQuando(agora, deps);
 
   const vereditos = await Promise.all(
     pedido.chaves.map(async function ({ chave, regra })
@@ -114,11 +161,17 @@ const ENTRADAS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 
 // teto reescreve 500 linhas por pedido. Arrastar itens na tela salva a ordem
 // inteira a cada solta, então o teto é folgado para quem organiza de verdade.
 const ORDENS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 };
+// Busca do catalogo (#134, achado 4): anonima, e cada termo novo e uma ida
+// real ao AniList pela cota compartilhada. Memo nao defende, porque a chave e
+// o `?q=` de quem pede. O teto e por IP e folgado: rede compartilhada cai num
+// balde so, e dev local sem `x-forwarded-for` cai todo em "desconhecido".
+const BUSCAS_POR_IP: RegraDeLimite = { maximo: 120, janelaMs: 60 * 60_000 };
 
 const DEPS_DE_PRODUCAO: DependenciasDeLimite = {
   contar: contarTentativas,
   registrar: registrarTentativa,
   limpar: limparTentativas,
+  recolher: recolherTentativasAntigas,
 };
 
 /**
@@ -216,6 +269,18 @@ export function limitarLista(pedido: { userId: string }): Promise<Veredito>
 export function limitarEntrada(pedido: { userId: string }): Promise<Veredito>
 {
   return limitarPorUsuario("estante", ENTRADAS_POR_USUARIO, pedido.userId);
+}
+
+/** A composição de produção. Antes de buscar no catálogo, sem sessão. */
+export function limitarBuscaDoCatalogo(pedido: { ip: string }): Promise<Veredito>
+{
+  return verificarERegistrar(
+    {
+      escopo: "catalogo",
+      chaves: [{ chave: chaveDeTentativa([pedido.ip]), regra: BUSCAS_POR_IP }],
+    },
+    DEPS_DE_PRODUCAO,
+  );
 }
 
 /** A composição de produção. Antes de reordenar os itens de uma lista. */

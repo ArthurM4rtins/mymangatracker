@@ -8,6 +8,8 @@
  */
 import { buscarFiltrado, buscarPopulares } from "@/server/infra/anilist";
 import { lembrarPorTempo } from "@/server/domain/memoria-curta";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import { limitarBuscaDoCatalogo } from "./limite.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import {
   temFiltroAtivo,
@@ -18,7 +20,8 @@ export type ResultadoBusca =
   | { estado: "ok"; termo: string; obras: MediaDoAniList[] }
   | { estado: "destaques"; termo: ""; obras: MediaDoAniList[] }
   | { estado: "vazio"; termo: string }
-  | { estado: "indisponivel"; termo: string };
+  | { estado: "indisponivel"; termo: string }
+  | { estado: "muitos_pedidos"; termo: string };
 
 /**
  * Nunca levanta. A tela é pública e o AniList é de terceiro: fora do ar, a
@@ -30,6 +33,7 @@ export type ResultadoBusca =
 export type DependenciasDoCatalogo = {
   populares: () => Promise<MediaDoAniList[]>;
   filtrado: (filtro: FiltroDoCatalogo) => Promise<MediaDoAniList[]>;
+  limitar: (ip: string) => Promise<Veredito>;
 };
 
 /**
@@ -51,11 +55,13 @@ const JANELA_DA_VITRINE_MS = 30_000;
 export const DEPS_DE_PRODUCAO: DependenciasDoCatalogo = {
   populares: lembrarPorTempo(buscarPopulares, JANELA_DA_VITRINE_MS),
   filtrado: buscarFiltrado,
+  limitar: function (ip) { return limitarBuscaDoCatalogo({ ip }); },
 };
 
 export async function buscarNoCatalogo(
   filtro: FiltroDoCatalogo,
   deps: DependenciasDoCatalogo = DEPS_DE_PRODUCAO,
+  ip?: string,
 ): Promise<ResultadoBusca>
 {
   try
@@ -67,6 +73,18 @@ export async function buscarNoCatalogo(
       return obras.length === 0
         ? { estado: "vazio", termo: "" }
         : { estado: "destaques", termo: "", obras };
+    }
+
+    // Só a busca filtrada tem teto, e só quando quem chama sabe o IP. A vitrine
+    // fica de fora porque é lembrada: repetir não custa ida ao AniList.
+    if (ip !== undefined)
+    {
+      const limite = await deps.limitar(ip);
+
+      if (limite.bloqueado)
+      {
+        return { estado: "muitos_pedidos", termo: filtro.termo };
+      }
     }
 
     const obras = await deps.filtrado(filtro);

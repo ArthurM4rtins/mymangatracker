@@ -183,7 +183,8 @@
       }
     },
     "erros": {
-      "indisponivel": "AniList hat gerade nicht geantwortet. Versuch es gleich noch mal."
+      "indisponivel": "AniList hat gerade nicht geantwortet. Versuch es gleich noch mal.",
+      "muitosPedidos": "Zu viele Suchanfragen von hier aus. Warte einen Moment und versuche es erneut."
     },
     "vazio": {
       "semTermo": "Der Katalog hat gerade nichts geliefert. Versuch es gleich noch mal.",

@@ -13,6 +13,7 @@ import {
 } from "@/server/domain/nota-media";
 import type { AutorDaObra, MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId, buscarSimilares } from "@/server/infra/anilist";
+import { lembrarPorChave } from "@/server/domain/memoria-curta";
 import {
   buscarMediaCompletaPorAnilistId,
   salvarMediaDoAniList,
@@ -320,6 +321,23 @@ async function minhaRelacao(
   };
 }
 
+/**
+ * Similares muda devagar e o id vem da URL: caminhar por ids era uma requisição
+ * nova ao AniList por id, sem teto, do IP único do deploy (#134). Cinco minutos
+ * por id, com teto de chaves para o mapa não crescer sem limite.
+ *
+ * No escopo do módulo, não dentro da composição: recriado a cada chamada, o memo
+ * não lembraria nada.
+ */
+const JANELA_DOS_SIMILARES_MS = 5 * 60_000;
+const MAXIMO_DE_IDS = 200;
+
+const similaresLembrados = lembrarPorChave(
+  buscarSimilares,
+  JANELA_DOS_SIMILARES_MS,
+  MAXIMO_DE_IDS,
+);
+
 /** A composição de produção. */
 export function obraParaPaginaDoSistema(
   anilistId: number,
@@ -330,7 +348,7 @@ export function obraParaPaginaDoSistema(
     buscarCompleta: buscarMediaCompletaPorAnilistId,
     buscarNoAniList: buscarMediaPorId,
     salvarMedia: salvarMediaDoAniList,
-    buscarSimilares,
+    buscarSimilares: similaresLembrados,
     buscarEntrada: buscarEntradaPorMedia,
     buscarLeituraMaisAvancada: aberturaMaisAvancadaDaObra,
     buscarAvaliacao,

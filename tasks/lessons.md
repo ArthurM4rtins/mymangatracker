@@ -478,3 +478,20 @@ trilho e o certo. Decidir isso olhando a tela, nao a assinatura da funcao.
 
 E o teste que garante isso precisa de uma conta presente nas DUAS fontes — com
 uma fonte so, as duas formas passam igual.
+
+## `pnpm test` nao faz type-check; `pnpm build` faz — inclusive nos testes (09/09/2026)
+
+Adicionei uma dependencia obrigatoria a `DependenciasDoCatalogo` e ajustei os
+testes que usavam a nova propriedade. Lint verde, 600 testes verdes, push — e o
+CI vermelho com **doze** `TS2345: Property 'limitar' is missing`, todos em
+`tests/services/catalogo.service.test.ts`.
+
+O vitest transpila sem checar tipo. Quem checa e o `next build`, e ele checa o
+`tests/` junto. Entao teste que monta objeto de dependencia na mao quebra o BUILD
+sem quebrar o TESTE.
+
+**A regra:** ao mudar a forma de um tipo que os testes constroem — campo novo
+obrigatorio em `Dependencias*`, retorno com variante nova —, rodar `pnpm build`
+antes do push, nao so `pnpm lint` e `pnpm test`. E preferir `{ ...fakeDeps(), x }`
+a montar o objeto inteiro em cada teste: uma fabrica so absorve o campo novo em
+um lugar, doze objetos literais nao.
