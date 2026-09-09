@@ -55,6 +55,51 @@ Varredura completa por `Page(perPage: 50)`, upsert por `anilistId`, e depois
 sincronização periódica em lotes, preferindo o registro com `syncedAt` mais
 antigo.
 
+#### Dá para copiar? Os números, da documentação deles (lidos em 09/09/2026)
+
+| | valor |
+|---|---|
+| Limite normal | **90 requisições por minuto** |
+| Limite no estado degradado | **30 por minuto** — é o que a doc anuncia hoje |
+| Estouro | 429 e **1 minuto de castigo** |
+| Burst limiter | existe, sem números públicos — espaçar os pedidos |
+| Página máxima | 50 registros |
+
+A varredura, então, é questão de paciência, não de possibilidade:
+
+| obras | pedidos | a 90/min | a 30/min |
+|---|---|---|---|
+| 50 mil | 1.000 | ~11 min | ~33 min |
+| 100 mil | 2.000 | ~22 min | ~1h10 |
+| 200 mil | 4.000 | ~45 min | ~2h15 |
+
+**Quantas obras existem, não sei** — e não dá para medir com a API fora. A
+primeira resposta da varredura já diz (`pageInfo.total`), então o próprio
+importador descobre e registra antes de continuar.
+
+#### O que a documentação NÃO diz
+
+Não há declaração sobre espelhar, copiar em massa ou raspar o catálogo. Nem
+permitindo, nem proibindo. O contato deles é `contact@anilist.co`.
+
+**Recomendação:** espelhar as mais populares primeiro, em faixas, e parar quando
+o produto estiver servido — não varrer o acervo inteiro só porque cabe. Se um dia
+fizer falta o acervo completo, aí sim vale escrever para eles antes.
+
+#### O limite que aperta primeiro não é o deles, é o nosso
+
+Estimando 1 a 2 KB por obra com sinopse:
+
+| obras | tamanho aproximado |
+|---|---|
+| 20 mil | 20–40 MB |
+| 100 mil | 100–200 MB |
+| 200 mil | 200–400 MB |
+
+O plano gratuito do Neon dá **0,5 GB**. O acervo inteiro pode caber, mas deixa
+pouca folga para o resto — e o resto é o que importa (estante, avaliações,
+progresso). Mais um argumento para o recorte.
+
 ## A descoberta que costura as duas fases
 
 **O Kitsu entrega o `anilistId` de cada obra**, no mesmo pedido:
@@ -105,10 +150,10 @@ enquanto o AniList estiver fora, e some do caminho quando ele voltar.
    mudança de comportamento visível: a busca passaria a mostrar o nosso espelho, e
    não o AniList ao vivo. Antes da Fase 2 isso não se decide — hoje o banco tem
    quinze obras.
-2. **Tamanho do espelho e limite do Neon.** Não sei quantas obras o AniList tem, e
-   não dá para medir com ele fora. Com `perPage: 50` e o teto de requisições por
-   minuto deles, a varredura é de dezenas de minutos. Confirmar o armazenamento do
-   plano antes de rodar.
+2. **Quantas obras espelhar.** Os números da varredura estão acima; o que falta é
+   a decisão de escopo. Recomendação: as mais populares, em faixas, parando quando
+   o produto estiver servido. O limite que aperta primeiro é o armazenamento do
+   nosso plano, não o deles.
 3. **Onde a sincronização roda**: cron da Vercel (o plano Hobby permite pouca
    frequência) ou script à mão. Cron pede rota protegida por segredo.
 4. **A Fase 2 depende do AniList voltar.** Não há previsão. A Fase 1 não depende, e
