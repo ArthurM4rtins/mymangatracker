@@ -3,6 +3,14 @@
  * a partir da página da obra). Quem resolve a sessão é o controller.
  */
 import { mesmoConjunto } from "@/server/domain/lista-ordem";
+import { podeSeRelacionar } from "@/server/domain/social";
+import {
+  FATOR_DE_BUSCA,
+  MAXIMO_POR_AUTOR,
+  noMaximoPorAutor,
+} from "@/server/domain/rodizio-de-autoria";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import { limitarLista, limitarOrdem } from "./limite.service";
 import { buscarMediaPorAnilistId } from "@/server/repositories/media.repository";
 import {
   adicionarItem,
@@ -10,6 +18,7 @@ import {
   apagarLista,
   buscarListaComItens,
   criarLista,
+  donoDaLista,
   editarLista,
   listarItensParaOrdem,
   listarListasPublicas,
@@ -18,6 +27,7 @@ import {
   reordenarItens,
   type ListaComItens,
   type ListaPublica,
+  buscarNomeDaLista,
 } from "@/server/repositories/lista.repository";
 
 import type { OrdemDasListas } from "@/server/domain/lista-listagem";
@@ -30,12 +40,18 @@ export type DependenciasDeCriacao = {
     nome: string;
     descricao: string | null;
   }) => Promise<{ id: string }>;
+  /** Teto de listas por usuário na janela (#136). */
+  limitar: (userId: string) => Promise<Veredito>;
 };
 
 export async function criarListaDoUsuario(
   pedido: { userId: string; nome: string; descricao: string | null },
   deps: DependenciasDeCriacao,
-): Promise<{ estado: "ok"; listaId: string } | { estado: "lista_invalida" }>
+): Promise<
+  | { estado: "ok"; listaId: string }
+  | { estado: "lista_invalida" }
+  | { estado: "limitado"; esperarSegundos: number }
+>
 {
   const nome = pedido.nome.trim();
   const descricao = pedido.descricao?.trim() || null;
@@ -43,6 +59,13 @@ export async function criarListaDoUsuario(
   if (nome === "" || nome.length > NOME_MAXIMO)
   {
     return { estado: "lista_invalida" };
+  }
+
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "limitado", esperarSegundos: limite.esperarSegundos };
   }
 
   const criada = await deps.criar({ userId: pedido.userId, nome, descricao });
@@ -56,7 +79,7 @@ export type DependenciasDeToggle = {
     userId: string,
     listaId: string,
     mediaId: string,
-  ) => Promise<{ jaExistia: boolean } | null>;
+  ) => Promise<{ jaExistia: boolean } | { cheia: true } | null>;
   remover: (
     userId: string,
     listaId: string,
@@ -75,6 +98,7 @@ export async function alternarObraNaLista(
   | { estado: "ok"; contem: boolean }
   | { estado: "nao_encontrada" }
   | { estado: "obra_desconhecida" }
+  | { estado: "lista_cheia" }
 >
 {
   const media = await deps.buscarMedia(pedido.anilistId);
@@ -89,6 +113,11 @@ export async function alternarObraNaLista(
   if (adicionado === null)
   {
     return { estado: "nao_encontrada" };
+  }
+
+  if ("cheia" in adicionado)
+  {
+    return { estado: "lista_cheia" };
   }
 
   if (!adicionado.jaExistia)
@@ -134,7 +163,10 @@ export function criarListaDoSistema(pedido: {
   descricao: string | null;
 })
 {
-  return criarListaDoUsuario(pedido, { criar: criarLista });
+  return criarListaDoUsuario(pedido, {
+    criar: criarLista,
+    limitar: function (userId) { return limitarLista({ userId }); },
+  });
 }
 
 /** A composição de produção. */
@@ -166,10 +198,35 @@ export function removerObraDaListaDoSistema(pedido: {
 
 const LIMITE_DE_LISTAS_PUBLICAS = 30;
 
+export type DependenciasDeListasPublicas = {
+  listar: (limite: number, ordem: OrdemDasListas) => Promise<ListaPublica[]>;
+};
+
+/**
+ * A listagem pública, com rodízio de autoria (#144): trinta cards ordenados só
+ * por data deixavam uma conta ocupar a página inteira, e repostar de tempos em
+ * tempos mantinha assim. Vale nas duas ordenações — por curtidas o rodízio não
+ * mexe no ranking, só pula o excedente de quem já apareceu duas vezes.
+ */
+export async function listasPublicas(
+  ordem: OrdemDasListas,
+  deps: DependenciasDeListasPublicas,
+): Promise<ListaPublica[]>
+{
+  const linhas = await deps.listar(LIMITE_DE_LISTAS_PUBLICAS * FATOR_DE_BUSCA, ordem);
+
+  return noMaximoPorAutor(
+    linhas,
+    function (lista) { return lista.username; },
+    MAXIMO_POR_AUTOR,
+    LIMITE_DE_LISTAS_PUBLICAS,
+  );
+}
+
 /** A composição de produção. As listas de todo mundo, na ordem pedida (issue #80). */
 export function listasPublicasDoSistema(ordem: OrdemDasListas = "recentes"): Promise<ListaPublica[]>
 {
-  return listarListasPublicas(LIMITE_DE_LISTAS_PUBLICAS, ordem);
+  return listasPublicas(ordem, { listar: listarListasPublicas });
 }
 
 /** A composição de produção. A lista com as obras, para a página dela. */
@@ -246,17 +303,34 @@ export type DependenciasDeOrdem = {
     listaId: string,
     mediaIds: string[],
   ) => Promise<{ reordenada: true } | null>;
+  limitar: (userId: string) => Promise<Veredito>;
 };
 
 /**
  * A ordem proposta (por anilistId) tem que ser permutação exata dos itens
  * atuais — o domínio decide. Só então traduz para mediaId e grava.
+ *
+ * O teto por usuário (#146) corre antes de tudo: reordenar reescreve a lista
+ * inteira, e sem limite o único freio era a latência de quem pedia. Pedido
+ * bloqueado não custa nem a leitura dos itens.
  */
 export async function reordenarItensDaLista(
   pedido: { userId: string; listaId: string; anilistIds: number[] },
   deps: DependenciasDeOrdem,
-): Promise<{ estado: "ok" } | { estado: "ordem_invalida" } | { estado: "nao_encontrada" }>
+): Promise<
+  | { estado: "ok" }
+  | { estado: "ordem_invalida" }
+  | { estado: "nao_encontrada" }
+  | { estado: "muitos_pedidos"; esperarSegundos: number }
+>
 {
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "muitos_pedidos", esperarSegundos: limite.esperarSegundos };
+  }
+
   const atuais = await deps.listarItens(pedido.userId, pedido.listaId);
 
   if (atuais === null)
@@ -283,20 +357,40 @@ export async function reordenarItensDaLista(
 }
 
 export type DependenciasDeCurtidaDeLista = {
+  /** O dono da lista, ou null quando ela não existe. */
+  buscarDono: (listaId: string) => Promise<string | null>;
   alternar: (
     listaId: string,
     userId: string,
   ) => Promise<{ curtida: boolean; total: number } | null>;
 };
 
+/**
+ * Curtir a PRÓPRIA lista é recusado (#148, item 4), como curtir o próprio perfil
+ * já era desde a #74. Sem isso, quem cria a lista se somava no ranking por
+ * curtidas de `/listas`.
+ */
 export async function curtirLista(
   pedido: { userId: string; listaId: string },
   deps: DependenciasDeCurtidaDeLista,
 ): Promise<
   | { estado: "ok"; curtida: boolean; total: number }
   | { estado: "nao_encontrada" }
+  | { estado: "a_si_mesmo" }
 >
 {
+  const dono = await deps.buscarDono(pedido.listaId);
+
+  if (dono === null)
+  {
+    return { estado: "nao_encontrada" };
+  }
+
+  if (!podeSeRelacionar(pedido.userId, dono))
+  {
+    return { estado: "a_si_mesmo" };
+  }
+
   const resultado = await deps.alternar(pedido.listaId, pedido.userId);
 
   if (resultado === null)
@@ -328,11 +422,21 @@ export function reordenarItensDoSistema(pedido: {
   return reordenarItensDaLista(pedido, {
     listarItens: listarItensParaOrdem,
     reordenar: reordenarItens,
+    limitar: function (userId) { return limitarOrdem({ userId }); },
   });
 }
 
 /** A composição de produção. */
 export function curtirListaDoSistema(pedido: { userId: string; listaId: string })
 {
-  return curtirLista(pedido, { alternar: alternarCurtidaDaLista });
+  return curtirLista(pedido, {
+    alternar: alternarCurtidaDaLista,
+    buscarDono: donoDaLista,
+  });
+}
+
+/** Só o nome da lista, para metadata (#135): não carrega os itens duas vezes por visita. */
+export function nomeDaListaDoSistema(listaId: string): Promise<string | null>
+{
+  return buscarNomeDaLista(listaId);
 }

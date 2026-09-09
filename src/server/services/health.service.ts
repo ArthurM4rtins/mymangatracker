@@ -16,7 +16,13 @@ export type Sonda = () => Promise<"ok" | "not_configured">;
 
 export type DependenciasDoHealth = {
   database: Sonda;
-  anilist: Sonda;
+  /**
+   * Opcional (#148, itens 11 e 12): a rota é anônima e sem teto, e cada chamada
+   * virava requisição real ao AniList pela cota compartilhada de todo o app.
+   * Sonda de liveness não testa terceiro a cada poll — o corpo com o terceiro
+   * fica para quem está autenticado.
+   */
+  anilist?: Sonda;
   /** Só configuração: `ok` ou `not_configured`, nunca mede nada. */
   sessionSecret: Sonda;
   relogio?: () => Date;
@@ -39,10 +45,12 @@ export async function verificarSaude(
   const relogio = deps.relogio ?? function () { return new Date(); };
   const timeoutMs = deps.timeoutMs ?? TIMEOUT_PADRAO_MS;
 
+  const anilist = deps.anilist;
+
   // Em paralelo: uma sonda lenta não pode somar o tempo da outra.
   const dependencies = await Promise.all([
     medir("database", deps.database, timeoutMs),
-    medir("anilist", deps.anilist, timeoutMs),
+    ...(anilist === undefined ? [] : [medir("anilist", anilist, timeoutMs)]),
     medir("session_secret", deps.sessionSecret, timeoutMs),
   ]);
 

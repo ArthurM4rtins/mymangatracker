@@ -75,21 +75,30 @@ function comentarioParaDto(linha: LinhaDeComentario, userId: string | null): Com
  * As resenhas públicas da obra: mais curtidas primeiro, desempate recente.
  * `userId` (opcional) só marca "curti/meu" — não filtra nada.
  */
+/**
+ * As `limite` resenhas mais curtidas da obra (#135): antes vinham TODAS, e uma
+ * obra popular com muitas resenhas de 20 KB virava dezenas de MB por render
+ * anônimo. Primeira página; carregar mais é evolução.
+ */
 export async function listarReviewsDaObra(
   mediaId: string,
   userId: string | null,
+  limite: number,
 ): Promise<ReviewPublica[]>
 {
   const linhas = await getPrisma().entry.findMany({
     where: { mediaId, review: { not: null } },
-    orderBy: [{ likes: { _count: "desc" } }, { reviewedAt: "desc" }],
+    // Desempate pela data publica (#143), nao pelo historico da linha.
+    orderBy: [{ likes: { _count: "desc" } }, { publishedAt: "desc" }],
+    take: limite,
     select: {
       id: true,
       userId: true,
       rating: true,
       review: true,
       containsSpoilers: true,
-      reviewedAt: true,
+      publishedAt: true,
+      createdAt: true,
       user: { select: { username: true, avatarUpdatedAt: true } },
       _count: { select: { likes: true, comentarios: true } },
       likes:
@@ -118,7 +127,7 @@ export async function listarReviewsDaObra(
       rating: linha.rating?.toString() ?? null,
       review: linha.review ?? "",
       containsSpoilers: linha.containsSpoilers,
-      publicadaEm: linha.reviewedAt,
+      publicadaEm: linha.publishedAt ?? linha.createdAt,
       curtidas: linha._count.likes,
       curtiPorMim: Array.isArray(linha.likes) && linha.likes.length > 0,
       comentarios: linha.comentarios
@@ -156,8 +165,36 @@ export async function listarComentariosAnteriores(
 }
 
 /**
+ * De quem é a resenha, se ela existe E tem texto. A FK sozinha não responde
+ * isso: a linha sobrevive ao dono apagar a resenha e manter a nota, e o id dela
+ * já circulou no HTML da página da obra (#138). Sem esta checagem, curtida e
+ * comentário eram aceitos numa resenha que não existe e ressurgiam colados no
+ * texto novo do dono.
+ *
+ * O dono sai junto porque o serviço precisa dele para recusar auto-curtida
+ * (#148, item 4) — é a mesma consulta, não uma segunda ida ao banco.
+ *
+ * Não é atômico com a escrita que vem depois — os catches de P2002 e P2003
+ * continuam sendo o que fecha a corrida.
+ */
+export async function donoDaResenha(entryId: string): Promise<string | null>
+{
+  const alvo = await getPrisma().entry.findFirst({
+    where: { id: entryId, review: { not: null } },
+    select: { userId: true },
+  });
+
+  return alvo?.userId ?? null;
+}
+
+async function temResenha(entryId: string): Promise<boolean>
+{
+  return (await donoDaResenha(entryId)) !== null;
+}
+
+/**
  * Toggle da curtida. `null` quando a resenha não existe (FK estoura no
- * create). Devolve o estado final e o total.
+ * create) ou está sem texto (#138). Devolve o estado final e o total.
  *
  * Atômico (#65, item 5): tenta apagar; se não havia, cria. Dois cliques
  * concorrentes não viram 404 — o segundo `create` bate no unique (P2002) e é
@@ -168,6 +205,11 @@ export async function alternarCurtida(
   userId: string,
 ): Promise<{ curtida: boolean; total: number } | null>
 {
+  if (!(await temResenha(entryId)))
+  {
+    return null;
+  }
+
   const prisma = getPrisma();
 
   const apagadas = await prisma.reviewLike.deleteMany({ where: { entryId, userId } });
@@ -202,8 +244,9 @@ export async function alternarCurtida(
 }
 
 /**
- * Comenta na resenha. `null` só quando ela não existe (FK, P2003); banco fora
- * e afins sobem para a rota logar e responder 500 (#65, item 6).
+ * Comenta na resenha. `null` quando ela não existe (FK, P2003) ou está sem
+ * texto (#138); banco fora e afins sobem para a rota logar e responder 500
+ * (#65, item 6).
  */
 export async function comentarNaReview(
   entryId: string,
@@ -211,6 +254,11 @@ export async function comentarNaReview(
   texto: string,
 ): Promise<{ id: string } | null>
 {
+  if (!(await temResenha(entryId)))
+  {
+    return null;
+  }
+
   try
   {
     return await getPrisma().reviewComment.create({

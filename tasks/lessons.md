@@ -422,3 +422,104 @@ commit que parecia feito e nao estava.
 ferramenta de arquivo, nao pelo shell) e roda com `python arquivo.py`. Heredoc so
 para bloco curto. E depois de qualquer falha de shell, `git status` antes de
 assumir que algo foi aplicado.
+
+## Duas sessoes na mesma copia do repo: o trabalho some e o commit vai para a branch errada (09/09/2026)
+
+Enquanto eu mexia nas issues de seguranca, o usuario trabalhava na #182 na MESMA
+pasta. O que aconteceu, em ordem: minhas tres edicoes foram parar num
+`git stash` que eu nao criei ("WIP ... antes de retomar issue 182"), o
+`git commit` respondeu "nothing to commit, working tree clean", e mais adiante um
+commit meu caiu na branch `desenvNovoDesignCatalogo`, que era a dele — a branch
+tinha trocado embaixo de mim entre um comando e outro.
+
+Nada se perdeu: o stash foi recuperado com `git stash pop`, e o commit foi salvo
+com `git format-patch` antes de `git reset --mixed` devolver a branch dele
+intacta. Mas custou tempo e quase contaminou o trabalho do outro lado.
+
+Sinal de alerta que apareceu antes do problema: `pnpm test` deu 56 arquivos numa
+rodada e 53 na seguinte, sem eu ter mexido em teste nenhum. Contagem de suite que
+muda sozinha significa que a arvore mudou por fora.
+
+**A regra:** ao trabalhar em paralelo com outra sessao no mesmo repositorio,
+`git worktree add ../<pasta> <branch>` e trabalhar la — indice, HEAD e working
+tree proprios. Copiar o `.env` (nao versionado) e rodar `pnpm install` na
+worktree; o `pnpm` usa store global, entao e rapido. Nunca `git add -A` numa
+arvore compartilhada: `git add` por arquivo, sempre.
+
+## Provar na tela sem dizer QUAL servidor esta rodando o codigo novo (09/09/2026)
+
+Baixei o carrossel da home de 12 para 10 itens e segui trabalhando. O usuario
+mandou um print: "mas ali mostra que tem 12". Estava certo — o `pnpm dev` que ele
+tinha aberto servia a `main`, sem a minha mudanca, que vivia numa branch nao
+mergeada.
+
+**A regra:** mudanca de tela so vira prova no servidor que roda o codigo dela.
+Subir o dev da propria branch em outra porta, conferir ali, e dizer explicitamente
+que o servidor do usuario continua na `main` ate o merge. Sem isso o print dele
+mede outra coisa e a conversa gasta um round-trip.
+
+Corolario que apareceu no mesmo dia: o contador do carrossel (`{centro + 1} / {total}`)
+e renderizado no cliente e NAO existe no HTML servido — procurar por ele com
+`grep` no `curl` nao acha nada. Contar o MARKUP do card, lembrando que o carrossel
+renderiza um card fantasma `aria-hidden` para medir largura: 11 no HTML sao 10 na
+tela.
+
+## Teto por autor em lista mesclada vale sobre a MESCLA, nao por fonte (09/09/2026)
+
+Na #144 apliquei "no maximo 2 por autor" nas resenhas e nas listas separadamente,
+e o feed da home continuou deixando a mesma conta ocupar QUATRO linhas — 2 de cada
+fonte. O teste unitario passava, porque testava uma fonte de cada vez; o furo so
+apareceu ao contar autor por autor no HTML da home de verdade.
+
+**A regra:** quando o produto final e UMA lista, o limite por autor se aplica
+depois da mescla, e a funcao que mescla recebe o tamanho da BUSCA, nao o do
+resultado. Quando sao trilhos visualmente distintos (dois carrosseis), o teto por
+trilho e o certo. Decidir isso olhando a tela, nao a assinatura da funcao.
+
+E o teste que garante isso precisa de uma conta presente nas DUAS fontes — com
+uma fonte so, as duas formas passam igual.
+
+## `pnpm test` nao faz type-check; `pnpm build` faz — inclusive nos testes (09/09/2026)
+
+Adicionei uma dependencia obrigatoria a `DependenciasDoCatalogo` e ajustei os
+testes que usavam a nova propriedade. Lint verde, 600 testes verdes, push — e o
+CI vermelho com **doze** `TS2345: Property 'limitar' is missing`, todos em
+`tests/services/catalogo.service.test.ts`.
+
+O vitest transpila sem checar tipo. Quem checa e o `next build`, e ele checa o
+`tests/` junto. Entao teste que monta objeto de dependencia na mao quebra o BUILD
+sem quebrar o TESTE.
+
+**A regra:** ao mudar a forma de um tipo que os testes constroem — campo novo
+obrigatorio em `Dependencias*`, retorno com variante nova —, rodar `pnpm build`
+antes do push, nao so `pnpm lint` e `pnpm test`. E preferir `{ ...fakeDeps(), x }`
+a montar o objeto inteiro em cada teste: uma fabrica so absorve o campo novo em
+um lugar, doze objetos literais nao.
+
+## Worktree com CRLF faz o Prisma pedir reset do banco de desenvolvimento (09/09/2026)
+
+`pnpm prisma migrate dev` na worktree respondeu que duas migrations de 01/09
+"foram modificadas depois de aplicadas" e que precisava **resetar o schema**,
+apagando o banco de desenvolvimento inteiro — com os dados de teste do usuario e
+o trabalho dele em andamento.
+
+Nao havia modificacao nenhuma: `git log` mostrava um commit por arquivo, sem
+alteracao posterior. A diferenca era o FIM DE LINHA. O `git worktree add` fez
+checkout com `core.autocrlf` ligado e gravou CRLF; a copia original tem LF, e foi
+dela que o checksum guardado em `_prisma_migrations` foi calculado. O Prisma
+compara o arquivo byte a byte.
+
+| copia | bytes | CRLF |
+|---|---|---|
+| original do usuario | 1500 | 1 |
+| worktree | 1543 | 44 |
+
+**A regra:** "migration modificada depois de aplicada" com `git log` limpo e
+Windows no meio e' fim de linha, nao corrupcao. NUNCA aceitar o reset para sair
+disso. Conferir com `python -c "print(open(f,'rb').read().count(b'\r\n'))"` nas
+duas copias e igualar os bytes — o que funcionou foi copiar os arquivos de
+migration da copia original para a worktree, rodar `migrate dev`, e restaurar os
+arquivos com `git checkout --` depois, para nao commitar troca de EOL.
+
+Antes disso: `git config core.autocrlf false` na worktree, senao o proximo
+checkout recria o problema.

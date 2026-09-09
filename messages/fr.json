@@ -76,11 +76,15 @@
     "avaliacao_nao_encontrada": "note introuvable",
     "usuario_nao_encontrado": "utilisateur introuvable",
     "ja_em_uso": "indisponible",
+    "cadastro_nao_concluido": "impossible de finaliser l’inscription — vérifie les informations ou, si tu as déjà un compte, connecte-toi",
+    "origem_recusada": "la requête ne vient pas de Kidoku",
+    "conteudo_nao_json": "la requête doit être en JSON",
     "nao_avanca": "ce chapitre ne dépasse pas la progression de ton étagère — pour revenir en arrière, utilise la réinitialisation",
     "sem_fonte": "configure d’abord ta source de lecture",
     "arquivo_grande_demais": "l’image dépasse 512 Ko",
     "tipo_de_arquivo_invalido": "envoie une image JPEG, PNG ou WebP",
     "capitulo_invalido": "chapitre invalide",
+    "lista_cheia": "la liste a atteint sa limite de 500 œuvres",
     "avaliacao_invalida": "note invalide — donne une note de 0,5 à 5 par demi-étoile, ou une critique",
     "url_invalida": "URL de lecture invalide",
     "url_de_capitulo_invalida": "colle l’URL complète du chapitre 1, avec https://",
@@ -88,6 +92,7 @@
     "ordem_invalida": "l’ordre doit contenir exactement les œuvres de la liste",
     "comentario_tamanho_invalido": "commentaire vide ou trop long",
     "proprio_perfil": "impossible sur ton propre profil",
+    "proprio_conteudo": "impossible sur ton propre contenu",
     "idioma_invalido": "langue non disponible",
     "limite_excedido": "trop de tentatives — attends avant de réessayer",
     "falha_interna": "impossible pour le moment",
@@ -179,7 +184,8 @@
       }
     },
     "erros": {
-      "indisponivel": "AniList n’a pas répondu. Réessaie dans un instant."
+      "indisponivel": "AniList n’a pas répondu. Réessaie dans un instant.",
+      "muitosPedidos": "Trop de recherches depuis ici. Patiente un instant et réessaie."
     },
     "vazio": {
       "semTermo": "Le catalogue n’a rien renvoyé. Réessaie dans un instant.",
@@ -382,6 +388,7 @@
       "autoria": "par <autor>{username}</autor> · {n, plural, one {# œuvre} other {# œuvres}}",
       "vazia": "Liste vide — ajoute des œuvres avec le bouton de liste sur la page de chaque œuvre.",
       "remover": "retirer",
+      "removerConfirmacao": "Retirer cette œuvre de la liste ?",
       "curtida": {
         "curtir": "aimer la liste",
         "descurtir": "retirer le j’aime de la liste"

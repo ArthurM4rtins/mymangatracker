@@ -139,6 +139,21 @@ Verde sozinho não prova nada. Cada invariante do projeto foi visto **falhando**
 - `Media` é cache do AniList: se sumir, é reconstruído. Por isso as FKs que apontam para ele são
   `Restrict`, não `Cascade` — cache não apaga dado de usuário.
 
+## Dependências
+
+`next`, `react`, `react-dom`, `prisma`, `@prisma/client` e `@prisma/adapter-pg` são
+**pinados**. Os três do Prisma têm um motivo específico: a tag `latest` do CLI já
+esteve num major à frente do client, e `pnpm add` monta a combinação quebrada sem
+avisar (registrado em `tasks/lessons.md`). O resto usa caret.
+
+`pnpm audit` reporta seis avisos, três altos e três moderados. **Todos** passam por
+`prisma`, o CLI: lodash via `@prisma/studio-core`, `deepmerge-ts` via
+`@prisma/config`, e `mysql2` direto. O CLI é `devDependency` e peer opcional do
+client, então o tracing do Next não o leva para o bundle da função, e nada sob
+`src/` importa qualquer um dos três. Não há ação de runtime a tomar, e o CI não
+roda `audit` justamente por isso. Se um dia algum deles aparecer numa dependência
+de produção, aí é bug, não ruído (#148, item 15).
+
 ## Deploy
 
 Push na `main` → build automático na Vercel → `prisma generate` → migration condicional → `next build`.

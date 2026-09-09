@@ -20,7 +20,9 @@ describe("curtirReview", function ()
   {
     const alternar = vi.fn(async function () { return { curtida: true, total: 3 }; });
 
-    const resultado = await curtirReview({ userId: "u1", entryId: "e1" }, { alternar });
+    const buscarDono = vi.fn(async function (): Promise<string | null> { return "dona"; });
+
+    const resultado = await curtirReview({ userId: "u1", entryId: "e1" }, { alternar, buscarDono });
 
     expect(alternar).toHaveBeenCalledWith("e1", "u1");
     expect(resultado).toEqual({ estado: "ok", curtida: true, total: 3 });
@@ -29,9 +31,10 @@ describe("curtirReview", function ()
   it("resenha inexistente é nao_encontrada", async function ()
   {
     const alternar = vi.fn(async function () { return null; });
+    const buscarDono = vi.fn(async function (): Promise<string | null> { return null; });
 
     await expect(
-      curtirReview({ userId: "u1", entryId: "morta" }, { alternar }),
+      curtirReview({ userId: "u1", entryId: "morta" }, { alternar, buscarDono }),
     ).resolves.toEqual({ estado: "nao_encontrada" });
   });
 });
@@ -139,5 +142,44 @@ describe("apagarComentarioDaReview", function ()
     await expect(
       apagarComentarioDaReview({ userId: "u1", comentarioId: "alheio" }, { apagar }),
     ).resolves.toEqual({ estado: "nao_encontrada" });
+  });
+});
+
+// #148, item 4: curtir o proprio PERFIL ja era recusado com 422 desde a #74, mas
+// a autora podia curtir a propria resenha e subir no ranking por curtidas da
+// pagina da obra. Assimetria provavel, nao teorica: os dois CHECK de
+// auto-relacao do banco cobrem Follow e ProfileLike, e nao ReviewLike.
+describe("curtir a propria resenha", function ()
+{
+  it("e recusado, e nao chega a alternar", async function ()
+  {
+    const alternar = vi.fn(async function () { return { curtida: true, total: 1 }; });
+    const buscarDono = vi.fn(async function () { return "u1"; });
+
+    await expect(
+      curtirReview({ userId: "u1", entryId: "e1" }, { alternar, buscarDono }),
+    ).resolves.toEqual({ estado: "a_si_mesmo" });
+    expect(alternar).not.toHaveBeenCalled();
+  });
+
+  it("resenha de outra pessoa continua passando", async function ()
+  {
+    const alternar = vi.fn(async function () { return { curtida: true, total: 1 }; });
+    const buscarDono = vi.fn(async function () { return "dona"; });
+
+    await expect(
+      curtirReview({ userId: "u1", entryId: "e1" }, { alternar, buscarDono }),
+    ).resolves.toEqual({ estado: "ok", curtida: true, total: 1 });
+  });
+
+  it("resenha inexistente ou sem texto e nao_encontrada, sem alternar", async function ()
+  {
+    const alternar = vi.fn(async function () { return { curtida: true, total: 1 }; });
+    const buscarDono = vi.fn(async function (): Promise<string | null> { return null; });
+
+    await expect(
+      curtirReview({ userId: "u1", entryId: "e1" }, { alternar, buscarDono }),
+    ).resolves.toEqual({ estado: "nao_encontrada" });
+    expect(alternar).not.toHaveBeenCalled();
   });
 });

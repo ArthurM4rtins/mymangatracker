@@ -30,6 +30,14 @@ export async function POST(
   {
     const resultado = await curtirListaDoSistema({ userId, listaId: id });
 
+    if (resultado.estado === "a_si_mesmo")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.PROPRIO_CONTEUDO } },
+        { status: 422 },
+      );
+    }
+
     if (resultado.estado === "nao_encontrada")
     {
       return NextResponse.json(

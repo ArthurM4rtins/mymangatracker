@@ -5,27 +5,22 @@
 // intocado, e nada aponta para o banco de verdade por acidente.
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { urlDoBancoDeTeste } from "./banco-de-teste.mjs";
 
-const SUFIXO_OBRIGATORIO = "_test";
-
+// A guarda mora em `banco-de-teste.mjs`, compartilhada com o setup da suite
+// (#148, item 7): quem apaga as tabelas e' a suite, entao ela tambem precisa
+// recusar banco sem o sufixo, e nao so este script.
 carregarEnvLocal();
 
-const url = process.env.DATABASE_URL_TEST;
+let url;
 
-if (!url)
+try
 {
-  console.error(
-    "[test-db] DATABASE_URL_TEST ausente. Copie a linha do `.env.example` para o seu `.env`.",
-  );
-  process.exit(1);
+  url = urlDoBancoDeTeste(process.env);
 }
-
-if (!nomeDoBanco(url).endsWith(SUFIXO_OBRIGATORIO))
+catch (erro)
 {
-  console.error(
-    `[test-db] recusado: o banco de teste precisa terminar em "${SUFIXO_OBRIGATORIO}". ` +
-      "A suíte apaga e recria dados — apontar para outro banco perderia dados de verdade.",
-  );
+  console.error(`[test-db] ${erro.message}`);
   process.exit(1);
 }
 
@@ -43,17 +38,6 @@ if (result.error)
 
 process.exit(result.status ?? 1);
 
-function nomeDoBanco(valor)
-{
-  try
-  {
-    return new URL(valor).pathname.replace(/^\//, "");
-  }
-  catch
-  {
-    return "";
-  }
-}
 
 // dotenv só entra pelo `prisma7.config.ts`, que roda no processo filho. Aqui a
 // leitura é manual para poder validar antes de disparar qualquer coisa.

@@ -62,6 +62,16 @@ quando o job de lint, testes e build passar, preservando as correções da base.
 - Build de produção com webpack concluído em cópia isolada, sem `.env` ou
   conexão com banco. As tentativas anteriores sem conclusão ficam superadas.
 
+## Integração com a base atual
+
+- Atualização com `origin/main` preserva os limites de consulta e escrita,
+  a data pública das resenhas, as guardas de sessão e a confirmação de remoção.
+- Conflitos de tradução resolvidos mantendo o título neutro do painel e os
+  novos textos da base. Finais de linha dos arquivos de tela normalizados em LF.
+- 624 testes unitários e lint passaram após essa atualização.
+- Publicação pelo PR com destino a `main`, condicionada ao job do CI que inclui
+  lint, testes unitários, testes de repositório em Postgres e build sem banco.
+
 ## Ambiente atual
 
 O workspace principal está em `desenvNovoDesignCatalogo`. Para avaliar,

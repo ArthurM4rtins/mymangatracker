@@ -11,31 +11,56 @@ import {
   listarListasPublicas,
   type ListaPublica,
 } from "@/server/repositories/lista.repository";
+import {
+  FATOR_DE_BUSCA,
+  MAXIMO_POR_AUTOR,
+  noMaximoPorAutor,
+} from "@/server/domain/rodizio-de-autoria";
 
-const LIMITE_POR_TRILHO = 12;
+// Dez por trilho (#144): o carrossel e vitrine, nao listagem — quem quiser ver
+// tudo vai para /listas. Menos linhas por trilho tambem estreita a janela que
+// uma conta so consegue ocupar.
+const LIMITE_POR_TRILHO = 10;
 
 export type Vitrine<R, L> = { resenhas: R[]; listas: L[] };
+
+export type ComAutor = { username: string };
 
 export type DependenciasDaVitrine<R, L> = {
   resenhasRecentes: (limite: number) => Promise<R[]>;
   listasRecentes: (limite: number) => Promise<L[]>;
 };
 
+function autorDe(item: ComAutor): string
+{
+  return item.username;
+}
+
 function vazioSeFalhar<T>(promessa: Promise<T[]>): Promise<T[]>
 {
   return promessa.catch(function (): T[] { return []; });
 }
 
-export async function vitrineDaHome<R, L>(
+/**
+ * Pede mais do que exibe e passa pelo rodízio de autoria (#144): sem isso, uma
+ * conta publicando seguido ocupava os dois trilhos sozinha, e repostar de
+ * tempos em tempos mantinha assim.
+ */
+export async function vitrineDaHome<R extends ComAutor, L extends ComAutor>(
   deps: DependenciasDaVitrine<R, L>,
 ): Promise<Vitrine<R, L>>
 {
+  const busca = LIMITE_POR_TRILHO * FATOR_DE_BUSCA;
+
   const [resenhas, listas] = await Promise.all([
-    vazioSeFalhar(deps.resenhasRecentes(LIMITE_POR_TRILHO)),
-    vazioSeFalhar(deps.listasRecentes(LIMITE_POR_TRILHO)),
+    vazioSeFalhar(deps.resenhasRecentes(busca)),
+    vazioSeFalhar(deps.listasRecentes(busca)),
   ]);
 
-  return { resenhas, listas };
+  return {
+    resenhas: noMaximoPorAutor(resenhas, autorDe, MAXIMO_POR_AUTOR, LIMITE_POR_TRILHO),
+    listas: noMaximoPorAutor(listas, autorDe, MAXIMO_POR_AUTOR, LIMITE_POR_TRILHO),
+  };
 }
 
 export type VitrineDaHome = Vitrine<ResenhaDaComunidade, ListaPublica>;

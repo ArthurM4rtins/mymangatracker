@@ -13,6 +13,7 @@ import {
 } from "@/server/domain/nota-media";
 import type { AutorDaObra, MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId, buscarSimilares } from "@/server/infra/anilist";
+import { lembrarPorChave } from "@/server/domain/memoria-curta";
 import {
   buscarMediaCompletaPorAnilistId,
   salvarMediaDoAniList,
@@ -122,6 +123,7 @@ export type DependenciasDaObra = {
   listarReviews: (
     mediaId: string,
     userId: string | null,
+    limite: number,
   ) => Promise<ReviewPublica[]>;
   contarNotas: (mediaId: string) => Promise<ContagemDeNota[]>;
   listarAberturas: (
@@ -134,6 +136,8 @@ export type DependenciasDaObra = {
 
 /** Quantas aberturas o painel da obra mostra. O resto fica no banco. */
 const LIMITE_DO_HISTORICO = 20;
+/** Quantas resenhas a página carrega (#135): as mais curtidas; o resto fica no banco. */
+const REVIEWS_NA_OBRA = 20;
 
 export async function obraParaPagina(
   anilistId: number,
@@ -221,7 +225,7 @@ export async function obraParaPagina(
               };
         }),
     // Social falhando não derruba a obra — a seção some.
-    deps.listarReviews(cache.id, userId).catch(function () { return []; }),
+    deps.listarReviews(cache.id, userId, REVIEWS_NA_OBRA).catch(function () { return []; }),
     // Agregado falhando não derruba a obra — a nota some.
     deps.contarNotas(cache.id).catch(function (): ContagemDeNota[] { return []; }),
   ]);
@@ -317,6 +321,23 @@ async function minhaRelacao(
   };
 }
 
+/**
+ * Similares muda devagar e o id vem da URL: caminhar por ids era uma requisição
+ * nova ao AniList por id, sem teto, do IP único do deploy (#134). Cinco minutos
+ * por id, com teto de chaves para o mapa não crescer sem limite.
+ *
+ * No escopo do módulo, não dentro da composição: recriado a cada chamada, o memo
+ * não lembraria nada.
+ */
+const JANELA_DOS_SIMILARES_MS = 5 * 60_000;
+const MAXIMO_DE_IDS = 200;
+
+const similaresLembrados = lembrarPorChave(
+  buscarSimilares,
+  JANELA_DOS_SIMILARES_MS,
+  MAXIMO_DE_IDS,
+);
+
 /** A composição de produção. */
 export function obraParaPaginaDoSistema(
   anilistId: number,
@@ -327,7 +348,7 @@ export function obraParaPaginaDoSistema(
     buscarCompleta: buscarMediaCompletaPorAnilistId,
     buscarNoAniList: buscarMediaPorId,
     salvarMedia: salvarMediaDoAniList,
-    buscarSimilares,
+    buscarSimilares: similaresLembrados,
     buscarEntrada: buscarEntradaPorMedia,
     buscarLeituraMaisAvancada: aberturaMaisAvancadaDaObra,
     buscarAvaliacao,

@@ -6,16 +6,19 @@
  */
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { entrarNoSistema } from "@/server/services/sessao.service";
+import { entrarNoSistema, sairDoSistema } from "@/server/services/sessao.service";
 import { liberarLogin, limitarLogin } from "@/server/services/limite.service";
 import { hasLocale } from "next-intl";
 import { routing } from "@/i18n/routing";
+import { lerJson } from "../_shared/corpo";
+import { mesmaOrigem } from "../_shared/origem";
 import { ERRO } from "../_shared/erros";
 import { ipDoPedido } from "../_shared/ip";
 import {
   apagarSessaoDoCookie,
   escreverIdiomaNoCookie,
   escreverSessaoNoCookie,
+  usuarioDaSessao,
 } from "../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -31,18 +34,24 @@ const ESQUEMA_LOGIN = z.object({
 
 export async function POST(request: Request)
 {
-  let corpo: unknown;
-  try
-  {
-    corpo = await request.json();
-  }
-  catch
+  // CSRF (#131): esta rota grava cookie sem exigir cookie. Form de outro site
+  // nao passa daqui; o corpo nem chega a ser lido.
+  if (!mesmaOrigem(request))
   {
     return NextResponse.json(
-      { erros: { _geral: ERRO.CORPO_INVALIDO } },
-      { status: 400 },
+      { erros: { _geral: ERRO.ORIGEM_RECUSADA } },
+      { status: 403 },
     );
   }
+
+  const leitura = await lerJson(request);
+
+  if (!leitura.ok)
+  {
+    return leitura.resposta;
+  }
+
+  const corpo: unknown = leitura.corpo;
 
   const analise = ESQUEMA_LOGIN.safeParse(corpo);
 
@@ -110,7 +119,28 @@ export async function POST(request: Request)
 
 export async function DELETE()
 {
-  // Sair apaga o cookie de fato — maxAge 0 — não só redireciona.
+  // Sair REVOGA (#137): incrementa a versão do token antes de apagar o cookie,
+  // e todo JWT assinado antes — inclusive um copiado — deixa de valer. Sem
+  // sessão válida não há o que revogar; só limpa.
+  const userId = await usuarioDaSessao();
+
+  if (userId !== null)
+  {
+    try
+    {
+      await sairDoSistema(userId);
+    }
+    catch (erro)
+    {
+      console.error("[sessao] falha ao revogar:", erro instanceof Error ? erro.message : erro);
+      return NextResponse.json(
+        { erros: { _geral: ERRO.FALHA_INTERNA } },
+        { status: 500 },
+      );
+    }
+  }
+
+  // Apaga o cookie de fato — maxAge 0 — não só redireciona.
   const resposta = NextResponse.json({ ok: true }, { status: 200 });
   apagarSessaoDoCookie(resposta);
   return resposta;

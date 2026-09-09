@@ -76,11 +76,15 @@
     "avaliacao_nao_encontrada": "valoración no encontrada",
     "usuario_nao_encontrado": "usuario no encontrado",
     "ja_em_uso": "ya está en uso",
+    "cadastro_nao_concluido": "no se pudo completar el registro — revisa los datos o, si ya tienes cuenta, inicia sesión",
+    "origem_recusada": "la solicitud no vino de Kidoku",
+    "conteudo_nao_json": "la solicitud debe ser JSON",
     "nao_avanca": "ese capítulo no supera el progreso de tu estantería — para volver, usa el reinicio",
     "sem_fonte": "configura primero la fuente de lectura",
     "arquivo_grande_demais": "la imagen supera los 512 KB",
     "tipo_de_arquivo_invalido": "envía una imagen JPEG, PNG o WebP",
     "capitulo_invalido": "capítulo inválido",
+    "lista_cheia": "la lista llegó al límite de 500 obras",
     "avaliacao_invalida": "valoración inválida — nota de 0,5 a 5 en medias estrellas, o reseña",
     "url_invalida": "URL de lectura inválida",
     "url_de_capitulo_invalida": "pega la URL completa del capítulo 1, con https://",
@@ -88,6 +92,7 @@
     "ordem_invalida": "el orden debe contener exactamente las obras de la lista",
     "comentario_tamanho_invalido": "comentario vacío o demasiado largo",
     "proprio_perfil": "no vale para tu propio perfil",
+    "proprio_conteudo": "no vale para lo que es tuyo",
     "idioma_invalido": "idioma no disponible",
     "limite_excedido": "demasiados intentos — espera antes de volver a intentarlo",
     "falha_interna": "ahora no es posible",
@@ -179,7 +184,8 @@
       }
     },
     "erros": {
-      "indisponivel": "AniList no respondió. Inténtalo de nuevo en unos instantes."
+      "indisponivel": "AniList no respondió. Inténtalo de nuevo en unos instantes.",
+      "muitosPedidos": "Demasiadas búsquedas desde aquí. Espera un momento e inténtalo de nuevo."
     },
     "vazio": {
       "semTermo": "El catálogo no devolvió nada. Inténtalo de nuevo en unos instantes.",
@@ -382,6 +388,7 @@
       "autoria": "por <autor>{username}</autor> · {n, plural, one {# obra} other {# obras}}",
       "vazia": "Lista vacía — añade obras desde el botón de lista en la página de cada obra.",
       "remover": "quitar",
+      "removerConfirmacao": "¿Quitar esta obra de la lista?",
       "curtida": {
         "curtir": "dar me gusta a la lista",
         "descurtir": "quitar el me gusta a la lista"

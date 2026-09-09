@@ -4,6 +4,7 @@
 
 const el = {
   estado: document.getElementById("estado"),
+  ambiente: document.getElementById("ambiente"),
   formulario: document.getElementById("formulario"),
   paginaUrl: document.getElementById("pagina-url"),
   verLink: document.getElementById("ver-link"),
@@ -65,6 +66,14 @@ async function iniciar()
   const [aba] = await chrome.tabs.query({ active: true, currentWindow: true });
   const sessao = await KIDOKU.sessao();
   const base = sessao ? sessao.base : KIDOKU.AMBIENTES[0];
+
+  // O host fica visivel (#148, item 9): o build distribuido embarca o localhost
+  // e tenta producao primeiro, entao sem isto nada na tela distingue os dois.
+  if (el.ambiente)
+  {
+    el.ambiente.textContent = new URL(base).host;
+    el.ambiente.hidden = false;
+  }
 
   el.abrirSite.href = base + "/estante";
   el.entrar.href = base + "/entrar";

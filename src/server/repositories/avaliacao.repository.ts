@@ -12,15 +12,27 @@ export type AvaliacaoDaObra = {
 /**
  * Upsert por (userId, mediaId) — avaliar de novo edita, nunca duplica.
  *
- * `reviewedAt` é a data em que a RESENHA nasceu (#111): avança quando `review`
- * passa de vazio a texto, e só aí. Mudar a nota ou editar o texto não mexe —
- * o feed, o perfil e a página da obra ordenam e exibem por esse campo, e uma
- * edição não pode trazer resenha velha de volta ao topo. `updatedAt` conta as
- * edições.
+ * `publishedAt` é a data PÚBLICA da resenha (#143, revisitando a #111):
+ * gravada na transição de vazio para texto e NUNCA recarimbada. Apagar o texto
+ * e escrever de novo não a move — era assim que qualquer conta voltava ao topo
+ * do feed em duas requisições, quantas vezes quisesse. Nula enquanto a linha
+ * nunca teve resenha: nota sozinha não publica nada.
+ *
+ * `reviewedAt` continua avançando como antes, mas virou histórico da linha —
+ * nenhuma superfície pública ordena nem exibe por ele. `updatedAt` conta as
+ * edições. A regra está em
+ * `Obsidian/03. Regras de Negocio/data-de-publicacao-da-resenha.md`.
  *
  * Curtidas e comentários são sobre o TEXTO (#112): quando `review` passa de
  * texto a vazio, saem na mesma transação. Senão ressurgiam colados num texto
  * novo e diferente. Editar o texto mantém.
+ *
+ * A mesma purga roda no renascimento (#138). Entre apagar o texto e escrever
+ * outro a linha continua existindo, e o id dela já foi entregue ao navegador
+ * de quem leu a resenha pública — quem guardou o id gravava curtida e
+ * comentário numa resenha que não existe. `review-social.repository.ts` agora
+ * recusa essa escrita; purgar aqui também fecha o que já estiver gravado, de
+ * antes desta correção ou por corrida.
  */
 export async function salvarAvaliacao(dados: {
   userId: string;
@@ -41,18 +53,28 @@ export async function salvarAvaliacao(dados: {
 
   const existente = await prisma.entry.findUnique({
     where: chave,
-    select: { id: true, review: true },
+    select: { id: true, review: true, publishedAt: true },
   });
 
   const resenhaNasceu = existente !== null && existente.review === null && dados.review !== null;
   const textoApagado = existente !== null && existente.review !== null && dados.review === null;
 
-  if (textoApagado)
+  if (textoApagado || resenhaNasceu)
   {
+    // `publishedAt` só entra quando ainda não existe: é o que faz a data ser
+    // carimbada uma vez na vida da linha, e não a cada texto que nasce.
+    const dadosDaLinha = resenhaNasceu
+      ? {
+          ...campos,
+          reviewedAt: new Date(),
+          ...(existente.publishedAt === null ? { publishedAt: new Date() } : {}),
+        }
+      : campos;
+
     const [, , atualizada] = await prisma.$transaction([
       prisma.reviewLike.deleteMany({ where: { entryId: existente.id } }),
       prisma.reviewComment.deleteMany({ where: { entryId: existente.id } }),
-      prisma.entry.update({ where: chave, data: campos, select: { id: true } }),
+      prisma.entry.update({ where: chave, data: dadosDaLinha, select: { id: true } }),
     ]);
 
     return atualizada;
@@ -60,8 +82,15 @@ export async function salvarAvaliacao(dados: {
 
   return prisma.entry.upsert({
     where: chave,
-    create: { userId: dados.userId, mediaId: dados.mediaId, ...campos },
-    update: resenhaNasceu ? { ...campos, reviewedAt: new Date() } : campos,
+    create: {
+      userId: dados.userId,
+      mediaId: dados.mediaId,
+      ...campos,
+      // Linha que já nasce com texto é publicada agora. Sem isto ela ficaria
+      // fora do feed para sempre, porque nunca haveria transição de vazio.
+      publishedAt: dados.review === null ? null : new Date(),
+    },
+    update: campos,
     select: { id: true },
   });
 }

@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { listaComItensDoSistema } from "@/server/services/lista.service";
+import { listaComItensDoSistema, nomeDaListaDoSistema } from "@/server/services/lista.service";
 import { Link, alternativasDeIdioma } from "@/i18n/navigation";
 import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { ApagarLista } from "./acoes-da-lista";
@@ -17,10 +17,11 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/listas/[
 {
   const { locale, id } = await params;
   const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "listas" });
-  const lista = await listaComItensDoSistema(id, null).catch(function () { return null; });
+  // Só o nome (#135): carregar a lista inteira aqui dobrava o custo de cada visita.
+  const nome = await nomeDaListaDoSistema(id).catch(function () { return null; });
 
   return {
-    title: lista?.nome ?? t("detalhe.meta.titulo"),
+    title: nome ?? t("detalhe.meta.titulo"),
     alternates: alternativasDeIdioma(`/listas/${id}`),
   };
 }

@@ -1,23 +1,24 @@
 /**
- * O IP de quem chamou, para o limite de tentativas (#108).
+ * O IP de quem chamou uma ROTA, para o limite de tentativas (#108).
  *
- * Na Vercel o cliente chega por proxy: o IP real vem em `x-forwarded-for`
- * (o primeiro da lista). Sem o header (dev local) todo mundo cai em
- * "desconhecido" — o teto por IP é folgado por causa disso.
+ * A regra mora em `domain/ip-do-visitante.ts`, porque a página do catálogo
+ * precisa dela também e a camada de tela não importa da camada de controller
+ * (#134). Aqui fica só a ponte: um `Request` vira leitor de cabeçalho.
  */
-export function ipDoPedido(request: Request): string
+import { escolherIp, IP_DESCONHECIDO } from "@/server/domain/ip-do-visitante";
+import { proxiesConfiaveis } from "@/server/services/limite.service";
+
+export { IP_DESCONHECIDO };
+
+export type OpcoesDeIp = {
+  /** Quantos proxies confiaveis anexam ao `x-forwarded-for`. Injetavel para teste. */
+  hops: number;
+};
+
+export function ipDoPedido(
+  request: Request,
+  opcoes: OpcoesDeIp = { hops: proxiesConfiaveis() },
+): string
 {
-  const encadeado = request.headers.get("x-forwarded-for");
-
-  if (encadeado)
-  {
-    const primeiro = encadeado.split(",")[0]?.trim();
-
-    if (primeiro)
-    {
-      return primeiro;
-    }
-  }
-
-  return request.headers.get("x-real-ip")?.trim() || "desconhecido";
+  return escolherIp(function (nome) { return request.headers.get(nome); }, opcoes.hops);
 }

@@ -5,7 +5,10 @@ import { buscarNoCatalogo } from "@/server/services/catalogo.service";
 import { anilistIdsNaEstanteDoSistema } from "@/server/services/estante.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
+import { headers } from "next/headers";
 import { alternativasDeIdioma, Link } from "@/i18n/navigation";
+import { escolherIp } from "@/server/domain/ip-do-visitante";
+import { proxiesConfiaveis } from "@/server/services/limite.service";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "./botao-estante";
 import { BuscaCatalogo } from "./busca-catalogo";
@@ -26,21 +29,21 @@ export async function generateMetadata({
   return { title: t("meta.titulo"), alternates: alternativasDeIdioma("/catalogo") };
 }
 
+// O mesmo parâmetro repetido na URL vira array (issue #145). O tipo tem que
+// dizer a verdade sobre o que chega; quem escolhe o valor é `interpretarFiltros`.
 type Props = {
-  searchParams: Promise<{
-    q?: string;
-    tipo?: string;
-    genero?: string;
-    decada?: string;
-    ordem?: string;
-  }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export default async function Catalogo({ searchParams }: Props)
 {
   const filtro = interpretarFiltros(await searchParams);
+  // Os cabeçalhos são lidos aqui, na camada que pode (#134): serviço não toca
+  // em `headers()`, e a regra de qual IP vale mora no domínio.
+  const cabecalhos = await headers();
+  const ip = escolherIp(function (nome) { return cabecalhos.get(nome); }, proxiesConfiaveis());
   const [resultado, naEstante] = await Promise.all([
-    buscarNoCatalogo(filtro),
+    buscarNoCatalogo(filtro, undefined, ip),
     idsNaEstante(),
   ]);
   const t = await getTranslations("catalogo");
@@ -68,6 +71,12 @@ export default async function Catalogo({ searchParams }: Props)
       {resultado.estado === "indisponivel" && (
         <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
           {t("erros.indisponivel")}
+        </p>
+      )}
+
+      {resultado.estado === "muitos_pedidos" && (
+        <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
+          {t("erros.muitosPedidos")}
         </p>
       )}
 

@@ -14,6 +14,8 @@
 import { normalizarCapitulo } from "@/server/domain/capitulo";
 import type { StatusDaEstante } from "@/server/domain/perfil";
 import { progressoAtual, progrideEstante } from "@/server/domain/progresso";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import { limitarLeitura } from "./limite.service";
 import { statusAposLeitura } from "@/server/domain/status-de-leitura";
 import { normalizarUrlVisitada } from "@/server/domain/url-visitada";
 import { buscarEntradaDoUsuario } from "@/server/repositories/shelf.repository";
@@ -37,7 +39,8 @@ export type ResultadoDeLeituraExterna =
   | { estado: "nao_avanca"; progresso: number }
   | { estado: "nao_encontrada" }
   | { estado: "capitulo_invalido" }
-  | { estado: "url_invalida" };
+  | { estado: "url_invalida" }
+  | { estado: "limitado"; esperarSegundos: number };
 
 export type DependenciasDeLeituraExterna = {
   buscarEntrada: (
@@ -58,6 +61,8 @@ export type DependenciasDeLeituraExterna = {
     novoProgresso: number;
     novoStatus?: StatusDaEstante;
   }) => Promise<{ id: string }>;
+  /** Teto de registros por usuário na janela (#136). */
+  limitar: (userId: string) => Promise<Veredito>;
 };
 
 export async function registrarLeituraExterna(
@@ -78,6 +83,14 @@ export async function registrarLeituraExterna(
   if (url === null)
   {
     return { estado: "url_invalida" };
+  }
+
+  // Depois das checagens puras, antes do banco: pedido malformado não gasta o teto.
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "limitado", esperarSegundos: limite.esperarSegundos };
   }
 
   const entrada = await deps.buscarEntrada(pedido.userId, pedido.entradaId);
@@ -129,5 +142,6 @@ export function registrarLeituraExternaDoSistema(
     buscarEntrada: buscarEntradaDoUsuario,
     maiorCapitulo,
     registrarComProgresso: registrarAberturaComProgresso,
+    limitar: function (userId) { return limitarLeitura({ userId }); },
   });
 }

@@ -76,11 +76,15 @@
     "avaliacao_nao_encontrada": "avaliação não encontrada",
     "usuario_nao_encontrado": "usuário não encontrado",
     "ja_em_uso": "já está em uso",
+    "cadastro_nao_concluido": "não foi possível concluir o cadastro — confira os dados ou, se já tem conta, entre",
+    "origem_recusada": "o pedido não veio do Kidoku",
+    "conteudo_nao_json": "o pedido precisa ser JSON",
     "nao_avanca": "esse capítulo não passa do progresso da estante — para voltar, use o reset",
     "sem_fonte": "configure a fonte de leitura primeiro",
     "arquivo_grande_demais": "a imagem passou de 512 KB",
     "tipo_de_arquivo_invalido": "envie uma imagem JPEG, PNG ou WebP",
     "capitulo_invalido": "capítulo inválido",
+    "lista_cheia": "a lista chegou ao limite de 500 obras",
     "avaliacao_invalida": "avaliação inválida — nota de 0,5 a 5 em meia estrela, ou resenha",
     "url_invalida": "URL de leitura inválida",
     "url_de_capitulo_invalida": "cole a URL completa do capítulo 1, com https://",
@@ -88,6 +92,7 @@
     "ordem_invalida": "a ordem precisa conter exatamente as obras da lista",
     "comentario_tamanho_invalido": "comentário vazio ou longo demais",
     "proprio_perfil": "não vale para o próprio perfil",
+    "proprio_conteudo": "não vale para o que é seu",
     "idioma_invalido": "idioma não disponível",
     "limite_excedido": "muitas tentativas — aguarde para tentar de novo",
     "falha_interna": "não foi possível agora",
@@ -179,7 +184,8 @@
       }
     },
     "erros": {
-      "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes."
+      "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes.",
+      "muitosPedidos": "Buscas demais a partir daqui. Espere um momento e tente de novo."
     },
     "vazio": {
       "semTermo": "O catálogo não respondeu nada agora. Tente de novo em instantes.",
@@ -382,6 +388,7 @@
       "autoria": "por <autor>{username}</autor> · {n, plural, =1 {# obra} other {# obras}}",
       "vazia": "Lista vazia — adicione obras pelo botão de lista na página de cada obra.",
       "remover": "remover",
+      "removerConfirmacao": "Remover esta obra da lista?",
       "curtida": {
         "curtir": "curtir a lista",
         "descurtir": "descurtir a lista"

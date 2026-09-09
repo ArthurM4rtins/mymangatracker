@@ -123,16 +123,45 @@ export async function listarListasPublicas(
   return linhas.map(paraCard);
 }
 
-/** As listas DE UM usuário, para o perfil público (issue #49). */
-export async function listarListasDoUsuario(userId: string): Promise<ListaPublica[]>
+/** As listas DE UM usuário, para o perfil público (issue #49) — as `limite` mais recentes (#135). */
+export async function listarListasDoUsuario(userId: string, limite: number): Promise<ListaPublica[]>
 {
   const linhas = await getPrisma().list.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
+    take: limite,
     select: SELECT_DO_CARD,
   });
 
   return linhas.map(paraCard);
+}
+
+/** Quantas listas o usuário tem — o número do perfil, sem materializar (#135). */
+export function contarListasDoUsuario(userId: string): Promise<number>
+{
+  return getPrisma().list.count({ where: { userId } });
+}
+
+/**
+ * De quem é a lista. `null` quando não existe. O serviço usa para recusar
+ * curtida na própria lista (#148, item 4).
+ */
+export async function donoDaLista(listaId: string): Promise<string | null>
+{
+  const linha = await getPrisma().list.findUnique({
+    where: { id: listaId },
+    select: { userId: true },
+  });
+
+  return linha?.userId ?? null;
+}
+
+/** Só o nome, para o `generateMetadata` não carregar a lista inteira duas vezes (#135). */
+export async function buscarNomeDaLista(listaId: string): Promise<string | null>
+{
+  const linha = await getPrisma().list.findUnique({ where: { id: listaId }, select: { nome: true } });
+
+  return linha?.nome ?? null;
 }
 
 /** A lista com as obras, na ordem de inserção. `null` quando não existe. */
@@ -153,6 +182,8 @@ export async function buscarListaComItens(
       likes: userId === null ? false : { where: { userId }, select: { id: true } },
       itens: {
         orderBy: [{ position: "asc" }, { createdAt: "asc" }],
+        // O mesmo teto que `adicionarItem` impõe: a página nunca carrega mais (#135).
+        take: ITENS_POR_LISTA,
         select: {
           media: {
             select: {
@@ -230,8 +261,15 @@ export async function listarItensParaOrdem(
 }
 
 /**
- * Grava a ordem inteira: `position = índice + 1`, numa transação. Quem
- * garante que `mediaIds` é permutação exata dos itens é o serviço.
+ * Grava a ordem inteira: `position = índice + 1`. Quem garante que `mediaIds`
+ * é permutação exata dos itens é o serviço.
+ *
+ * Um `UPDATE` só (#146). Antes era um `updateMany` por item dentro de uma
+ * transação: uma lista no teto do schema virava 500 statements segurando lock
+ * nas 500 linhas durante toda a ida e volta, e repetir o pedido prendia
+ * conexões do pool. `unnest` casa os dois arrays em uma tabela derivada, então
+ * o custo deixa de crescer em statements — e os ids continuam indo como
+ * parâmetro, nunca interpolados na string.
  */
 export async function reordenarItens(
   userId: string,
@@ -251,15 +289,17 @@ export async function reordenarItens(
     return null;
   }
 
-  await prisma.$transaction(
-    mediaIds.map(function (mediaId, indice)
-    {
-      return prisma.listItem.updateMany({
-        where: { listId: listaId, mediaId },
-        data: { position: indice + 1 },
-      });
-    }),
-  );
+  if (mediaIds.length > 0)
+  {
+    const posicoes = mediaIds.map(function (_, indice) { return indice + 1; });
+
+    await prisma.$executeRaw`
+      UPDATE "ListItem" AS item
+      SET position = nova.posicao
+      FROM unnest(${mediaIds}::text[], ${posicoes}::int[]) AS nova(media_id, posicao)
+      WHERE item."listId" = ${listaId} AND item."mediaId" = nova.media_id
+    `;
+  }
 
   return { reordenada: true };
 }
@@ -341,11 +381,14 @@ export async function listarMinhasListas(
  * Adiciona a obra à lista DO DONO, no fim. `null` quando a lista não é do
  * usuário ou não existe; `{ jaExistia: true }` quando a obra já estava lá.
  */
+/** Teto de obras por lista (#135). A rota de ordem (`listas/[id]/ordem`) assume o mesmo número. */
+export const ITENS_POR_LISTA = 500;
+
 export async function adicionarItem(
   userId: string,
   listaId: string,
   mediaId: string,
-): Promise<{ jaExistia: boolean } | null>
+): Promise<{ jaExistia: boolean } | { cheia: true } | null>
 {
   const prisma = getPrisma();
 
@@ -361,10 +404,18 @@ export async function adicionarItem(
 
   // Fim da lista = maior posição + 1, não contagem + 1: depois de remoções a
   // contagem repete posições e o item novo cairia no meio (#65, itens 8/25).
-  const { _max } = await prisma.listItem.aggregate({
+  // A contagem entra só para o teto (#135): lista sem fim era o que inflava a
+  // página pública, e a rota de ordem já assumia 500.
+  const { _max, _count } = await prisma.listItem.aggregate({
     where: { listId: listaId },
     _max: { position: true },
+    _count: { _all: true },
   });
+
+  if (_count._all >= ITENS_POR_LISTA)
+  {
+    return { cheia: true };
+  }
 
   try
   {

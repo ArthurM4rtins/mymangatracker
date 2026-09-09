@@ -33,11 +33,17 @@ const SELECT_DA_OBRA = {
   coverImageUrl: true,
 } as const;
 
-/** Todas as obras que o usuário deu nota. Ordem e filtro são do domínio. */
-export async function listarAvaliadas(userId: string): Promise<AvaliadaDoPerfil[]>
+/**
+ * As obras que o usuário deu nota, as `limite` mais recentes (#135): o perfil
+ * de quem inflou a conta não materializa tudo a cada visita. Ordem e filtro
+ * finos continuam no domínio, dentro dessa página.
+ */
+export async function listarAvaliadas(userId: string, limite: number): Promise<AvaliadaDoPerfil[]>
 {
   const linhas = await getPrisma().entry.findMany({
     where: { userId, rating: { not: null } },
+    orderBy: { reviewedAt: "desc" },
+    take: limite,
     select: { rating: true, reviewedAt: true, media: { select: SELECT_DA_OBRA } },
   });
 
@@ -73,14 +79,18 @@ export async function listarResenhasRecentes(
 {
   const linhas = await getPrisma().entry.findMany({
     where: { userId, review: { not: null } },
-    orderBy: { reviewedAt: "desc" },
+    // A data publica e `publishedAt` (#143). A lista de AVALIADAS acima segue
+    // por `reviewedAt`: la o que importa e quando a pessoa avaliou, nao quando
+    // publicou texto.
+    orderBy: { publishedAt: "desc" },
     take: limite,
     select: {
       id: true,
       rating: true,
       review: true,
       containsSpoilers: true,
-      reviewedAt: true,
+      publishedAt: true,
+      createdAt: true,
       _count: { select: { likes: true } },
       media: { select: SELECT_DA_OBRA },
     },
@@ -94,8 +104,14 @@ export async function listarResenhasRecentes(
       rating: linha.rating?.toString() ?? null,
       review: linha.review ?? "",
       containsSpoilers: linha.containsSpoilers,
-      publicadaEm: linha.reviewedAt,
+      publicadaEm: linha.publishedAt ?? linha.createdAt,
       curtidas: linha._count.likes,
     };
   });
+}
+
+/** Quantas obras o usuário deu nota — o número do perfil, sem materializar (#135). */
+export function contarAvaliadas(userId: string): Promise<number>
+{
+  return getPrisma().entry.count({ where: { userId, rating: { not: null } } });
 }

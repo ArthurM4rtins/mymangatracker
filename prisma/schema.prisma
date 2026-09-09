@@ -48,6 +48,9 @@ model User {
   usernameNormalizado String @unique
   email        String   @unique
   passwordHash String
+  // Versão do token de sessão (#137): sair incrementa, e todo JWT assinado com
+  // a versão antiga deixa de valer. Nunca sai em DTO.
+  tokenVersion Int      @default(0)
   role         Role     @default(USER)
   // Idioma da interface escolhido pela pessoa (#116, fase 5). Nulo = nunca
   // escolheu, e a negociacao por Accept-Language decide.
@@ -214,6 +217,12 @@ model Entry {
   review           String?  @db.Text
   containsSpoilers Boolean  @default(false)
   reviewedAt       DateTime @default(now())
+  // A data PUBLICA da resenha (#143). Escrita uma vez, na transicao de vazio
+  // para texto, e nunca mais. Apagar o texto e escrever de novo NAO recarimba:
+  // era isso que deixava qualquer conta voltar ao topo do feed quantas vezes
+  // quisesse, em duas requisicoes. Nula enquanto a linha nunca teve resenha.
+  // A regra esta em `Obsidian/03. Regras de Negocio/data-de-publicacao-da-resenha.md`.
+  publishedAt      DateTime?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -225,8 +234,9 @@ model Entry {
 
   @@unique([userId, mediaId])
   // Página da obra: resenhas públicas e histograma de notas filtram só por mediaId.
-  // O feed da home (reviewedAt DESC WHERE review IS NOT NULL) é índice parcial,
-  // escrito à mão na migration indices_consultas.
+  // O feed da home (publishedAt DESC WHERE review IS NOT NULL) é índice parcial,
+  // escrito à mão na migration data_de_publicacao — o de reviewedAt saiu junto,
+  // porque nenhuma consulta pública ordena mais por aquela coluna (#143).
   @@index([mediaId])
 }
 

@@ -59,40 +59,62 @@ describe("salvarAvaliacao", function ()
     });
   });
 
-  // #111: as tres superficies publicas ordenam e exibem a resenha por
-  // reviewedAt. Resenha escrita depois da nota ficava com a data da NOTA e
-  // afundava no feed. reviewedAt avanca quando o texto NASCE; editar so a
-  // nota, ou editar o texto, nao mexe.
-  describe("reviewedAt", function ()
+  // #143, revisitando a #111: a data PUBLICA da resenha e carimbada uma vez, na
+  // transicao de vazio para texto, e nunca mais. `reviewedAt` continua existindo
+  // como historico da linha, mas nenhuma superficie publica olha para ele.
+  //
+  // A regra esta em `Obsidian/03. Regras de Negocio/data-de-publicacao-da-resenha.md`.
+  describe("publishedAt", function ()
   {
     const ANTIGO = new Date("2026-01-05T12:00:00.000Z");
 
     async function retroagir(entryId: string)
     {
-      await getPrisma().entry.update({ where: { id: entryId }, data: { reviewedAt: ANTIGO } });
+      await getPrisma().entry.update({
+        where: { id: entryId },
+        data: { publishedAt: ANTIGO, reviewedAt: ANTIGO },
+      });
     }
 
-    async function reviewedAtDe(entryId: string)
+    async function publishedAtDe(entryId: string)
     {
       const linha = await getPrisma().entry.findUniqueOrThrow({
         where: { id: entryId },
-        select: { reviewedAt: true },
+        select: { publishedAt: true },
       });
-      return linha.reviewedAt;
+      return linha.publishedAt;
     }
 
-    it("avanca quando a resenha nasce depois da nota", async function ()
+    it("nota sozinha nao publica nada", async function ()
+    {
+      const usuario = await semearUsuario("rankine");
+      const media = await salvarMediaDoAniList(OBRA, new Date());
+
+      const { id } = await salvarAvaliacao({
+        userId: usuario.id,
+        mediaId: media.id,
+        rating: 5,
+        review: null,
+        containsSpoilers: false,
+      });
+
+      expect(await publishedAtDe(id)).toBeNull();
+    });
+
+    it("carimba quando a resenha nasce depois da nota", async function ()
     {
       const usuario = await semearUsuario("rankine");
       const media = await salvarMediaDoAniList(OBRA, new Date());
       const base = { userId: usuario.id, mediaId: media.id, containsSpoilers: false };
 
       const { id } = await salvarAvaliacao({ ...base, rating: 5, review: null });
-      await retroagir(id);
+      await getPrisma().entry.update({ where: { id }, data: { reviewedAt: ANTIGO } });
 
       await salvarAvaliacao({ ...base, rating: 5, review: "escrita hoje" });
 
-      expect((await reviewedAtDe(id)).getTime()).toBeGreaterThan(ANTIGO.getTime());
+      const publicada = await publishedAtDe(id);
+      expect(publicada).not.toBeNull();
+      expect((publicada as Date).getTime()).toBeGreaterThan(ANTIGO.getTime());
     });
 
     it("nao mexe quando so a nota muda", async function ()
@@ -106,10 +128,10 @@ describe("salvarAvaliacao", function ()
 
       await salvarAvaliacao({ ...base, rating: 3, review: "texto" });
 
-      expect(await reviewedAtDe(id)).toEqual(ANTIGO);
+      expect(await publishedAtDe(id)).toEqual(ANTIGO);
     });
 
-    it("nao mexe quando o texto e editado — so quando nasce", async function ()
+    it("nao mexe quando o texto e editado", async function ()
     {
       const usuario = await semearUsuario("rankine");
       const media = await salvarMediaDoAniList(OBRA, new Date());
@@ -120,22 +142,24 @@ describe("salvarAvaliacao", function ()
 
       await salvarAvaliacao({ ...base, rating: 5, review: "texto corrigido" });
 
-      expect(await reviewedAtDe(id)).toEqual(ANTIGO);
+      expect(await publishedAtDe(id)).toEqual(ANTIGO);
     });
 
-    it("apagar o texto e escrever de novo conta como nascer de novo", async function ()
+    // O buraco da #143: isto ANTES recarimbava a data e levava a resenha ao topo
+    // do feed, em duas requisicoes, quantas vezes o dono quisesse.
+    it("apagar o texto e escrever de novo NAO recarimba", async function ()
     {
       const usuario = await semearUsuario("rankine");
       const media = await salvarMediaDoAniList(OBRA, new Date());
       const base = { userId: usuario.id, mediaId: media.id, containsSpoilers: false };
 
       const { id } = await salvarAvaliacao({ ...base, rating: 5, review: "texto" });
-      await salvarAvaliacao({ ...base, rating: 5, review: null });
       await retroagir(id);
 
-      await salvarAvaliacao({ ...base, rating: 5, review: "novo texto" });
+      await salvarAvaliacao({ ...base, rating: 5, review: null });
+      await salvarAvaliacao({ ...base, rating: 5, review: "texto de novo" });
 
-      expect((await reviewedAtDe(id)).getTime()).toBeGreaterThan(ANTIGO.getTime());
+      expect(await publishedAtDe(id)).toEqual(ANTIGO);
     });
   });
 
@@ -186,6 +210,50 @@ describe("salvarAvaliacao", function ()
       await salvarAvaliacao({ ...base, rating: 4, review: "texto corrigido" });
 
       expect(await contarSocial(id)).toEqual({ curtidas: 1, comentarios: 1 });
+    });
+
+    // #138: a purga do #112 fechava so a saida. Entre apagar o texto e
+    // escrever outro, a linha Entry continua existindo e o id dela ja foi
+    // entregue ao navegador de quem leu a resenha publica — quem guardou o id
+    // curtia e comentava numa resenha que nao existe, e o social ressurgia
+    // colado no texto novo do dono. Duas defesas: recusar a escrita, e purgar
+    // tambem no renascimento.
+    it("comentario e curtida sao recusados quando a Entry esta sem resenha", async function ()
+    {
+      const dono = await semearUsuario("dono");
+      const leitor = await semearUsuario("leitor");
+      const media = await salvarMediaDoAniList(OBRA, new Date());
+      const base = { userId: dono.id, mediaId: media.id, containsSpoilers: false };
+
+      const { id } = await salvarAvaliacao({ ...base, rating: 5, review: "texto" });
+      await salvarAvaliacao({ ...base, rating: 5, review: null });
+
+      await expect(alternarCurtida(id, leitor.id)).resolves.toBeNull();
+      await expect(comentarNaReview(id, leitor.id, "colado")).resolves.toBeNull();
+      expect(await contarSocial(id)).toEqual({ curtidas: 0, comentarios: 0 });
+    });
+
+    it("resenha nova nao herda o social gravado enquanto a Entry estava sem texto", async function ()
+    {
+      const dono = await semearUsuario("dono");
+      const leitor = await semearUsuario("leitor");
+      const media = await salvarMediaDoAniList(OBRA, new Date());
+      const base = { userId: dono.id, mediaId: media.id, containsSpoilers: false };
+
+      const { id } = await salvarAvaliacao({ ...base, rating: 5, review: "texto" });
+      await salvarAvaliacao({ ...base, rating: 5, review: null });
+
+      // Escrita direta: prova que o renascimento purga mesmo se a defesa da
+      // borda falhar ou se a linha vier de antes desta correcao.
+      const prisma = getPrisma();
+      await prisma.reviewLike.create({ data: { entryId: id, userId: leitor.id } });
+      await prisma.reviewComment.create({
+        data: { entryId: id, userId: leitor.id, texto: "colado" },
+      });
+
+      await salvarAvaliacao({ ...base, rating: 5, review: "texto novo e diferente" });
+
+      expect(await contarSocial(id)).toEqual({ curtidas: 0, comentarios: 0 });
     });
   });
 

@@ -10,6 +10,8 @@ import { z } from "zod";
 import { ErroCampoDuplicado } from "@/server/domain/erros";
 import { cadastrarUsuarioNoSistema } from "@/server/services/cadastro.service";
 import { limitarCadastro } from "@/server/services/limite.service";
+import { lerJson } from "../_shared/corpo";
+import { mesmaOrigem } from "../_shared/origem";
 import { ERRO } from "../_shared/erros";
 import { ipDoPedido } from "../_shared/ip";
 
@@ -32,18 +34,24 @@ const ESQUEMA_CADASTRO = z.object({
 
 export async function POST(request: Request)
 {
-  let corpo: unknown;
-  try
-  {
-    corpo = await request.json();
-  }
-  catch
+  // CSRF (#131): esta rota grava cookie sem exigir cookie. Form de outro site
+  // nao passa daqui; o corpo nem chega a ser lido.
+  if (!mesmaOrigem(request))
   {
     return NextResponse.json(
-      { erros: { _geral: ERRO.CORPO_INVALIDO } },
-      { status: 400 },
+      { erros: { _geral: ERRO.ORIGEM_RECUSADA } },
+      { status: 403 },
     );
   }
+
+  const leitura = await lerJson(request);
+
+  if (!leitura.ok)
+  {
+    return leitura.resposta;
+  }
+
+  const corpo: unknown = leitura.corpo;
 
   const analise = ESQUEMA_CADASTRO.safeParse(corpo);
 
@@ -57,7 +65,9 @@ export async function POST(request: Request)
 
   try
   {
-    // Cadastro em massa (#108) e enumeração de e-mail por 409 (#113) param aqui.
+    // Cadastro em massa (#108) para aqui. A enumeração de e-mail (#113, #140) é
+    // contida em dois níveis: a resposta não nomeia o e-mail (abaixo), e este
+    // medidor limita a sondagem que sobra pelo status.
     const limite = await limitarCadastro({ ip: ipDoPedido(request) });
 
     if (limite.bloqueado)
@@ -75,9 +85,20 @@ export async function POST(request: Request)
   {
     if (erro instanceof ErroCampoDuplicado)
     {
+      // Username é público em /u/<username>: dizer "já está em uso" não revela
+      // nada. E-mail não é — o 409 nomeado confirmava quem tem conta (#140).
+      // Vai como falha genérica, no status das validações, sem nomear o campo.
+      if (erro.campo === "username")
+      {
+        return NextResponse.json(
+          { erros: { username: ERRO.JA_EM_USO } },
+          { status: 409 },
+        );
+      }
+
       return NextResponse.json(
-        { erros: { [erro.campo]: ERRO.JA_EM_USO } },
-        { status: 409 },
+        { erros: { _geral: ERRO.CADASTRO_NAO_CONCLUIDO } },
+        { status: 400 },
       );
     }
 

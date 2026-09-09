@@ -20,7 +20,9 @@ const OBRA = {
   coverImageUrl: null,
 };
 
-function fakeDeps(cenario: { usuario?: typeof USUARIO | null })
+function fakeDeps(cenario: { usuario?: typeof USUARIO | null
+  totalAvaliadas?: number;
+})
 {
   return {
     buscarPorUsername: vi.fn(async function ()
@@ -36,6 +38,9 @@ function fakeDeps(cenario: { usuario?: typeof USUARIO | null })
       ];
     }),
     contarResenhas: vi.fn(async function () { return 1; }),
+    // Os numeros do perfil vem de COUNT, nao do tamanho da pagina (#135).
+    contarAvaliadas: vi.fn(async function () { return cenario.totalAvaliadas ?? 3; }),
+    contarListas: vi.fn(async function () { return 1; }),
     contarCurtidasDadas: vi.fn(async function () { return 7; }),
     listarResenhas: vi.fn(async function ()
     {
@@ -84,6 +89,16 @@ const SEM_FILTRO = { ordem: "recentes" as const };
 
 describe("perfilDoUsuario", function ()
 {
+  it("o total de avaliadas e a contagem, mesmo quando a pagina traz menos (#135)", async function ()
+  {
+    const deps = fakeDeps({ totalAvaliadas: 42 });
+
+    const perfil = await perfilDoUsuario({ username: "leitora", viewerId: null, filtro: SEM_FILTRO }, deps);
+
+    expect(perfil?.numeros.avaliadas).toBe(42);
+    expect(perfil?.avaliadas).toHaveLength(3);
+  });
+
   it("username inexistente devolve null sem consultar mais nada", async function ()
   {
     const deps = fakeDeps({ usuario: null });
@@ -118,6 +133,10 @@ describe("perfilDoUsuario", function ()
     ]);
     expect(perfil?.listas.map(function (l) { return l.nome; })).toEqual(["seinen"]);
     expect(deps.listarResenhas).toHaveBeenCalledWith("u1", 5);
+    // Leituras publicas com teto (#135): o perfil de quem inflou a conta nao
+    // materializa tudo a cada visita.
+    expect(deps.listarAvaliadas).toHaveBeenCalledWith("u1", 200);
+    expect(deps.listarListas).toHaveBeenCalledWith("u1", 50);
     expect(deps.listarEstante).not.toHaveBeenCalled();
   });
 

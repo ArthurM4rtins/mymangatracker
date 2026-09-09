@@ -11,6 +11,7 @@ import {
   adicionarNaEstanteDoSistema,
   listarEstanteDoSistema,
 } from "@/server/services/estante.service";
+import { lerJson } from "../_shared/corpo";
 import { ERRO } from "../_shared/erros";
 import { usuarioDaSessao } from "../_shared/sessao";
 
@@ -25,7 +26,8 @@ const ESQUEMA_ESTANTE = z.object({
 
 export async function GET(request: Request)
 {
-  const userId = await usuarioDaSessao();
+  // A extensão lê a estante por Bearer (#52); é uma das duas rotas que aceitam (#137).
+  const userId = await usuarioDaSessao({ aceitarBearer: true });
 
   if (!userId)
   {
@@ -77,18 +79,14 @@ export async function POST(request: Request)
     );
   }
 
-  let corpo: unknown;
-  try
+  const leitura = await lerJson(request);
+
+  if (!leitura.ok)
   {
-    corpo = await request.json();
+    return leitura.resposta;
   }
-  catch
-  {
-    return NextResponse.json(
-      { erros: { _geral: ERRO.CORPO_INVALIDO } },
-      { status: 400 },
-    );
-  }
+
+  const corpo: unknown = leitura.corpo;
 
   const analise = ESQUEMA_ESTANTE.safeParse(corpo);
 
@@ -121,6 +119,14 @@ export async function POST(request: Request)
       return NextResponse.json(
         { erros: { _geral: ERRO.CATALOGO_INDISPONIVEL } },
         { status: 503 },
+      );
+    }
+
+    if (resultado.estado === "limitado")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
+        { status: 429, headers: { "Retry-After": String(resultado.esperarSegundos) } },
       );
     }
 

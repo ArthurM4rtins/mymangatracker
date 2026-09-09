@@ -76,11 +76,15 @@
     "avaliacao_nao_encontrada": "Bewertung nicht gefunden",
     "usuario_nao_encontrado": "Benutzer nicht gefunden",
     "ja_em_uso": "schon vergeben",
+    "cadastro_nao_concluido": "die Registrierung konnte nicht abgeschlossen werden — prüfe die Angaben oder melde dich an, falls du schon ein Konto hast",
+    "origem_recusada": "die Anfrage kam nicht von Kidoku",
+    "conteudo_nao_json": "die Anfrage muss JSON sein",
     "nao_avanca": "dieses Kapitel liegt nicht über deinem Regal-Fortschritt — zum Zurückgehen nutze das Zurücksetzen",
     "sem_fonte": "richte zuerst die Lesequelle ein",
     "arquivo_grande_demais": "das Bild ist größer als 512 KB",
     "tipo_de_arquivo_invalido": "lade ein JPEG-, PNG- oder WebP-Bild hoch",
     "capitulo_invalido": "ungültiges Kapitel",
+    "lista_cheia": "die Liste hat ihr Limit von 500 Werken erreicht",
     "avaliacao_invalida": "ungültige Bewertung — 0,5 bis 5 in halben Sternen oder eine Rezension",
     "url_invalida": "ungültige Lese-URL",
     "url_de_capitulo_invalida": "füge die vollständige URL von Kapitel 1 ein, mit https://",
@@ -88,6 +92,7 @@
     "ordem_invalida": "die Reihenfolge muss genau die Werke der Liste enthalten",
     "comentario_tamanho_invalido": "Kommentar leer oder zu lang",
     "proprio_perfil": "gilt nicht für dein eigenes Profil",
+    "proprio_conteudo": "gilt nicht für deine eigenen Inhalte",
     "idioma_invalido": "Sprache nicht verfügbar",
     "limite_excedido": "zu viele Versuche — warte, bevor du es erneut versuchst",
     "falha_interna": "gerade nicht möglich",
@@ -179,7 +184,8 @@
       }
     },
     "erros": {
-      "indisponivel": "AniList hat gerade nicht geantwortet. Versuch es gleich noch mal."
+      "indisponivel": "AniList hat gerade nicht geantwortet. Versuch es gleich noch mal.",
+      "muitosPedidos": "Zu viele Suchanfragen von hier aus. Warte einen Moment und versuche es erneut."
     },
     "vazio": {
       "semTermo": "Der Katalog hat gerade nichts geliefert. Versuch es gleich noch mal.",
@@ -382,6 +388,7 @@
       "autoria": "von <autor>{username}</autor> · {n, plural, one {# Werk} other {# Werke}}",
       "vazia": "Leere Liste — füge Werke über den Listen-Button auf der Seite jedes Werks hinzu.",
       "remover": "entfernen",
+      "removerConfirmacao": "Dieses Werk aus der Liste entfernen?",
       "curtida": {
         "curtir": "die Liste liken",
         "descurtir": "Like von der Liste entfernen"

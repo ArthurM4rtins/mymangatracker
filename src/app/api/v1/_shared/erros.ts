@@ -52,16 +52,28 @@ export const ERRO = {
 
   // 409 — conflito com o estado que já existe.
   JA_EM_USO: "ja_em_uso",
+  /**
+   * Cadastro que não pôde ser concluído, sem dizer por quê (#140): e-mail já
+   * cadastrado responde isto, com o MESMO status das validações, para o 409
+   * não confirmar quem tem conta. Username duplicado continua nomeado — é público.
+   */
+  CADASTRO_NAO_CONCLUIDO: "cadastro_nao_concluido",
   /** Capítulo que não passa do progresso da estante: nada foi gravado (#172). */
   NAO_AVANCA: "nao_avanca",
   SEM_FONTE: "sem_fonte",
 
-  // 413/415 — o arquivo enviado.
+  // 403 — o pedido veio de outro site (#131). So nas rotas que gravam cookie.
+  ORIGEM_RECUSADA: "origem_recusada",
+
+  // 413/415 — o arquivo enviado, ou corpo que nao e JSON (#131).
+  CONTEUDO_NAO_JSON: "conteudo_nao_json",
   ARQUIVO_GRANDE_DEMAIS: "arquivo_grande_demais",
   TIPO_DE_ARQUIVO_INVALIDO: "tipo_de_arquivo_invalido",
 
   // 422 — o pedido faz sentido, o conteúdo não passa na regra.
   CAPITULO_INVALIDO: "capitulo_invalido",
+  /** A lista chegou ao teto de obras (#135). */
+  LISTA_CHEIA: "lista_cheia",
   AVALIACAO_INVALIDA: "avaliacao_invalida",
   URL_INVALIDA: "url_invalida",
   URL_DE_CAPITULO_INVALIDA: "url_de_capitulo_invalida",
@@ -69,6 +81,9 @@ export const ERRO = {
   ORDEM_INVALIDA: "ordem_invalida",
   COMENTARIO_TAMANHO_INVALIDO: "comentario_tamanho_invalido",
   PROPRIO_PERFIL: "proprio_perfil",
+  // Curtir o proprio conteudo (#148, item 4): a mesma recusa do proprio perfil,
+  // que existia so para Follow e ProfileLike.
+  PROPRIO_CONTEUDO: "proprio_conteudo",
   IDIOMA_INVALIDO: "idioma_invalido",
 
   // 429 — bateu no limitador.
