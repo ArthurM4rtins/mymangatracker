@@ -21,7 +21,8 @@ const SELECT_DA_RESENHA = {
   rating: true,
   review: true,
   containsSpoilers: true,
-  reviewedAt: true,
+  publishedAt: true,
+  createdAt: true,
   user: { select: { username: true } },
   media: {
     select: { anilistId: true, titleRomaji: true, titleEnglish: true, coverImageUrl: true },
@@ -34,7 +35,8 @@ type LinhaDaResenha = {
   rating: { toString(): string } | null;
   review: string | null;
   containsSpoilers: boolean;
-  reviewedAt: Date;
+  publishedAt: Date | null;
+  createdAt: Date;
   user: { username: string };
   media: {
     anilistId: number;
@@ -57,7 +59,7 @@ function paraResenha(linha: LinhaDaResenha): ResenhaDaComunidade
     review: linha.review ?? "",
     containsSpoilers: linha.containsSpoilers,
     curtidas: linha._count.likes,
-    quando: linha.reviewedAt,
+    quando: linha.publishedAt ?? linha.createdAt,
   };
 }
 
@@ -68,7 +70,11 @@ export async function listarResenhasDaComunidade(
 {
   const linhas = await getPrisma().entry.findMany({
     where: { review: { not: null } },
-    orderBy: { reviewedAt: "desc" },
+    // A data publica e `publishedAt` (#143): carimbada uma vez, na transicao de
+    // vazio para texto. `reviewedAt` virou historico da linha e nao ordena mais
+    // nada aqui — apagar e reescrever o texto o recarimbava, e isso levava a
+    // resenha de volta ao topo em duas requisicoes.
+    orderBy: { publishedAt: "desc" },
     take: limite,
     select: SELECT_DA_RESENHA,
   });

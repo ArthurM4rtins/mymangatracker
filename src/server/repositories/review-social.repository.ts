@@ -88,7 +88,8 @@ export async function listarReviewsDaObra(
 {
   const linhas = await getPrisma().entry.findMany({
     where: { mediaId, review: { not: null } },
-    orderBy: [{ likes: { _count: "desc" } }, { reviewedAt: "desc" }],
+    // Desempate pela data publica (#143), nao pelo historico da linha.
+    orderBy: [{ likes: { _count: "desc" } }, { publishedAt: "desc" }],
     take: limite,
     select: {
       id: true,
@@ -96,7 +97,8 @@ export async function listarReviewsDaObra(
       rating: true,
       review: true,
       containsSpoilers: true,
-      reviewedAt: true,
+      publishedAt: true,
+      createdAt: true,
       user: { select: { username: true, avatarUpdatedAt: true } },
       _count: { select: { likes: true, comentarios: true } },
       likes:
@@ -125,7 +127,7 @@ export async function listarReviewsDaObra(
       rating: linha.rating?.toString() ?? null,
       review: linha.review ?? "",
       containsSpoilers: linha.containsSpoilers,
-      publicadaEm: linha.reviewedAt,
+      publicadaEm: linha.publishedAt ?? linha.createdAt,
       curtidas: linha._count.likes,
       curtiPorMim: Array.isArray(linha.likes) && linha.likes.length > 0,
       comentarios: linha.comentarios

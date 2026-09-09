@@ -4,6 +4,8 @@
  * exige a obra na estante: vale ter a obra no cache (a página dela cacheia).
  */
 import { ratingValido } from "@/server/domain/rating";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import { limitarAvaliacao } from "./limite.service";
 import { buscarMediaPorAnilistId } from "@/server/repositories/media.repository";
 import {
   removerAvaliacao,
@@ -21,7 +23,8 @@ export type PedidoDeAvaliacao = {
 export type ResultadoDeAvaliacao =
   | { estado: "ok" }
   | { estado: "obra_desconhecida" }
-  | { estado: "avaliacao_invalida" };
+  | { estado: "avaliacao_invalida" }
+  | { estado: "muitos_pedidos"; esperarSegundos: number };
 
 export type DependenciasDeAvaliacao = {
   buscarMedia: (anilistId: number) => Promise<{ id: string } | null>;
@@ -33,6 +36,7 @@ export type DependenciasDeAvaliacao = {
     containsSpoilers: boolean;
   }) => Promise<{ id: string }>;
   remover: (userId: string, mediaId: string) => Promise<{ removida: true } | null>;
+  limitar: (userId: string) => Promise<Veredito>;
 };
 
 export async function salvarAvaliacaoDaEntrada(
@@ -52,6 +56,15 @@ export async function salvarAvaliacaoDaEntrada(
   if (pedido.rating === null && review === null)
   {
     return { estado: "avaliacao_invalida" };
+  }
+
+  // Depois da validacao e antes de tocar o banco (#143): pedido invalido nao
+  // gasta balde, e pedido acima do teto nao custa consulta.
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "muitos_pedidos", esperarSegundos: limite.esperarSegundos };
   }
 
   const media = await deps.buscarMedia(pedido.anilistId);
@@ -114,4 +127,5 @@ const DEPS_DE_PRODUCAO: DependenciasDeAvaliacao = {
   buscarMedia: buscarMediaPorAnilistId,
   salvar: salvarAvaliacao,
   remover: removerAvaliacao,
+  limitar: function (userId) { return limitarAvaliacao({ userId }); },
 };
