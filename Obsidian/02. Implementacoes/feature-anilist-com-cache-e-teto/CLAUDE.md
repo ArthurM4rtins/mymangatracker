@@ -1,6 +1,8 @@
 # AniList com cache e teto — a página anônima que derruba o site inteiro
 
-Issue #134, achado 4 da auditoria de 06/09/2026, severidade média. Desenho aberto em 09/09/2026. **Aguardando aprovação.**
+Issue #134, achado 4 da auditoria de 06/09/2026, severidade média. Desenho aberto e **aprovado em 09/09/2026**.
+
+**Estado:** frentes 1 e 4 feitas. Frentes 2 e 3 dependem das pendências no fim deste arquivo.
 
 ## Objetivo
 
@@ -16,7 +18,7 @@ Vale registrar que em 09/09/2026 o AniList está fora por conta própria (`403 "
 
 Quatro frentes, em ordem de valor.
 
-### 1. Memo na vitrine
+### 1. Memo na vitrine — FEITO
 
 A query dos populares é **idêntica para todo visitante**, e é o que `/` e `/catalogo` sem filtro batem. Envolver `buscarPopulares` com `lembrarPorTempo` (`domain/memoria-curta.ts`) numa janela curta.
 
@@ -24,13 +26,13 @@ Isso já existe no projeto e é usado **uma única vez**, na sonda do health (`s
 
 Onde: `catalogo.service.ts`, no módulo, não dentro da função — o memo tem que sobreviver entre requisições.
 
-### 2. Memo por id em similares e autor
+### 2. Memo por id em similares e autor — PENDENTE
 
 `autor.service.ts` documenta no cabeçalho não ter cache nenhum. Mesma ideia, mas a chave é o id, então `lembrarPorTempo` (que guarda um valor só) não serve direto: precisa de um mapa de id para função lembrada, com teto de tamanho para o mapa não virar vazamento de memória — chave escolhida pelo visitante é chave sem limite.
 
 Decidir no desenho: `Map` com corte por tamanho, ou aceitar o vazamento por ser id numérico do AniList e processo serverless de vida curta. **Recomendação:** `Map` com teto e descarte do mais antigo, porque o id vem da URL.
 
-### 3. Teto por IP na busca do catálogo
+### 3. Teto por IP na busca do catálogo — PENDENTE
 
 `buscarFiltrado` é o caso em que memo **não resolve**: `?q=<aleatório>` é chave escolhida por quem ataca, e cada valor novo é uma ida nova. Aqui a defesa é orçamento por IP, com `verificarERegistrar` num escopo novo, na forma dos limitadores que já existem.
 
@@ -41,7 +43,7 @@ Duas complicações reais:
 
 **Recomendação:** teto folgado por IP, e a issue do recolhimento (#148, item 1) vira pré-requisito ou entra junto.
 
-### 4. Corte do termo
+### 4. Corte do termo — FEITO
 
 `.slice(0, 100)` no termo dentro de `interpretarFiltros`. Barato, puro domínio, teste trivial. Entra em qualquer cenário.
 
@@ -59,7 +61,6 @@ Duas complicações reais:
 
 ## Pendências
 
-- **Aprovação deste desenho** antes de qualquer código.
 - Escolher entre `Map` com teto e memo simples no item 2.
 - Decidir se o item 1 da #148 (recolher `AuthAttempt`) entra junto com o item 3 ou vira pré-requisito.
 - **Prova de ponta a ponta bloqueada enquanto o AniList estiver fora.** Com a API de terceiro respondendo 403 a tudo, não dá para observar a diferença entre uma ida e uma ida cacheada na resposta real. O que dá para provar sem rede: o memo, por teste de serviço com relógio injetado e contagem de chamadas na dependência falsa, que é a forma que `lembrarPorTempo` já tem em teste. O teto por IP se prova com `curl` normalmente, porque não depende do AniList responder.
