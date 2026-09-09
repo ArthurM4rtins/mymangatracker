@@ -84,6 +84,9 @@ export const ERRO = {
   // Curtir o proprio conteudo (#148, item 4): a mesma recusa do proprio perfil,
   // que existia so para Follow e ProfileLike.
   PROPRIO_CONTEUDO: "proprio_conteudo",
+  // Canal de relato desligado ou GitHub fora (#158): o relato NAO foi
+  // registrado, e a tela precisa dizer isso.
+  RELATO_INDISPONIVEL: "relato_indisponivel",
   IDIOMA_INVALIDO: "idioma_invalido",
 
   // 429 — bateu no limitador.

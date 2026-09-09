@@ -93,6 +93,7 @@
     "comentario_tamanho_invalido": "comentário vazio ou longo demais",
     "proprio_perfil": "não vale para o próprio perfil",
     "proprio_conteudo": "não vale para o que é seu",
+    "relato_indisponivel": "o canal de relato está fora agora. Tente de novo em instantes.",
     "idioma_invalido": "idioma não disponível",
     "limite_excedido": "muitas tentativas — aguarde para tentar de novo",
     "falha_interna": "não foi possível agora",
@@ -569,6 +570,27 @@
       "vaziaPropria": "Você ainda não criou lista. <link>Criar a primeira</link>",
       "vaziaOutro": "{username} ainda não criou lista.",
       "obras": "{n, plural, =1 {{valor} obra} other {{valor} obras}}"
+    }
+  },
+  "relatar": {
+    "meta": {
+      "titulo": "Relatar erro de tradução"
+    },
+    "titulo": "Achou um texto errado?",
+    "subtitulo": "O Kidoku fala cinco idiomas, e nem todos têm revisor nativo por aqui. Se leu algo torto, conta pra gente.",
+    "avisoPublico": "O que você escrever vira uma issue pública no repositório do projeto, junto do seu nome de usuário e da tela em que estava. Não escreva nada pessoal.",
+    "precisaEntrar": "Para relatar, entre na sua conta.",
+    "entrar": "entrar",
+    "linkDoRodape": "relatar erro de tradução",
+    "obrigado": "Recebido, obrigado. O time vê o relato no repositório.",
+    "enviar": "Enviar relato",
+    "enviando": "Enviando…",
+    "campos": {
+      "texto": "O que está errado?",
+      "sugestao": "Como deveria ser? (opcional)"
+    },
+    "erros": {
+      "geral": "não foi possível enviar agora. Tente de novo em instantes."
     }
   }
 }

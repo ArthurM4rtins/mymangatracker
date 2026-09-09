@@ -93,6 +93,7 @@
     "comentario_tamanho_invalido": "comment is empty or too long",
     "proprio_perfil": "doesn't apply to your own profile",
     "proprio_conteudo": "doesn't apply to your own content",
+    "relato_indisponivel": "the reporting channel is down right now. Try again in a moment.",
     "idioma_invalido": "language not available",
     "limite_excedido": "too many attempts — wait before trying again",
     "falha_interna": "couldn't do that right now",
@@ -569,6 +570,27 @@
       "vaziaPropria": "You haven't created a list yet. <link>Create the first one</link>",
       "vaziaOutro": "{username} hasn't created a list yet.",
       "obras": "{n, plural, one {{valor} series} other {{valor} series}}"
+    }
+  },
+  "relatar": {
+    "meta": {
+      "titulo": "Report a translation issue"
+    },
+    "titulo": "Found wrong wording?",
+    "subtitulo": "Kidoku speaks five languages, and not all of them have a native reviewer here. If something reads wrong, tell us.",
+    "avisoPublico": "What you write becomes a public issue in the project repository, along with your username and the screen you were on. Don't write anything personal.",
+    "precisaEntrar": "To report, sign in to your account.",
+    "entrar": "sign in",
+    "linkDoRodape": "report a translation issue",
+    "obrigado": "Got it, thanks. The team sees the report in the repository.",
+    "enviar": "Send report",
+    "enviando": "Sending…",
+    "campos": {
+      "texto": "What's wrong?",
+      "sugestao": "How should it read? (optional)"
+    },
+    "erros": {
+      "geral": "couldn't send just now. Try again in a moment."
     }
   }
 }

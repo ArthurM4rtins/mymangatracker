@@ -46,6 +46,26 @@ export function pepperDoLimite(): string
   return process.env.LIMITE_PEPPER ?? "";
 }
 
+/**
+ * O canal de relato de tradução (#158). Token com escopo mínimo de abrir issue,
+ * e o repositório no formato `dono/nome`. Ausente = canal desligado, e a rota
+ * diz isso — nunca finge que enviou.
+ */
+export function relatoConfigurado(): boolean
+{
+  return Boolean(process.env.GITHUB_TOKEN_RELATOS && process.env.GITHUB_REPO_RELATOS);
+}
+
+export function tokenDeRelatos(): string
+{
+  return process.env.GITHUB_TOKEN_RELATOS ?? "";
+}
+
+export function repositorioDeRelatos(): string
+{
+  return process.env.GITHUB_REPO_RELATOS ?? "";
+}
+
 export function sessaoConfigurada(): boolean
 {
   return Boolean(process.env.SESSION_SECRET);
