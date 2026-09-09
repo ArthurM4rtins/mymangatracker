@@ -169,6 +169,10 @@ const AVALIACOES_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_00
 // issue aberta nao se desfaz sozinha. Teto apertado de proposito — quem relata
 // de verdade manda um ou dois, nao dez.
 const RELATOS_POR_USUARIO: RegraDeLimite = { maximo: 5, janelaMs: 60 * 60_000 };
+// Apagar conta e apagar fonte (#208). Apagar conta acontece uma vez na vida; o
+// teto existe para a rota nao virar caminho barato de martelar o banco com
+// confirmacao errada.
+const EXCLUSOES_POR_USUARIO: RegraDeLimite = { maximo: 10, janelaMs: 60 * 60_000 };
 // Busca do catalogo (#134, achado 4): anonima, e cada termo novo e uma ida
 // real ao AniList pela cota compartilhada. Memo nao defende, porque a chave e
 // o `?q=` de quem pede. O teto e por IP e folgado: rede compartilhada cai num
@@ -283,6 +287,12 @@ export function limitarEntrada(pedido: { userId: string }): Promise<Veredito>
 export function limitarAvaliacao(pedido: { userId: string }): Promise<Veredito>
 {
   return limitarPorUsuario("avaliacao", AVALIACOES_POR_USUARIO, pedido.userId);
+}
+
+/** A composição de produção. Antes de apagar conta ou fonte. */
+export function limitarConta(pedido: { userId: string }): Promise<Veredito>
+{
+  return limitarPorUsuario("conta", EXCLUSOES_POR_USUARIO, pedido.userId);
 }
 
 /** A composição de produção. Antes de abrir issue de relato de tradução. */
