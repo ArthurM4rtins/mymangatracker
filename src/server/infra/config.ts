@@ -36,6 +36,16 @@ export function bancoConfigurado(): boolean
  * Se o segredo da sessão existe. Sem ele nenhum login funciona, e antes nada
  * no deploy olhava para isso — o health passa a reportar (#65, item 23).
  */
+/**
+ * Segredo do HMAC das chaves de tentativa (#148, item 5). Opcional: ausente, as
+ * chaves continuam estáveis e o app funciona — só não resistem a um dump, que é
+ * o modo de desenvolvimento. Em produção, definir.
+ */
+export function pepperDoLimite(): string
+{
+  return process.env.LIMITE_PEPPER ?? "";
+}
+
 export function sessaoConfigurada(): boolean
 {
   return Boolean(process.env.SESSION_SECRET);
