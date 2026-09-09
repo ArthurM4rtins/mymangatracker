@@ -183,7 +183,8 @@
       }
     },
     "erros": {
-      "indisponivel": "AniList didn't respond just now. Try again in a moment."
+      "indisponivel": "AniList didn't respond just now. Try again in a moment.",
+      "muitosPedidos": "Too many searches from here. Wait a moment and try again."
     },
     "vazio": {
       "semTermo": "The catalog didn't return anything just now. Try again in a moment.",

@@ -161,6 +161,11 @@ const ENTRADAS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 
 // teto reescreve 500 linhas por pedido. Arrastar itens na tela salva a ordem
 // inteira a cada solta, então o teto é folgado para quem organiza de verdade.
 const ORDENS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 };
+// Busca do catalogo (#134, achado 4): anonima, e cada termo novo e uma ida
+// real ao AniList pela cota compartilhada. Memo nao defende, porque a chave e
+// o `?q=` de quem pede. O teto e por IP e folgado: rede compartilhada cai num
+// balde so, e dev local sem `x-forwarded-for` cai todo em "desconhecido".
+const BUSCAS_POR_IP: RegraDeLimite = { maximo: 120, janelaMs: 60 * 60_000 };
 
 const DEPS_DE_PRODUCAO: DependenciasDeLimite = {
   contar: contarTentativas,
@@ -264,6 +269,18 @@ export function limitarLista(pedido: { userId: string }): Promise<Veredito>
 export function limitarEntrada(pedido: { userId: string }): Promise<Veredito>
 {
   return limitarPorUsuario("estante", ENTRADAS_POR_USUARIO, pedido.userId);
+}
+
+/** A composição de produção. Antes de buscar no catálogo, sem sessão. */
+export function limitarBuscaDoCatalogo(pedido: { ip: string }): Promise<Veredito>
+{
+  return verificarERegistrar(
+    {
+      escopo: "catalogo",
+      chaves: [{ chave: chaveDeTentativa([pedido.ip]), regra: BUSCAS_POR_IP }],
+    },
+    DEPS_DE_PRODUCAO,
+  );
 }
 
 /** A composição de produção. Antes de reordenar os itens de uma lista. */

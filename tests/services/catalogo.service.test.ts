@@ -143,3 +143,43 @@ describe("a vitrine lembrada", function ()
     expect(filtrado).toHaveBeenCalledTimes(2);
   });
 });
+
+// #134: memo não defende a busca filtrada, porque a chave é o `?q=` de quem
+// pede. Ali a defesa é orçamento por IP, e ele corre ANTES da ida ao AniList.
+describe("teto por IP na busca filtrada", function ()
+{
+  it("acima do teto, devolve muitos_pedidos sem chamar o AniList", async function ()
+  {
+    const deps = {
+      ...fakeDeps(),
+      limitar: vi.fn(async function () { return { bloqueado: true as const, esperarSegundos: 30 }; }),
+    };
+
+    const resultado = await buscarNoCatalogo(interpretarFiltros({ q: "berserk" }), deps, "1.2.3.4");
+
+    expect(resultado).toEqual({ estado: "muitos_pedidos", termo: "berserk" });
+    expect(deps.filtrado).not.toHaveBeenCalled();
+  });
+
+  it("a vitrine não passa pelo teto: ela é lembrada, não custa ida", async function ()
+  {
+    const limitar = vi.fn(async function () { return { bloqueado: true as const, esperarSegundos: 30 }; });
+    const deps = { ...fakeDeps(), limitar };
+
+    const resultado = await buscarNoCatalogo(interpretarFiltros({}), deps, "1.2.3.4");
+
+    expect(resultado.estado).toBe("destaques");
+    expect(limitar).not.toHaveBeenCalled();
+  });
+
+  it("sem IP, não limita: a página que não passa IP é a que já era pública", async function ()
+  {
+    const limitar = vi.fn(async function () { return { bloqueado: true as const, esperarSegundos: 30 }; });
+    const deps = { ...fakeDeps(), limitar };
+
+    const resultado = await buscarNoCatalogo(interpretarFiltros({ q: "berserk" }), deps);
+
+    expect(resultado.estado).toBe("ok");
+    expect(limitar).not.toHaveBeenCalled();
+  });
+});
