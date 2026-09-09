@@ -157,8 +157,29 @@ de produção, aí é bug, não ruído (#148, item 15).
 ## Deploy
 
 Push na `main` → build automático na Vercel → `prisma generate` → migration condicional → `next build`.
-Cada pull request ganha um **branch próprio do Neon**, então a migration de uma PR nunca toca produção
-antes do merge.
+
+### O banco só existe em produção
+
+O recurso do Neon está marcado como **Production environment only** na Vercel. Preview e Development
+**não recebem `DATABASE_URL`**, e isso é de propósito, por dois motivos:
+
+1. **O plano Free tem limite de branches.** Enquanto o recurso valia para todos os ambientes, cada
+   preview criava um branch do banco, os órfãos se acumulavam e o deploy passou a morrer na etapa de
+   provisionamento — antes de instalar dependência, antes de buildar. O check da Vercel ficou vermelho
+   em **todo** PR por semanas, e um check que sempre falha ensina o time a ignorar o vermelho (#162).
+2. **Não há revisão de tela em preview hoje.** O preview de verdade é local, com `pnpm dev`.
+
+Preview então serve a tela com a faixa de configuração pendente e o resto funcionando, que é o
+comportamento desenhado na Fase 1 — o build não depende do banco.
+
+⚠️ **Religar o Neon para Preview traz o problema de volta.** Se um dia fizer falta (revisão de tela
+por PR, por exemplo), o caminho é branch efêmero por PR **com limpeza automática**, e provavelmente
+plano pago. Não basta marcar "All environments".
+
+### A migration
+
+`prisma migrate deploy` só roda quando `VERCEL_ENV` é `production` ou não existe (desenvolvimento
+local). Preview nunca aplica DDL, mesmo que um dia volte a ter banco (#148, item 8).
 
 ## Documentação
 
