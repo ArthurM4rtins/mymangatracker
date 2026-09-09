@@ -523,3 +523,36 @@ arquivos com `git checkout --` depois, para nao commitar troca de EOL.
 
 Antes disso: `git config core.autocrlf false` na worktree, senao o proximo
 checkout recria o problema.
+
+## Banco de preview por PR estoura o Free do Neon e aparece como check da Vercel (09/09/2026)
+
+O check **Vercel** falhava em TODO preview desde o #92, com producao passando no
+mesmo commit. A #162 investigou por semanas e parou em duas hipoteses erradas:
+"e a migration rodando contra banco invalido" (caiu quando o #205 fez o script
+pular fora de producao, e o preview seguinte continuou vermelho) e "e variavel de
+ambiente faltando no Preview".
+
+Nao era nenhuma das duas. O log do deployment dizia, na etapa **Provisioning
+Integrations**, antes de instalar qualquer dependencia:
+
+```
+mymangatracker: Create database branch for deployment
+Branch limit reached. Upgrade your plan or delete unused branches.
+```
+
+A integracao Neon cria uma branch de banco por preview deployment. Ninguem
+apagava. O Free do Neon para em **10 branches**. Na decima o teto bateu e desde
+entao todo preview morria em 1s, antes do build. Por isso o bot comentava
+`previewUrl: ""` — o deployment nunca chegava a existir.
+
+**A regra:** deployment que falha em **1s** nao falhou no build. Antes de teorizar
+sobre codigo, variavel ou migration, abrir o deployment e expandir as etapas: o
+que quebra antes de instalar dependencia e provisionamento de integracao ou
+quota, e o log diz qual em uma linha. E recurso que cria artefato por PR (branch
+de banco, ambiente efemero) precisa de limpeza automatica ou de um teto, senao a
+falha chega disfarcada de outra coisa semanas depois.
+
+Correcao aplicada: as 9 branches orfas apagadas e o recurso Neon restrito a
+`Production environment only` na Vercel — preview e development nao recebem mais
+banco, o build passa e a tela degrada com o aviso de configuracao pendente, que e
+o comportamento desenhado na Fase 1.
