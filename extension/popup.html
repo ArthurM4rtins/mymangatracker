@@ -8,6 +8,10 @@
   <body>
     <header class="topo">
       <span class="marca">kidoku</span>
+      <!-- Qual servidor esta recebendo a leitura (#148, item 9). O build e
+           unico e tenta producao antes do localhost, entao quem testa local
+           logado nos dois gravava em producao sem nada na tela dizer. -->
+      <span id="ambiente" class="ambiente" hidden></span>
       <a
         id="abrir-site"
         class="discreto"
