@@ -7,6 +7,7 @@
  * `Obsidian/02. Implementacoes/slice-vertical/CLAUDE.md`.
  */
 import { buscarFiltrado, buscarPopulares } from "@/server/infra/anilist";
+import { lembrarPorTempo } from "@/server/domain/memoria-curta";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import {
   temFiltroAtivo,
@@ -26,22 +27,49 @@ export type ResultadoBusca =
  * Sem termo E sem filtro, a resposta são os populares (`destaques`) — o
  * catálogo abre com vitrine. Termo ou filtro ativo viram busca filtrada.
  */
+export type DependenciasDoCatalogo = {
+  populares: () => Promise<MediaDoAniList[]>;
+  filtrado: (filtro: FiltroDoCatalogo) => Promise<MediaDoAniList[]>;
+};
+
+/**
+ * A vitrine é a MESMA para todo visitante, então a resposta serve a janela
+ * inteira (#134). Sem isso, `GET /` — que é `force-dynamic` — virava uma
+ * requisição real ao AniList em todo render, saindo do IP único do deploy:
+ * algumas dezenas por minuto estouravam a cota e derrubavam catálogo, autor,
+ * página da obra e a adição à estante para TODO MUNDO.
+ *
+ * A busca filtrada fica de fora de propósito: ali a chave é o `?q=`, escolhido
+ * por quem pede, e memo não defende chave que o atacante inventa. Aquele lado é
+ * teto por IP, ainda não implementado.
+ *
+ * `lembrarPorTempo` compartilha a promessa em voo, então renders concorrentes
+ * não duplicam a ida, e falha não fica lembrada.
+ */
+const JANELA_DA_VITRINE_MS = 30_000;
+
+export const DEPS_DE_PRODUCAO: DependenciasDoCatalogo = {
+  populares: lembrarPorTempo(buscarPopulares, JANELA_DA_VITRINE_MS),
+  filtrado: buscarFiltrado,
+};
+
 export async function buscarNoCatalogo(
   filtro: FiltroDoCatalogo,
+  deps: DependenciasDoCatalogo = DEPS_DE_PRODUCAO,
 ): Promise<ResultadoBusca>
 {
   try
   {
     if (filtro.termo === "" && !temFiltroAtivo(filtro))
     {
-      const obras = await buscarPopulares();
+      const obras = await deps.populares();
 
       return obras.length === 0
         ? { estado: "vazio", termo: "" }
         : { estado: "destaques", termo: "", obras };
     }
 
-    const obras = await buscarFiltrado(filtro);
+    const obras = await deps.filtrado(filtro);
 
     return obras.length === 0
       ? { estado: "vazio", termo: filtro.termo }

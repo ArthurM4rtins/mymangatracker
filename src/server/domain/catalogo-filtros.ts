@@ -38,6 +38,13 @@ export const GENEROS = [
 
 export const DECADAS = [2020, 2010, 2000, 1990, 1980, 1970, 1960, 1950] as const;
 
+/**
+ * O termo vai cru para a query do AniList e e escolhido por quem chama (#134).
+ * Sem teto, um `?q=` gigante vira corpo de requisicao do mesmo tamanho contra a
+ * cota compartilhada de todo o app. Cem caracteres passa de qualquer titulo real.
+ */
+const TAMANHO_MAXIMO_DO_TERMO = 100;
+
 const TIPOS: TipoDeObra[] = ["manga", "manhwa", "manhua", "novel"];
 const ORDENS: OrdemDoCatalogo[] = ["popular", "nota", "alta", "recente"];
 
@@ -67,7 +74,7 @@ export function interpretarFiltros(
   const ordem = primeiro(params.ordem);
 
   const filtro: FiltroDoCatalogo = {
-    termo: q?.trim() ?? "",
+    termo: q?.trim().slice(0, TAMANHO_MAXIMO_DO_TERMO) ?? "",
     ordem: (ORDENS as string[]).includes(ordem ?? "")
       ? (ordem as OrdemDoCatalogo)
       : "popular",
