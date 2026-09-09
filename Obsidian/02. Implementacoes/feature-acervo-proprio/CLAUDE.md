@@ -1,6 +1,10 @@
 # Acervo próprio — espelhar o AniList, com o Kitsu tapando o buraco
 
-Desenho aberto em 09/09/2026, a partir da #215. **Aguardando aprovação.**
+Desenho aberto e **aprovado em 09/09/2026**, a partir da #215.
+
+**Plano aprovado, em uma frase:** Kitsu como fallback enquanto o AniList estiver
+fora → copiar a base do AniList quando ele voltar → daí em diante, só atualizar
+de tempos em tempos.
 
 > Correção de rumo: a primeira versão deste desenho propunha **importar o acervo
 > do Kitsu em massa**. Não é isso. O acervo a ser espelhado é o do **AniList**.
@@ -72,10 +76,12 @@ A varredura, então, é questão de paciência, não de possibilidade:
 | 50 mil | 1.000 | ~11 min | ~33 min |
 | 100 mil | 2.000 | ~22 min | ~1h10 |
 | 200 mil | 4.000 | ~45 min | ~2h15 |
+| **300 mil** | **6.000** | **~1h07** | **~3h20** |
 
-**Quantas obras existem, não sei** — e não dá para medir com a API fora. A
-primeira resposta da varredura já diz (`pageInfo.total`), então o próprio
-importador descobre e registra antes de continuar.
+**A ordem de grandeza é 300 mil obras**, pelo que o usuário lembra de ter visto
+(09/09/2026). Não dá para confirmar com a API fora, mas a primeira resposta da
+varredura já traz o total em `pageInfo.total` — o importador confere antes de
+seguir, e para se o número destoar do previsto.
 
 #### O que a documentação NÃO diz
 
@@ -86,19 +92,23 @@ permitindo, nem proibindo. O contato deles é `contact@anilist.co`.
 o produto estiver servido — não varrer o acervo inteiro só porque cabe. Se um dia
 fizer falta o acervo completo, aí sim vale escrever para eles antes.
 
-#### O limite que aperta primeiro não é o deles, é o nosso
+#### ⚠️ O limite que aperta primeiro não é o deles, é o NOSSO BANCO
 
-Estimando 1 a 2 KB por obra com sinopse:
+Com 300 mil obras, a conta muda de figura. Estimando 1 a 2 KB por obra com
+sinopse:
 
 | obras | tamanho aproximado |
 |---|---|
-| 20 mil | 20–40 MB |
 | 100 mil | 100–200 MB |
 | 200 mil | 200–400 MB |
+| **300 mil** | **300–600 MB** |
 
-O plano gratuito do Neon dá **0,5 GB**. O acervo inteiro pode caber, mas deixa
-pouca folga para o resto — e o resto é o que importa (estante, avaliações,
-progresso). Mais um argumento para o recorte.
+O plano gratuito do Neon dá **0,5 GB — para tudo**. Ou seja: o espelho completo
+com sinopse **provavelmente não cabe**, e no melhor caso não deixa folga para o
+que de fato é nosso (estante, avaliações, resenhas, progresso, tentativas).
+
+Isto é **pendência aberta**, e é a que decide o tamanho da Fase 2. Ver
+**Pendências, item 2**, com os três caminhos.
 
 ## A descoberta que costura as duas fases
 
@@ -150,14 +160,29 @@ enquanto o AniList estiver fora, e some do caminho quando ele voltar.
    mudança de comportamento visível: a busca passaria a mostrar o nosso espelho, e
    não o AniList ao vivo. Antes da Fase 2 isso não se decide — hoje o banco tem
    quinze obras.
-2. **Quantas obras espelhar.** Os números da varredura estão acima; o que falta é
-   a decisão de escopo. Recomendação: as mais populares, em faixas, parando quando
-   o produto estiver servido. O limite que aperta primeiro é o armazenamento do
-   nosso plano, não o deles.
+2. ⚠️ **O banco não comporta 300 mil obras com sinopse no plano gratuito.** É a
+   pendência que decide o tamanho da Fase 2, e precisa ser resolvida antes de
+   rodar a varredura. Três caminhos, do mais barato ao mais caro:
+
+   **(a) Espelho magro + detalhe sob demanda — recomendado.** Guardar de TODAS as
+   obras só o que a busca precisa: `anilistId`, títulos, tipo, país, capa, ano,
+   nota. Deixar de fora a sinopse, que é o campo pesado. Isso dá algo como 200 a
+   300 bytes por linha — **60 a 90 MB para as 300 mil**, com folga confortável. A
+   sinopse e o resto do detalhe continuam vindo sob demanda na página da obra,
+   como já acontece hoje, e ficam gravados só para quem foi visitado. O catálogo
+   ganha o acervo inteiro; o banco não engorda com texto que ninguém leu.
+
+   **(b) Recorte por popularidade.** Espelhar só as N mais populares, com tudo.
+   Simples, mas escolhe por nós o que a pessoa pode encontrar na busca.
+
+   **(c) Plano pago do Neon.** Resolve por dinheiro; some com a restrição.
+
+   Medir antes de decidir: rodar a varredura contra uma amostra e olhar o tamanho
+   real por linha, em vez de confiar na estimativa acima.
 3. **Onde a sincronização roda**: cron da Vercel (o plano Hobby permite pouca
    frequência) ou script à mão. Cron pede rota protegida por segredo.
 4. **A Fase 2 depende do AniList voltar.** Não há previsão. A Fase 1 não depende, e
-   é o que destrava o uso hoje.
+   é o que destrava o uso hoje — por isso ela é a que entra primeiro, já aprovada.
 
 ## Referências
 
