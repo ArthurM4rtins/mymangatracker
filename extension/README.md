@@ -53,10 +53,14 @@ no catálogo da API.
 ## Permissões
 
 - `activeTab`, `tabs`: ler URL e título da aba (o `tabs` é o que permite o badge antes do clique).
+  **O Chrome apresenta essa permissão como "Ler seu histórico de navegação"**, e é uma descrição
+  honesta: o `background.js` recebe URL e título de toda aba a cada navegação. A concessão
+  corresponde ao recurso — o badge precisa disso, e não há forma mais estreita —, mas quem instala
+  merece ler isso aqui e não descobrir no diálogo do navegador (#148, item 10).
 - `cookies` + `host_permissions` do nosso domínio: ler a sessão.
 - `storage`: o pareamento.
 
-Nenhuma permissão em sites de terceiros: a extensão não injeta script nem lê DOM.
+A extensão não injeta script nem lê DOM de site nenhum.
 
 ## Pendências
 
