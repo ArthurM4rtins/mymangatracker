@@ -25,6 +25,7 @@ function fakeDeps()
     filtrado: vi.fn(async function (): Promise<MediaDoAniList[]> { return [OBRA]; }),
     limitar: vi.fn(async function (): Promise<Veredito> { return { bloqueado: false }; }),
     doCache: vi.fn(async function (): Promise<MediaDoAniList[]> { return []; }),
+    noKitsu: vi.fn(async function (): Promise<MediaDoAniList[]> { return []; }),
   };
 }
 
@@ -259,5 +260,87 @@ describe("fallback para o cache quando o AniList cai", function ()
 
     expect(resultado.estado).toBe("ok");
     expect(doCache).not.toHaveBeenCalled();
+  });
+});
+
+// #219: o Kitsu tapa o buraco enquanto o AniList esta fora. Ele entra ANTES do
+// cache local — o cache tem so o que alguem ja visitou; o Kitsu tem catalogo.
+// E nunca entra com o AniList de pe: fallback, nao segunda fonte ao vivo.
+describe("Kitsu como fallback do AniList", function ()
+{
+  function comAniListFora()
+  {
+    const deps = fakeDeps();
+    deps.populares.mockRejectedValue(new Error("403 disabled"));
+    deps.filtrado.mockRejectedValue(new Error("403 disabled"));
+    return deps;
+  }
+
+  const OUTRA = { ...OBRA, anilistId: 30656, titleRomaji: "Vagabond" };
+
+  it("com o AniList fora, responde do Kitsu", async function ()
+  {
+    const noKitsu = vi.fn(async function () { return [OUTRA]; });
+
+    const resultado = await buscarNoCatalogo(
+      interpretarFiltros({ q: "vagabond" }),
+      { ...comAniListFora(), noKitsu },
+    );
+
+    expect(resultado).toEqual({ estado: "kitsu", termo: "vagabond", obras: [OUTRA] });
+    expect(noKitsu).toHaveBeenCalledWith("vagabond");
+  });
+
+  it("com o AniList de pe, o Kitsu nem e consultado", async function ()
+  {
+    const noKitsu = vi.fn(async function () { return [OUTRA]; });
+
+    const resultado = await buscarNoCatalogo(
+      interpretarFiltros({ q: "vinland" }),
+      { ...fakeDeps(), noKitsu },
+    );
+
+    expect(resultado.estado).toBe("ok");
+    expect(noKitsu).not.toHaveBeenCalled();
+  });
+
+  it("Kitsu vazio cai no cache local, que e o ultimo recurso", async function ()
+  {
+    const noKitsu = vi.fn(async function (): Promise<typeof OBRA[]> { return []; });
+    const doCache = vi.fn(async function () { return [OBRA]; });
+
+    const resultado = await buscarNoCatalogo(
+      interpretarFiltros({ q: "vinland" }),
+      { ...comAniListFora(), noKitsu, doCache },
+    );
+
+    expect(resultado).toEqual({ estado: "cache", termo: "vinland", obras: [OBRA] });
+  });
+
+  it("Kitsu falhando tambem cai no cache, sem virar 500", async function ()
+  {
+    const noKitsu = vi.fn(async function (): Promise<typeof OBRA[]> { throw new Error("kitsu fora"); });
+    const doCache = vi.fn(async function () { return [OBRA]; });
+
+    const resultado = await buscarNoCatalogo(
+      interpretarFiltros({ q: "vinland" }),
+      { ...comAniListFora(), noKitsu, doCache },
+    );
+
+    expect(resultado.estado).toBe("cache");
+  });
+
+  it("todos fora: indisponivel, como antes", async function ()
+  {
+    const resultado = await buscarNoCatalogo(
+      interpretarFiltros({ q: "vinland" }),
+      {
+        ...comAniListFora(),
+        noKitsu: vi.fn(async function (): Promise<typeof OBRA[]> { return []; }),
+        doCache: vi.fn(async function (): Promise<typeof OBRA[]> { return []; }),
+      },
+    );
+
+    expect(resultado).toEqual({ estado: "indisponivel", termo: "vinland" });
   });
 });

@@ -8,6 +8,7 @@
  */
 import { buscarFiltrado, buscarPopulares } from "@/server/infra/anilist";
 import { buscarMediasEmCache } from "@/server/repositories/media.repository";
+import { buscarNoKitsu } from "@/server/infra/kitsu";
 import { lembrarPorTempo } from "@/server/domain/memoria-curta";
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import { limitarBuscaDoCatalogo } from "./limite.service";
@@ -24,7 +25,9 @@ export type ResultadoBusca =
   | { estado: "indisponivel"; termo: string }
   | { estado: "muitos_pedidos"; termo: string }
   /** O AniList está fora e o banco tinha o que mostrar (#165). */
-  | { estado: "cache"; termo: string; obras: MediaDoAniList[] };
+  | { estado: "cache"; termo: string; obras: MediaDoAniList[] }
+  /** O AniList está fora e o Kitsu respondeu no lugar dele (#219). */
+  | { estado: "kitsu"; termo: string; obras: MediaDoAniList[] };
 
 /**
  * Nunca levanta. A tela é pública e o AniList é de terceiro: fora do ar, a
@@ -39,6 +42,8 @@ export type DependenciasDoCatalogo = {
   limitar: (ip: string) => Promise<Veredito>;
   /** As obras já cacheadas que casam com o termo. Só entra no fallback (#165). */
   doCache: (termo: string) => Promise<MediaDoAniList[]>;
+  /** O tapa-buraco enquanto o AniList está fora (#219). Nunca com ele de pé. */
+  noKitsu: (termo: string) => Promise<MediaDoAniList[]>;
 };
 
 /**
@@ -62,6 +67,7 @@ export const DEPS_DE_PRODUCAO: DependenciasDoCatalogo = {
   filtrado: buscarFiltrado,
   limitar: function (ip) { return limitarBuscaDoCatalogo({ ip }); },
   doCache: buscarMediasEmCache,
+  noKitsu: buscarNoKitsu,
 };
 
 export async function buscarNoCatalogo(
@@ -109,15 +115,40 @@ export async function buscarNoCatalogo(
     // decisão fazia sentido quando o risco era o Postgres cair, e inverteu de
     // efeito quando quem caiu foi o terceiro. Cache-first NÃO: só no fallback,
     // senão a busca vira um índice das poucas obras que alguém já abriu.
-    return await doCacheOuIndisponivel(filtro, deps);
+    return await semOAniList(filtro, deps);
   }
 }
 
-async function doCacheOuIndisponivel(
+/**
+ * A escada de quando o AniList falha (#219).
+ *
+ * 1. **Kitsu**, que tem catálogo de verdade e entrega o `anilistId` junto — o
+ *    que a pessoa achar aqui é a mesma linha que o AniList vai atualizar depois.
+ * 2. **Cache local**, que só tem o que alguém já visitou.
+ * 3. **Indisponível**, a verdade quando não há nada a mostrar.
+ *
+ * Nesta ordem porque o Kitsu cobre o acervo e o cache cobre um punhado de obras.
+ * E nada disso roda com o AniList de pé: é fallback, não segunda fonte ao vivo.
+ */
+async function semOAniList(
   filtro: FiltroDoCatalogo,
   deps: DependenciasDoCatalogo,
 ): Promise<ResultadoBusca>
 {
+  try
+  {
+    const obras = await deps.noKitsu(filtro.termo);
+
+    if (obras.length > 0)
+    {
+      return { estado: "kitsu", termo: filtro.termo, obras };
+    }
+  }
+  catch
+  {
+    // O tapa-buraco também caiu. Segue para o cache.
+  }
+
   try
   {
     const obras = await deps.doCache(filtro.termo);

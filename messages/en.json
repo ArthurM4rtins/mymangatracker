@@ -188,7 +188,8 @@
     "erros": {
       "indisponivel": "AniList didn't respond just now. Try again in a moment.",
       "muitosPedidos": "Too many searches from here. Wait a moment and try again.",
-      "doCache": "Results from what we've already visited: AniList didn't respond just now, so the catalog is limited to works that passed through here."
+      "doCache": "Results from what we've already visited: AniList didn't respond just now, so the catalog is limited to works that passed through here.",
+      "doKitsu": "AniList didn't respond just now, so these results come from Kitsu. Some titles may appear romanized."
     },
     "vazio": {
       "semTermo": "The catalog didn't return anything just now. Try again in a moment.",
