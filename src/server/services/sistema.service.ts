@@ -20,18 +20,38 @@ import { verificarSaude, type RelatorioSaude } from "./health.service";
  * entra na memória: é nosso e a sonda é barata.
  */
 const JANELA_DO_ANILIST_MS = 30_000;
-const pingAniListLembrado = lembrarPorTempo(pingAniList, JANELA_DO_ANILIST_MS);
+/**
+ * A falha vale por uma janela própria e curta (#148, item 11). Antes o memo era
+ * limpo no erro, então durante uma indisponibilidade do AniList ele ficava
+ * desligado e cada chamada virava uma requisição nova — mantendo a cota fixada
+ * em zero justo quando ela precisava se recuperar.
+ */
+const JANELA_DE_FALHA_MS = 10_000;
+const pingAniListLembrado = lembrarPorTempo(
+  pingAniList,
+  JANELA_DO_ANILIST_MS,
+  undefined,
+  JANELA_DE_FALHA_MS,
+);
 
 async function sondaDoSegredo(): Promise<"ok" | "not_configured">
 {
   return sessaoConfigurada() ? "ok" : "not_configured";
 }
 
-export async function verificarSaudeDoSistema(): Promise<RelatorioSaude>
+/**
+ * `completo` só para quem está autenticado (#148, itens 11 e 12): a sonda do
+ * terceiro e a lista de dependências saem do corpo anônimo. Sem sessão, o health
+ * responde liveness do que é nosso — banco e segredo —, que é barato e não
+ * publica estado de configuração para qualquer um.
+ */
+export async function verificarSaudeDoSistema(
+  opcoes: { completo?: boolean } = {},
+): Promise<RelatorioSaude>
 {
   return verificarSaude({
     database: pingBanco,
-    anilist: pingAniListLembrado,
+    anilist: opcoes.completo === true ? pingAniListLembrado : undefined,
     sessionSecret: sondaDoSegredo,
   });
 }

@@ -184,3 +184,28 @@ describe("verificarSaude", () =>
     expect(pico).toBe(2);
   });
 });
+
+// #148, itens 11 e 12: a rota e anonima e sem teto, e cada chamada disparava uma
+// requisicao real ao AniList pela cota compartilhada. Sonda de liveness nao
+// precisa testar terceiro a cada poll — e o estado de configuracao so interessa
+// a quem esta autenticado.
+describe("verificarSaude sem a sonda do AniList", function ()
+{
+  it("checa so o que e nosso, e nem chama o terceiro", async function ()
+  {
+    const relatorio = await verificarSaude({ database: ok, sessionSecret: ok, relogio });
+
+    expect(relatorio.dependencies.map(function (d) { return d.name; })).toEqual([
+      "database",
+      "session_secret",
+    ]);
+    expect(relatorio.status).toBe("ok");
+  });
+
+  it("o terceiro fora deixa de derrubar o estado geral", async function ()
+  {
+    const relatorio = await verificarSaude({ database: ok, sessionSecret: ok, relogio });
+
+    expect(relatorio.status).toBe("ok");
+  });
+});
