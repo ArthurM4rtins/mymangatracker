@@ -34,7 +34,7 @@ export async function definirAvatar(
   deps: DependenciasDoAvatar,
 ): Promise<ResultadoDeDefinir>
 {
-  const motivo = validarAvatar(pedido.mime, pedido.bytes.byteLength);
+  const motivo = validarAvatar(pedido.mime, pedido.bytes);
 
   if (motivo !== null)
   {
