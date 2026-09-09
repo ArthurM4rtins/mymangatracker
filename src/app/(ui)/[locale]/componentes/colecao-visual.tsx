@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Fragment, useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { Fragment, useEffect, useId, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 
 import estilos from "./colecao-visual.module.css";
 
@@ -22,11 +22,12 @@ export type GrupoDaColecao = {
 
 const CORES = ["#733c35", "#344d53", "#586044", "#71516b", "#865f33", "#364868", "#55504a"];
 
-export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade" }: {
+export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classeGrade = "grid gap-4 sm:grid-cols-2" }: {
   itens: ItemDaColecao[];
-  grupos: GrupoDaColecao[];
+  grupos?: GrupoDaColecao[];
   titulo: string;
   inicial?: "grade" | "prateleira";
+  classeGrade?: string;
 })
 {
   const t = useTranslations("colecao");
@@ -34,6 +35,10 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade" }: {
   const [selecionado, setSelecionado] = useState<number | null>(null);
   const item = itens.find((obra) => obra.id === selecionado);
   const conteudoId = useId();
+  const botaoPrateleira = useRef<HTMLButtonElement>(null);
+
+  // Uma remoção ou filtro não deve reabrir o painel se a obra reaparecer.
+  if (selecionado !== null && !item) setSelecionado(null);
 
   return (
     <div className={estilos.colecao}>
@@ -42,6 +47,7 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade" }: {
         <div className={estilos.modos} role="group" aria-label={t("visualizacao")}>
           {(["grade", "prateleira"] as const).map((opcao) => (
             <button key={opcao} type="button" aria-pressed={modo === opcao}
+              ref={opcao === "prateleira" ? botaoPrateleira : undefined}
               aria-controls={conteudoId} onClick={() => setModo(opcao)}>
               <IconeModo prateleira={opcao === "prateleira"} />
               {t(opcao)}
@@ -52,13 +58,13 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade" }: {
 
       <div id={conteudoId}>
         {modo === "grade" ? (
-          <ul aria-label={titulo} className="grid gap-4 sm:grid-cols-2">
+          <ul aria-label={titulo} className={classeGrade}>
             {itens.map((obra) => <Fragment key={obra.id}>{obra.detalhe}</Fragment>)}
           </ul>
         ) : (
           <div className={estilos.prateleiras}>
             <p className={estilos.dica}>{t("dica")}</p>
-            {grupos.filter((grupo) => grupo.itens.length > 0).map((grupo, indice) => (
+            {(grupos ?? [{ id: "obras", titulo, itens }]).filter((grupo) => grupo.itens.length > 0).map((grupo, indice) => (
               <Prateleira key={grupo.id} grupo={grupo} numero={indice + 1} aoAbrir={setSelecionado} />
             ))}
           </div>
@@ -66,7 +72,7 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade" }: {
       </div>
 
       {modo === "prateleira" && item && (
-        <DetalheDaColecao item={item} aoFechar={() => setSelecionado(null)} />
+        <DetalheDaColecao item={item} aoFechar={() => setSelecionado(null)} focoAlternativo={botaoPrateleira} />
       )}
     </div>
   );
@@ -203,7 +209,11 @@ function ImagemDaColecao({ src, sizes, className }: { src: string; sizes: string
     className={className} onError={() => setFalhou(true)} />;
 }
 
-function DetalheDaColecao({ item, aoFechar }: { item: ItemDaColecao; aoFechar: () => void })
+function DetalheDaColecao({ item, aoFechar, focoAlternativo }: {
+  item: ItemDaColecao;
+  aoFechar: () => void;
+  focoAlternativo: RefObject<HTMLButtonElement | null>;
+})
 {
   const t = useTranslations("colecao");
   const dialogo = useRef<HTMLDialogElement>(null);
@@ -212,15 +222,17 @@ function DetalheDaColecao({ item, aoFechar }: { item: ItemDaColecao; aoFechar: (
   useEffect(() => {
     const elemento = dialogo.current;
     const origem = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const alternativa = focoAlternativo.current;
     const overflow = document.body.style.overflow;
     elemento?.showModal();
     document.body.style.overflow = "hidden";
     return () => {
       elemento?.close();
       document.body.style.overflow = overflow;
-      if (origem?.isConnected) origem.focus({ preventScroll: true });
+      const destino = origem?.isConnected ? origem : alternativa;
+      destino?.focus({ preventScroll: true });
     };
-  }, []);
+  }, [focoAlternativo]);
 
   return (
     <dialog ref={dialogo} className={estilos.dialogo} aria-labelledby={tituloId}

@@ -8,7 +8,7 @@
     "anterior": "Reculer dans l’étagère {grupo}",
     "proxima": "Avancer dans l’étagère {grupo}",
     "abrir": "Voir les détails de {titulo}",
-    "detalhes": "Sur l’étagère · {titulo}",
+    "detalhes": "Détails · {titulo}",
     "fechar": "Fermer les détails",
     "laboratorio": "Une nouvelle façon d’explorer",
     "descricaoLaboratorio": "Un aperçu de votre bibliothèque. Explorez cette collection d’exemple et alternez entre les deux affichages.",

@@ -8,7 +8,7 @@
     "anterior": "Retroceder en la estantería {grupo}",
     "proxima": "Avanzar en la estantería {grupo}",
     "abrir": "Ver detalles de {titulo}",
-    "detalhes": "En la estantería · {titulo}",
+    "detalhes": "Detalles · {titulo}",
     "fechar": "Cerrar detalles",
     "laboratorio": "Una nueva forma de explorar",
     "descricaoLaboratorio": "Un ensayo para tu estantería. Explora esta colección de ejemplo y alterna entre las dos vistas.",

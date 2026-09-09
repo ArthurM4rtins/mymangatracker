@@ -55,6 +55,10 @@
 .cardDetalhe > li > a > img { width: 176px; height: 264px; box-shadow: 5px 8px 20px #0003; }
 .cardDetalhe h2 { font-size: 1.5rem; margin-bottom: .5rem; }
 .cardDetalhe h2, .cardDetalhe p { -webkit-line-clamp: unset; }
+.cardDetalhe > li[data-cartao-obra] > a { align-self: stretch; gap: 1.5rem; }
+.cardDetalhe > li[data-cartao-obra] > a > img,
+.cardDetalhe [data-capa-vazia] { align-self: center; width: min(100%, 176px); height: auto; aspect-ratio: 2 / 3; }
+.cardDetalhe [data-titulo-obra] { font-size: 1.5rem; font-weight: 600; color: var(--texto); -webkit-line-clamp: unset; overflow-wrap: anywhere; }
 @keyframes abrir { from { opacity: 0; translate: 24px 0; } to { opacity: 1; translate: 0 0; } }
 @media (max-width: 480px) {
   .trilho { padding-inline: 12px; }
