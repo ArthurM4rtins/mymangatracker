@@ -64,15 +64,15 @@ Duas complicações reais:
 Nenhuma aberta. As três que existiam foram decididas em 09/09/2026, com o usuário
 delegando a escolha técnica:
 
-1. **Memo por id foi de  com teto**, como a recomendação previa: a chave vem
+1. **Memo por id foi de `Map` com teto**, como a recomendação previa: a chave vem
    da URL, e mapa que só cresce seria vazamento com a porta aberta. Duzentas
    chaves, cinco minutos cada.
-2. **O recolhimento do  entrou junto** (item 1 da #148), não como
+2. **O recolhimento do `AuthAttempt` entrou junto** (item 1 da #148), não como
    pré-requisito separado. Sem ele o teto por IP trocaria uma pressão por outra:
    cada busca anônima grava linha numa tabela que ninguém recolhia. É amostrado —
    uma fração pequena dos pedidos paga a limpeza, sem cron para manter.
 3. **A regra de qual IP vale mudou para o domínio.** A página não pode importar
-   da camada de controller: o  barra, e a exceção existente cobre só
+   da camada de controller: o `boundaries` barra, e a exceção existente cobre só
    sessão e códigos de erro. Como a regra é pura, o domínio é o lugar dela, e as
    duas bordas viraram ponte.
 
