@@ -4,7 +4,7 @@
  */
 import { mesmoConjunto } from "@/server/domain/lista-ordem";
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
-import { limitarLista } from "./limite.service";
+import { limitarLista, limitarOrdem } from "./limite.service";
 import { buscarMediaPorAnilistId } from "@/server/repositories/media.repository";
 import {
   adicionarItem,
@@ -271,17 +271,34 @@ export type DependenciasDeOrdem = {
     listaId: string,
     mediaIds: string[],
   ) => Promise<{ reordenada: true } | null>;
+  limitar: (userId: string) => Promise<Veredito>;
 };
 
 /**
  * A ordem proposta (por anilistId) tem que ser permutação exata dos itens
  * atuais — o domínio decide. Só então traduz para mediaId e grava.
+ *
+ * O teto por usuário (#146) corre antes de tudo: reordenar reescreve a lista
+ * inteira, e sem limite o único freio era a latência de quem pedia. Pedido
+ * bloqueado não custa nem a leitura dos itens.
  */
 export async function reordenarItensDaLista(
   pedido: { userId: string; listaId: string; anilistIds: number[] },
   deps: DependenciasDeOrdem,
-): Promise<{ estado: "ok" } | { estado: "ordem_invalida" } | { estado: "nao_encontrada" }>
+): Promise<
+  | { estado: "ok" }
+  | { estado: "ordem_invalida" }
+  | { estado: "nao_encontrada" }
+  | { estado: "muitos_pedidos"; esperarSegundos: number }
+>
 {
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "muitos_pedidos", esperarSegundos: limite.esperarSegundos };
+  }
+
   const atuais = await deps.listarItens(pedido.userId, pedido.listaId);
 
   if (atuais === null)
@@ -353,6 +370,7 @@ export function reordenarItensDoSistema(pedido: {
   return reordenarItensDaLista(pedido, {
     listarItens: listarItensParaOrdem,
     reordenar: reordenarItens,
+    limitar: function (userId) { return limitarOrdem({ userId }); },
   });
 }
 
