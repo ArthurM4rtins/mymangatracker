@@ -185,7 +185,8 @@
     },
     "erros": {
       "indisponivel": "AniList n’a pas répondu. Réessaie dans un instant.",
-      "muitosPedidos": "Trop de recherches depuis ici. Patiente un instant et réessaie."
+      "muitosPedidos": "Trop de recherches depuis ici. Patiente un instant et réessaie.",
+      "doCache": "Résultats de ce que nous avons déjà visité : AniList n'a pas répondu, donc le catalogue se limite aux œuvres déjà passées par ici."
     },
     "vazio": {
       "semTermo": "Le catalogue n’a rien renvoyé. Réessaie dans un instant.",
