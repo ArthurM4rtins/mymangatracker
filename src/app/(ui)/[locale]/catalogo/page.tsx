@@ -25,14 +25,10 @@ export async function generateMetadata({
   return { title: t("meta.titulo"), alternates: alternativasDeIdioma("/catalogo") };
 }
 
+// O mesmo parâmetro repetido na URL vira array (issue #145). O tipo tem que
+// dizer a verdade sobre o que chega; quem escolhe o valor é `interpretarFiltros`.
 type Props = {
-  searchParams: Promise<{
-    q?: string;
-    tipo?: string;
-    genero?: string;
-    decada?: string;
-    ordem?: string;
-  }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export default async function Catalogo({ searchParams }: Props)
