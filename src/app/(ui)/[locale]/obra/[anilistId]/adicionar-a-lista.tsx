@@ -21,6 +21,9 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
   const [aberto, setAberto] = useState(false);
   const [listas, setListas] = useState<MinhaLista[] | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  // Em voo (#148, item 13): a rota é um toggle, então dois cliques rápidos
+  // viravam adicionar e remover, e o item sumia sem a pessoa querer desfazer.
+  const [emVoo, setEmVoo] = useState<string | null>(null);
 
   async function abrir()
   {
@@ -54,6 +57,13 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
 
   async function alternar(lista: MinhaLista)
   {
+    if (emVoo !== null)
+    {
+      return;
+    }
+
+    setEmVoo(lista.listaId);
+
     try
     {
       const resposta = await fetch(`/api/v1/listas/${lista.listaId}/itens`, {
@@ -81,6 +91,10 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
     catch
     {
       // Sem drama: o estado local fica como estava.
+    }
+    finally
+    {
+      setEmVoo(null);
     }
   }
 
@@ -131,7 +145,8 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
             key={lista.listaId}
             type="button"
             onClick={function () { void alternar(lista); }}
-            className="flex items-center justify-between gap-3 rounded-md px-2 py-1 text-left transition-colors hover:bg-superficie"
+            disabled={emVoo !== null}
+            className="flex items-center justify-between gap-3 rounded-md px-2 py-1 text-left transition-colors hover:bg-superficie disabled:opacity-60"
           >
             <span className="min-w-0 flex-1 truncate">{lista.nome}</span>
             <span aria-hidden className={lista.jaContem ? "text-acento" : "text-borda"}>
