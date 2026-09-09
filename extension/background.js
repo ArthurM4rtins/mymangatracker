@@ -46,8 +46,13 @@ async function atualizarBadge(tabId, url, titulo)
       return;
     }
 
-    const pares = await KIDOKU.paresSalvos();
-    const pareada = Object.prototype.hasOwnProperty.call(pares, chave);
+    // O par tem que ser DESTA sessão (#181): `chrome.storage` é do navegador,
+    // não da conta. Antes bastava o par existir, e o badge de uma conta acendia
+    // para a outra, prometendo registro numa página que o popup abriria sem
+    // obra selecionada.
+    const sessao = await KIDOKU.sessao();
+    const pareada = sessao !== null
+      && (await KIDOKU.parDaSessao(chave, sessao.token)) !== null;
 
     await chrome.action.setBadgeText({ tabId, text: pareada ? "●" : "" });
 
@@ -92,8 +97,13 @@ async function agendarAutoRegistro(tabId, url, titulo)
     return;
   }
 
-  const pares = await KIDOKU.paresSalvos();
-  const entradaId = pares[chave];
+  // Mesma regra do badge: par de outra conta não agenda nada (#181). A
+  // checagem contra a estante, em `tentarAutoRegistro`, continua sendo a que
+  // vale — esta só evita agendar o que já se sabe que não é desta sessão.
+  const sessao = await KIDOKU.sessao();
+  const entradaId = sessao === null
+    ? null
+    : await KIDOKU.parDaSessao(chave, sessao.token);
 
   if (!entradaId)
   {
