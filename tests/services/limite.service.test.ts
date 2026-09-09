@@ -182,3 +182,53 @@ describe("planoDoLogin (#133)", function ()
     expect(a.liberar).not.toContain(a.limitar[1].chave);
   });
 });
+
+// #148, item 1: `limparTentativas` só é alcançado por login com sucesso, então
+// linhas de cadastro, comentário e afins nunca eram recolhidas — a tabela
+// crescia sob tráfego legítimo. O recolhimento é amostrado: uma fração dos
+// pedidos paga a limpeza, e nenhum pedido espera por ela com frequência.
+describe("recolhimento amostrado das tentativas velhas (#148, item 1)", function ()
+{
+  function depsComRecolher(sorteio: number)
+  {
+    return {
+      contar: vi.fn(async function () { return { total: 0, maisAntiga: null }; }),
+      registrar: vi.fn(async function () {}),
+      limpar: vi.fn(async function () {}),
+      recolher: vi.fn(async function () {}),
+      sortear: function () { return sorteio; },
+    };
+  }
+
+  const PEDIDO = {
+    escopo: "catalogo",
+    chaves: [{ chave: "ip", regra: { maximo: 10, janelaMs: 60_000 } }],
+    agora: AGORA,
+  };
+
+  it("dentro da amostra, recolhe o que passou da janela mais longa", async function ()
+  {
+    const deps = depsComRecolher(0);
+
+    await verificarERegistrar(PEDIDO, deps);
+
+    expect(deps.recolher).toHaveBeenCalledWith(new Date(AGORA.getTime() - 60 * 60_000));
+  });
+
+  it("fora da amostra, não toca no banco à toa", async function ()
+  {
+    const deps = depsComRecolher(0.9);
+
+    await verificarERegistrar(PEDIDO, deps);
+
+    expect(deps.recolher).not.toHaveBeenCalled();
+  });
+
+  it("recolhimento que falha não derruba o pedido", async function ()
+  {
+    const deps = depsComRecolher(0);
+    deps.recolher.mockRejectedValue(new Error("banco fora"));
+
+    await expect(verificarERegistrar(PEDIDO, deps)).resolves.toEqual({ bloqueado: false });
+  });
+});
