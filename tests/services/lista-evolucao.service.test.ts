@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import {
   curtirLista,
+  listasPublicas,
   editarListaDoUsuario,
   reordenarItensDaLista,
 } from "@/server/services/lista.service";
@@ -155,5 +156,42 @@ describe("curtirLista", function ()
     await expect(curtirLista({ userId: "u1", listaId: "nada" }, { alternar })).resolves.toEqual({
       estado: "nao_encontrada",
     });
+  });
+});
+
+// #144: trinta cards ordenados só por data deixavam uma conta ocupar a página
+// inteira. O rodízio vale nas duas ordenações.
+describe("listasPublicas", function ()
+{
+  function cards(autores: string[])
+  {
+    return autores.map(function (username, indice)
+    {
+      return { listaId: `l${indice}`, username } as never;
+    });
+  }
+
+  it("no máximo duas por autor, pedindo mais do que exibe", async function ()
+  {
+    const listar = vi.fn(async function ()
+    {
+      return cards(Array.from({ length: 60 }, function (_, i) { return i < 50 ? "spam" : `outro${i}`; }));
+    });
+
+    const publicas = await listasPublicas("recentes", { listar });
+
+    expect(listar).toHaveBeenCalledWith(120, "recentes");
+    expect(publicas.filter(function (l) { return l.username === "spam"; })).toHaveLength(2);
+    expect(publicas).toHaveLength(12);
+  });
+
+  it("vale também para a ordenação por curtidas", async function ()
+  {
+    const listar = vi.fn(async function () { return cards(["spam", "spam", "spam", "bia"]); });
+
+    const publicas = await listasPublicas("curtidas", { listar });
+
+    expect(listar).toHaveBeenCalledWith(120, "curtidas");
+    expect(publicas.map(function (l) { return l.username; })).toEqual(["spam", "spam", "bia"]);
   });
 });

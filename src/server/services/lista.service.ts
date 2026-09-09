@@ -3,6 +3,11 @@
  * a partir da página da obra). Quem resolve a sessão é o controller.
  */
 import { mesmoConjunto } from "@/server/domain/lista-ordem";
+import {
+  FATOR_DE_BUSCA,
+  MAXIMO_POR_AUTOR,
+  noMaximoPorAutor,
+} from "@/server/domain/rodizio-de-autoria";
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import { limitarLista, limitarOrdem } from "./limite.service";
 import { buscarMediaPorAnilistId } from "@/server/repositories/media.repository";
@@ -191,10 +196,35 @@ export function removerObraDaListaDoSistema(pedido: {
 
 const LIMITE_DE_LISTAS_PUBLICAS = 30;
 
+export type DependenciasDeListasPublicas = {
+  listar: (limite: number, ordem: OrdemDasListas) => Promise<ListaPublica[]>;
+};
+
+/**
+ * A listagem pública, com rodízio de autoria (#144): trinta cards ordenados só
+ * por data deixavam uma conta ocupar a página inteira, e repostar de tempos em
+ * tempos mantinha assim. Vale nas duas ordenações — por curtidas o rodízio não
+ * mexe no ranking, só pula o excedente de quem já apareceu duas vezes.
+ */
+export async function listasPublicas(
+  ordem: OrdemDasListas,
+  deps: DependenciasDeListasPublicas,
+): Promise<ListaPublica[]>
+{
+  const linhas = await deps.listar(LIMITE_DE_LISTAS_PUBLICAS * FATOR_DE_BUSCA, ordem);
+
+  return noMaximoPorAutor(
+    linhas,
+    function (lista) { return lista.username; },
+    MAXIMO_POR_AUTOR,
+    LIMITE_DE_LISTAS_PUBLICAS,
+  );
+}
+
 /** A composição de produção. As listas de todo mundo, na ordem pedida (issue #80). */
 export function listasPublicasDoSistema(ordem: OrdemDasListas = "recentes"): Promise<ListaPublica[]>
 {
-  return listarListasPublicas(LIMITE_DE_LISTAS_PUBLICAS, ordem);
+  return listasPublicas(ordem, { listar: listarListasPublicas });
 }
 
 /** A composição de produção. A lista com as obras, para a página dela. */
