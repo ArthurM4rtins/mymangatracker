@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
 import { lembrarPorTempo } from "@/server/domain/memoria-curta";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import { buscarNoCatalogo } from "@/server/services/catalogo.service";
 
 // Issue #17: campo vazio é a vitrine de populares. Issue #37: com termo OU
@@ -22,6 +23,7 @@ function fakeDeps()
   return {
     populares: vi.fn(async function (): Promise<MediaDoAniList[]> { return [OBRA]; }),
     filtrado: vi.fn(async function (): Promise<MediaDoAniList[]> { return [OBRA]; }),
+    limitar: vi.fn(async function (): Promise<Veredito> { return { bloqueado: false }; }),
   };
 }
 
@@ -113,8 +115,8 @@ describe("a vitrine lembrada", function ()
     const populares = vi.fn(async function () { return [OBRA]; });
     let instante = 0;
     const deps = {
+      ...fakeDeps(),
       populares: lembrarPorTempo(populares, 30_000, function () { return instante; }),
-      filtrado: vi.fn(async function (): Promise<MediaDoAniList[]> { return []; }),
     };
 
     await buscarNoCatalogo(interpretarFiltros({}), deps);
@@ -132,10 +134,7 @@ describe("a vitrine lembrada", function ()
   it("a busca filtrada não é lembrada: a chave é de quem pede", async function ()
   {
     const filtrado = vi.fn(async function () { return [OBRA]; });
-    const deps = {
-      populares: vi.fn(async function (): Promise<MediaDoAniList[]> { return []; }),
-      filtrado,
-    };
+    const deps = { ...fakeDeps(), filtrado };
 
     await buscarNoCatalogo(interpretarFiltros({ q: "a" }), deps);
     await buscarNoCatalogo(interpretarFiltros({ q: "b" }), deps);
