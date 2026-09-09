@@ -10,6 +10,7 @@ export function lembrarPorTempo<T>(
   fn: () => Promise<T>,
   janelaMs: number,
   agora: () => number = Date.now,
+  janelaDeFalhaMs = 0,
 ): () => Promise<T>
 {
   let lembrada: { promessa: Promise<T>; validaAte: number } | null = null;
@@ -29,10 +30,19 @@ export function lembrarPorTempo<T>(
 
     promessa.catch(function ()
     {
-      if (lembrada === atual)
+      if (lembrada !== atual)
       {
-        lembrada = null;
+        return;
       }
+
+      // A falha vale por uma janela PRÓPRIA e curta (#148, item 11). Limpar na
+      // hora desligava o memo justo durante a indisponibilidade do terceiro:
+      // cada chamada virava uma requisição nova, mantendo a cota fixada em zero
+      // exatamente quando ela precisava se recuperar. Zero mantém o
+      // comportamento antigo, para quem não quiser lembrar falha.
+      lembrada = janelaDeFalhaMs > 0
+        ? { promessa, validaAte: instante + janelaDeFalhaMs }
+        : null;
     });
 
     return promessa;
