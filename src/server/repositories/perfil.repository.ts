@@ -79,14 +79,18 @@ export async function listarResenhasRecentes(
 {
   const linhas = await getPrisma().entry.findMany({
     where: { userId, review: { not: null } },
-    orderBy: { reviewedAt: "desc" },
+    // A data publica e `publishedAt` (#143). A lista de AVALIADAS acima segue
+    // por `reviewedAt`: la o que importa e quando a pessoa avaliou, nao quando
+    // publicou texto.
+    orderBy: { publishedAt: "desc" },
     take: limite,
     select: {
       id: true,
       rating: true,
       review: true,
       containsSpoilers: true,
-      reviewedAt: true,
+      publishedAt: true,
+      createdAt: true,
       _count: { select: { likes: true } },
       media: { select: SELECT_DA_OBRA },
     },
@@ -100,7 +104,7 @@ export async function listarResenhasRecentes(
       rating: linha.rating?.toString() ?? null,
       review: linha.review ?? "",
       containsSpoilers: linha.containsSpoilers,
-      publicadaEm: linha.reviewedAt,
+      publicadaEm: linha.publishedAt ?? linha.createdAt,
       curtidas: linha._count.likes,
     };
   });
