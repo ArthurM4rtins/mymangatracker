@@ -188,7 +188,8 @@
     "erros": {
       "indisponivel": "AniList n’a pas répondu. Réessaie dans un instant.",
       "muitosPedidos": "Trop de recherches depuis ici. Patiente un instant et réessaie.",
-      "doCache": "Résultats de ce que nous avons déjà visité : AniList n'a pas répondu, donc le catalogue se limite aux œuvres déjà passées par ici."
+      "doCache": "Résultats de ce que nous avons déjà visité : AniList n'a pas répondu, donc le catalogue se limite aux œuvres déjà passées par ici.",
+      "doKitsu": "AniList n'a pas répondu, donc ces résultats viennent de Kitsu. Certains titres peuvent apparaître romanisés."
     },
     "vazio": {
       "semTermo": "Le catalogue n’a rien renvoyé. Réessaie dans un instant.",

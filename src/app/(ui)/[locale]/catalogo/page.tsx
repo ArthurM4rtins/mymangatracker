@@ -50,8 +50,10 @@ export default async function Catalogo({ searchParams }: Props)
   const temObras =
     resultado.estado === "ok"
     || resultado.estado === "destaques"
-    // #165: o cache renderiza os mesmos cards; o que muda e' a faixa de aviso.
-    || resultado.estado === "cache";
+    // #165 e #219: cache e Kitsu renderizam os mesmos cards; o que muda e' a
+    // faixa de aviso que diz de onde vieram.
+    || resultado.estado === "cache"
+    || resultado.estado === "kitsu";
 
   const itens = temObras
     ? resultado.obras.map((obra) => ({
@@ -83,6 +85,12 @@ export default async function Catalogo({ searchParams }: Props)
       {resultado.estado === "muitos_pedidos" && (
         <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
           {t("erros.muitosPedidos")}
+        </p>
+      )}
+
+      {resultado.estado === "kitsu" && (
+        <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
+          {t("erros.doKitsu")}
         </p>
       )}
 
