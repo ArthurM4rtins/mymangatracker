@@ -37,6 +37,14 @@ body {
 
 .marca { font-weight: 700; letter-spacing: 0.02em; }
 
+/* Discreto, mas legivel: e' a diferenca entre gravar leitura em producao e
+   no localhost (#148, item 9). */
+.ambiente {
+  font-size: 11px;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
 .discreto { color: var(--texto-suave); font-size: 12px; text-decoration: none; }
 .discreto:hover { color: var(--texto); text-decoration: underline; }
 
