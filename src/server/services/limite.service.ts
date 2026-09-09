@@ -165,6 +165,10 @@ const ORDENS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 };
 // apagar-e-reescrever repetia para subir no feed. A coluna carimbada uma vez ja
 // fecha aquilo; este teto protege a rota inteira, que grava linha por chamada.
 const AVALIACOES_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 };
+// Relato de traducao (#158): cada envio vira issue publica no repositorio, e
+// issue aberta nao se desfaz sozinha. Teto apertado de proposito — quem relata
+// de verdade manda um ou dois, nao dez.
+const RELATOS_POR_USUARIO: RegraDeLimite = { maximo: 5, janelaMs: 60 * 60_000 };
 // Busca do catalogo (#134, achado 4): anonima, e cada termo novo e uma ida
 // real ao AniList pela cota compartilhada. Memo nao defende, porque a chave e
 // o `?q=` de quem pede. O teto e por IP e folgado: rede compartilhada cai num
@@ -279,6 +283,12 @@ export function limitarEntrada(pedido: { userId: string }): Promise<Veredito>
 export function limitarAvaliacao(pedido: { userId: string }): Promise<Veredito>
 {
   return limitarPorUsuario("avaliacao", AVALIACOES_POR_USUARIO, pedido.userId);
+}
+
+/** A composição de produção. Antes de abrir issue de relato de tradução. */
+export function limitarRelato(pedido: { userId: string }): Promise<Veredito>
+{
+  return limitarPorUsuario("relato", RELATOS_POR_USUARIO, pedido.userId);
 }
 
 /** A composição de produção. Antes de buscar no catálogo, sem sessão. */
