@@ -1,6 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 import type { AutorDoAniList } from "@/server/domain/anilist-media";
-import { autorParaPagina } from "@/server/services/autor.service";
+import { autorParaPagina, autorParaPaginaDoSistema } from "@/server/services/autor.service";
+import { buscarAutor } from "@/server/infra/anilist";
+
+vi.mock("@/server/infra/anilist", function ()
+{
+  return { buscarAutor: vi.fn() };
+});
 
 // As regras da issue #43: leitura ao vivo do AniList — inexistente e
 // indisponível são estados distintos, e nada aqui vira 500.
@@ -45,5 +51,30 @@ describe("autorParaPagina", function ()
     await expect(autorParaPagina(96911, { buscarAutor })).resolves.toEqual({
       estado: "indisponivel",
     });
+  });
+});
+
+// #134: o id vem da URL, então caminhar por ids era uma requisição nova ao
+// AniList por id. Este teste passa pela COMPOSIÇÃO de propósito: é ela que
+// pode errar, se o memo for criado dentro da função em vez de no módulo.
+describe("autorParaPaginaDoSistema", function ()
+{
+  it("o mesmo autor duas vezes é uma ida só ao AniList", async function ()
+  {
+    vi.mocked(buscarAutor).mockResolvedValue(INOUE);
+
+    await autorParaPaginaDoSistema(INOUE.staffId);
+    await autorParaPaginaDoSistema(INOUE.staffId);
+
+    expect(buscarAutor).toHaveBeenCalledTimes(1);
+  });
+
+  it("id diferente é ida nova", async function ()
+  {
+    vi.mocked(buscarAutor).mockResolvedValue(INOUE);
+
+    await autorParaPaginaDoSistema(12345);
+
+    expect(buscarAutor).toHaveBeenCalledWith(12345);
   });
 });
