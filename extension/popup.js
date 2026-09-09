@@ -127,9 +127,12 @@ async function iniciar()
   }
 
   const chave = KIDOKU.chaveDaObra(aba && aba.url, aba && aba.title);
-  const pares = await KIDOKU.paresSalvos();
-  const pareada = chave !== null && pares[chave] && abertas.some(function (e) { return e.entradaId === pares[chave]; })
-    ? pares[chave]
+  // O par precisa ser desta conta (#181) E estar na estante aberta. A segunda
+  // condicao ja existia e continua sendo a que vale de verdade; a primeira
+  // evita ate considerar par de outra conta do mesmo navegador.
+  const doDono = await KIDOKU.parDaSessao(chave, sessao.token);
+  const pareada = doDono !== null && abertas.some(function (e) { return e.entradaId === doDono; })
+    ? doDono
     : null;
   // Sem par salvo, o nome no título da aba decide (#171). Par salvo ganha:
   // é o que a pessoa confirmou com um clique; o nome é só palpite.
@@ -241,7 +244,7 @@ el.formulario.addEventListener("submit", async function (evento)
 
     if (contexto.chave !== null)
     {
-      await KIDOKU.salvarPar(contexto.chave, entradaId);
+      await KIDOKU.salvarPar(contexto.chave, entradaId, KIDOKU.donoDoToken(contexto.sessao.token));
       chrome.runtime.sendMessage({
         tipo: "pareou",
         tabId: contexto.aba.id,

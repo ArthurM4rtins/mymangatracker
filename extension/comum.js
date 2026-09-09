@@ -116,11 +116,75 @@ globalThis.KIDOKU = (function ()
     return guardado.pares || {};
   }
 
-  async function salvarPar(chave, entradaId)
+  async function salvarPar(chave, entradaId, dono)
   {
     const pares = await paresSalvos();
-    pares[chave] = entradaId;
+    pares[chave] = { entradaId, dono };
     await chrome.storage.local.set({ pares });
+  }
+
+  // --- De quem é o par (#181) ---
+  //
+  // `chrome.storage.local` é do NAVEGADOR, não da conta. O popup já tratava
+  // isso — só usa o par se o `entradaId` estiver na estante de quem está
+  // logado —, mas o service worker acendia o badge só por o par existir. Com
+  // duas contas no mesmo navegador, o badge prometia "dá pra registrar aqui"
+  // numa página que o popup abriria sem obra selecionada.
+
+  /**
+   * O `sub` do JWT de sessão, que é o id de quem está logado.
+   *
+   * A assinatura NÃO é verificada aqui, e não pode ser: a extensão não tem o
+   * segredo. Isto serve só para separar pares dentro do navegador — nunca para
+   * autorizar nada. Quem decide o que a pessoa pode é o servidor, a cada
+   * requisição, com o token inteiro.
+   */
+  function donoDoToken(token)
+  {
+    const partes = (token || "").split(".");
+
+    if (partes.length !== 3)
+    {
+      return null;
+    }
+
+    try
+    {
+      const payload = JSON.parse(atob(partes[1].replace(/-/g, "+").replace(/_/g, "/")));
+
+      return typeof payload.sub === "string" ? payload.sub : null;
+    }
+    catch
+    {
+      return null;
+    }
+  }
+
+  /** O `entradaId` do par, se ele for de quem está logado. Senão, `null`. */
+  function parDoDono(pares, chave, dono)
+  {
+    if (chave === null || dono === null)
+    {
+      return null;
+    }
+
+    const par = (pares || {})[chave];
+
+    // Formato antigo (string solta): guardado antes desta correção, sem saber
+    // de quem é. Adivinhar seria repetir o bug — um clique no popup pareia de
+    // novo, que é barato.
+    if (par === undefined || typeof par !== "object")
+    {
+      return null;
+    }
+
+    return par.dono === dono ? par.entradaId : null;
+  }
+
+  /** O par desta aba para a sessão atual, resolvendo tudo de uma vez. */
+  async function parDaSessao(chave, token)
+  {
+    return parDoDono(await paresSalvos(), chave, donoDoToken(token));
   }
 
   // --- Nome da obra (#171): o MESMO algoritmo de src/server/domain/obra-do-titulo.ts.
@@ -202,5 +266,8 @@ globalThis.KIDOKU = (function ()
     sessao,
     paresSalvos,
     salvarPar,
+    donoDoToken,
+    parDoDono,
+    parDaSessao,
   };
 })();
