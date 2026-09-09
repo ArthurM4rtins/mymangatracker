@@ -47,7 +47,13 @@ export default async function Catalogo({ searchParams }: Props)
     idsNaEstante(),
   ]);
   const t = await getTranslations("catalogo");
-  const itens = (resultado.estado === "ok" || resultado.estado === "destaques")
+  const temObras =
+    resultado.estado === "ok"
+    || resultado.estado === "destaques"
+    // #165: o cache renderiza os mesmos cards; o que muda e' a faixa de aviso.
+    || resultado.estado === "cache";
+
+  const itens = temObras
     ? resultado.obras.map((obra) => ({
       id: obra.anilistId,
       titulo: obra.titleEnglish ?? obra.titleRomaji,
@@ -80,6 +86,12 @@ export default async function Catalogo({ searchParams }: Props)
         </p>
       )}
 
+      {resultado.estado === "cache" && (
+        <p className="rounded-md border border-borda bg-superficie p-4 text-sm">
+          {t("erros.doCache")}
+        </p>
+      )}
+
       {resultado.estado === "vazio" && (
         <p className="text-sm text-texto-suave">
           {resultado.termo === "" ? (
@@ -93,7 +105,7 @@ export default async function Catalogo({ searchParams }: Props)
         </p>
       )}
 
-      {(resultado.estado === "ok" || resultado.estado === "destaques") && (
+      {temObras && (
         <section className="flex flex-col gap-4">
           {resultado.estado === "destaques" && (
             <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">

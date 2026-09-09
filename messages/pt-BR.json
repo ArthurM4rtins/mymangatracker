@@ -185,7 +185,8 @@
     },
     "erros": {
       "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes.",
-      "muitosPedidos": "Buscas demais a partir daqui. Espere um momento e tente de novo."
+      "muitosPedidos": "Buscas demais a partir daqui. Espere um momento e tente de novo.",
+      "doCache": "Resultados do que já visitamos: o AniList não respondeu agora, então o catálogo está limitado às obras que já passaram por aqui."
     },
     "vazio": {
       "semTermo": "O catálogo não respondeu nada agora. Tente de novo em instantes.",

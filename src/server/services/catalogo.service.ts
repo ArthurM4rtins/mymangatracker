@@ -7,6 +7,7 @@
  * `Obsidian/02. Implementacoes/slice-vertical/CLAUDE.md`.
  */
 import { buscarFiltrado, buscarPopulares } from "@/server/infra/anilist";
+import { buscarMediasEmCache } from "@/server/repositories/media.repository";
 import { lembrarPorTempo } from "@/server/domain/memoria-curta";
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import { limitarBuscaDoCatalogo } from "./limite.service";
@@ -21,7 +22,9 @@ export type ResultadoBusca =
   | { estado: "destaques"; termo: ""; obras: MediaDoAniList[] }
   | { estado: "vazio"; termo: string }
   | { estado: "indisponivel"; termo: string }
-  | { estado: "muitos_pedidos"; termo: string };
+  | { estado: "muitos_pedidos"; termo: string }
+  /** O AniList está fora e o banco tinha o que mostrar (#165). */
+  | { estado: "cache"; termo: string; obras: MediaDoAniList[] };
 
 /**
  * Nunca levanta. A tela é pública e o AniList é de terceiro: fora do ar, a
@@ -34,6 +37,8 @@ export type DependenciasDoCatalogo = {
   populares: () => Promise<MediaDoAniList[]>;
   filtrado: (filtro: FiltroDoCatalogo) => Promise<MediaDoAniList[]>;
   limitar: (ip: string) => Promise<Veredito>;
+  /** As obras já cacheadas que casam com o termo. Só entra no fallback (#165). */
+  doCache: (termo: string) => Promise<MediaDoAniList[]>;
 };
 
 /**
@@ -56,6 +61,7 @@ export const DEPS_DE_PRODUCAO: DependenciasDoCatalogo = {
   populares: lembrarPorTempo(buscarPopulares, JANELA_DA_VITRINE_MS),
   filtrado: buscarFiltrado,
   limitar: function (ip) { return limitarBuscaDoCatalogo({ ip }); },
+  doCache: buscarMediasEmCache,
 };
 
 export async function buscarNoCatalogo(
@@ -97,6 +103,35 @@ export async function buscarNoCatalogo(
   {
     // O motivo fica no log da plataforma. A tela não mostra texto de erro de
     // terceiro, que pode conter URL interna ou detalhe de infraestrutura.
+    //
+    // Antes de desistir, o banco (#165): o resto do sistema já degrada com o
+    // cache, e o catálogo era o único caminho que o ignorava de propósito — a
+    // decisão fazia sentido quando o risco era o Postgres cair, e inverteu de
+    // efeito quando quem caiu foi o terceiro. Cache-first NÃO: só no fallback,
+    // senão a busca vira um índice das poucas obras que alguém já abriu.
+    return await doCacheOuIndisponivel(filtro, deps);
+  }
+}
+
+async function doCacheOuIndisponivel(
+  filtro: FiltroDoCatalogo,
+  deps: DependenciasDoCatalogo,
+): Promise<ResultadoBusca>
+{
+  try
+  {
+    const obras = await deps.doCache(filtro.termo);
+
+    // Banco vazio não vira tela de "cache vazio": segue sendo indisponível, que
+    // é a verdade — não temos o que mostrar porque o terceiro está fora.
+    return obras.length === 0
+      ? { estado: "indisponivel", termo: filtro.termo }
+      : { estado: "cache", termo: filtro.termo, obras };
+  }
+  catch
+  {
+    // Os dois fora. A tela do terceiro indisponível continua sendo a resposta
+    // honesta, e o 500 não entra em cena.
     return { estado: "indisponivel", termo: filtro.termo };
   }
 }

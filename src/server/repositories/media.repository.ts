@@ -8,6 +8,71 @@ export type MediaEmCache = {
   syncedAt: Date;
 };
 
+/**
+ * Quantas linhas o fallback do catálogo devolve. Teto obrigatório: leitura
+ * pública sem `take` é o achado 5 da auditoria (#135), e esta consulta é
+ * anônima.
+ */
+const OBRAS_DO_FALLBACK = 24;
+
+/**
+ * As obras já cacheadas que casam com o termo (#165). Serve o catálogo quando o
+ * AniList está fora — só isso: com o terceiro de pé o catálogo continua ao vivo,
+ * senão a busca viraria um índice das poucas obras que alguém já abriu.
+ *
+ * Termo vazio devolve as mais recentes, que é a vitrine possível sem o terceiro.
+ * A busca é por prefixo/trecho, sem acento nem stemming: é fallback, não motor
+ * de busca.
+ */
+export async function buscarMediasEmCache(termo: string): Promise<MediaDoAniList[]>
+{
+  const limpo = termo.trim();
+
+  const linhas = await getPrisma().media.findMany({
+    where: limpo === ""
+      ? undefined
+      : {
+          OR: [
+            { titleRomaji: { contains: limpo, mode: "insensitive" } },
+            { titleEnglish: { contains: limpo, mode: "insensitive" } },
+            { titleNative: { contains: limpo, mode: "insensitive" } },
+          ],
+        },
+    orderBy: [{ syncedAt: "desc" }, { id: "desc" }],
+    take: OBRAS_DO_FALLBACK,
+    select: {
+      anilistId: true,
+      type: true,
+      countryOfOrigin: true,
+      titleRomaji: true,
+      titleEnglish: true,
+      titleNative: true,
+      coverImageUrl: true,
+      description: true,
+      chapters: true,
+      startYear: true,
+      averageScore: true,
+    },
+  });
+
+  return linhas.map(function (linha)
+  {
+    return {
+      anilistId: linha.anilistId,
+      type: linha.type,
+      titleRomaji: linha.titleRomaji,
+      ...(linha.countryOfOrigin === null ? {} : { countryOfOrigin: linha.countryOfOrigin }),
+      ...(linha.titleEnglish === null ? {} : { titleEnglish: linha.titleEnglish }),
+      ...(linha.titleNative === null ? {} : { titleNative: linha.titleNative }),
+      ...(linha.coverImageUrl === null ? {} : { coverImageUrl: linha.coverImageUrl }),
+      ...(linha.description === null ? {} : { description: linha.description }),
+      ...(linha.chapters === null ? {} : { chapters: linha.chapters }),
+      ...(linha.startYear === null ? {} : { startYear: linha.startYear }),
+      ...(linha.averageScore === null ? {} : { averageScore: linha.averageScore }),
+    };
+  });
+}
+
 /** O recorte completo que a página da obra mostra. */
 export type MediaCompleta = {
   id: string;

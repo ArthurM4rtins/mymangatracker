@@ -24,6 +24,7 @@ function fakeDeps()
     populares: vi.fn(async function (): Promise<MediaDoAniList[]> { return [OBRA]; }),
     filtrado: vi.fn(async function (): Promise<MediaDoAniList[]> { return [OBRA]; }),
     limitar: vi.fn(async function (): Promise<Veredito> { return { bloqueado: false }; }),
+    doCache: vi.fn(async function (): Promise<MediaDoAniList[]> { return []; }),
   };
 }
 
@@ -180,5 +181,83 @@ describe("teto por IP na busca filtrada", function ()
 
     expect(resultado.estado).toBe("ok");
     expect(limitar).not.toHaveBeenCalled();
+  });
+});
+
+// #165: o AniList desligou a API em 08/09/2026 e o catalogo — a tela de entrada
+// do produto — ficou vazio, mesmo com obras ja cacheadas no banco. O resto do
+// sistema degrada com o cache; o catalogo era o unico caminho que ignorava o
+// banco de proposito, decisao que fazia sentido quando o risco era o Postgres
+// cair, e que inverteu de efeito quando quem caiu foi o terceiro.
+describe("fallback para o cache quando o AniList cai", function ()
+{
+  function comAniListFora()
+  {
+    const deps = fakeDeps();
+    deps.populares.mockRejectedValue(new Error("403 disabled"));
+    deps.filtrado.mockRejectedValue(new Error("403 disabled"));
+    return deps;
+  }
+
+  it("com obras no banco, devolve o cache em vez da tela vazia", async function ()
+  {
+    const doCache = vi.fn(async function () { return [OBRA]; });
+
+    const resultado = await buscarNoCatalogo(
+      interpretarFiltros({ q: "vinland" }),
+      { ...comAniListFora(), doCache },
+    );
+
+    expect(resultado).toEqual({ estado: "cache", termo: "vinland", obras: [OBRA] });
+    expect(doCache).toHaveBeenCalledWith("vinland");
+  });
+
+  it("a vitrine sem termo também cai no cache", async function ()
+  {
+    const doCache = vi.fn(async function () { return [OBRA]; });
+
+    const resultado = await buscarNoCatalogo(
+      interpretarFiltros({}),
+      { ...comAniListFora(), doCache },
+    );
+
+    expect(resultado).toEqual({ estado: "cache", termo: "", obras: [OBRA] });
+  });
+
+  it("banco vazio continua sendo indisponivel — o comportamento de hoje", async function ()
+  {
+    const doCache = vi.fn(async function (): Promise<typeof OBRA[]> { return []; });
+
+    const resultado = await buscarNoCatalogo(
+      interpretarFiltros({ q: "zzz" }),
+      { ...comAniListFora(), doCache },
+    );
+
+    expect(resultado).toEqual({ estado: "indisponivel", termo: "zzz" });
+  });
+
+  it("o cache tambem falhando nao vira 500: segue indisponivel", async function ()
+  {
+    const doCache = vi.fn(async function (): Promise<typeof OBRA[]> { throw new Error("banco fora"); });
+
+    const resultado = await buscarNoCatalogo(
+      interpretarFiltros({ q: "zzz" }),
+      { ...comAniListFora(), doCache },
+    );
+
+    expect(resultado).toEqual({ estado: "indisponivel", termo: "zzz" });
+  });
+
+  it("com o AniList de pe, o banco nem e consultado", async function ()
+  {
+    const doCache = vi.fn(async function () { return [OBRA]; });
+
+    const resultado = await buscarNoCatalogo(
+      interpretarFiltros({ q: "vinland" }),
+      { ...fakeDeps(), doCache },
+    );
+
+    expect(resultado.estado).toBe("ok");
+    expect(doCache).not.toHaveBeenCalled();
   });
 });
