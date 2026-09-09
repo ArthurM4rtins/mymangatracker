@@ -110,6 +110,10 @@ const LEITURAS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 
 const AVATARES_POR_USUARIO: RegraDeLimite = { maximo: 10, janelaMs: 60 * 60_000 };
 const LISTAS_POR_USUARIO: RegraDeLimite = { maximo: 20, janelaMs: 60 * 60_000 };
 const ENTRADAS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 };
+// Reordenar (#146, achado 16): a escrita mais cara do sistema — uma lista no
+// teto reescreve 500 linhas por pedido. Arrastar itens na tela salva a ordem
+// inteira a cada solta, então o teto é folgado para quem organiza de verdade.
+const ORDENS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 };
 
 const DEPS_DE_PRODUCAO: DependenciasDeLimite = {
   contar: contarTentativas,
@@ -212,6 +216,12 @@ export function limitarLista(pedido: { userId: string }): Promise<Veredito>
 export function limitarEntrada(pedido: { userId: string }): Promise<Veredito>
 {
   return limitarPorUsuario("estante", ENTRADAS_POR_USUARIO, pedido.userId);
+}
+
+/** A composição de produção. Antes de reordenar os itens de uma lista. */
+export function limitarOrdem(pedido: { userId: string }): Promise<Veredito>
+{
+  return limitarPorUsuario("ordem", ORDENS_POR_USUARIO, pedido.userId);
 }
 
 /** A composição de produção. Antes de cadastrar. */

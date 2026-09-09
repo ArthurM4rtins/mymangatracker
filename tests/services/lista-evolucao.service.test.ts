@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import {
   curtirLista,
   editarListaDoUsuario,
@@ -54,11 +55,15 @@ describe("editarListaDoUsuario", function ()
 
 describe("reordenarItensDaLista", function ()
 {
-  function fakeDeps(atual: Array<{ anilistId: number; mediaId: string }> | null)
+  function fakeDeps(
+    atual: Array<{ anilistId: number; mediaId: string }> | null,
+    veredito: Veredito = { bloqueado: false },
+  )
   {
     return {
       listarItens: vi.fn(async function () { return atual; }),
       reordenar: vi.fn(async function () { return { reordenada: true as const }; }),
+      limitar: vi.fn(async function () { return veredito; }),
     };
   }
 
@@ -100,6 +105,32 @@ describe("reordenarItensDaLista", function ()
       reordenarItensDaLista({ userId: "u2", listaId: "l1", anilistIds: [] }, deps),
     ).resolves.toEqual({ estado: "nao_encontrada" });
     expect(deps.reordenar).not.toHaveBeenCalled();
+  });
+
+  // #146: reordenar era a escrita autenticada mais cara sem teto nenhum. O
+  // limite corre ANTES de ler os itens — pedido bloqueado não custa banco.
+  it("acima do teto é muitos_pedidos, sem ler nem gravar", async function ()
+  {
+    const deps = fakeDeps(
+      [{ anilistId: 1, mediaId: "m1" }],
+      { bloqueado: true, esperarSegundos: 42 },
+    );
+
+    await expect(
+      reordenarItensDaLista({ userId: "u1", listaId: "l1", anilistIds: [1] }, deps),
+    ).resolves.toEqual({ estado: "muitos_pedidos", esperarSegundos: 42 });
+    expect(deps.listarItens).not.toHaveBeenCalled();
+    expect(deps.reordenar).not.toHaveBeenCalled();
+  });
+
+  it("dentro do teto, o limite é chamado com o dono e a ordem grava", async function ()
+  {
+    const deps = fakeDeps([{ anilistId: 1, mediaId: "m1" }]);
+
+    await expect(
+      reordenarItensDaLista({ userId: "u1", listaId: "l1", anilistIds: [1] }, deps),
+    ).resolves.toEqual({ estado: "ok" });
+    expect(deps.limitar).toHaveBeenCalledWith("u1");
   });
 });
 
