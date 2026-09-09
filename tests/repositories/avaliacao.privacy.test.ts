@@ -187,6 +187,50 @@ describe("salvarAvaliacao", function ()
 
       expect(await contarSocial(id)).toEqual({ curtidas: 1, comentarios: 1 });
     });
+
+    // #138: a purga do #112 fechava so a saida. Entre apagar o texto e
+    // escrever outro, a linha Entry continua existindo e o id dela ja foi
+    // entregue ao navegador de quem leu a resenha publica — quem guardou o id
+    // curtia e comentava numa resenha que nao existe, e o social ressurgia
+    // colado no texto novo do dono. Duas defesas: recusar a escrita, e purgar
+    // tambem no renascimento.
+    it("comentario e curtida sao recusados quando a Entry esta sem resenha", async function ()
+    {
+      const dono = await semearUsuario("dono");
+      const leitor = await semearUsuario("leitor");
+      const media = await salvarMediaDoAniList(OBRA, new Date());
+      const base = { userId: dono.id, mediaId: media.id, containsSpoilers: false };
+
+      const { id } = await salvarAvaliacao({ ...base, rating: 5, review: "texto" });
+      await salvarAvaliacao({ ...base, rating: 5, review: null });
+
+      await expect(alternarCurtida(id, leitor.id)).resolves.toBeNull();
+      await expect(comentarNaReview(id, leitor.id, "colado")).resolves.toBeNull();
+      expect(await contarSocial(id)).toEqual({ curtidas: 0, comentarios: 0 });
+    });
+
+    it("resenha nova nao herda o social gravado enquanto a Entry estava sem texto", async function ()
+    {
+      const dono = await semearUsuario("dono");
+      const leitor = await semearUsuario("leitor");
+      const media = await salvarMediaDoAniList(OBRA, new Date());
+      const base = { userId: dono.id, mediaId: media.id, containsSpoilers: false };
+
+      const { id } = await salvarAvaliacao({ ...base, rating: 5, review: "texto" });
+      await salvarAvaliacao({ ...base, rating: 5, review: null });
+
+      // Escrita direta: prova que o renascimento purga mesmo se a defesa da
+      // borda falhar ou se a linha vier de antes desta correcao.
+      const prisma = getPrisma();
+      await prisma.reviewLike.create({ data: { entryId: id, userId: leitor.id } });
+      await prisma.reviewComment.create({
+        data: { entryId: id, userId: leitor.id, texto: "colado" },
+      });
+
+      await salvarAvaliacao({ ...base, rating: 5, review: "texto novo e diferente" });
+
+      expect(await contarSocial(id)).toEqual({ curtidas: 0, comentarios: 0 });
+    });
   });
 
   it("o CHECK do banco recusa nota fora da meia estrela", async function ()

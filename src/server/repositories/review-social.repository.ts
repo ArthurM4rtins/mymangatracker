@@ -163,8 +163,27 @@ export async function listarComentariosAnteriores(
 }
 
 /**
+ * A Entry existe E tem texto? A FK sozinha não responde isso: a linha sobrevive
+ * ao dono apagar a resenha e manter a nota, e o id dela já circulou no HTML da
+ * página da obra (#138). Sem esta checagem, curtida e comentário eram aceitos
+ * numa resenha que não existe e ressurgiam colados no texto novo do dono.
+ *
+ * Não é atômico com a escrita que vem depois — os catches de P2002 e P2003
+ * continuam sendo o que fecha a corrida.
+ */
+async function temResenha(entryId: string): Promise<boolean>
+{
+  const alvo = await getPrisma().entry.findFirst({
+    where: { id: entryId, review: { not: null } },
+    select: { id: true },
+  });
+
+  return alvo !== null;
+}
+
+/**
  * Toggle da curtida. `null` quando a resenha não existe (FK estoura no
- * create). Devolve o estado final e o total.
+ * create) ou está sem texto (#138). Devolve o estado final e o total.
  *
  * Atômico (#65, item 5): tenta apagar; se não havia, cria. Dois cliques
  * concorrentes não viram 404 — o segundo `create` bate no unique (P2002) e é
@@ -175,6 +194,11 @@ export async function alternarCurtida(
   userId: string,
 ): Promise<{ curtida: boolean; total: number } | null>
 {
+  if (!(await temResenha(entryId)))
+  {
+    return null;
+  }
+
   const prisma = getPrisma();
 
   const apagadas = await prisma.reviewLike.deleteMany({ where: { entryId, userId } });
@@ -209,8 +233,9 @@ export async function alternarCurtida(
 }
 
 /**
- * Comenta na resenha. `null` só quando ela não existe (FK, P2003); banco fora
- * e afins sobem para a rota logar e responder 500 (#65, item 6).
+ * Comenta na resenha. `null` quando ela não existe (FK, P2003) ou está sem
+ * texto (#138); banco fora e afins sobem para a rota logar e responder 500
+ * (#65, item 6).
  */
 export async function comentarNaReview(
   entryId: string,
@@ -218,6 +243,11 @@ export async function comentarNaReview(
   texto: string,
 ): Promise<{ id: string } | null>
 {
+  if (!(await temResenha(entryId)))
+  {
+    return null;
+  }
+
   try
   {
     return await getPrisma().reviewComment.create({

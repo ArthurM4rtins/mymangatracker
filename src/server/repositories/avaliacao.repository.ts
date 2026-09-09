@@ -21,6 +21,13 @@ export type AvaliacaoDaObra = {
  * Curtidas e comentários são sobre o TEXTO (#112): quando `review` passa de
  * texto a vazio, saem na mesma transação. Senão ressurgiam colados num texto
  * novo e diferente. Editar o texto mantém.
+ *
+ * A mesma purga roda no renascimento (#138). Entre apagar o texto e escrever
+ * outro a linha continua existindo, e o id dela já foi entregue ao navegador
+ * de quem leu a resenha pública — quem guardou o id gravava curtida e
+ * comentário numa resenha que não existe. `review-social.repository.ts` agora
+ * recusa essa escrita; purgar aqui também fecha o que já estiver gravado, de
+ * antes desta correção ou por corrida.
  */
 export async function salvarAvaliacao(dados: {
   userId: string;
@@ -47,12 +54,14 @@ export async function salvarAvaliacao(dados: {
   const resenhaNasceu = existente !== null && existente.review === null && dados.review !== null;
   const textoApagado = existente !== null && existente.review !== null && dados.review === null;
 
-  if (textoApagado)
+  if (textoApagado || resenhaNasceu)
   {
+    const dadosDaLinha = resenhaNasceu ? { ...campos, reviewedAt: new Date() } : campos;
+
     const [, , atualizada] = await prisma.$transaction([
       prisma.reviewLike.deleteMany({ where: { entryId: existente.id } }),
       prisma.reviewComment.deleteMany({ where: { entryId: existente.id } }),
-      prisma.entry.update({ where: chave, data: campos, select: { id: true } }),
+      prisma.entry.update({ where: chave, data: dadosDaLinha, select: { id: true } }),
     ]);
 
     return atualizada;
@@ -61,7 +70,7 @@ export async function salvarAvaliacao(dados: {
   return prisma.entry.upsert({
     where: chave,
     create: { userId: dados.userId, mediaId: dados.mediaId, ...campos },
-    update: resenhaNasceu ? { ...campos, reviewedAt: new Date() } : campos,
+    update: campos,
     select: { id: true },
   });
 }
