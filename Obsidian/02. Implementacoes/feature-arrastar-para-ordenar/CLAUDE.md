@@ -26,8 +26,18 @@ Junto veio o Salvar explícito: ordem e remoção passam a ser rascunho.
   para entrar no modo de reordenar; arrastar direto continua rolando. Enquanto
   reordena, `touchmove` é barrado em listener NÃO passivo — mudar `touch-action`
   no meio do gesto não tem efeito, o valor vale desde o `touchstart`.
-- **Durante o arraste todos os livros fecham.** Larguras viram lombadas iguais
-  e estáveis; com um livro aberto sob o ponteiro o alvo do solto vira loteria.
+- **Durante o arraste os OUTROS livros fecham.** Larguras viram lombadas iguais
+  e estáveis; com vários abertos o alvo do solto vira loteria.
+- **O livro agarrado segue o ponteiro** pelo ponto exato onde a pegada caiu, e
+  mantém a largura que tinha na hora. Encolhendo junto com os outros, mover
+  pouco não mexia nada na tela e agarrar pela capa aberta encolhia 168px para
+  46px debaixo da mão — parecia que o gesto não pegava.
+- **O livro agarrado sai do teste de acerto** (`pointer-events: none`): o cursor
+  está grudado nele, então ele seria sempre o resultado e nenhum destino
+  apareceria.
+- **A medida do deslocamento roda num quadro à parte.** A troca de posição
+  acontece no mesmo movimento; medindo na hora, o valor é o de ANTES da troca e
+  o livro escapa do cursor por um quadro a cada vizinho cruzado (medido: 55px).
 - **A vaga abre ao vivo**: a ordem é reescrita a cada vizinho cruzado, então a
   prateleira que se vê antes de soltar já é a final.
 - Andar é preenchido por largura, então mover um livro pode empurrar outro para
@@ -62,6 +72,9 @@ Junto veio o Salvar explícito: ordem e remoção passam a ser rascunho.
 
 ## Pendências
 
+- A supressão de clique escrita no arraste é código morto: o estado já foi
+  limpo quando o clique chega. Hoje o clique depois do arraste é engolido pela
+  checagem de distância do #241 — funciona, mas por acidente. Limpar.
 - O cabeçalho da lista mostra a contagem SALVA ("3 obras") enquanto o corpo
   mostra o rascunho ("2 obras"). É honesto, mas as duas contagens aparecem na
   mesma tela e podem confundir. Decidir com o usuário se o cabeçalho passa a
@@ -72,6 +85,8 @@ Junto veio o Salvar explícito: ordem e remoção passam a ser rascunho.
 
 - 717 testes, lint e `tsc` limpos. Cada commit compila sozinho (provado com
   `git stash` na árvore do commit do gesto).
+- O livro arrastado foi medido a cada movimento: o cursor fica cravado nos
+  mesmos 138px dentro do livro em todas as trocas, e a largura fica em 168px.
 - Chromium local, lista própria: arrastar o terceiro livro para a primeira
   posição reordenou na tela; o painel apareceu com "1 mudança por salvar";
   Salvar gravou (`PUT ... /ordem 200`) e a ordem sobreviveu ao recarregar.
