@@ -41,6 +41,8 @@ function fakeDeps(cenario: {
   noCache?: MediaCompleta | null;
   noAniList?: typeof DO_ANILIST | null;
   anilistFora?: boolean;
+  noKitsu?: typeof DO_ANILIST | null;
+  kitsuFora?: boolean;
   similaresFora?: boolean;
   notasFora?: boolean;
   historicoFora?: boolean;
@@ -62,6 +64,14 @@ function fakeDeps(cenario: {
       throw new Error("fora");
     }
     return cenario.noAniList === undefined ? DO_ANILIST : cenario.noAniList;
+  });
+  const buscarNoKitsu = vi.fn(async function ()
+  {
+    if (cenario.kitsuFora)
+    {
+      throw new Error("fora");
+    }
+    return cenario.noKitsu === undefined ? null : cenario.noKitsu;
   });
   const salvarMedia = vi.fn(async function ()
   {
@@ -154,6 +164,7 @@ function fakeDeps(cenario: {
     deps: {
       buscarCompleta,
       buscarNoAniList,
+      buscarNoKitsu,
       salvarMedia,
       buscarSimilares,
       buscarEntrada,
@@ -165,6 +176,7 @@ function fakeDeps(cenario: {
       relogio: function () { return AGORA; },
     },
     buscarNoAniList,
+    buscarNoKitsu,
     salvarMedia,
     buscarEntrada,
     listarReviews,
@@ -290,9 +302,45 @@ describe("obraParaPagina", function ()
     expect(deps.buscarSimilares).not.toHaveBeenCalled();
   });
 
-  it("AniList fora sem cache é indisponivel", async function ()
+  // O degrau do #219 na página da obra (#227): sem ele, obra que a vitrine do
+  // Kitsu acabou de mostrar não abria enquanto o AniList estivesse fora.
+  it("AniList fora sem cache: o Kitsu segura a página", async function ()
   {
-    const { deps } = fakeDeps({ noCache: null, anilistFora: true });
+    const { deps, buscarNoKitsu, salvarMedia } = fakeDeps({
+      noCache: null,
+      anilistFora: true,
+      noKitsu: DO_ANILIST,
+    });
+
+    const resultado = await obraParaPagina(30013, null, deps);
+
+    expect(resultado.estado).toBe("ok");
+    expect(buscarNoKitsu).toHaveBeenCalledWith(30013);
+    expect(salvarMedia).toHaveBeenCalled();
+  });
+
+  it("AniList de pé nunca chama o Kitsu", async function ()
+  {
+    const { deps, buscarNoKitsu } = fakeDeps({ noCache: null });
+
+    const resultado = await obraParaPagina(30013, null, deps);
+
+    expect(resultado.estado).toBe("ok");
+    expect(buscarNoKitsu).not.toHaveBeenCalled();
+  });
+
+  it("AniList fora e Kitsu sem a obra: não encontrada", async function ()
+  {
+    const { deps } = fakeDeps({ noCache: null, anilistFora: true, noKitsu: null });
+
+    const resultado = await obraParaPagina(30013, null, deps);
+
+    expect(resultado.estado).toBe("nao_encontrada");
+  });
+
+  it("as duas fontes fora sem cache é indisponivel", async function ()
+  {
+    const { deps } = fakeDeps({ noCache: null, anilistFora: true, kitsuFora: true });
 
     await expect(obraParaPagina(30656, null, deps)).resolves.toEqual({
       estado: "indisponivel",
