@@ -16,7 +16,7 @@ export type EntradaParaTela = {
   entradaId: string;
   status: StatusDaEstante;
   progressChapter: string | null;
-  anilistId: number;
+  chave: string;
   titulo: string;
   coverImageUrl: string | null;
 };
@@ -81,11 +81,11 @@ export function MinhaEstante({
         <ColecaoVisual titulo={c(`status.${aba}`)} andarSimples
           classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-5 md:grid-cols-6"
           itens={visiveis.map((entrada) => ({
-            id: entrada.anilistId,
+            id: entrada.chave,
             titulo: entrada.titulo,
             capa: entrada.coverImageUrl,
             detalhe: (
-              <CartaoObra anilistId={entrada.anilistId} titulo={entrada.titulo} capa={entrada.coverImageUrl}>
+              <CartaoObra chave={entrada.chave} titulo={entrada.titulo} capa={entrada.coverImageUrl}>
                 <span className="text-xs text-texto-suave">
                   {entrada.progressChapter === null
                     ? t("estante.semCapitulo")

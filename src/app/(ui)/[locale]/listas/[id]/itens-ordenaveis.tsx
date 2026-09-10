@@ -20,14 +20,14 @@ import { ColecaoVisual } from "../../componentes/colecao-visual";
 import { CartaoObra } from "../../componentes/cartao-obra";
 
 export type ItemParaOrdenar = {
-  anilistId: number;
+  chave: string;
   titulo: string;
   coverImageUrl: string | null;
 };
 
 function mesmosIds(a: ItemParaOrdenar[], b: ItemParaOrdenar[]): boolean
 {
-  return a.length === b.length && a.every((item, i) => item.anilistId === b[i].anilistId);
+  return a.length === b.length && a.every((item, i) => item.chave === b[i].chave);
 }
 
 export function ItensOrdenaveis({
@@ -43,7 +43,7 @@ export function ItensOrdenaveis({
   const roteador = useRouter();
   const t = useTranslations("listas");
   const [ordem, setOrdem] = useState(itens);
-  const [removidos, setRemovidos] = useState<number[]>([]);
+  const [removidos, setRemovidos] = useState<string[]>([]);
   const [recebidos, setRecebidos] = useState(itens);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -53,20 +53,20 @@ export function ItensOrdenaveis({
   // rascunho, e as que ele passou a ter entram no fim, onde a rota as colocou.
   if (itens !== recebidos)
   {
-    const presentes = new Set(itens.map((item) => item.anilistId));
+    const presentes = new Set(itens.map((item) => item.chave));
     const aindaRemovidos = removidos.filter((id) => presentes.has(id));
-    const porId = new Map(itens.map((item) => [item.anilistId, item]));
+    const porId = new Map(itens.map((item) => [item.chave, item]));
     const mantidos = ordem
-      .filter((item) => presentes.has(item.anilistId))
-      .map((item) => porId.get(item.anilistId) as ItemParaOrdenar);
-    const conhecidos = new Set([...ordem.map((item) => item.anilistId), ...aindaRemovidos]);
+      .filter((item) => presentes.has(item.chave))
+      .map((item) => porId.get(item.chave) as ItemParaOrdenar);
+    const conhecidos = new Set([...ordem.map((item) => item.chave), ...aindaRemovidos]);
 
     setRecebidos(itens);
     setRemovidos(aindaRemovidos);
-    setOrdem([...mantidos, ...itens.filter((item) => !conhecidos.has(item.anilistId))]);
+    setOrdem([...mantidos, ...itens.filter((item) => !conhecidos.has(item.chave))]);
   }
 
-  const ordemMudou = !mesmosIds(ordem, itens.filter((item) => !removidos.includes(item.anilistId)));
+  const ordemMudou = !mesmosIds(ordem, itens.filter((item) => !removidos.includes(item.chave)));
   const pendentes = removidos.length + (ordemMudou ? 1 : 0);
 
   // Fechar a aba com rascunho por salvar pede confirmação do navegador. O texto
@@ -78,33 +78,33 @@ export function ItensOrdenaveis({
     return () => window.removeEventListener("beforeunload", avisar);
   }, [pendentes]);
 
-  function moverItem(anilistId: number, direcao: Direcao)
+  function moverItem(chave: string, direcao: Direcao)
   {
     setErro(null);
     setOrdem(function (atual)
     {
-      const ids = mover(atual.map((item) => item.anilistId), anilistId, direcao);
-      const porId = new Map(atual.map((item) => [item.anilistId, item]));
+      const ids = mover(atual.map((item) => item.chave), chave, direcao);
+      const porId = new Map(atual.map((item) => [item.chave, item]));
       return ids.map((id) => porId.get(id) as ItemParaOrdenar);
     });
   }
 
-  function arrastarItem(anilistId: number, destino: number)
+  function arrastarItem(chave: string, destino: number)
   {
     setErro(null);
     setOrdem(function (atual)
     {
-      const ids = reposicionar(atual.map((item) => item.anilistId), anilistId, destino);
-      const porId = new Map(atual.map((item) => [item.anilistId, item]));
+      const ids = reposicionar(atual.map((item) => item.chave), chave, destino);
+      const porId = new Map(atual.map((item) => [item.chave, item]));
       return ids.map((id) => porId.get(id) as ItemParaOrdenar);
     });
   }
 
-  function removerItem(anilistId: number)
+  function removerItem(chave: string)
   {
     setErro(null);
-    setRemovidos(function (atual) { return [...atual, anilistId]; });
-    setOrdem(function (atual) { return atual.filter((item) => item.anilistId !== anilistId); });
+    setRemovidos(function (atual) { return [...atual, chave]; });
+    setOrdem(function (atual) { return atual.filter((item) => item.chave !== chave); });
   }
 
   function descartar()
@@ -123,12 +123,12 @@ export function ItensOrdenaveis({
     {
       // As remoções primeiro: a rota de ordem exige permutação exata do que
       // sobrou, então mandar a ordem antes seria pedido inválido.
-      for (const anilistId of removidos)
+      for (const chave of removidos)
       {
         const resposta = await fetch(`/api/v1/listas/${listaId}/itens`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ anilistId }),
+          body: JSON.stringify({ chave }),
         });
 
         // 404 é obra que já não estava lá: o rascunho queria isso mesmo.
@@ -144,7 +144,7 @@ export function ItensOrdenaveis({
         const resposta = await fetch(`/api/v1/listas/${listaId}/ordem`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ anilistIds: ordem.map((item) => item.anilistId) }),
+          body: JSON.stringify({ chaves: ordem.map((item) => item.chave) }),
         });
 
         if (!resposta.ok)
@@ -175,24 +175,24 @@ export function ItensOrdenaveis({
         classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6"
         aoReordenar={arrastarItem}
         itens={ordem.map((item, indice) => ({
-          id: item.anilistId,
+          id: item.chave,
           titulo: item.titulo,
           capa: item.coverImageUrl,
           detalhe: (
-            <CartaoObra anilistId={item.anilistId} titulo={item.titulo} capa={item.coverImageUrl} acoes={
+            <CartaoObra chave={item.chave} titulo={item.titulo} capa={item.coverImageUrl} acoes={
               <div className="flex items-center justify-between gap-2 text-xs">
                 <span className="flex gap-1">
                   <Seta
                     rotulo={t("detalhe.ordenar.antes", { titulo: item.titulo })}
                     desativada={salvando || indice === 0}
-                    aoClicar={function () { moverItem(item.anilistId, "cima"); }}
+                    aoClicar={function () { moverItem(item.chave, "cima"); }}
                   >
                     ←
                   </Seta>
                   <Seta
                     rotulo={t("detalhe.ordenar.depois", { titulo: item.titulo })}
                     desativada={salvando || indice === ordem.length - 1}
-                    aoClicar={function () { moverItem(item.anilistId, "baixo"); }}
+                    aoClicar={function () { moverItem(item.chave, "baixo"); }}
                   >
                     →
                   </Seta>
@@ -200,7 +200,7 @@ export function ItensOrdenaveis({
                 <button
                   type="button"
                   disabled={salvando}
-                  onClick={function () { removerItem(item.anilistId); }}
+                  onClick={function () { removerItem(item.chave); }}
                   className="text-texto-suave underline underline-offset-4 hover:text-texto disabled:opacity-40"
                 >
                   {t("detalhe.remover")}

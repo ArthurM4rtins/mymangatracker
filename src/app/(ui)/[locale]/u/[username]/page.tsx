@@ -174,7 +174,7 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
               entradaId: entrada.entradaId,
               status: entrada.status,
               progressChapter: entrada.progressChapter,
-              anilistId: entrada.obra.anilistId,
+              chave: entrada.obra.chave,
               titulo: entrada.obra.titleEnglish ?? entrada.obra.titleRomaji,
               coverImageUrl: entrada.obra.coverImageUrl,
             };
@@ -202,7 +202,7 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
             avaliadas={perfil.avaliadas.map(function (obra)
             {
               return {
-                anilistId: obra.anilistId,
+                chave: obra.chave,
                 titulo: obra.titleEnglish ?? obra.titleRomaji,
                 coverImageUrl: obra.coverImageUrl,
                 rating: obra.rating,
@@ -231,7 +231,7 @@ export default async function PaginaDoPerfil({ params, searchParams }: Props)
                   key={resenha.entryId}
                   resenha={{
                     entryId: resenha.entryId,
-                    anilistId: resenha.anilistId,
+                    chave: resenha.chave,
                     titulo: resenha.titleEnglish ?? resenha.titleRomaji,
                     coverImageUrl: resenha.coverImageUrl,
                     rating: resenha.rating,

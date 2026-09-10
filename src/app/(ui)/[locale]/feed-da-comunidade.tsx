@@ -15,7 +15,7 @@ export type ItemParaTela =
       tipo: "resenha";
       chave: string;
       username: string;
-      anilistId: number;
+      obraChave: string;
       titulo: string;
       coverImageUrl: string | null;
       rating: string | null;
@@ -70,7 +70,7 @@ function Resenha({ item }: { item: Extract<ItemParaTela, { tipo: "resenha" }> })
 
   return (
     <>
-      <Link href={`/obra/${item.anilistId}`} className="shrink-0">
+      <Link href={`/obra/${item.obraChave.replace(":", "/")}`} className="shrink-0">
         {item.coverImageUrl ? (
           <Image
             src={item.coverImageUrl}
@@ -88,7 +88,7 @@ function Resenha({ item }: { item: Extract<ItemParaTela, { tipo: "resenha" }> })
         <p className="flex flex-wrap items-baseline gap-x-2 text-sm">
           <Autor username={item.username} quando={item.quando} />
           <span className="text-texto-suave">{t("feed.resenhou")}</span>
-          <Link href={`/obra/${item.anilistId}`} className="font-medium hover:text-acento">
+          <Link href={`/obra/${item.obraChave.replace(":", "/")}`} className="font-medium hover:text-acento">
             {item.titulo}
           </Link>
           {item.rating !== null && (

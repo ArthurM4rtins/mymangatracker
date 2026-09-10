@@ -22,7 +22,7 @@ type MinhaLista = {
   jaContem: boolean;
 };
 
-export function AdicionarALista({ anilistId }: { anilistId: number })
+export function AdicionarALista({ chave }: { chave: string })
 {
   const t = useTranslations("obra");
   const roteador = useRouter();
@@ -77,7 +77,7 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
 
     try
     {
-      const resposta = await fetch(`/api/v1/listas?anilistId=${anilistId}`);
+      const resposta = await fetch(`/api/v1/listas?obra=${encodeURIComponent(chave)}`);
 
       if (resposta.status === 401)
       {
@@ -115,7 +115,7 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
       const resposta = await fetch(`/api/v1/listas/${lista.listaId}/itens`, {
         method: lista.jaContem ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ anilistId }),
+        body: JSON.stringify({ chave }),
       });
 
       if (!resposta.ok)

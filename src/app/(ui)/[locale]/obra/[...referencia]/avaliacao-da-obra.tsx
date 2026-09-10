@@ -29,14 +29,14 @@ type Rascunho = {
 };
 
 export function AvaliacaoDaObra({
-  anilistId,
+  chave,
   titulo,
   ano,
   coverImageUrl,
   avaliacao,
   social,
 }: {
-  anilistId: number;
+  chave: string;
   titulo: string;
   ano: number | null;
   coverImageUrl: string | null;
@@ -75,12 +75,12 @@ export function AvaliacaoDaObra({
       // Nota e resenha vazias = avaliação não existe mais.
       const resposta =
         dados.rating === null && review === null
-          ? await fetch(`/api/v1/avaliacoes/${anilistId}`, { method: "DELETE" })
+          ? await fetch(`/api/v1/avaliacoes/${encodeURIComponent(chave)}`, { method: "DELETE" })
           : await fetch("/api/v1/avaliacoes", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                anilistId,
+                chave,
                 rating: dados.rating,
                 review,
                 containsSpoilers: dados.containsSpoilers,

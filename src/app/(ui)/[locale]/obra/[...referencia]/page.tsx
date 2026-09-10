@@ -23,6 +23,7 @@ import { ContinuarLeitura } from "../../estante/continuar-leitura";
 import { EditarProgresso } from "../../estante/editar-progresso";
 import { SeletorStatus } from "../../estante/seletor-status";
 import { idiomaDoSegmento } from "@/i18n/routing";
+import { caminhoDaObra, chaveDaObra, interpretarReferencia } from "@/server/domain/referencia-da-obra";
 
 // Sessão + AniList: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -40,45 +41,45 @@ const PAIS: Record<string, "formato.JP" | "formato.KR" | "formato.CN"> = {
 };
 
 type Props = {
-  params: Promise<{ anilistId: string }>;
+  params: Promise<{ referencia: string[] }>;
 };
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/obra/[anilistId]">): Promise<Metadata>
+}: PageProps<"/[locale]/obra/[...referencia]">): Promise<Metadata>
 {
-  const { locale, anilistId } = await params;
+  const { locale, referencia } = await params;
+  const alvo = interpretarReferencia(referencia[0] ?? "", referencia[1]);
   const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "obra" });
-  const id = Number(anilistId);
-
-  if (!Number.isInteger(id) || id <= 0)
+  if (alvo === null)
   {
-    return { title: t("meta.titulo"), alternates: alternativasDeIdioma(`/obra/${anilistId}`) };
+    return { title: t("meta.titulo"), alternates: alternativasDeIdioma("/catalogo") };
   }
 
   const userId = await usuarioDaSessao();
-  const resultado = await carregarObra(id, userId);
+  const resultado = await carregarObra(alvo, userId);
 
   return {
     title:
       resultado.estado === "ok"
         ? resultado.obra.titleEnglish ?? resultado.obra.titleRomaji
         : t("meta.titulo"),
-    alternates: alternativasDeIdioma(`/obra/${anilistId}`),
+    alternates: alternativasDeIdioma(alvo === null ? "/catalogo" : caminhoDaObra(alvo)),
   };
 }
 
 export default async function PaginaDaObra({ params }: Props)
 {
-  const id = Number((await params).anilistId);
+  const { referencia } = await params;
+  const alvo = interpretarReferencia(referencia[0] ?? "", referencia[1]);
 
-  if (!Number.isInteger(id) || id <= 0)
+  if (alvo === null)
   {
     notFound();
   }
 
   const userId = await usuarioDaSessao();
-  const resultado = await carregarObra(id, userId);
+  const resultado = await carregarObra(alvo, userId);
   const t = await getTranslations("obra");
   const c = await getTranslations("comum");
 
@@ -220,7 +221,7 @@ export default async function PaginaDaObra({ params }: Props)
             <div className="flex shrink-0 flex-col gap-4 sm:w-64">
               {userId !== null && (
                 <AvaliacaoDaObra
-                  anilistId={obra.anilistId}
+                  chave={obra.chave}
                   titulo={obra.titleEnglish ?? obra.titleRomaji}
                   ano={obra.startYear}
                   coverImageUrl={obra.coverImageUrl}
@@ -274,7 +275,7 @@ export default async function PaginaDaObra({ params }: Props)
           </section>
         )}
 
-        <PainelDoUsuario anilistId={obra.anilistId} minha={minha} logado={userId !== null} />
+        <PainelDoUsuario chave={obra.chave} minha={minha} logado={userId !== null} />
 
         <section className="flex flex-col gap-4">
           <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
@@ -329,11 +330,11 @@ export default async function PaginaDaObra({ params }: Props)
 }
 
 async function PainelDoUsuario({
-  anilistId,
+  chave,
   minha,
   logado,
 }: {
-  anilistId: number;
+  chave: string;
   minha: MinhaRelacao | null;
   logado: boolean;
 })
@@ -362,9 +363,9 @@ async function PainelDoUsuario({
   {
     return (
       <section className="flex flex-wrap items-center gap-4 rounded-lg border border-borda bg-superficie p-4">
-        <BotaoEstante anilistId={anilistId} atualizarAoSalvar />
+        <BotaoEstante chave={chave} atualizarAoSalvar />
         {/* Lista é curadoria, não leitura (#237): dá para listar sem ter na estante. */}
-        <AdicionarALista anilistId={anilistId} />
+        <AdicionarALista chave={chave} />
         <span className="text-sm text-texto-suave">
           {t("painel.adicionar")}
         </span>
@@ -382,7 +383,7 @@ async function PainelDoUsuario({
             progressChapter={minha.progressChapter}
           />
         </span>
-        <AdicionarALista anilistId={anilistId} />
+        <AdicionarALista chave={chave} />
       </div>
 
       <ContinuarLeitura continuarEm={minha.continuarEm} />
@@ -445,10 +446,10 @@ async function Similares({ similares }: { similares: ObraSimilar[] })
       </h2>
       <ColecaoVisual titulo={t("similares")} andarSimples classeGrade="grid grid-cols-3 gap-3 sm:grid-cols-6"
         itens={similares.map((similar) => ({
-          id: similar.anilistId,
+          id: similar.chave,
           titulo: similar.titleEnglish ?? similar.titleRomaji,
           capa: similar.coverImageUrl,
-          detalhe: <CartaoObra anilistId={similar.anilistId}
+          detalhe: <CartaoObra chave={similar.chave}
             titulo={similar.titleEnglish ?? similar.titleRomaji} capa={similar.coverImageUrl} />,
         }))}
       />

@@ -1,19 +1,25 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
+import { caminhoDaObra, referenciaDaChave } from "@/server/domain/referencia-da-obra";
 
 /** A mesma capa e identificação nas grades e no painel da prateleira. */
-export function CartaoObra({ anilistId, titulo, capa, children, acoes }: {
-  anilistId: number;
+export function CartaoObra({ chave, titulo, capa, children, acoes }: {
+  /** A obra pela chave (#254): `anilist:30002` ou `kitsu:54598`. */
+  chave: string;
   titulo: string;
   capa: string | null;
   children?: ReactNode;
   acoes?: ReactNode;
 })
 {
+  const referencia = referenciaDaChave(chave);
+  // Chave que o servidor não soube montar não vira link para lugar nenhum.
+  const caminho = referencia === null ? "/catalogo" : caminhoDaObra(referencia);
+
   return (
     <li data-cartao-obra className="flex min-w-0 flex-col gap-2">
-      <Link href={`/obra/${anilistId}`} title={titulo} className="group flex min-w-0 flex-col gap-1.5">
+      <Link href={caminho} title={titulo} className="group flex min-w-0 flex-col gap-1.5">
         {capa ? (
           <Image src={capa} alt="" width={160} height={240} unoptimized
             className="aspect-[2/3] w-full rounded object-cover transition-opacity group-hover:opacity-80" />

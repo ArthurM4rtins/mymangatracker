@@ -18,6 +18,8 @@ import { ItensOrdenaveis } from "./itens-ordenaveis";
 import { idiomaDoSegmento } from "@/i18n/routing";
 import { ColecaoVisual } from "../../componentes/colecao-visual";
 import { CartaoObra } from "../../componentes/cartao-obra";
+import { chaveDaObra } from "@/server/domain/referencia-da-obra";
+import { referenciaDaObra } from "@/server/domain/anilist-media";
 
 export const dynamic = "force-dynamic";
 
@@ -82,7 +84,7 @@ export default async function PaginaDaLista({ params, searchParams }: PageProps<
     }
   }
 
-  const naLista = new Set(lista.itens.map(function (item) { return item.anilistId; }));
+  const naLista = new Set(lista.itens.map(function (item) { return item.chave; }));
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
@@ -144,7 +146,7 @@ export default async function PaginaDaLista({ params, searchParams }: PageProps<
           itens={lista.itens.map(function (item)
           {
             return {
-              anilistId: item.anilistId,
+              chave: item.chave,
               titulo: item.titleEnglish ?? item.titleRomaji,
               coverImageUrl: item.coverImageUrl,
             };
@@ -154,10 +156,10 @@ export default async function PaginaDaLista({ params, searchParams }: PageProps<
         <ColecaoVisual titulo={lista.nome} andarSimples
           classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6"
           itens={lista.itens.map((item) => ({
-            id: item.anilistId,
+            id: item.chave,
             titulo: item.titleEnglish ?? item.titleRomaji,
             capa: item.coverImageUrl,
-            detalhe: <CartaoObra anilistId={item.anilistId}
+            detalhe: <CartaoObra chave={item.chave}
               titulo={item.titleEnglish ?? item.titleRomaji} capa={item.coverImageUrl} />,
           }))}
         />
@@ -173,7 +175,7 @@ async function ResultadosDaBusca({
 }: {
   busca: ResultadoBusca;
   listaId: string;
-  naLista: ReadonlySet<number>;
+  naLista: ReadonlySet<string>;
 })
 {
   const t = await getTranslations("listas");
@@ -208,7 +210,7 @@ async function ResultadosDaBusca({
         const titulo = obra.titleEnglish ?? obra.titleRomaji;
 
         return (
-          <li key={obra.anilistId} className="flex items-center gap-3 px-3 py-2">
+          <li key={chaveDaObra(referenciaDaObra(obra))} className="flex items-center gap-3 px-3 py-2">
             {obra.coverImageUrl ? (
               <Image
                 src={obra.coverImageUrl}
@@ -232,8 +234,8 @@ async function ResultadosDaBusca({
             </Link>
             <AdicionarItem
               listaId={listaId}
-              anilistId={obra.anilistId}
-              jaNaLista={naLista.has(obra.anilistId)}
+              chave={chaveDaObra(referenciaDaObra(obra))}
+              jaNaLista={naLista.has(chaveDaObra(referenciaDaObra(obra)))}
             />
           </li>
         );

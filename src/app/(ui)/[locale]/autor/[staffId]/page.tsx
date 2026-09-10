@@ -119,11 +119,11 @@ export default async function PaginaDoAutor({ params }: Props)
           <ColecaoVisual titulo={t("obras.titulo")} andarSimples
             classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6"
             itens={autor.obras.map((obra) => ({
-              id: obra.anilistId,
+              id: obra.chave,
               titulo: obra.titleEnglish ?? obra.titleRomaji,
               capa: obra.coverImageUrl,
               detalhe: (
-                <CartaoObra anilistId={obra.anilistId} titulo={obra.titleEnglish ?? obra.titleRomaji}
+                <CartaoObra chave={obra.chave} titulo={obra.titleEnglish ?? obra.titleRomaji}
                   capa={obra.coverImageUrl}>
                   {obra.startYear !== null && (
                     <span className="text-xs tabular-nums text-texto-suave">{obra.startYear}</span>

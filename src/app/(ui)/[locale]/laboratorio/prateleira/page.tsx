@@ -11,22 +11,22 @@ export const metadata: Metadata = { robots: { index: false, follow: false } };
 // Amostra fixa de metadados públicos já presentes no cache do projeto.
 // Não consulta o banco, não usa uma conta e nunca altera a coleção de alguém.
 const AMOSTRA = [
-  [105778, "Chainsaw Man", "bx105778-euxXZEIfDY2u.png"],
-  [30002, "Berserk", "bx30002-Cul4OeN7bYtn.jpg"],
-  [30013, "ONE PIECE", "bx30013-BeslEMqiPhlk.jpg"],
-  [30642, "Vinland Saga", "bx30642-0mjRDkf4THpo.jpg"],
-  [30656, "Vagabond", "bx30656-9mW113O7rDnA.png"],
-  [34632, "Oyasumi Punpun", "bx34632-5xMDkx3pXsEh.png"],
-  [46765, "Kingdom", "nx46765-KPXir4sRqJBW.png"],
-  [53390, "Shingeki no Kyojin", "bx53390-1RsuABC34P9D.jpg"],
-  [63327, "Tokyo Ghoul", "bx63327-glC9cDxYBja9.png"],
-  [74347, "One Punch-Man", "bx74347-sZpmNJ5xLwRK.jpg"],
-  [108556, "SPY×FAMILY", "bx108556-NHjkz0BNJhLx.jpg"],
-  [85486, "Boku no Hero Academia", "bx85486-INqnYx8gL3eX.jpg"],
-  [87216, "Kimetsu no Yaiba", "bx87216-c9bSNVD10UuD.png"],
-  [101517, "Jujutsu Kaisen", "bx101517-H3TdM3g5ZUe9.jpg"],
-  [105398, "Na Honjaman Level Up", "bx105398-b673Vt5ZSuz3.jpg"],
-] as const;
+  ["anilist:105778", "Chainsaw Man", "bx105778-euxXZEIfDY2u.png"],
+  ["anilist:30002", "Berserk", "bx30002-Cul4OeN7bYtn.jpg"],
+  ["anilist:30013", "ONE PIECE", "bx30013-BeslEMqiPhlk.jpg"],
+  ["anilist:30642", "Vinland Saga", "bx30642-0mjRDkf4THpo.jpg"],
+  ["anilist:30656", "Vagabond", "bx30656-9mW113O7rDnA.png"],
+  ["anilist:34632", "Oyasumi Punpun", "bx34632-5xMDkx3pXsEh.png"],
+  ["anilist:46765", "Kingdom", "nx46765-KPXir4sRqJBW.png"],
+  ["anilist:53390", "Shingeki no Kyojin", "bx53390-1RsuABC34P9D.jpg"],
+  ["anilist:63327", "Tokyo Ghoul", "bx63327-glC9cDxYBja9.png"],
+  ["anilist:74347", "One Punch-Man", "bx74347-sZpmNJ5xLwRK.jpg"],
+  ["anilist:108556", "SPY×FAMILY", "bx108556-NHjkz0BNJhLx.jpg"],
+  ["anilist:85486", "Boku no Hero Academia", "bx85486-INqnYx8gL3eX.jpg"],
+  ["anilist:87216", "Kimetsu no Yaiba", "bx87216-c9bSNVD10UuD.png"],
+  ["anilist:101517", "Jujutsu Kaisen", "bx101517-H3TdM3g5ZUe9.jpg"],
+  ["anilist:105398", "Na Honjaman Level Up", "bx105398-b673Vt5ZSuz3.jpg"],
+];
 
 export default async function LaboratorioPrateleira()
 {

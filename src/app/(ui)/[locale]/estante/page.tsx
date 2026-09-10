@@ -76,7 +76,7 @@ export default async function Estante({ searchParams }: Props)
   const t = await getTranslations("estante");
   const c = await getTranslations("comum");
   const itens = (entradas ?? []).map((entrada) => ({
-    id: entrada.obra.anilistId,
+    id: entrada.obra.chave,
     titulo: entrada.obra.titleEnglish ?? entrada.obra.titleRomaji,
     capa: entrada.obra.coverImageUrl,
     detalhe: <Entrada entrada={entrada} />,
@@ -160,7 +160,7 @@ async function Entrada({ entrada }: { entrada: EntradaDaEstante })
 
   return (
     <li className="flex gap-4 rounded-lg border border-borda bg-superficie p-4">
-      <Link href={`/obra/${obra.anilistId}`} className="shrink-0">
+      <Link href={`/obra/${obra.chave}`} className="shrink-0">
         {obra.coverImageUrl ? (
           <Image
             src={obra.coverImageUrl}
@@ -182,7 +182,7 @@ async function Entrada({ entrada }: { entrada: EntradaDaEstante })
 
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <h2 className="font-medium leading-snug">
-          <Link href={`/obra/${obra.anilistId}`} className="hover:text-acento">
+          <Link href={`/obra/${obra.chave}`} className="hover:text-acento">
             {obra.titleEnglish ?? obra.titleRomaji}
           </Link>
         </h2>
@@ -216,7 +216,7 @@ async function Entrada({ entrada }: { entrada: EntradaDaEstante })
             )}
           </div>
 
-          <Avaliar anilistId={entrada.obra.anilistId} avaliacao={entrada.avaliacao} />
+          <Avaliar chave={entrada.obra.chave} avaliacao={entrada.avaliacao} />
         </div>
       </div>
     </li>

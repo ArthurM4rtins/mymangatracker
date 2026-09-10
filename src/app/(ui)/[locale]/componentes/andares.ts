@@ -18,10 +18,28 @@ export const VAO = 4;
  */
 export const VITRINE_MINIMA = 120;
 
-/** Lombada de 46, 51 ou 56 px, decidida pelo id — livros diferentes, lombadas diferentes. */
-export function larguraDaLombada(id: number): number
+/**
+ * Um número estável a partir da chave da obra (#254). A chave virou texto
+ * (`anilist:30002`), e a lombada, a cor e a altura precisam de número — mas
+ * precisam sobretudo ser SEMPRE as mesmas para a mesma obra, senão a estante
+ * muda de cara a cada render.
+ */
+export function numeroDaChave(chave: string): number
 {
-  return 46 + (Math.abs(id) % 3) * 5;
+  let soma = 0;
+
+  for (let i = 0; i < chave.length; i++)
+  {
+    soma = (soma * 31 + chave.charCodeAt(i)) % 100000;
+  }
+
+  return soma;
+}
+
+/** Lombada de 46, 51 ou 56 px, decidida pela chave — livros diferentes, lombadas diferentes. */
+export function larguraDaLombada(id: string): number
+{
+  return 46 + (numeroDaChave(id) % 3) * 5;
 }
 
 /**
@@ -30,7 +48,7 @@ export function larguraDaLombada(id: number): number
  * variam de largura, então quem cede é a vitrine — nunca abaixo de
  * `VITRINE_MINIMA`, e nunca acima do tamanho normal.
  */
-export function larguraDaVitrine<T extends { id: number }>(
+export function larguraDaVitrine<T extends { id: string }>(
   andar: readonly T[],
   larguraDoTrilho: number,
 ): number
@@ -59,7 +77,7 @@ export function larguraDaVitrine<T extends { id: number }>(
  * Com teto, o andar tenta fechar com o número cheio apertando a vitrine até
  * `VITRINE_MINIMA` (#229). Se nem assim couber, volta a encher pela largura.
  */
-export function emAndaresPelaLargura<T extends { id: number }>(
+export function emAndaresPelaLargura<T extends { id: string }>(
   itens: readonly T[],
   larguraDoTrilho: number,
   maximoPorAndar: number = Number.POSITIVE_INFINITY,
@@ -111,7 +129,7 @@ export type AndarDaEstante<T> = {
  * andares de estante. O nome fica em cima do primeiro andar do grupo; os
  * seguintes seguem sem cabeçalho, como na home (#234).
  */
-export function emAndaresDosGrupos<T extends { id: number }>(
+export function emAndaresDosGrupos<T extends { id: string }>(
   grupos: ReadonlyArray<{ id: string; titulo: string; itens: T[] }>,
   larguraDoTrilho: number,
   maximoPorAndar?: number,

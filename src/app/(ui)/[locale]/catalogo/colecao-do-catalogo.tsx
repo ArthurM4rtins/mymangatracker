@@ -75,8 +75,8 @@ export function ColecaoDoCatalogo({ inicial, temMaisInicial, consulta, tituloDoG
       const corpo = (await resposta.json()) as PaginaDoCatalogoDTO;
       // Obra repetida entre páginas (o AniList reordena entre pedidos) não
       // duplica card: a chave da prateleira é o anilistId.
-      const vistos = new Set(obras.map(function (obra) { return obra.anilistId; }));
-      const novas = corpo.obras.filter(function (obra) { return !vistos.has(obra.anilistId); });
+      const vistos = new Set(obras.map(function (obra) { return obra.chave; }));
+      const novas = corpo.obras.filter(function (obra) { return !vistos.has(obra.chave); });
 
       setObras(obras.concat(novas));
       setPagina(proxima);
@@ -99,15 +99,15 @@ export function ColecaoDoCatalogo({ inicial, temMaisInicial, consulta, tituloDoG
       : obra.pais ? c(`formato.${obra.pais}`) : t("cartao.formatoGenerico");
 
     return {
-      id: obra.anilistId,
+      id: obra.chave,
       titulo: obra.titulo,
       capa: obra.capa,
       detalhe: (
         <CartaoObra
-          anilistId={obra.anilistId}
+          chave={obra.chave}
           titulo={obra.titulo}
           capa={obra.capa}
-          acoes={<BotaoEstante anilistId={obra.anilistId} jaNaEstante={obra.jaNaEstante} />}
+          acoes={<BotaoEstante chave={obra.chave} jaNaEstante={obra.jaNaEstante} />}
         >
           <p className="flex flex-wrap items-center gap-1.5 text-xs text-texto-suave">
             <span className="rounded-full border border-borda px-2 py-0.5">{rotulo}</span>

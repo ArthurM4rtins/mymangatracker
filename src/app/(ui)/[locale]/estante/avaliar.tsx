@@ -16,10 +16,10 @@ type Avaliacao = {
 };
 
 export function Avaliar({
-  anilistId,
+  chave,
   avaliacao,
 }: {
-  anilistId: number;
+  chave: string;
   avaliacao: Avaliacao | null;
 })
 {
@@ -53,7 +53,7 @@ export function Avaliar({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          anilistId,
+          chave,
           rating: nota,
           review: resenha.trim() === "" ? null : resenha,
           containsSpoilers: spoilers,
@@ -92,7 +92,7 @@ export function Avaliar({
 
     try
     {
-      const resposta = await fetch(`/api/v1/avaliacoes/${anilistId}`, {
+      const resposta = await fetch(`/api/v1/avaliacoes/${encodeURIComponent(chave)}`, {
         method: "DELETE",
       });
 
