@@ -14,7 +14,7 @@ import {
   type ResumoDeNotas,
 } from "@/server/domain/nota-media";
 import type { AutorDaObra, MediaDoAniList } from "@/server/domain/anilist-media";
-import { buscarMediaPorId, buscarSimilares } from "@/server/infra/anilist";
+import { buscarSimilares } from "@/server/infra/anilist";
 import { lembrarPorChave } from "@/server/domain/memoria-curta";
 import { buscarObraNaFonte, type ResultadoDaFonte } from "@/server/services/obra-externa.service";
 import {
