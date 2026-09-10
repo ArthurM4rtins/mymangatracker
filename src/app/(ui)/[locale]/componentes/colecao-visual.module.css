@@ -74,20 +74,20 @@
 .prateleiras[data-arrastando] .capa { opacity: 0; }
 .prateleiras[data-arrastando] .volume { transform: none; box-shadow: 3px 0 5px #0003, inset 1px 0 #ffffff30; }
 .prateleiras[data-arrastando] .trilho { cursor: grabbing; }
-/* O livro na mão segue o ponteiro e mantém o tamanho que tinha na pegada: sem
-   isso ele encolhia junto com os outros e nada se mexia até cruzar um vizinho.
+/* O livro na mão fecha como os outros e segue o ponteiro: arrastar uma capa
+   aberta pela prateleira lê estranho, e o que resolve o "nada se mexe" é ele
+   acompanhar o cursor, não o tamanho. Solto na posição 1, ele reabre sozinho
+   porque volta a ser a vitrine do andar.
    Sem transição, senão o livro corre atrás do cursor com atraso.
    `pointer-events: none` é o que faz o gesto funcionar: o cursor está grudado
    neste livro, então ele seria SEMPRE o resultado do teste de acerto e nenhum
    destino apareceria. Fora do teste, quem responde é o livro de baixo. */
 .prateleiras[data-arrastando] .livro[data-arrastado] {
-  width: var(--largura-agarrada, var(--largura-lombada));
   transform: translateX(var(--deslize, 0px));
   transition: none;
   pointer-events: none;
   z-index: 3;
 }
-.prateleiras[data-arrastando] .livro[data-arrastado] .capa { opacity: 1; }
 .prateleiras[data-arrastando] .livro[data-arrastado] .volume { transform: translateY(-12px); box-shadow: 10px 14px 22px #0005; outline: 2px solid var(--acento); outline-offset: 2px; }
 /* O texto não pode ser selecionado no meio do gesto, nem no toque nem no mouse. */
 .prateleiras[data-arrastando] { user-select: none; -webkit-user-select: none; }

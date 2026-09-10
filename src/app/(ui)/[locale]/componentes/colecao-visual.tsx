@@ -145,7 +145,7 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
             {andares.filter((grupo) => grupo.itens.length > 0).map((grupo, indice) => (
               <Prateleira key={grupo.id} grupo={grupo} numero={indice + 1} aoAbrir={setSelecionado}
                 simples={andarSimples} selecionado={selecionado} arrastado={arraste.arrastado}
-                deslize={arraste.deslize} larguraAgarrada={arraste.largura} />
+                deslize={arraste.deslize} />
             ))}
           </div>
         )}
@@ -177,16 +177,17 @@ function useArrasteParaOrdenar(
 {
   const [arrastado, setArrastado] = useState<number | null>(null);
   // O livro agarrado segue o ponteiro: `deslize` é o quanto ele sai do lugar que
-  // ocupa na fila, e `largura` é o tamanho que ele tinha na hora da pegada — sem
-  // guardar isso ele encolheria na mão junto com os outros.
+  // ocupa na fila.
   const [deslize, setDeslize] = useState(0);
-  const [largura, setLargura] = useState(0);
-  const gesto = useRef<{ id: number; x: number; y: number; dentroDoLivro: number } | null>(null);
+  // Onde a pegada caiu DENTRO do livro, como fração da largura dele. Guardar o
+  // pixel não serve: o livro fecha ao ser agarrado, e 138 px medidos numa capa
+  // aberta de 168 px cairiam fora de uma lombada de 46 px.
+  const gesto = useRef<{ id: number; x: number; y: number; fracao: number } | null>(null);
   const espera = useRef<ReturnType<typeof setTimeout> | null>(null);
   // O deslize também num ref: quem mede a posição de fila roda depois do
   // render, e ali o valor do estado já é o de antes.
   const deslizeAgora = useRef(0);
-  const quadro = useRef<number | null>(null);
+  const ultimoX = useRef(0);
 
   const cancelarEspera = useCallback(() => {
     if (espera.current !== null) { clearTimeout(espera.current); espera.current = null; }
@@ -194,7 +195,6 @@ function useArrasteParaOrdenar(
 
   const encerrar = useCallback(() => {
     cancelarEspera();
-    if (quadro.current !== null) { cancelAnimationFrame(quadro.current); quadro.current = null; }
     gesto.current = null;
     deslizeAgora.current = 0;
     setArrastado(null);
@@ -202,15 +202,38 @@ function useArrasteParaOrdenar(
   }, [cancelarEspera]);
 
   /**
-   * O id da obra sob o ponteiro, seja qual for o andar. O livro arrastado sai do
-   * teste de acerto pelo CSS (`pointer-events: none`), senão ele estaria sempre
-   * sob o cursor — é nele que o cursor está grudado — e nunca acharia destino.
+   * O id da obra que o ponteiro elege como destino, seja qual for o andar. O
+   * livro arrastado sai do teste de acerto pelo CSS (`pointer-events: none`),
+   * senão ele estaria sempre sob o cursor — é nele que o cursor está grudado —
+   * e nunca acharia destino.
+   *
+   * Ponteiro nos vãos ou passando da última lombada ainda vale: ao agarrar, a
+   * prateleira inteira fecha e encolhe, e o cursor que mirava um livro sobra do
+   * lado de fora. Sem a ponta, arrastar para o fim simplesmente não respondia.
    */
   function idSobOPonteiro(x: number, y: number): number | null
   {
-    const alvo = document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-obra]");
-    const id = alvo?.dataset.obra;
-    return id === undefined ? null : Number(id);
+    const embaixo = document.elementFromPoint(x, y);
+    const direto = embaixo?.closest<HTMLElement>("[data-obra]");
+
+    if (direto?.dataset.obra !== undefined)
+    {
+      return Number(direto.dataset.obra);
+    }
+
+    const andar = embaixo?.closest<HTMLElement>("[data-trilho]");
+    const livros = andar === null || andar === undefined
+      ? []
+      : [...andar.querySelectorAll<HTMLElement>("[data-obra]")];
+
+    if (livros.length === 0)
+    {
+      return null;
+    }
+
+    const ponta = x < livros[0].getBoundingClientRect().x ? livros[0] : livros[livros.length - 1];
+
+    return ponta.dataset.obra === undefined ? null : Number(ponta.dataset.obra);
   }
 
   function elementoDoLivro(id: number): HTMLElement | null
@@ -218,43 +241,35 @@ function useArrasteParaOrdenar(
     return caixa.current?.querySelector<HTMLElement>(`[data-obra="${id}"]`) ?? null;
   }
 
-  /** Começa o arraste guardando onde, dentro do livro, a pegada caiu. */
+  /** Começa o arraste guardando em que ponto do livro a pegada caiu. */
   function agarrar(id: number, x: number)
   {
-    const elemento = elementoDoLivro(id);
-    const area = elemento?.getBoundingClientRect();
+    const area = elementoDoLivro(id)?.getBoundingClientRect();
 
-    if (area && gesto.current)
+    if (area && area.width > 0 && gesto.current)
     {
-      gesto.current.dentroDoLivro = x - area.x;
-      setLargura(area.width);
+      gesto.current.fracao = (x - area.x) / area.width;
     }
 
     setArrastado(id);
   }
 
-  /**
+/**
    * Cola o livro no ponteiro. A posição de fila muda a cada vizinho cruzado,
    * então o deslocamento é medido contra ela a cada movimento — guardar só o
    * ponto da pegada deixaria o livro para trás depois da primeira troca.
-   *
-   * A medida sai num quadro à parte porque a troca de posição acontece no mesmo
-   * movimento: medindo na hora, o valor é o de ANTES da troca e o livro escapa
-   * do cursor por um quadro a cada vizinho cruzado (medido: 55 px).
    */
   function acompanhar(id: number, x: number)
   {
-    if (quadro.current !== null) cancelAnimationFrame(quadro.current);
-
-    quadro.current = requestAnimationFrame(() => {
-      quadro.current = null;
-      const elemento = elementoDoLivro(id);
-      if (!elemento || !gesto.current) return;
-      const naFila = elemento.getBoundingClientRect().x - deslizeAgora.current;
-      const novo = x - gesto.current.dentroDoLivro - naFila;
-      deslizeAgora.current = novo;
-      setDeslize(novo);
-    });
+    const elemento = elementoDoLivro(id);
+    if (!elemento || !gesto.current) return;
+    const area = elemento.getBoundingClientRect();
+    // A fração vira pixel contra a largura ATUAL, que é a de lombada assim que
+    // o livro fecha: o cursor segue no mesmo ponto relativo do livro.
+    const naFila = area.x - deslizeAgora.current;
+    const novo = x - gesto.current.fracao * area.width - naFila;
+    deslizeAgora.current = novo;
+    setDeslize(novo);
   }
 
   function levarPara(destinoId: number)
@@ -264,6 +279,18 @@ function useArrasteParaOrdenar(
     const destino = itens.findIndex((obra) => obra.id === destinoId);
     if (destino >= 0) aoReordenar?.(atual.id, destino);
   }
+
+  // Agarrar fecha o livro e cruzar um vizinho muda a posição de fila: nas duas
+  // o DOM muda DEPOIS da medida feita no movimento, e o livro sai do cursor por
+  // um quadro (medido: 137 px ao agarrar uma capa aberta, 55 px a cada troca).
+  // Efeito de layout roda depois do commit e antes de pintar, então corrige sem
+  // ninguém ver.
+  useLayoutEffect(() => {
+    if (arrastado === null) return;
+    acompanhar(arrastado, ultimoX.current);
+    // `acompanhar` lê refs e o DOM; refazê-la a cada render não traz nada.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [arrastado, itens]);
 
   // Enquanto reordena, o dedo não pode rolar a prateleira. `touch-action` não
   // resolve: o valor vale desde o `touchstart`, e a essa altura o gesto já
@@ -280,7 +307,7 @@ function useArrasteParaOrdenar(
 
   if (!aoReordenar)
   {
-    return { arrastando: false, arrastado: null as number | null, deslize: 0, largura: 0, gestos: {} };
+    return { arrastando: false, arrastado: null as number | null, deslize: 0, gestos: {} };
   }
 
   const gestos = {
@@ -290,7 +317,7 @@ function useArrasteParaOrdenar(
       const id = alvo?.dataset.obra;
       if (id === undefined || evento.button !== 0) return;
 
-      gesto.current = { id: Number(id), x: evento.clientX, y: evento.clientY, dentroDoLivro: 0 };
+      gesto.current = { id: Number(id), x: evento.clientX, y: evento.clientY, fracao: 0.5 };
 
       // No mouse o arraste começa no primeiro movimento: no andar simples não
       // há rolagem para disputar. No toque, arrastar já significa rolar, então
@@ -330,9 +357,11 @@ function useArrasteParaOrdenar(
         agarrar(atual.id, atual.x);
       }
 
+      ultimoX.current = evento.clientX;
+      acompanhar(atual.id, evento.clientX);
+
       const destino = idSobOPonteiro(evento.clientX, evento.clientY);
       if (destino !== null) levarPara(destino);
-      acompanhar(atual.id, evento.clientX);
     },
     onPointerUp() { encerrar(); },
     onPointerCancel() { encerrar(); },
@@ -345,10 +374,10 @@ function useArrasteParaOrdenar(
     },
   };
 
-  return { arrastando: arrastado !== null, arrastado, deslize, largura, gestos };
+  return { arrastando: arrastado !== null, arrastado, deslize, gestos };
 }
 
-function Prateleira({ grupo, numero, aoAbrir, simples, selecionado, arrastado, deslize, larguraAgarrada }: {
+function Prateleira({ grupo, numero, aoAbrir, simples, selecionado, arrastado, deslize }: {
   grupo: GrupoDaColecao;
   numero: number;
   aoAbrir: (id: number) => void;
@@ -359,8 +388,6 @@ function Prateleira({ grupo, numero, aoAbrir, simples, selecionado, arrastado, d
   arrastado: number | null;
   /** O quanto o livro arrastado sai da posição que ocupa na fila. */
   deslize: number;
-  /** O tamanho que o livro arrastado tinha quando foi agarrado. */
-  larguraAgarrada: number;
 })
 {
   const t = useTranslations("colecao");
@@ -432,7 +459,7 @@ function Prateleira({ grupo, numero, aoAbrir, simples, selecionado, arrastado, d
       )}
 
       <div className={estilos.movel}>
-        <ul ref={trilho} id={trilhoId}
+        <ul ref={trilho} id={trilhoId} data-trilho
           aria-labelledby={simples && !grupo.abreOGrupo ? undefined : tituloId}
           aria-label={simples && !grupo.abreOGrupo ? grupo.titulo : undefined} className={estilos.trilho}
           onKeyDown={(evento) => {
@@ -487,9 +514,7 @@ function Prateleira({ grupo, numero, aoAbrir, simples, selecionado, arrastado, d
               style={{ "--cor-lombada": CORES[obra.id % CORES.length],
                 "--altura-livro": `${224 + (obra.id % 5) * 9}px`,
                 "--largura-lombada": `${larguraDaLombada(obra.id)}px`,
-                ...(obra.id === arrastado
-                  ? { "--deslize": `${deslize}px`, "--largura-agarrada": `${larguraAgarrada}px` }
-                  : {}) } as CSSProperties}>
+                ...(obra.id === arrastado ? { "--deslize": `${deslize}px` } : {}) } as CSSProperties}>
               <button type="button" className={estilos.volume} aria-label={t("abrir", { titulo: obra.titulo })}
                 aria-haspopup="dialog" onClick={() => aoAbrir(obra.id)}>
                 <span className={estilos.lombada} aria-hidden>
