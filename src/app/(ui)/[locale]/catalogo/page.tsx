@@ -1,20 +1,17 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import Image from "next/image";
-import { buscarNoCatalogo } from "@/server/services/catalogo.service";
+import { buscarNoCatalogo, OBRAS_POR_PAGINA, obraParaDTO } from "@/server/services/catalogo.service";
 import { anilistIdsNaEstanteDoSistema } from "@/server/services/estante.service";
-import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
 import { headers } from "next/headers";
-import { alternativasDeIdioma, Link } from "@/i18n/navigation";
+import { alternativasDeIdioma } from "@/i18n/navigation";
 import { escolherIp } from "@/server/domain/ip-do-visitante";
 import { proxiesConfiaveis } from "@/server/services/limite.service";
 import { usuarioDaSessao } from "../../../api/v1/_shared/sessao";
-import { BotaoEstante } from "./botao-estante";
 import { BuscaCatalogo } from "./busca-catalogo";
 import { FiltrosCatalogo } from "./filtros-catalogo";
 import { idiomaDoSegmento } from "@/i18n/routing";
-import { ColecaoVisual } from "../componentes/colecao-visual";
+import { ColecaoDoCatalogo } from "./colecao-do-catalogo";
 
 // A busca depende do termo da URL e do AniList: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -55,13 +52,19 @@ export default async function Catalogo({ searchParams }: Props)
     || resultado.estado === "cache"
     || resultado.estado === "kitsu";
 
-  const itens = temObras
-    ? resultado.obras.map((obra) => ({
-      id: obra.anilistId,
-      titulo: obra.titleEnglish ?? obra.titleRomaji,
-      capa: obra.coverImageUrl ?? null,
-      detalhe: <Obra obra={obra} jaNaEstante={naEstante.has(obra.anilistId)} />,
-    })) : [];
+  // A primeira página vai pronta para o cliente, como DTO: é o mesmo formato
+  // que a API devolve nas páginas seguintes, então o card é um só.
+  const obras = temObras
+    ? resultado.obras.map((obra) => obraParaDTO(obra, naEstante))
+    : [];
+
+  // Os filtros atuais, para o "ver mais" pedir a próxima página da MESMA busca.
+  const consulta = new URLSearchParams();
+  if (filtro.termo !== "") consulta.set("q", filtro.termo);
+  if (filtro.tipo !== undefined) consulta.set("tipo", filtro.tipo);
+  if (filtro.genero !== undefined) consulta.set("genero", filtro.genero);
+  if (filtro.decada !== undefined) consulta.set("decada", String(filtro.decada));
+  if (filtro.ordem !== "popular") consulta.set("ordem", filtro.ordem);
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
@@ -120,9 +123,12 @@ export default async function Catalogo({ searchParams }: Props)
               {t("destaques")}
             </h2>
           )}
-          <ColecaoVisual itens={itens} titulo={t("titulo")} grupos={[
-            { id: "catalogo", titulo: resultado.estado === "destaques" ? t("destaques") : t("titulo"), itens },
-          ]} />
+          <ColecaoDoCatalogo
+            inicial={obras}
+            temMaisInicial={obras.length >= OBRAS_POR_PAGINA}
+            consulta={consulta.toString()}
+            tituloDoGrupo={resultado.estado === "destaques" ? t("destaques") : t("titulo")}
+          />
         </section>
       )}
     </main>
@@ -147,64 +153,4 @@ async function idsNaEstante(): Promise<Set<number>>
   {
     return new Set();
   }
-}
-
-async function Obra({ obra, jaNaEstante }: { obra: MediaDoAniList; jaNaEstante: boolean })
-{
-  const t = await getTranslations("catalogo");
-  const c = await getTranslations("comum");
-  const rotulo = obra.countryOfOrigin
-    ? c(`formato.${obra.countryOfOrigin}`)
-    : t("cartao.formatoGenerico");
-
-  return (
-    <li className="group flex gap-4 rounded-lg border border-borda bg-superficie p-4 transition-colors hover:border-acento/60">
-      <Link href={`/obra/${obra.anilistId}`} className="shrink-0">
-        {obra.coverImageUrl ? (
-          <Image
-            src={obra.coverImageUrl}
-            alt=""
-            width={112}
-            height={168}
-            className="h-42 w-28 rounded-md object-cover shadow-sm transition-opacity hover:opacity-80"
-            unoptimized
-          />
-        ) : (
-          <div
-            aria-hidden
-            className="flex h-42 w-28 items-center justify-center rounded-md bg-fundo text-texto-suave"
-          >
-            —
-          </div>
-        )}
-      </Link>
-
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <h2 className="line-clamp-2 font-medium leading-snug">
-          <Link href={`/obra/${obra.anilistId}`} className="hover:text-acento">
-            {obra.titleEnglish ?? obra.titleRomaji}
-          </Link>
-        </h2>
-
-        <p className="flex flex-wrap items-center gap-1.5 text-xs text-texto-suave">
-          <span className="rounded-full border border-borda px-2 py-0.5">
-            {obra.type === "NOVEL" ? c("formato.NOVEL") : rotulo}
-          </span>
-          {obra.chapters !== undefined && (
-            <span className="tabular-nums">
-              {t("cartao.capitulos", { n: obra.chapters })}
-            </span>
-          )}
-        </p>
-
-        {obra.description && (
-          <p className="line-clamp-3 text-sm text-texto-suave">{obra.description}</p>
-        )}
-
-        <div className="mt-auto pt-2">
-          <BotaoEstante anilistId={obra.anilistId} jaNaEstante={jaNaEstante} />
-        </div>
-      </div>
-    </li>
-  );
 }
