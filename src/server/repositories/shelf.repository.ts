@@ -56,11 +56,7 @@ export async function listarEntradasDoUsuario(
     },
   });
 
-  // SEM_ANILIST (#254, fase 1): a coluna virou anulavel e as telas ainda falam
-  // em anilistId. Obra sem AniList fica de fora AQUI, a vista, em vez de
-  // escondida num tipo que mente. A fase 2 troca por referencia (fonte, id).
   return linhas
-    
     .map(function (linha)
     {
       return {

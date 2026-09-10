@@ -2,7 +2,7 @@
 // nasce, a existente é regravada com `syncedAt` novo — nunca duplica.
 import type { AutorDaObra, MediaDoAniList } from "@/server/domain/anilist-media";
 import { referenciaDaObra } from "@/server/domain/anilist-media";
-import type { ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
+import { referenciaDeMedia, type ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
 import { getPrisma } from "./prisma";
 
 export type MediaEmCache = {
@@ -59,14 +59,24 @@ export async function buscarMediasEmCache(termo: string, pagina = 1): Promise<Me
     },
   });
 
-  // SEM_ANILIST (#254, fase 1): obra sem AniList fica de fora AQUI, a vista.
-  // A fase 2 troca por referencia (fonte, id).
-  return linhas
-    .filter(function (linha) { return linha.anilistId !== null; })
-    .map(function (linha)
+  return linhas.flatMap(function (linha)
   {
-    return {
-      anilistId: linha.anilistId as number,
+    const referencia = referenciaDeMedia(linha);
+
+    // O CHECK do banco garante que toda linha tem ao menos um dos dois ids.
+    // Se um dia deixar de garantir, a linha some daqui em vez de virar uma
+    // obra sem identidade nenhuma.
+    if (referencia === null)
+    {
+      return [];
+    }
+
+    return [{
+      ...(referencia.fonte === "anilist"
+        ? { anilistId: referencia.id }
+        : { kitsuId: referencia.id }),
+      ...(linha.anilistId === null ? {} : { anilistId: linha.anilistId }),
+      ...(linha.kitsuId === null ? {} : { kitsuId: linha.kitsuId }),
       type: linha.type,
       titleRomaji: linha.titleRomaji,
       ...(linha.countryOfOrigin === null ? {} : { countryOfOrigin: linha.countryOfOrigin }),
@@ -77,7 +87,7 @@ export async function buscarMediasEmCache(termo: string, pagina = 1): Promise<Me
       ...(linha.chapters === null ? {} : { chapters: linha.chapters }),
       ...(linha.startYear === null ? {} : { startYear: linha.startYear }),
       ...(linha.averageScore === null ? {} : { averageScore: linha.averageScore }),
-    };
+    }];
   });
 }
 

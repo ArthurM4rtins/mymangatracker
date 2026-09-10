@@ -81,10 +81,7 @@ export async function listarResenhasDaComunidade(
     select: SELECT_DA_RESENHA,
   });
 
-  // SEM_ANILIST (#254, fase 1): obra sem AniList fica de fora AQUI, a vista.
-  // A fase 2 troca por referencia (fonte, id).
   return linhas
-    
     .map(function (linha)
     {
       return paraResenha({

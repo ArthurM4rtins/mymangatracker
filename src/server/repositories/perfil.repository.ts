@@ -49,10 +49,7 @@ export async function listarAvaliadas(userId: string, limite: number): Promise<A
     select: { rating: true, reviewedAt: true, media: { select: SELECT_DA_OBRA } },
   });
 
-  // SEM_ANILIST (#254, fase 1): obra sem AniList fica de fora AQUI, a vista.
-  // A fase 2 troca por referencia (fonte, id).
   return linhas
-    
     .map(function (linha)
   {
     return {
@@ -103,10 +100,7 @@ export async function listarResenhasRecentes(
     },
   });
 
-  // SEM_ANILIST (#254, fase 1): obra sem AniList fica de fora AQUI, a vista.
-  // A fase 2 troca por referencia (fonte, id).
   return linhas
-    
     .map(function (linha)
   {
     return {
