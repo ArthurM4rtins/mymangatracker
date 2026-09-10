@@ -124,6 +124,16 @@ const primeiraPaginaDaVitrine = lembrarPorTempo(
   JANELA_DA_VITRINE_MS,
 );
 
+/**
+ * A vitrine do Kitsu também é lembrada: com o AniList fora, é ela que a home
+ * bate em todo render, e cada página são três pedidos ao Kitsu. Guardar o que
+ * se exibe por uma janela curta é o que a documentação deles pede.
+ */
+const primeiraPaginaDaVitrineDoKitsu = lembrarPorTempo(
+  function () { return buscarNoKitsu("", 1); },
+  JANELA_DA_VITRINE_MS,
+);
+
 export const DEPS_DE_PRODUCAO: DependenciasDoCatalogo = {
   populares: function (pagina)
   {
@@ -132,7 +142,12 @@ export const DEPS_DE_PRODUCAO: DependenciasDoCatalogo = {
   filtrado: function (filtro, pagina) { return buscarFiltrado(filtro, OBRAS_POR_PAGINA, pagina); },
   limitar: function (ip) { return limitarBuscaDoCatalogo({ ip }); },
   doCache: buscarMediasEmCache,
-  noKitsu: buscarNoKitsu,
+  noKitsu: function (termo, pagina)
+  {
+    return termo === "" && pagina === 1
+      ? primeiraPaginaDaVitrineDoKitsu()
+      : buscarNoKitsu(termo, pagina);
+  },
 };
 
 /**
