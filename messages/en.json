@@ -209,8 +209,7 @@
     "erros": {
       "indisponivel": "AniList didn't respond just now. Try again in a moment.",
       "muitosPedidos": "Too many searches from here. Wait a moment and try again.",
-      "doCache": "Results limited to the series that have already been through here.",
-      "doKitsu": "Some titles may appear romanised."
+      "doCache": "Results limited to the series that have already been through here."
     },
     "vazio": {
       "semTermo": "The catalog didn't return anything just now. Try again in a moment.",
