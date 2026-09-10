@@ -4,7 +4,14 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Fragment, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 
-import { emAndaresPelaLargura, LARGURA_ABERTA, larguraDaLombada, RECUO_DO_TRILHO, VAO } from "./andares";
+import {
+  emAndaresPelaLargura,
+  LARGURA_ABERTA,
+  larguraDaLombada,
+  larguraDaVitrine,
+  RECUO_DO_TRILHO,
+  VAO,
+} from "./andares";
 import estilos from "./colecao-visual.module.css";
 
 /** Os cards chegam prontos do servidor; a prateleira só controla a apresentação. */
@@ -19,6 +26,8 @@ export type GrupoDaColecao = {
   id: string;
   titulo: string;
   itens: ItemDaColecao[];
+  /** Quanto o livro aberto ocupa neste andar. Sem isso, a largura padrão. */
+  larguraDaVitrine?: number;
 };
 
 const CORES = ["#733c35", "#344d53", "#586044", "#71516b", "#865f33", "#364868", "#55504a"];
@@ -71,6 +80,9 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classe
       id: `andar-${indice + 1}`,
       titulo: t("andar", { n: indice + 1 }),
       itens: andar,
+      // O andar com teto fecha cheio apertando a vitrine (#229); os outros
+      // ficam com a largura normal.
+      larguraDaVitrine: larguraDaVitrine(andar, larguraDoTrilho),
     }))
     : grupos ?? [{ id: "obras", titulo, itens }];
 
@@ -162,7 +174,10 @@ function Prateleira({ grupo, numero, aoAbrir, simples }: {
 
   return (
     <section aria-labelledby={simples ? undefined : tituloId} aria-label={simples ? grupo.titulo : undefined}
-      className={estilos.secao} data-simples={simples || undefined}>
+      className={estilos.secao} data-simples={simples || undefined}
+      style={grupo.larguraDaVitrine === undefined
+        ? undefined
+        : ({ "--largura-aberta": `${grupo.larguraDaVitrine}px` } as CSSProperties)}>
       {!simples && (
         <div className={estilos.cabecalho}>
           <div className={estilos.identificacao}>
