@@ -33,6 +33,27 @@ export function ColecaoDoCatalogo({ inicial, temMaisInicial, consulta, tituloDoG
   const [temMais, setTemMais] = useState(temMaisInicial);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(false);
+  const [filtroNaTela, setFiltroNaTela] = useState(consulta);
+
+  // Filtro novo joga fora o que estava acumulado (#252).
+  //
+  // Sem isto, `useState(inicial)` guardava a primeira página UMA vez, na
+  // montagem, e ignorava toda página nova que o servidor mandasse depois:
+  // digitar no campo ou mexer num select trocava a URL, o servidor respondia
+  // com o resultado certo — medido, 30 obras para "naruto" contra 59 sem termo
+  // — e a tela seguia mostrando as 59. Parecia que filtro nenhum funcionava.
+  //
+  // A identidade é a query dos filtros, não o array `inicial`: ele é outro a
+  // cada render do servidor, e comparar por referência limparia as páginas
+  // acumuladas pelo "ver mais" a qualquer re-render do pai.
+  if (consulta !== filtroNaTela)
+  {
+    setFiltroNaTela(consulta);
+    setObras(inicial);
+    setPagina(1);
+    setTemMais(temMaisInicial);
+    setErro(false);
+  }
 
   async function carregarMais()
   {
