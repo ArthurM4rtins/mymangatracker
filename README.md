@@ -1,6 +1,6 @@
 # MyMangaTracker
 
-Um Letterboxd para mangá, manhwa e novel — que lembra sozinho em que capítulo você parou.
+Sua estante de mangá, manhwa e novel — que lembra sozinho em que capítulo você parou.
 
 **No ar:** https://mymangatracker.vercel.app · **Saúde:** [`/api/v1/health`](https://mymangatracker.vercel.app/api/v1/health)
 
@@ -11,9 +11,9 @@ Integrantes: Arthur Juchem Martins e Nicholas Gabriel Deotti Schlindwein.
 
 ## O problema
 
-O Letterboxd resolveu o registro para filme: você loga o que viu, dá nota, escreve resenha, monta listas.
-Mídia serializada não tem esse lugar — e tem um problema que filme não tem: a obra continua saindo, em
-capítulos, espalhada por sites diferentes.
+Registrar filme é problema resolvido: existe onde logar o que se viu, dar nota, escrever resenha e montar
+lista. Mídia serializada não tem esse lugar — e tem um problema que filme não tem: a obra continua saindo,
+em capítulos, espalhada por sites diferentes.
 
 Pedir o número do capítulo toda vez é o tipo de trabalho que faz o usuário abandonar o app na terceira
 semana. Aqui ele informa **uma coisa só, uma vez**: onde lê, colando o link do primeiro capítulo.
