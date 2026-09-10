@@ -34,10 +34,11 @@ export type GrupoDaColecao = {
 
 const CORES = ["#733c35", "#344d53", "#586044", "#71516b", "#865f33", "#364868", "#55504a"];
 
-export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classeGrade = "grid gap-4 sm:grid-cols-2", andarSimples = false, maximoPorAndar }: {
+export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", classeGrade = "grid gap-4 sm:grid-cols-2", andarSimples = false, maximoPorAndar }: {
   itens: ItemDaColecao[];
   grupos?: GrupoDaColecao[];
   titulo: string;
+  /** A prateleira é o que o Kidoku tem de próprio: ela abre por padrão (#241). */
   inicial?: "grade" | "prateleira";
   classeGrade?: string;
    /**
