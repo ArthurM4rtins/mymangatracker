@@ -13,7 +13,6 @@ import { z } from "zod";
 import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
 import {
   buscarNoCatalogo,
-  OBRAS_POR_PAGINA,
   obraParaDTO,
   type PaginaDoCatalogoDTO,
 } from "@/server/services/catalogo.service";
@@ -59,7 +58,9 @@ export async function GET(request: Request)
     const corpo: PaginaDoCatalogoDTO = {
       estado: resultado.estado,
       obras,
-      temMais: obras.length >= OBRAS_POR_PAGINA,
+      // Quem sabe se há mais é a fonte, não a contagem do que sobrou depois do
+      // descarte do domínio (#228).
+      temMais: "temMais" in resultado && resultado.temMais,
     };
 
     return NextResponse.json(corpo, {

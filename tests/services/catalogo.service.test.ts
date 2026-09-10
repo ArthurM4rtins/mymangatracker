@@ -3,7 +3,11 @@ import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
 import { lembrarPorTempo } from "@/server/domain/memoria-curta";
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
-import { buscarNoCatalogo } from "@/server/services/catalogo.service";
+import {
+  buscarNoCatalogo,
+  OBRAS_POR_PAGINA,
+  type PaginaDaFonte,
+} from "@/server/services/catalogo.service";
 
 // Issue #17: campo vazio é a vitrine de populares. Issue #37: com termo OU
 // filtro ativo, a busca filtrada assume. AniList fora nunca vira 500.
@@ -25,7 +29,7 @@ function fakeDeps()
     filtrado: vi.fn(async function (): Promise<MediaDoAniList[]> { return [OBRA]; }),
     limitar: vi.fn(async function (): Promise<Veredito> { return { bloqueado: false }; }),
     doCache: vi.fn(async function (): Promise<MediaDoAniList[]> { return []; }),
-    noKitsu: vi.fn(async function (): Promise<MediaDoAniList[]> { return []; }),
+    noKitsu: vi.fn(async function (): Promise<PaginaDaFonte> { return { obras: [], temMais: false }; }),
   };
 }
 
@@ -39,7 +43,7 @@ describe("buscarNoCatalogo com termo ou filtro", function ()
     const resultado = await buscarNoCatalogo(filtro, deps);
 
     expect(deps.filtrado).toHaveBeenCalledWith(filtro, 1);
-    expect(resultado).toEqual({ estado: "ok", termo: "vinland", obras: [OBRA] });
+    expect(resultado).toEqual({ estado: "ok", termo: "vinland", obras: [OBRA], temMais: false });
     expect(deps.populares).not.toHaveBeenCalled();
   });
 
@@ -82,7 +86,7 @@ describe("buscarNoCatalogo sem termo nem filtro", function ()
 
     const resultado = await buscarNoCatalogo(interpretarFiltros({}), deps);
 
-    expect(resultado).toEqual({ estado: "destaques", termo: "", obras: [OBRA] });
+    expect(resultado).toEqual({ estado: "destaques", termo: "", obras: [OBRA], temMais: false });
     expect(deps.filtrado).not.toHaveBeenCalled();
   });
 
@@ -209,7 +213,7 @@ describe("fallback para o cache quando o AniList cai", function ()
       { ...comAniListFora(), doCache },
     );
 
-    expect(resultado).toEqual({ estado: "cache", termo: "vinland", obras: [OBRA] });
+    expect(resultado).toEqual({ estado: "cache", termo: "vinland", obras: [OBRA], temMais: false });
     expect(doCache).toHaveBeenCalledWith("vinland", 1);
   });
 
@@ -222,7 +226,7 @@ describe("fallback para o cache quando o AniList cai", function ()
       { ...comAniListFora(), doCache },
     );
 
-    expect(resultado).toEqual({ estado: "cache", termo: "", obras: [OBRA] });
+    expect(resultado).toEqual({ estado: "cache", termo: "", obras: [OBRA], temMais: false });
   });
 
   it("banco vazio continua sendo indisponivel — o comportamento de hoje", async function ()
@@ -280,20 +284,20 @@ describe("Kitsu como fallback do AniList", function ()
 
   it("com o AniList fora, responde do Kitsu", async function ()
   {
-    const noKitsu = vi.fn(async function () { return [OUTRA]; });
+    const noKitsu = vi.fn(async function (): Promise<PaginaDaFonte> { return { obras: [OUTRA], temMais: false }; });
 
     const resultado = await buscarNoCatalogo(
       interpretarFiltros({ q: "vagabond" }),
       { ...comAniListFora(), noKitsu },
     );
 
-    expect(resultado).toEqual({ estado: "kitsu", termo: "vagabond", obras: [OUTRA] });
+    expect(resultado).toEqual({ estado: "kitsu", termo: "vagabond", obras: [OUTRA], temMais: false });
     expect(noKitsu).toHaveBeenCalledWith("vagabond", 1);
   });
 
   it("com o AniList de pe, o Kitsu nem e consultado", async function ()
   {
-    const noKitsu = vi.fn(async function () { return [OUTRA]; });
+    const noKitsu = vi.fn(async function (): Promise<PaginaDaFonte> { return { obras: [OUTRA], temMais: false }; });
 
     const resultado = await buscarNoCatalogo(
       interpretarFiltros({ q: "vinland" }),
@@ -306,7 +310,7 @@ describe("Kitsu como fallback do AniList", function ()
 
   it("Kitsu vazio cai no cache local, que e o ultimo recurso", async function ()
   {
-    const noKitsu = vi.fn(async function (): Promise<typeof OBRA[]> { return []; });
+    const noKitsu = vi.fn(async function (): Promise<PaginaDaFonte> { return { obras: [], temMais: false }; });
     const doCache = vi.fn(async function () { return [OBRA]; });
 
     const resultado = await buscarNoCatalogo(
@@ -314,12 +318,12 @@ describe("Kitsu como fallback do AniList", function ()
       { ...comAniListFora(), noKitsu, doCache },
     );
 
-    expect(resultado).toEqual({ estado: "cache", termo: "vinland", obras: [OBRA] });
+    expect(resultado).toEqual({ estado: "cache", termo: "vinland", obras: [OBRA], temMais: false });
   });
 
   it("Kitsu falhando tambem cai no cache, sem virar 500", async function ()
   {
-    const noKitsu = vi.fn(async function (): Promise<typeof OBRA[]> { throw new Error("kitsu fora"); });
+    const noKitsu = vi.fn(async function (): Promise<PaginaDaFonte> { throw new Error("kitsu fora"); });
     const doCache = vi.fn(async function () { return [OBRA]; });
 
     const resultado = await buscarNoCatalogo(
@@ -336,7 +340,7 @@ describe("Kitsu como fallback do AniList", function ()
       interpretarFiltros({ q: "vinland" }),
       {
         ...comAniListFora(),
-        noKitsu: vi.fn(async function (): Promise<typeof OBRA[]> { return []; }),
+        noKitsu: vi.fn(async function (): Promise<PaginaDaFonte> { return { obras: [], temMais: false }; }),
         doCache: vi.fn(async function (): Promise<typeof OBRA[]> { return []; }),
       },
     );
@@ -383,12 +387,83 @@ describe("paginacao do catalogo", function ()
   {
     const deps = fakeDeps();
     deps.populares.mockRejectedValue(new Error("fora"));
-    const noKitsu = vi.fn(async function (): Promise<typeof OBRA[]> { return []; });
+    const noKitsu = vi.fn(async function (): Promise<PaginaDaFonte> { return { obras: [], temMais: false }; });
     const doCache = vi.fn(async function () { return [OBRA]; });
 
     await buscarNoCatalogo(interpretarFiltros({}), { ...deps, noKitsu, doCache }, undefined, 2);
 
     expect(noKitsu).toHaveBeenCalledWith("", 2);
     expect(doCache).toHaveBeenCalledWith("", 2);
+  });
+});
+
+
+// #228: o "fim" do catálogo era a contagem do que sobrou depois do descarte
+// (oneshot, oel, obra sem mapeamento para o AniList), não a resposta da fonte.
+// Página curta virava "acabou" com 63 mil obras ainda por ver.
+describe("temMais é resposta da fonte, não contagem do que sobrou", function ()
+{
+  const VITRINE = interpretarFiltros({});
+
+  it("Kitsu com mais a dar: temMais verdadeiro mesmo com página curta", async function ()
+  {
+    const deps = fakeDeps();
+    deps.populares.mockRejectedValue(new Error("anilist fora"));
+    deps.noKitsu.mockResolvedValue({ obras: [OBRA], temMais: true });
+
+    const resultado = await buscarNoCatalogo(VITRINE, deps);
+
+    expect(resultado).toMatchObject({ estado: "kitsu", temMais: true });
+  });
+
+  it("Kitsu no fim do acervo: temMais falso", async function ()
+  {
+    const deps = fakeDeps();
+    deps.populares.mockRejectedValue(new Error("anilist fora"));
+    deps.noKitsu.mockResolvedValue({ obras: [OBRA], temMais: false });
+
+    const resultado = await buscarNoCatalogo(VITRINE, deps, undefined, 9);
+
+    expect(resultado).toMatchObject({ estado: "kitsu", temMais: false });
+    expect(deps.noKitsu).toHaveBeenCalledWith("", 9);
+  });
+
+  it("AniList de pé: página cheia diz que há mais", async function ()
+  {
+    const cheia = Array.from({ length: OBRAS_POR_PAGINA }, function (_, indice)
+    {
+      return { ...OBRA, anilistId: indice + 1 };
+    });
+    const deps = fakeDeps();
+    deps.populares.mockResolvedValue(cheia);
+
+    const resultado = await buscarNoCatalogo(VITRINE, deps);
+
+    expect(resultado).toMatchObject({ estado: "destaques", temMais: true });
+  });
+
+  it("AniList de pé: página curta é o fim", async function ()
+  {
+    const deps = fakeDeps();
+
+    const resultado = await buscarNoCatalogo(VITRINE, deps);
+
+    expect(resultado).toMatchObject({ estado: "destaques", temMais: false });
+  });
+
+  it("cache local também diz se ainda há mais", async function ()
+  {
+    const cheia = Array.from({ length: OBRAS_POR_PAGINA }, function (_, indice)
+    {
+      return { ...OBRA, anilistId: indice + 1 };
+    });
+    const deps = fakeDeps();
+    deps.populares.mockRejectedValue(new Error("anilist fora"));
+    deps.noKitsu.mockRejectedValue(new Error("kitsu fora"));
+    deps.doCache.mockResolvedValue(cheia);
+
+    const resultado = await buscarNoCatalogo(VITRINE, deps);
+
+    expect(resultado).toMatchObject({ estado: "cache", temMais: true });
   });
 });

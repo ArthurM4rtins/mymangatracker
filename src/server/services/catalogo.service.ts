@@ -19,15 +19,15 @@ import {
 } from "@/server/domain/catalogo-filtros";
 
 export type ResultadoBusca =
-  | { estado: "ok"; termo: string; obras: MediaDoAniList[] }
-  | { estado: "destaques"; termo: ""; obras: MediaDoAniList[] }
+  | { estado: "ok"; termo: string; obras: MediaDoAniList[]; temMais: boolean }
+  | { estado: "destaques"; termo: ""; obras: MediaDoAniList[]; temMais: boolean }
   | { estado: "vazio"; termo: string }
   | { estado: "indisponivel"; termo: string }
   | { estado: "muitos_pedidos"; termo: string }
   /** O AniList está fora e o banco tinha o que mostrar (#165). */
-  | { estado: "cache"; termo: string; obras: MediaDoAniList[] }
+  | { estado: "cache"; termo: string; obras: MediaDoAniList[]; temMais: boolean }
   /** O AniList está fora e o Kitsu respondeu no lugar dele (#219). */
-  | { estado: "kitsu"; termo: string; obras: MediaDoAniList[] };
+  | { estado: "kitsu"; termo: string; obras: MediaDoAniList[]; temMais: boolean };
 
 /**
  * Nunca levanta. A tela é pública e o AniList é de terceiro: fora do ar, a
@@ -43,7 +43,18 @@ export type DependenciasDoCatalogo = {
   /** As obras já cacheadas que casam com o termo. Só entra no fallback (#165). */
   doCache: (termo: string, pagina: number) => Promise<MediaDoAniList[]>;
   /** O tapa-buraco enquanto o AniList está fora (#219). Nunca com ele de pé. */
-  noKitsu: (termo: string, pagina: number) => Promise<MediaDoAniList[]>;
+  noKitsu: (termo: string, pagina: number) => Promise<PaginaDaFonte>;
+};
+
+/**
+ * O que uma fonte paginada devolve. `temMais` é resposta DELA, não contagem do
+ * que sobrou: o Kitsu entrega obras que o nosso domínio descarta (`oneshot`,
+ * `oel`, obra sem mapeamento para o AniList), então uma página curta não
+ * significa acervo no fim — significa que descartamos bastante (#228).
+ */
+export type PaginaDaFonte = {
+  obras: MediaDoAniList[];
+  temMais: boolean;
 };
 
 /**
@@ -124,6 +135,15 @@ export const DEPS_DE_PRODUCAO: DependenciasDoCatalogo = {
   noKitsu: buscarNoKitsu,
 };
 
+/**
+ * Fonte que já entrega filtrado (AniList, cache local): página cheia é a única
+ * pista de que ainda há mais.
+ */
+function paginaCheia(obras: MediaDoAniList[]): boolean
+{
+  return obras.length >= OBRAS_POR_PAGINA;
+}
+
 export async function buscarNoCatalogo(
   filtro: FiltroDoCatalogo,
   deps: DependenciasDoCatalogo = DEPS_DE_PRODUCAO,
@@ -139,7 +159,7 @@ export async function buscarNoCatalogo(
 
       return obras.length === 0
         ? { estado: "vazio", termo: "" }
-        : { estado: "destaques", termo: "", obras };
+        : { estado: "destaques", termo: "", obras, temMais: paginaCheia(obras) };
     }
 
     // Só a busca filtrada tem teto, e só quando quem chama sabe o IP. A vitrine
@@ -158,7 +178,7 @@ export async function buscarNoCatalogo(
 
     return obras.length === 0
       ? { estado: "vazio", termo: filtro.termo }
-      : { estado: "ok", termo: filtro.termo, obras };
+      : { estado: "ok", termo: filtro.termo, obras, temMais: paginaCheia(obras) };
   }
   catch
   {
@@ -193,11 +213,11 @@ async function semOAniList(
 {
   try
   {
-    const obras = await deps.noKitsu(filtro.termo, pagina);
+    const daFonte = await deps.noKitsu(filtro.termo, pagina);
 
-    if (obras.length > 0)
+    if (daFonte.obras.length > 0)
     {
-      return { estado: "kitsu", termo: filtro.termo, obras };
+      return { estado: "kitsu", termo: filtro.termo, obras: daFonte.obras, temMais: daFonte.temMais };
     }
   }
   catch
@@ -213,7 +233,7 @@ async function semOAniList(
     // é a verdade — não temos o que mostrar porque o terceiro está fora.
     return obras.length === 0
       ? { estado: "indisponivel", termo: filtro.termo }
-      : { estado: "cache", termo: filtro.termo, obras };
+      : { estado: "cache", termo: filtro.termo, obras, temMais: paginaCheia(obras) };
   }
   catch
   {
