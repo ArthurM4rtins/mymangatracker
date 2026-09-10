@@ -12,7 +12,7 @@ import { buscarNoKitsu } from "@/server/infra/kitsu";
 import { lembrarPorTempo } from "@/server/domain/memoria-curta";
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import { limitarBuscaDoCatalogo } from "./limite.service";
-import type { MediaDoAniList } from "@/server/domain/anilist-media";
+import type { MediaDoAniList, PaisDeOrigem } from "@/server/domain/anilist-media";
 import {
   temFiltroAtivo,
   type FiltroDoCatalogo,
@@ -37,14 +37,57 @@ export type ResultadoBusca =
  * catálogo abre com vitrine. Termo ou filtro ativo viram busca filtrada.
  */
 export type DependenciasDoCatalogo = {
-  populares: () => Promise<MediaDoAniList[]>;
-  filtrado: (filtro: FiltroDoCatalogo) => Promise<MediaDoAniList[]>;
+  populares: (pagina: number) => Promise<MediaDoAniList[]>;
+  filtrado: (filtro: FiltroDoCatalogo, pagina: number) => Promise<MediaDoAniList[]>;
   limitar: (ip: string) => Promise<Veredito>;
   /** As obras já cacheadas que casam com o termo. Só entra no fallback (#165). */
-  doCache: (termo: string) => Promise<MediaDoAniList[]>;
+  doCache: (termo: string, pagina: number) => Promise<MediaDoAniList[]>;
   /** O tapa-buraco enquanto o AniList está fora (#219). Nunca com ele de pé. */
-  noKitsu: (termo: string) => Promise<MediaDoAniList[]>;
+  noKitsu: (termo: string, pagina: number) => Promise<MediaDoAniList[]>;
 };
+
+/**
+ * Uma página do catálogo: 36 obras, quatro andares de nove na prateleira. A
+ * home mostra a primeira; o catálogo pede as seguintes sob demanda.
+ */
+export const OBRAS_POR_PAGINA = 36;
+
+/**
+ * O contrato do card do catálogo, para a tela e para a API — só o que o card
+ * precisa, nunca a obra inteira. Vive aqui porque a tela não importa da camada
+ * de controller (o `boundaries` cobra), e as duas precisam da mesma forma.
+ */
+export type ObraDoCatalogoDTO = {
+  anilistId: number;
+  titulo: string;
+  capa: string | null;
+  tipo: "MANGA" | "NOVEL";
+  pais: PaisDeOrigem | null;
+  capitulos: number | null;
+  descricao: string | null;
+  jaNaEstante: boolean;
+};
+
+export type PaginaDoCatalogoDTO = {
+  estado: ResultadoBusca["estado"];
+  obras: ObraDoCatalogoDTO[];
+  /** Veio uma página cheia: vale a pena oferecer a próxima. */
+  temMais: boolean;
+};
+
+export function obraParaDTO(obra: MediaDoAniList, naEstante: ReadonlySet<number>): ObraDoCatalogoDTO
+{
+  return {
+    anilistId: obra.anilistId,
+    titulo: obra.titleEnglish ?? obra.titleRomaji,
+    capa: obra.coverImageUrl ?? null,
+    tipo: obra.type,
+    pais: obra.countryOfOrigin ?? null,
+    capitulos: obra.chapters ?? null,
+    descricao: obra.description ?? null,
+    jaNaEstante: naEstante.has(obra.anilistId),
+  };
+}
 
 /**
  * A vitrine é a MESMA para todo visitante, então a resposta serve a janela
@@ -62,9 +105,20 @@ export type DependenciasDoCatalogo = {
  */
 const JANELA_DA_VITRINE_MS = 30_000;
 
+// Só a PRIMEIRA página da vitrine é lembrada: é a única idêntica para todo
+// visitante, e é a que a home bate em todo render. Páginas seguintes são pedido
+// de quem clicou em "ver mais".
+const primeiraPaginaDaVitrine = lembrarPorTempo(
+  function () { return buscarPopulares(OBRAS_POR_PAGINA, 1); },
+  JANELA_DA_VITRINE_MS,
+);
+
 export const DEPS_DE_PRODUCAO: DependenciasDoCatalogo = {
-  populares: lembrarPorTempo(buscarPopulares, JANELA_DA_VITRINE_MS),
-  filtrado: buscarFiltrado,
+  populares: function (pagina)
+  {
+    return pagina === 1 ? primeiraPaginaDaVitrine() : buscarPopulares(OBRAS_POR_PAGINA, pagina);
+  },
+  filtrado: function (filtro, pagina) { return buscarFiltrado(filtro, OBRAS_POR_PAGINA, pagina); },
   limitar: function (ip) { return limitarBuscaDoCatalogo({ ip }); },
   doCache: buscarMediasEmCache,
   noKitsu: buscarNoKitsu,
@@ -74,13 +128,14 @@ export async function buscarNoCatalogo(
   filtro: FiltroDoCatalogo,
   deps: DependenciasDoCatalogo = DEPS_DE_PRODUCAO,
   ip?: string,
+  pagina = 1,
 ): Promise<ResultadoBusca>
 {
   try
   {
     if (filtro.termo === "" && !temFiltroAtivo(filtro))
     {
-      const obras = await deps.populares();
+      const obras = await deps.populares(pagina);
 
       return obras.length === 0
         ? { estado: "vazio", termo: "" }
@@ -99,7 +154,7 @@ export async function buscarNoCatalogo(
       }
     }
 
-    const obras = await deps.filtrado(filtro);
+    const obras = await deps.filtrado(filtro, pagina);
 
     return obras.length === 0
       ? { estado: "vazio", termo: filtro.termo }
@@ -115,7 +170,7 @@ export async function buscarNoCatalogo(
     // decisão fazia sentido quando o risco era o Postgres cair, e inverteu de
     // efeito quando quem caiu foi o terceiro. Cache-first NÃO: só no fallback,
     // senão a busca vira um índice das poucas obras que alguém já abriu.
-    return await semOAniList(filtro, deps);
+    return await semOAniList(filtro, deps, pagina);
   }
 }
 
@@ -133,11 +188,12 @@ export async function buscarNoCatalogo(
 async function semOAniList(
   filtro: FiltroDoCatalogo,
   deps: DependenciasDoCatalogo,
+  pagina: number,
 ): Promise<ResultadoBusca>
 {
   try
   {
-    const obras = await deps.noKitsu(filtro.termo);
+    const obras = await deps.noKitsu(filtro.termo, pagina);
 
     if (obras.length > 0)
     {
@@ -151,7 +207,7 @@ async function semOAniList(
 
   try
   {
-    const obras = await deps.doCache(filtro.termo);
+    const obras = await deps.doCache(filtro.termo, pagina);
 
     // Banco vazio não vira tela de "cache vazio": segue sendo indisponível, que
     // é a verdade — não temos o que mostrar porque o terceiro está fora.

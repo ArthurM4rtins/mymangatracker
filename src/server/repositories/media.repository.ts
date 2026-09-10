@@ -13,7 +13,7 @@ export type MediaEmCache = {
  * pública sem `take` é o achado 5 da auditoria (#135), e esta consulta é
  * anônima.
  */
-const OBRAS_DO_FALLBACK = 24;
+const OBRAS_DO_FALLBACK = 36;
 
 /**
  * As obras já cacheadas que casam com o termo (#165). Serve o catálogo quando o
@@ -24,7 +24,7 @@ const OBRAS_DO_FALLBACK = 24;
  * A busca é por prefixo/trecho, sem acento nem stemming: é fallback, não motor
  * de busca.
  */
-export async function buscarMediasEmCache(termo: string): Promise<MediaDoAniList[]>
+export async function buscarMediasEmCache(termo: string, pagina = 1): Promise<MediaDoAniList[]>
 {
   const limpo = termo.trim();
 
@@ -39,6 +39,7 @@ export async function buscarMediasEmCache(termo: string): Promise<MediaDoAniList
           ],
         },
     orderBy: [{ syncedAt: "desc" }, { id: "desc" }],
+    skip: (Math.max(1, pagina) - 1) * OBRAS_DO_FALLBACK,
     take: OBRAS_DO_FALLBACK,
     select: {
       anilistId: true,

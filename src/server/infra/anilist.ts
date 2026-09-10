@@ -43,8 +43,8 @@ const CAMPOS_DE_MEDIA = `
 // Vitrine do catálogo sem termo. `isAdult: false` porque a tela é pública e
 // sem sessão — não é o lugar de decidir preferência de conteúdo por usuário.
 const POPULARES = `
-query($limite: Int) {
-  Page(perPage: $limite) {
+query($limite: Int, $pagina: Int) {
+  Page(perPage: $limite, page: $pagina) {
     media(type: MANGA, sort: POPULARITY_DESC, isAdult: false) {${CAMPOS_DE_MEDIA}
     }
   }
@@ -90,9 +90,10 @@ query($id: Int) {
  */
 export async function buscarPopulares(
   limite: number = LIMITE_PADRAO,
+  pagina: number = 1,
 ): Promise<MediaDoAniList[]>
 {
-  const resposta = await chamar(POPULARES, { limite });
+  const resposta = await chamar(POPULARES, { limite, pagina });
 
   return mapearBusca(resposta);
 }
@@ -128,11 +129,12 @@ const ORDEM_ANILIST: Record<OrdemDoCatalogo, string> = {
 export async function buscarFiltrado(
   filtro: FiltroDoCatalogo,
   limite: number = LIMITE_PADRAO,
+  pagina: number = 1,
 ): Promise<MediaDoAniList[]>
 {
   const args: string[] = ["type: MANGA", "isAdult: false"];
-  const declaracoes: string[] = ["$limite: Int"];
-  const variables: Record<string, unknown> = { limite };
+  const declaracoes: string[] = ["$limite: Int", "$pagina: Int"];
+  const variables: Record<string, unknown> = { limite, pagina };
 
   if (filtro.termo !== "")
   {
@@ -173,7 +175,7 @@ export async function buscarFiltrado(
 
   const query = `
 query(${declaracoes.join(", ")}) {
-  Page(perPage: $limite) {
+  Page(perPage: $limite, page: $pagina) {
     media(${args.join(", ")}) {${CAMPOS_DE_MEDIA}
     }
   }
