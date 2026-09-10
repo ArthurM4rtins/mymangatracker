@@ -563,3 +563,15 @@ o comportamento desenhado na Fase 1.
 - **Erro**: a aba estava com `document.visibilityState === "hidden"` (janela minimizada ou outra aba/janela na frente). Aba oculta não pinta frame: `Page.captureScreenshot` não retorna e `requestAnimationFrame` nunca dispara. JS sem rAF respondia na hora.
 - **Regra**: antes de diagnosticar "travou", rodar `document.visibilityState` pelo `javascript_tool`. Se vier `hidden`, o problema é a janela, não a página. Sonda de desempenho usa `setTimeout`/`PerformanceObserver` (longtask), nunca rAF. Uma aba por vez para captura: ação em outra aba tira a primeira do primeiro plano.
 - **Mais dois sintomas da aba oculta** (09/09/2026): transição CSS fica congelada no meio (livro com `width` computada de 168 px sem regra nenhuma dando isso — `li.style.transition = "none"` resolve na hora) e `:focus`/`:focus-within` não casam porque `document.hasFocus()` é falso. Prova de largura em aba oculta: zerar transições antes de medir; prova de foco/hover: só com janela visível.
+
+## Paginar por contagem entregue, com a fonte filtrada depois
+
+- **Tentativa**: pagina N do Kitsu = offsets [(N-1)*36, N*36) e `temMais = obras.length >= 36`, com o dominio descartando `oneshot`, `oel` e obra sem mapeamento depois da busca.
+- **Erro**: o descarte acontece DEPOIS da fonte responder, entao a contagem entregue nao serve nem de offset nem de fim. O catalogo parava em 55 obras com 63 mil disponiveis, e o ultimo andar so enchia depois do "ver mais".
+- **Regra**: quando a camada de dominio filtra o que a fonte devolveu, a pagina cobre uma fatia FIXA da fonte e o "tem mais" e resposta da fonte, nunca `length >= N` do que sobrou. Vale para toda fonte externa com filtro nosso em cima.
+
+## Fallback tem que descer em todo caminho, nao so no que se testou
+
+- **Tentativa**: com o AniList fora, so o catalogo e a home ganharam o degrau do Kitsu (#219).
+- **Erro**: `adicionarNaEstante` e `obraParaPagina` continuaram chamando so o AniList. O botao "+ Estante" respondia "nao deu" para toda obra que a propria vitrine acabara de mostrar.
+- **Regra**: ao criar fonte de fallback, listar TODO caminho que chama a fonte original (`grep` pelo import do infra) e decidir caso a caso. Fonte de fallback com acervo menor nao prova ausencia: obra que ela nao conhece nao vira "nao encontrada" quando ha cache.
