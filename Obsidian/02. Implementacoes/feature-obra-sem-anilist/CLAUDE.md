@@ -74,19 +74,23 @@ subtipos aceitos. Os repositórios passam a excluir obra sem AniList de forma
 EXPLÍCITA, marcada com `SEM_ANILIST` — o comportamento é idêntico ao de hoje,
 mas fica à vista em vez de escondido num tipo que mentia.
 
-**Fase 2.** Carregar a referência (fonte, id) de ponta a ponta: `MediaDoAniList`
-ganha `referencia`, `traduzirDoKitsu` deixa de exigir `anilistId`, o repositório
-grava por referência, as rotas viram `/obra/<fonte>/<id>` com redirect da antiga,
-e todo `SEM_ANILIST` some. Medido: alargar os DTOs para `number | null` acende
-13 erros em tela e serviço — é esse o tamanho da fase.
+**Fase 2 (feita).** A referência (fonte, id) atravessa as seis camadas. A obra
+passa a ser dita por chave textual (`anilist:30002`, `kitsu:54598`) na API e nas
+telas, a rota virou `/obra/<fonte>/<id>` com a antiga `/obra/<id>` valendo como
+AniList, e todo `SEM_ANILIST` saiu. A escada de fontes, que estava escrita três
+vezes, virou `obra-externa.service` e passou a dizer QUEM respondeu — sem isso a
+página trocava cache velho por 404 sempre que o AniList caísse.
+
+Provado no navegador em 10/09/2026: `/obra/kitsu/54598` abre "The Beginning
+After the End" inteira, e a busca no catálogo devolve a obra.
 
 ## Pendências
 
-- Remover todos os pontos marcados com `SEM_ANILIST` na fase 2 (repositórios de
-  estante, lista, atividade, perfil e media).
 - Gênero e autoria do Kitsu vêm por `include` separado (`categories`, `staff`);
   hoje não são pedidos. Decidir se entram nesta tarefa ou em outra.
 - O cache local (terceiro degrau) continua filtrando só por título.
+- Similares só existem no AniList: obra nascida no Kitsu não mostra a fileira.
+- Obra do Kitsu não traz gênero nem autoria, então a página abre sem os dois.
 - Falar com o Kitsu sobre uso correto da API, em paralelo (#238).
 
 ## Referências
