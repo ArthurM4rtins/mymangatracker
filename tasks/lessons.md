@@ -575,3 +575,9 @@ o comportamento desenhado na Fase 1.
 - **Tentativa**: com o AniList fora, so o catalogo e a home ganharam o degrau do Kitsu (#219).
 - **Erro**: `adicionarNaEstante` e `obraParaPagina` continuaram chamando so o AniList. O botao "+ Estante" respondia "nao deu" para toda obra que a propria vitrine acabara de mostrar.
 - **Regra**: ao criar fonte de fallback, listar TODO caminho que chama a fonte original (`grep` pelo import do infra) e decidir caso a caso. Fonte de fallback com acervo menor nao prova ausencia: obra que ela nao conhece nao vira "nao encontrada" quando ha cache.
+
+## `:has()` nao aninha dentro de `:has()` — o seletor inteiro morre calado
+
+- **Tentativa**: `.trilho:has(.livro:has(:focus-visible)) .livro:not(:has(:focus-visible))` para fechar os outros livros quando um recebe foco (#241).
+- **Erro**: a especificacao proibe `:has()` dentro de `:has()`. O navegador descarta a regra inteira sem aviso, sem erro no console e sem falhar build, lint ou teste. Na tela: o livro focado E a vitrine abriram juntos e o andar estourou 120 px. `:has()` dentro de `:not()` e permitido, o que torna o erro mais dificil de ver — metade do seletor parecia legitima.
+- **Regra**: `:has()` so aninha pseudo-classes simples. Quando precisar do ancestral, mirar direto o que casa (`.trilho:has(:focus-visible)`) em vez de repetir o filho. E seletor novo com `:has()` so conta como pronto depois de visto na tela: nenhum portao le CSS descartado — mesma familia do [portoes-nao-leem-a-saida].
