@@ -581,3 +581,15 @@ o comportamento desenhado na Fase 1.
 - **Tentativa**: `.trilho:has(.livro:has(:focus-visible)) .livro:not(:has(:focus-visible))` para fechar os outros livros quando um recebe foco (#241).
 - **Erro**: a especificacao proibe `:has()` dentro de `:has()`. O navegador descarta a regra inteira sem aviso, sem erro no console e sem falhar build, lint ou teste. Na tela: o livro focado E a vitrine abriram juntos e o andar estourou 120 px. `:has()` dentro de `:not()` e permitido, o que torna o erro mais dificil de ver — metade do seletor parecia legitima.
 - **Regra**: `:has()` so aninha pseudo-classes simples. Quando precisar do ancestral, mirar direto o que casa (`.trilho:has(:focus-visible)`) em vez de repetir o filho. E seletor novo com `:has()` so conta como pronto depois de visto na tela: nenhum portao le CSS descartado — mesma familia do [portoes-nao-leem-a-saida].
+
+## Regex cega sobre arquivo de teste troca fixture por asserção
+
+- **Tentativa**: com o repositório passando a devolver `chave: "anilist:30013"` no lugar de `anilistId: 30013`, rodei um `replace(/anilistId: (\d+)([,\s}])/g, 'chave: "anilist:$1"$2')` em cinco arquivos de teste de banco de uma vez.
+- **Erro**: num teste de repositório, `anilistId: N` aparece nos DOIS lados — na asserção, que precisava mudar, e na fixture que alimenta o `create` do Prisma, que não. A troca cega reescreveu as duas e levou a suíte de 6 falhas para 16, com sintomas em testes que eu nem tinha tocado.
+- **Regra**: renomear campo em teste é edição por sítio, não por arquivo. Antes de qualquer troca em massa, separar os usos em duas listas — o que ENTRA no banco e o que SAI dele — e só mexer no segundo. Se a lista não couber num `grep` que dê para ler, o rename está grande demais para uma regex.
+
+## Suíte de banco verde não prova que o banco de desenvolvimento tem a migration
+
+- **Tentativa**: com `pnpm test:db` verde e a migration escrita, abri a página da obra do Kitsu no `pnpm dev` e vi "o AniList não respondeu". Fui atrás de erro na fonte, no User-Agent e no timeout.
+- **Erro**: `test:db` roda contra o banco de TESTE, que a suíte prepara sozinha. O banco de desenvolvimento estava uma migration atrás, e o `findUnique` por uma coluna que ainda não existia lá estourava — a página caía no degrau de "fonte indisponível" e escondia a causa.
+- **Regra**: antes de julgar comportamento no `pnpm dev`, rodar `pnpm prisma migrate status`. Erro de coluna inexistente vira "serviço fora do ar" em qualquer camada que degrade com `try/catch`, então o `catch` mudo é o primeiro lugar a instrumentar, não a rede.
