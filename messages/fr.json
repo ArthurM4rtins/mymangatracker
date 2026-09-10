@@ -3,6 +3,7 @@
     "visualizacao": "Affichage de la collection",
     "grade": "Grille",
     "prateleira": "Étagère",
+    "andar": "Étagère {n}",
     "contagem": "{n, plural, one {# œuvre} other {# œuvres}}",
     "dica": "Explorez les dos des livres. Utilisez les flèches ou faites glisser. Sélectionnez une œuvre pour voir ses détails.",
     "anterior": "Reculer dans l’étagère {grupo}",
@@ -206,7 +207,6 @@
       "erro": "ça n’a pas marché — réessaie"
     },
     "mais": {
-      "andar": "Étagère {n}",
       "verMais": "Voir plus d'œuvres",
       "carregando": "Chargement…",
       "fim": "Tu as atteint la fin de ce que nous avons ici.",
@@ -335,8 +335,7 @@
     "populares": {
       "titulo": "Populaires en ce moment",
       "verMais": "voir plus →",
-      "indisponivel": "Le catalogue n’a pas répondu — réessaie dans un instant.",
-      "andar": "Étagère {n}"
+      "indisponivel": "Le catalogue n’a pas répondu — réessaie dans un instant."
     },
     "atividade": {
       "titulo": "Activité récente",

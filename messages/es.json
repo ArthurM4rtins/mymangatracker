@@ -3,6 +3,7 @@
     "visualizacao": "Vista de la colección",
     "grade": "Cuadrícula",
     "prateleira": "Estantería",
+    "andar": "Estante {n}",
     "contagem": "{n, plural, one {# obra} other {# obras}}",
     "dica": "Explora los lomos. Usa las flechas, arrastra o desliza. Selecciona una obra para ver sus detalles.",
     "anterior": "Retroceder en la estantería {grupo}",
@@ -206,7 +207,6 @@
       "erro": "no se pudo — inténtalo de nuevo"
     },
     "mais": {
-      "andar": "Estante {n}",
       "verMais": "Ver más obras",
       "carregando": "Cargando…",
       "fim": "Llegaste al final de lo que tenemos.",
@@ -335,8 +335,7 @@
     "populares": {
       "titulo": "Populares ahora",
       "verMais": "ver más →",
-      "indisponivel": "El catálogo no respondió ahora mismo — inténtalo de nuevo en unos instantes.",
-      "andar": "Estante {n}"
+      "indisponivel": "El catálogo no respondió ahora mismo — inténtalo de nuevo en unos instantes."
     },
     "atividade": {
       "titulo": "Actividad reciente",

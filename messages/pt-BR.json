@@ -3,6 +3,7 @@
     "visualizacao": "Visualização da coleção",
     "grade": "Grade",
     "prateleira": "Prateleira",
+    "andar": "Andar {n}",
     "contagem": "{n, plural, =1 {# obra} other {# obras}}",
     "dica": "Explore as lombadas. Use as setas, arraste ou deslize. Selecione uma obra para ver os detalhes.",
     "anterior": "Voltar na prateleira {grupo}",
@@ -206,7 +207,6 @@
       "erro": "não deu — tente de novo"
     },
     "mais": {
-      "andar": "Andar {n}",
       "verMais": "Ver mais obras",
       "carregando": "Carregando…",
       "fim": "Chegou ao fim do que temos por aqui.",
@@ -335,8 +335,7 @@
     "populares": {
       "titulo": "Populares agora",
       "verMais": "ver mais →",
-      "indisponivel": "O catálogo não respondeu agora — tente de novo em instantes.",
-      "andar": "Andar {n}"
+      "indisponivel": "O catálogo não respondeu agora — tente de novo em instantes."
     },
     "atividade": {
       "titulo": "Atividade recente",
