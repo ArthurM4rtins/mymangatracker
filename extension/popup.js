@@ -222,6 +222,21 @@ el.formulario.addEventListener("submit", async function (evento)
 
     const corpo = await resposta.json().catch(function () { return {}; });
 
+    // O par vem ANTES de decidir o que mostrar: ele diz "esta pagina e esta
+    // obra", e isso vale mesmo quando o capitulo nao avanca (409). Preso ao
+    // caminho de sucesso, obra ja lida alem daquele capitulo nunca pareava, e
+    // o badge nunca acendia naquele site.
+    if (KIDOKU.deveParear(resposta.status) && contexto.chave !== null)
+    {
+      await KIDOKU.salvarPar(contexto.chave, entradaId, KIDOKU.donoDoToken(contexto.sessao.token));
+      chrome.runtime.sendMessage({
+        tipo: "pareou",
+        tabId: contexto.aba.id,
+        url: contexto.aba.url,
+        titulo: contexto.aba.title,
+      });
+    }
+
     if (!resposta.ok)
     {
       el.resultado.className = "resultado erro";
@@ -242,16 +257,6 @@ el.formulario.addEventListener("submit", async function (evento)
       [String(corpo.capitulo), String(corpo.progresso)],
     );
 
-    if (contexto.chave !== null)
-    {
-      await KIDOKU.salvarPar(contexto.chave, entradaId, KIDOKU.donoDoToken(contexto.sessao.token));
-      chrome.runtime.sendMessage({
-        tipo: "pareou",
-        tabId: contexto.aba.id,
-        url: contexto.aba.url,
-        titulo: contexto.aba.title,
-      });
-    }
   }
   catch
   {
