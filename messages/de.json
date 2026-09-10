@@ -34,7 +34,8 @@
   },
   "rodape": {
     "explorar": {
-      "titulo": "Entdecken"
+      "titulo": "Entdecken",
+      "extensao": "Erweiterung"
     },
     "conta": {
       "titulo": "Dein Konto",
@@ -311,6 +312,78 @@
       "acao": "hat nicht geklappt — versuche es noch einmal",
       "rede": "hat gerade nicht geklappt — versuche es noch einmal",
       "registrar": "konnte gerade nicht eingetragen werden"
+    }
+  },
+  "extensao": {
+    "meta": {
+      "titulo": "Erweiterung"
+    },
+    "titulo": "Die Kidoku-Erweiterung",
+    "subtitulo": "Trägt das Kapitel, das du gerade liest, in dein Regal ein, ohne den Tab zu verlassen. Du nennst das Werk einmal; danach erkennt sie die Seite von allein.",
+    "instalar": {
+      "titulo": "Installieren",
+      "loja": "Im Chrome Web Store installieren",
+      "emBreve": "Demnächst im Chrome Web Store",
+      "aviso": "Die Erweiterung ist fertig, aber noch nicht veröffentlicht. Sobald sie erscheint, führt die Schaltfläche oben direkt dorthin.",
+      "passos": {
+        "loja": "Installiere die Erweiterung über den Chrome Web Store.",
+        "entrar": "Melde dich auf dieser Seite bei Kidoku an. Die Erweiterung nutzt die Sitzung deines Browsers — sie fragt nie nach deinem Passwort und speichert keine Zugangsdaten.",
+        "abrir": "Öffne ein Kapitel auf einer beliebigen Leseseite und klicke auf das Kidoku-Symbol in der Browserleiste."
+      }
+    },
+    "usar": {
+      "titulo": "So funktioniert sie",
+      "obra": "Das Fenster listet die Werke aus deinem Regal. Wähle das, was du liest — abgeschlossene bleiben draußen, und das Filterfeld ist für große Regale da.",
+      "capitulo": "Das Kapitel stammt aus dem Seitentitel. Wenn es nicht sicher zu erkennen ist, bleibt das Feld leer, statt zu raten, und du trägst es ein. Ob dein Fortschritt weiterrückt, entscheidet der Server, nicht die Erweiterung.",
+      "captura": {
+        "alt": "Fenster der Erweiterung mit der Regalliste, ausgewähltem Berserk und automatisch eingetragenem Kapitel 2.",
+        "legenda": "Das Fenster bei einem offenen Kapitel, mit bereits erkanntem Werk und dem aus dem Tab-Titel gelesenen Kapitel."
+      }
+    },
+    "badge": {
+      "titulo": "Das Zeichen am Symbol",
+      "parear": "Beim Eintragen merkt sich die Erweiterung, dass diese Seite zu diesem Werk gehört. Beim nächsten Mal sagt es dir das Symbol, noch bevor du klickst.",
+      "pareada": {
+        "alt": "Symbol der Erweiterung mit einem bernsteinfarbenen Punkt in der Ecke.",
+        "legenda": "Bernsteinfarbener Punkt: Diese Seite gehört zu einem bereits zugeordneten Werk."
+      },
+      "registrado": {
+        "alt": "Symbol der Erweiterung mit einem grünen Haken in der Ecke.",
+        "legenda": "Grüner Haken: Das automatische Eintragen hat dieses Kapitel gespeichert."
+      }
+    },
+    "automatico": {
+      "titulo": "Automatisches Eintragen",
+      "oQueE": "Mit eingeschaltetem Schalter trägt die Erweiterung das Kapitel ohne Klick ein. Das tut sie nur, wenn alle drei Bedingungen gelten:",
+      "condicoes": {
+        "pareada": "du hast das Werk dieser Seite einmal von Hand zugeordnet;",
+        "espera": "du bist zwanzig Sekunden auf der Kapitelseite geblieben;",
+        "foco": "der Tab ist weiterhin im Vordergrund, im benutzten Fenster — ein Tabwechsel bricht ab."
+      },
+      "servidor": "Der grüne Haken am Symbol ist die Rückmeldung, dass gespeichert wurde. Wird versehentlich etwas eingetragen, steht das Zurücksetzen auf der Seite des Werks."
+    },
+    "privacidade": {
+      "titulo": "Datenschutz und Berechtigungen",
+      "oQueLe": "Die Erweiterung liest Adresse und Titel deiner Tabs. Daraus ergeben sich Werk und Kapitel, und das ermöglicht das Zeichen am Symbol vor dem Klick. Sie schleust auf keiner Seite Skripte ein und liest keine Seiteninhalte.",
+      "historico": "Chrome zeigt diese Berechtigung als „Deinen Browserverlauf lesen“ an. Das beschreibt ehrlich, was sie erlaubt, und du solltest es hier lesen und nicht erst im Dialog des Browsers entdecken.",
+      "progresso": "Dein Lesefortschritt und die Seite, auf der du liest, gehören dir allein. Sie erscheinen bei niemand anderem, zählen in keine öffentliche Statistik und werden nie zu einer Rangliste."
+    },
+    "problemas": {
+      "titulo": "Klappt nicht?",
+      "sessao": {
+        "titulo": "Das Fenster bittet um Anmeldung",
+        "texto": "Die Erweiterung hat deine Sitzung nicht gefunden. Melde dich auf dieser Seite in einem normalen Tab bei Kidoku an und öffne das Fenster erneut.",
+        "alt": "Fenster der Erweiterung mit dem Hinweis: Melde dich bei Kidoku an, um die Lektüre einzutragen.",
+        "legenda": "So sieht es ohne Sitzung aus."
+      },
+      "capitulo": {
+        "titulo": "Das Kapitelfeld blieb leer",
+        "texto": "Der Titel dieser Seite nennt das Kapitel nicht eindeutig genug. Trag die Nummer ein und speichere: Der Erweiterung ist ein leeres Feld lieber als ein falscher Tipp."
+      },
+      "foraDaEstante": {
+        "titulo": "Das Werk steht nicht in der Liste",
+        "texto": "Das Fenster zeigt nur, was in deinem Regal steht, und kann noch keine Werke hinzufügen. Füge es über den <catalogo>Katalog</catalogo> hinzu."
+      }
     }
   },
   "home": {

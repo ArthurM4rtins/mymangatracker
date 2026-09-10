@@ -34,7 +34,8 @@
   },
   "rodape": {
     "explorar": {
-      "titulo": "Explorar"
+      "titulo": "Explorar",
+      "extensao": "Extensión"
     },
     "conta": {
       "titulo": "Tu cuenta",
@@ -311,6 +312,78 @@
       "acao": "no se pudo — inténtalo de nuevo",
       "rede": "ahora no se pudo — inténtalo de nuevo",
       "registrar": "ahora no se pudo registrar"
+    }
+  },
+  "extensao": {
+    "meta": {
+      "titulo": "Extensión"
+    },
+    "titulo": "La extensión de Kidoku",
+    "subtitulo": "Registra en tu estantería el capítulo que estás leyendo, sin salir de la pestaña. Dices cuál es la obra una vez; a partir de ahí reconoce el sitio sola.",
+    "instalar": {
+      "titulo": "Instalar",
+      "loja": "Instalar desde Chrome Web Store",
+      "emBreve": "Muy pronto en Chrome Web Store",
+      "aviso": "La extensión está lista, pero todavía no se ha publicado. Cuando salga, el botón de arriba llevará directo a ella.",
+      "passos": {
+        "loja": "Instala la extensión desde Chrome Web Store.",
+        "entrar": "Entra en Kidoku por este sitio. La extensión usa la sesión de tu navegador: nunca te pide la contraseña ni guarda tus datos de acceso.",
+        "abrir": "Abre un capítulo en cualquier sitio de lectura y haz clic en el icono de Kidoku en la barra del navegador."
+      }
+    },
+    "usar": {
+      "titulo": "Cómo funciona",
+      "obra": "La ventana lista las obras de tu estantería. Elige la que estás leyendo: las terminadas quedan fuera, y el campo de filtro está ahí para estanterías grandes.",
+      "capitulo": "El capítulo sale del título de la página. Cuando no se puede saber con certeza, el campo se queda vacío en vez de adivinar y lo escribes tú. Quien decide si tu progreso avanza es el servidor, no la extensión.",
+      "captura": {
+        "alt": "Ventana de la extensión con la lista de la estantería, Berserk seleccionada y el capítulo 2 rellenado automáticamente.",
+        "legenda": "La ventana en un capítulo abierto, con la obra ya reconocida y el capítulo leído del título de la pestaña."
+      }
+    },
+    "badge": {
+      "titulo": "La señal en el icono",
+      "parear": "Al registrar una lectura, la extensión guarda que ese sitio es esa obra. La próxima vez el icono te avisa antes de que hagas clic.",
+      "pareada": {
+        "alt": "Icono de la extensión con un punto ámbar en la esquina.",
+        "legenda": "Punto ámbar: esta página es de una obra que ya emparejaste."
+      },
+      "registrado": {
+        "alt": "Icono de la extensión con una marca verde en la esquina.",
+        "legenda": "Marca verde: el registro automático guardó este capítulo."
+      }
+    },
+    "automatico": {
+      "titulo": "Registro automático",
+      "oQueE": "Con el interruptor activado, la extensión registra el capítulo sin que hagas clic. Solo lo hace cuando se cumplen las tres cosas:",
+      "condicoes": {
+        "pareada": "emparejaste la obra con ese sitio una vez, a mano;",
+        "espera": "te quedaste veinte segundos en la página del capítulo;",
+        "foco": "la pestaña sigue delante, en la ventana que estás usando: cambiar de pestaña lo cancela."
+      },
+      "servidor": "La marca verde en el icono es el aviso de que se guardó. Si se registra algo sin querer, el reinicio de la lectura está en la página de la obra."
+    },
+    "privacidade": {
+      "titulo": "Privacidad y permisos",
+      "oQueLe": "La extensión lee la dirección y el título de tus pestañas. De ahí salen la obra y el capítulo, y es lo que permite la señal en el icono antes del clic. No inyecta ningún script en ningún sitio y no lee el contenido de las páginas.",
+      "historico": "Chrome presenta ese permiso como “Leer tu historial de navegación”. Es una descripción honesta de lo que permite, y mereces leerlo aquí en vez de descubrirlo en el diálogo del navegador.",
+      "progresso": "Tu progreso de lectura y el sitio donde lees son privados. No aparecen para otras personas, no entran en ningún recuento público y nunca se convierten en un ranking."
+    },
+    "problemas": {
+      "titulo": "¿No funcionó?",
+      "sessao": {
+        "titulo": "La ventana pide entrar",
+        "texto": "La extensión no encontró tu sesión. Entra en Kidoku por este sitio, en una pestaña normal, y abre la ventana otra vez.",
+        "alt": "Ventana de la extensión diciendo: entra en Kidoku para registrar la lectura.",
+        "legenda": "Esto es lo que aparece sin sesión."
+      },
+      "capitulo": {
+        "titulo": "El campo del capítulo salió vacío",
+        "texto": "El título de esa página no dice el capítulo de una forma que dé certeza. Escribe el número y registra: la extensión prefiere el campo vacío a una suposición equivocada."
+      },
+      "foraDaEstante": {
+        "titulo": "La obra no está en la lista",
+        "texto": "La ventana solo muestra lo que está en tu estantería, y todavía no puede añadir obras. Añádela desde el <catalogo>catálogo</catalogo>."
+      }
     }
   },
   "home": {

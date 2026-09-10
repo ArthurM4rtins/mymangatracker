@@ -48,6 +48,7 @@ export async function Rodape({
           <Coluna titulo={t("explorar.titulo")}>
             <ItemDoRodape href="/catalogo">{c("catalogo")}</ItemDoRodape>
             <ItemDoRodape href="/listas">{c("listas")}</ItemDoRodape>
+            <ItemDoRodape href="/extensao">{t("explorar.extensao")}</ItemDoRodape>
           </Coluna>
 
           <Coluna titulo={t("conta.titulo")}>

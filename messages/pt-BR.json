@@ -34,7 +34,8 @@
   },
   "rodape": {
     "explorar": {
-      "titulo": "Explorar"
+      "titulo": "Explorar",
+      "extensao": "Extensão"
     },
     "conta": {
       "titulo": "Sua conta",
@@ -311,6 +312,78 @@
       "acao": "não deu — tente de novo",
       "rede": "não deu agora — tente de novo",
       "registrar": "não foi possível registrar agora"
+    }
+  },
+  "extensao": {
+    "meta": {
+      "titulo": "Extensão"
+    },
+    "titulo": "A extensão do Kidoku",
+    "subtitulo": "Registra na sua estante o capítulo que você está lendo, sem sair da aba. Você diz qual é a obra uma vez; daí em diante ela reconhece o site sozinha.",
+    "instalar": {
+      "titulo": "Instalar",
+      "loja": "Instalar pela Chrome Web Store",
+      "emBreve": "Em breve na Chrome Web Store",
+      "aviso": "A extensão está pronta, mas ainda não foi publicada. Quando sair, o botão acima leva direto a ela.",
+      "passos": {
+        "loja": "Instale a extensão pela Chrome Web Store.",
+        "entrar": "Entre no Kidoku por este site. A extensão usa a sessão do seu navegador — ela nunca pede sua senha nem guarda seus dados de acesso.",
+        "abrir": "Abra um capítulo em qualquer site de leitura e clique no ícone do Kidoku na barra do navegador."
+      }
+    },
+    "usar": {
+      "titulo": "Como funciona",
+      "obra": "O popup lista as obras da sua estante. Escolha a que você está lendo — as concluídas ficam de fora, e o campo de filtro serve para estantes grandes.",
+      "capitulo": "O capítulo vem do título da página. Quando não dá para saber com certeza, o campo fica vazio em vez de chutar: aí você digita. Quem decide se o seu progresso avança é o servidor, não a extensão.",
+      "captura": {
+        "alt": "Popup da extensão com a lista da estante, a obra Berserk selecionada e o capítulo 2 preenchido automaticamente.",
+        "legenda": "O popup num capítulo aberto, com a obra já reconhecida e o capítulo lido do título da aba."
+      }
+    },
+    "badge": {
+      "titulo": "O sinal no ícone",
+      "parear": "Ao registrar uma leitura, a extensão guarda que aquele site é aquela obra. Da próxima vez o ícone avisa sozinho, antes de você clicar.",
+      "pareada": {
+        "alt": "Ícone da extensão com um ponto âmbar no canto.",
+        "legenda": "Ponto âmbar: esta página é de uma obra que você já pareou."
+      },
+      "registrado": {
+        "alt": "Ícone da extensão com um visto verde no canto.",
+        "legenda": "Visto verde: o registro automático gravou este capítulo."
+      }
+    },
+    "automatico": {
+      "titulo": "Registro automático",
+      "oQueE": "Com a chave ligada, a extensão registra o capítulo sem você clicar. Ela só faz isso quando as três coisas valem:",
+      "condicoes": {
+        "pareada": "a obra já foi pareada com aquele site por você, uma vez, à mão;",
+        "espera": "você ficou vinte segundos na página do capítulo;",
+        "foco": "a aba continua na frente, na janela em uso — trocar de aba cancela."
+      },
+      "servidor": "O visto verde no ícone é o aviso de que gravou. Se você registrar sem querer, o reset da leitura está na página da obra."
+    },
+    "privacidade": {
+      "titulo": "Privacidade e permissões",
+      "oQueLe": "A extensão lê o endereço e o título das suas abas. É disso que saem a obra e o capítulo, e é o que permite o sinal no ícone antes do clique. Ela não injeta script em site nenhum e não lê o conteúdo das páginas.",
+      "historico": "O Chrome apresenta essa permissão como “Ler seu histórico de navegação”. É uma descrição honesta do que ela permite, e você merece ler isso aqui em vez de descobrir no diálogo do navegador.",
+      "progresso": "O seu progresso de leitura e o site em que você lê são privados do dono. Não aparecem para outras pessoas, não entram em contagem pública e não viram ranking."
+    },
+    "problemas": {
+      "titulo": "Não funcionou?",
+      "sessao": {
+        "titulo": "O popup pede para entrar",
+        "texto": "A extensão não achou a sua sessão. Entre no Kidoku por este site, numa aba normal, e abra o popup de novo.",
+        "alt": "Popup da extensão dizendo: entre no Kidoku para registrar a leitura.",
+        "legenda": "É isto que aparece sem sessão."
+      },
+      "capitulo": {
+        "titulo": "O campo do capítulo veio vazio",
+        "texto": "O título daquela página não diz o capítulo de um jeito que dê para ter certeza. Digite o número e registre: a extensão prefere o campo vazio a um palpite errado."
+      },
+      "foraDaEstante": {
+        "titulo": "A obra não está na lista",
+        "texto": "O popup só mostra o que está na sua estante, e ainda não dá para adicionar obra por ele. Adicione pelo <catalogo>catálogo</catalogo>."
+      }
     }
   },
   "home": {

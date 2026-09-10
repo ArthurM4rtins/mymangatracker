@@ -34,7 +34,8 @@
   },
   "rodape": {
     "explorar": {
-      "titulo": "Explorer"
+      "titulo": "Explorer",
+      "extensao": "Extension"
     },
     "conta": {
       "titulo": "Ton compte",
@@ -311,6 +312,78 @@
       "acao": "ça n’a pas marché — réessaie",
       "rede": "ça n’a pas marché à l’instant — réessaie",
       "registrar": "impossible d’enregistrer pour le moment"
+    }
+  },
+  "extensao": {
+    "meta": {
+      "titulo": "Extension"
+    },
+    "titulo": "L'extension Kidoku",
+    "subtitulo": "Elle enregistre dans votre bibliothèque le chapitre que vous lisez, sans quitter l'onglet. Vous indiquez l'œuvre une fois ; ensuite elle reconnaît le site toute seule.",
+    "instalar": {
+      "titulo": "Installer",
+      "loja": "Installer depuis le Chrome Web Store",
+      "emBreve": "Bientôt sur le Chrome Web Store",
+      "aviso": "L'extension est prête, mais pas encore publiée. Dès sa sortie, le bouton ci-dessus y mènera directement.",
+      "passos": {
+        "loja": "Installez l'extension depuis le Chrome Web Store.",
+        "entrar": "Connectez-vous à Kidoku sur ce site. L'extension utilise la session de votre navigateur : elle ne demande jamais votre mot de passe et ne conserve aucun identifiant.",
+        "abrir": "Ouvrez un chapitre sur n'importe quel site de lecture et cliquez sur l'icône Kidoku dans la barre du navigateur."
+      }
+    },
+    "usar": {
+      "titulo": "Comment ça marche",
+      "obra": "La fenêtre liste les œuvres de votre bibliothèque. Choisissez celle que vous lisez : les œuvres terminées sont écartées, et le champ de filtre sert aux grandes bibliothèques.",
+      "capitulo": "Le chapitre vient du titre de la page. Quand il n'y a pas de certitude, le champ reste vide plutôt que de deviner, et vous le saisissez. C'est le serveur qui décide si votre progression avance, pas l'extension.",
+      "captura": {
+        "alt": "Fenêtre de l'extension avec la liste de la bibliothèque, Berserk sélectionnée et le chapitre 2 rempli automatiquement.",
+        "legenda": "La fenêtre sur un chapitre ouvert, avec l'œuvre déjà reconnue et le chapitre lu depuis le titre de l'onglet."
+      }
+    },
+    "badge": {
+      "titulo": "Le signal sur l'icône",
+      "parear": "Quand vous enregistrez une lecture, l'extension retient que ce site correspond à cette œuvre. La fois suivante, l'icône vous prévient avant même le clic.",
+      "pareada": {
+        "alt": "Icône de l'extension avec un point ambre dans le coin.",
+        "legenda": "Point ambre : cette page appartient à une œuvre déjà associée."
+      },
+      "registrado": {
+        "alt": "Icône de l'extension avec une coche verte dans le coin.",
+        "legenda": "Coche verte : l'enregistrement automatique a sauvegardé ce chapitre."
+      }
+    },
+    "automatico": {
+      "titulo": "Enregistrement automatique",
+      "oQueE": "Avec l'interrupteur activé, l'extension enregistre le chapitre sans clic. Elle ne le fait que si les trois conditions tiennent :",
+      "condicoes": {
+        "pareada": "vous avez associé l'œuvre à ce site une fois, à la main ;",
+        "espera": "vous êtes resté vingt secondes sur la page du chapitre ;",
+        "foco": "l'onglet est toujours au premier plan, dans la fenêtre utilisée — changer d'onglet annule tout."
+      },
+      "servidor": "La coche verte sur l'icône signale que c'est enregistré. En cas d'enregistrement involontaire, la remise à zéro de la lecture se trouve sur la page de l'œuvre."
+    },
+    "privacidade": {
+      "titulo": "Confidentialité et autorisations",
+      "oQueLe": "L'extension lit l'adresse et le titre de vos onglets. C'est de là que viennent l'œuvre et le chapitre, et c'est ce qui permet le signal sur l'icône avant le clic. Elle n'injecte aucun script sur aucun site et ne lit pas le contenu des pages.",
+      "historico": "Chrome présente cette autorisation comme « Consulter votre historique de navigation ». C'est une description honnête de ce qu'elle permet, et vous méritez de le lire ici plutôt que de le découvrir dans la boîte de dialogue du navigateur.",
+      "progresso": "Votre progression de lecture et le site où vous lisez restent privés. Ils n'apparaissent jamais pour les autres, n'entrent dans aucun décompte public et ne deviennent jamais un classement."
+    },
+    "problemas": {
+      "titulo": "Ça ne marche pas ?",
+      "sessao": {
+        "titulo": "La fenêtre demande de se connecter",
+        "texto": "L'extension n'a pas trouvé votre session. Connectez-vous à Kidoku sur ce site, dans un onglet normal, puis rouvrez la fenêtre.",
+        "alt": "Fenêtre de l'extension indiquant : connectez-vous à Kidoku pour enregistrer la lecture.",
+        "legenda": "Voici ce qui s'affiche sans session."
+      },
+      "capitulo": {
+        "titulo": "Le champ du chapitre est vide",
+        "texto": "Le titre de cette page n'indique pas le chapitre de façon certaine. Saisissez le numéro et enregistrez : l'extension préfère un champ vide à une supposition fausse."
+      },
+      "foraDaEstante": {
+        "titulo": "L'œuvre n'est pas dans la liste",
+        "texto": "La fenêtre n'affiche que ce qui est dans votre bibliothèque, et elle ne sait pas encore ajouter d'œuvre. Ajoutez-la depuis le <catalogo>catalogue</catalogo>."
+      }
     }
   },
   "home": {

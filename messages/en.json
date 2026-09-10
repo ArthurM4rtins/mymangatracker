@@ -34,7 +34,8 @@
   },
   "rodape": {
     "explorar": {
-      "titulo": "Explore"
+      "titulo": "Explore",
+      "extensao": "Extension"
     },
     "conta": {
       "titulo": "Your account",
@@ -311,6 +312,78 @@
       "acao": "didn't work — try again",
       "rede": "didn't work just now — try again",
       "registrar": "couldn't record that right now"
+    }
+  },
+  "extensao": {
+    "meta": {
+      "titulo": "Extension"
+    },
+    "titulo": "The Kidoku extension",
+    "subtitulo": "Logs the chapter you're reading to your shelf without leaving the tab. You name the work once; from then on it recognises the site on its own.",
+    "instalar": {
+      "titulo": "Install",
+      "loja": "Install from the Chrome Web Store",
+      "emBreve": "Coming soon to the Chrome Web Store",
+      "aviso": "The extension is ready but not published yet. Once it's out, the button above will take you straight to it.",
+      "passos": {
+        "loja": "Install the extension from the Chrome Web Store.",
+        "entrar": "Sign in to Kidoku on this site. The extension uses your browser session — it never asks for your password or stores your credentials.",
+        "abrir": "Open a chapter on any reading site and click the Kidoku icon in the browser bar."
+      }
+    },
+    "usar": {
+      "titulo": "How it works",
+      "obra": "The popup lists the works on your shelf. Pick the one you're reading — finished ones are left out, and the filter field is there for large shelves.",
+      "capitulo": "The chapter comes from the page title. When it can't be sure, the field stays empty instead of guessing, and you type it in. Whether your progress moves forward is decided by the server, not the extension.",
+      "captura": {
+        "alt": "The extension popup showing the shelf list, Berserk selected and chapter 2 filled in automatically.",
+        "legenda": "The popup on an open chapter, with the work already recognised and the chapter read from the tab title."
+      }
+    },
+    "badge": {
+      "titulo": "The mark on the icon",
+      "parear": "When you log a chapter, the extension remembers that this site is that work. Next time the icon tells you before you even click.",
+      "pareada": {
+        "alt": "Extension icon with an amber dot in the corner.",
+        "legenda": "Amber dot: this page belongs to a work you've already paired."
+      },
+      "registrado": {
+        "alt": "Extension icon with a green check in the corner.",
+        "legenda": "Green check: automatic logging saved this chapter."
+      }
+    },
+    "automatico": {
+      "titulo": "Automatic logging",
+      "oQueE": "With the switch on, the extension logs the chapter without a click. It only does that when all three hold:",
+      "condicoes": {
+        "pareada": "you paired the work with that site once, by hand;",
+        "espera": "you stayed twenty seconds on the chapter page;",
+        "foco": "the tab is still in front, in the window you're using — switching tabs cancels it."
+      },
+      "servidor": "The green check on the icon is how you know it saved. If something gets logged by accident, the reading reset lives on the work's page."
+    },
+    "privacidade": {
+      "titulo": "Privacy and permissions",
+      "oQueLe": "The extension reads the address and title of your tabs. That's where the work and the chapter come from, and it's what allows the mark on the icon before you click. It injects no script into any site and does not read page content.",
+      "historico": "Chrome presents this permission as “Read your browsing history”. That's an honest description of what it allows, and you deserve to read it here rather than discover it in the browser dialog.",
+      "progresso": "Your reading progress and the site you read on are private to you. They never show to other people, never count towards anything public and never become a ranking."
+    },
+    "problemas": {
+      "titulo": "Not working?",
+      "sessao": {
+        "titulo": "The popup asks you to sign in",
+        "texto": "The extension couldn't find your session. Sign in to Kidoku on this site, in a normal tab, then open the popup again.",
+        "alt": "Extension popup saying: sign in to Kidoku to log your reading.",
+        "legenda": "This is what shows with no session."
+      },
+      "capitulo": {
+        "titulo": "The chapter field came up empty",
+        "texto": "That page's title doesn't state the chapter in a way anything could be sure about. Type the number and log it: the extension would rather leave the field empty than guess wrong."
+      },
+      "foraDaEstante": {
+        "titulo": "The work isn't in the list",
+        "texto": "The popup only shows what's on your shelf, and it can't add works yet. Add it from the <catalogo>catalogue</catalogo>."
+      }
     }
   },
   "home": {
