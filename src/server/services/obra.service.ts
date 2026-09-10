@@ -13,6 +13,7 @@ import {
 } from "@/server/domain/nota-media";
 import type { AutorDaObra, MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId, buscarSimilares } from "@/server/infra/anilist";
+import { buscarNoKitsuPorAnilistId } from "@/server/infra/kitsu";
 import { lembrarPorChave } from "@/server/domain/memoria-curta";
 import {
   buscarMediaCompletaPorAnilistId,
@@ -94,6 +95,8 @@ export type ResultadoDaObra =
 export type DependenciasDaObra = {
   buscarCompleta: (anilistId: number) => Promise<MediaCompleta | null>;
   buscarNoAniList: (anilistId: number) => Promise<MediaDoAniList | null>;
+  /** O degrau de baixo, só com o AniList fora (#219). */
+  buscarNoKitsu: (anilistId: number) => Promise<MediaDoAniList | null>;
   salvarMedia: (
     obra: MediaDoAniList,
     sincronizadoEm: Date,
@@ -167,34 +170,62 @@ export async function obraParaPagina(
   {
     try
     {
-      const doAniList = await deps.buscarNoAniList(anilistId);
+      let doAniList: MediaDoAniList | null;
 
-      if (doAniList === null)
+      try
       {
-        // O AniList respondeu e a obra não existe (ou o domínio descartou).
-        // Cache antigo de algo que sumiu não ressuscita a página.
-        return { estado: "nao_encontrada" };
+        doAniList = await deps.buscarNoAniList(anilistId);
+
+        if (doAniList === null)
+        {
+          // O AniList respondeu e a obra não existe (ou o domínio descartou).
+          // Cache antigo de algo que sumiu não ressuscita a página.
+          return { estado: "nao_encontrada" };
+        }
+      }
+      catch
+      {
+        // AniList fora: desce um degrau, como o catálogo e a home (#219). Sem
+        // isso, obra que a vitrine do Kitsu acabou de mostrar não abria (#227).
+        // Kitsu fora também: o erro sobe para o catch de baixo.
+        doAniList = await deps.buscarNoKitsu(anilistId);
+
+        if (doAniList === null)
+        {
+          // O Kitsu não conhecer a obra não prova que ela sumiu: ele tem bem
+          // menos obras que o AniList. Cache velho ainda serve (página é
+          // leitura); sem cache, não há o que mostrar.
+          if (cache === null)
+          {
+            return { estado: "nao_encontrada" };
+          }
+
+          anilistFora = true;
+        }
       }
 
-      const salvo = await deps.salvarMedia(doAniList, agora);
-      cache = {
-        id: salvo.id,
-        anilistId: doAniList.anilistId,
-        type: doAniList.type,
-        countryOfOrigin: doAniList.countryOfOrigin ?? null,
-        titleRomaji: doAniList.titleRomaji,
-        titleEnglish: doAniList.titleEnglish ?? null,
-        titleNative: doAniList.titleNative ?? null,
-        coverImageUrl: doAniList.coverImageUrl ?? null,
-        bannerImageUrl: doAniList.bannerImageUrl ?? null,
-        description: doAniList.description ?? null,
-        chapters: doAniList.chapters ?? null,
-        startYear: doAniList.startYear ?? null,
-        genres: doAniList.genres ?? [],
-        averageScore: doAniList.averageScore ?? null,
-        autores: doAniList.autores ?? [],
-        syncedAt: salvo.syncedAt,
-      };
+      if (doAniList !== null)
+      {
+        const salvo = await deps.salvarMedia(doAniList, agora);
+        cache = {
+          id: salvo.id,
+          anilistId: doAniList.anilistId,
+          type: doAniList.type,
+          countryOfOrigin: doAniList.countryOfOrigin ?? null,
+          titleRomaji: doAniList.titleRomaji,
+          titleEnglish: doAniList.titleEnglish ?? null,
+          titleNative: doAniList.titleNative ?? null,
+          coverImageUrl: doAniList.coverImageUrl ?? null,
+          bannerImageUrl: doAniList.bannerImageUrl ?? null,
+          description: doAniList.description ?? null,
+          chapters: doAniList.chapters ?? null,
+          startYear: doAniList.startYear ?? null,
+          genres: doAniList.genres ?? [],
+          averageScore: doAniList.averageScore ?? null,
+          autores: doAniList.autores ?? [],
+          syncedAt: salvo.syncedAt,
+        };
+      }
     }
     catch
     {
@@ -206,6 +237,13 @@ export async function obraParaPagina(
 
       anilistFora = true;
     }
+  }
+
+  if (cache === null)
+  {
+    // Inalcançável: todo caminho acima ou preenche o cache ou já retornou. O
+    // compilador não enxerga isso, e mentir com `!` seria pior.
+    return { estado: "indisponivel" };
   }
 
   const [similares, minha, minhaAvaliacao, reviews, contagens] = await Promise.all([
@@ -347,6 +385,7 @@ export function obraParaPaginaDoSistema(
   return obraParaPagina(anilistId, userId, {
     buscarCompleta: buscarMediaCompletaPorAnilistId,
     buscarNoAniList: buscarMediaPorId,
+    buscarNoKitsu: buscarNoKitsuPorAnilistId,
     salvarMedia: salvarMediaDoAniList,
     buscarSimilares: similaresLembrados,
     buscarEntrada: buscarEntradaPorMedia,
