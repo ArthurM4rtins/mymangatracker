@@ -1211,6 +1211,18 @@ Resumo do que esta decidido e do que nao esta:
 Travado por isso: a fase 1 do plano de divulgacao
 (`Obsidian/05. Divulgacao/redes-sociais/CLAUDE.md`) nao comeca antes do nome fechar.
 
+**PR #266 esta em DRAFT de proposito, esperando este rebrand.** Decisao do usuario
+em 10/09: nao mergear o plano de divulgacao antes do nome, porque ele esta escrito
+inteiro como Kidoku e precisaria ser reescrito no dia seguinte.
+
+Ordem: fechar o nome -> rebranding -> corrigir o plano -> tirar do draft -> mergear.
+O que precisa mudar la esta listado no comentario do proprio #266: decisao 1, a
+estrategia de handle, a pendencia de dominio, a pendencia 3 (trocar a mencao nao
+verificada ao Kenmei pelo achado real do `kidoku.net`) e a fase 1.
+
+Os outros dois PRs desta leva nao dependem do nome e podem mergear antes: **#265**
+(desenho do PWA, ver #264) e **#267** (este handoff e o doc do rebrand).
+
 O pedido anterior de **design de telas e botoes** (09/09) continua na fila, atras do
 rebranding.
 
