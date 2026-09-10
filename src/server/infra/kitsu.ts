@@ -10,7 +10,7 @@
  * atualizar depois.
  */
 import { traduzirDoKitsu, type ObraDoKitsu } from "@/server/domain/kitsu-media";
-import type { MediaDoAniList } from "@/server/domain/anilist-media";
+import { semRepetidas, type MediaDoAniList } from "@/server/domain/anilist-media";
 
 const BASE = "https://kitsu.io/api/edge/manga";
 const TIMEOUT_MS = 8000;
@@ -134,6 +134,16 @@ export type PaginaDoKitsu = {
   temMais: boolean;
 };
 
+/**
+ * A busca do Kitsu repete linha entre offsets (#240): pedindo "berserk", os
+ * offsets 0 e 20 devolvem as vinte mesmas linhas. A regra por trás disso varia
+ * por termo e não é conhecível de fora, então não se tenta adivinhar o passo
+ * certo — junta-se a fatia e tira-se a repetida no fim.
+ *
+ * `temMais` continua vindo da FONTE, pelo lote cheio, e não da contagem do que
+ * sobrou: a página cobre uma fatia fixa da fonte, e contar o que restou depois
+ * do descarte pararia a paginação cedo demais (a lição de 09/09).
+ */
 export async function buscarNoKitsu(termo: string, pagina = 1): Promise<PaginaDoKitsu>
 {
   const limpo = termo.trim();
@@ -157,7 +167,7 @@ export async function buscarNoKitsu(termo: string, pagina = 1): Promise<PaginaDo
     if (nesteLote < POR_PAGINA)
     {
       // A fonte acabou no meio da fatia: não há próxima página.
-      return { obras, temMais: false };
+      return { obras: semRepetidas(obras), temMais: false };
     }
 
     // Lote cheio: a fonte tinha pelo menos até aqui. Se for o último da fatia,
@@ -165,7 +175,7 @@ export async function buscarNoKitsu(termo: string, pagina = 1): Promise<PaginaDo
     temMais = true;
   }
 
-  return { obras, temMais };
+  return { obras: semRepetidas(obras), temMais };
 }
 
 /**
