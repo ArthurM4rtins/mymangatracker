@@ -397,7 +397,24 @@
         "titulo": "Liste"
       },
       "autoria": "par <autor>{username}</autor> · {n, plural, one {# œuvre} other {# œuvres}}",
-      "vazia": "Liste vide — ajoute des œuvres avec le bouton de liste sur la page de chaque œuvre.",
+      "vazia": "Liste vide pour le moment.",
+      "vaziaPropria": "Liste vide — cherche une œuvre ci-dessus pour l'ajouter.",
+      "busca": {
+        "rotulo": "Chercher une œuvre à ajouter",
+        "placeholder": "Chercher une œuvre à ajouter…",
+        "buscando": "Recherche…",
+        "semResultado": "Rien trouvé pour « {termo} ».",
+        "indisponivel": "AniList n'a pas répondu. Réessaie dans un instant.",
+        "muitosPedidos": "Trop de recherches depuis ici. Attends un moment et réessaie.",
+        "adicionar": "+ ajouter",
+        "jaNaLista": "✓ dans la liste",
+        "erros": {
+          "cheia": "la liste a atteint sa limite d'œuvres",
+          "limite": "trop d'ajouts en peu de temps — patiente un peu",
+          "indisponivel": "le catalogue n'a pas répondu — réessaie",
+          "geral": "impossible d'ajouter — réessaie"
+        }
+      },
       "remover": "retirer",
       "removerConfirmacao": "Retirer cette œuvre de la liste ?",
       "curtida": {

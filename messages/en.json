@@ -397,7 +397,24 @@
         "titulo": "List"
       },
       "autoria": "by <autor>{username}</autor> · {n, plural, one {# series} other {# series}}",
-      "vazia": "Empty list — add series with the list button on each series page.",
+      "vazia": "Empty list for now.",
+      "vaziaPropria": "Empty list — search for a series above to add it.",
+      "busca": {
+        "rotulo": "Search for a series to add",
+        "placeholder": "Search for a series to add…",
+        "buscando": "Searching…",
+        "semResultado": "Nothing found for \"{termo}\".",
+        "indisponivel": "AniList did not respond. Try again in a moment.",
+        "muitosPedidos": "Too many searches from here. Wait a moment and try again.",
+        "adicionar": "+ add",
+        "jaNaLista": "✓ in the list",
+        "erros": {
+          "cheia": "the list has reached its limit",
+          "limite": "too many additions in a short time — wait a bit",
+          "indisponivel": "the catalog did not respond — try again",
+          "geral": "could not add — try again"
+        }
+      },
       "remover": "remove",
       "removerConfirmacao": "Remove this series from the list?",
       "curtida": {

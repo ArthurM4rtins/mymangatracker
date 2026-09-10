@@ -34,10 +34,11 @@ export type GrupoDaColecao = {
 
 const CORES = ["#733c35", "#344d53", "#586044", "#71516b", "#865f33", "#364868", "#55504a"];
 
-export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classeGrade = "grid gap-4 sm:grid-cols-2", andarSimples = false, maximoPorAndar }: {
+export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", classeGrade = "grid gap-4 sm:grid-cols-2", andarSimples = false, maximoPorAndar }: {
   itens: ItemDaColecao[];
   grupos?: GrupoDaColecao[];
   titulo: string;
+  /** A prateleira é o que o Kidoku tem de próprio: ela abre por padrão (#241). */
   inicial?: "grade" | "prateleira";
   classeGrade?: string;
    /**
@@ -129,7 +130,7 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classe
             <p className={estilos.dica}>{t("dica")}</p>
             {andares.filter((grupo) => grupo.itens.length > 0).map((grupo, indice) => (
               <Prateleira key={grupo.id} grupo={grupo} numero={indice + 1} aoAbrir={setSelecionado}
-                simples={andarSimples} />
+                simples={andarSimples} selecionado={selecionado} />
             ))}
           </div>
         )}
@@ -142,11 +143,16 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classe
   );
 }
 
-function Prateleira({ grupo, numero, aoAbrir, simples }: {
+/** A partir de quantos pixels o gesto do mouse deixa de ser clique e vira arraste. */
+const ARRASTE_MINIMO = 6;
+
+function Prateleira({ grupo, numero, aoAbrir, simples, selecionado }: {
   grupo: GrupoDaColecao;
   numero: number;
   aoAbrir: (id: number) => void;
   simples: boolean;
+  /** A obra com o painel aberto, em qualquer andar da coleção. */
+  selecionado: number | null;
 })
 {
   const t = useTranslations("colecao");
@@ -155,7 +161,16 @@ function Prateleira({ grupo, numero, aoAbrir, simples }: {
   const trilhoId = useId();
   const [limites, setLimites] = useState({ inicio: true, fim: true });
   const arraste = useRef<{ x: number; scroll: number; moveu: boolean } | null>(null);
-  const suprimirClique = useRef(false);
+  // Onde o ponteiro desceu. Quem decide se o clique foi arraste é o próprio
+  // clique, comparando a sua posição com esta: uma bandeira ligada durante o
+  // arraste sobrevive ao gesto que termina fora do trilho — o clique que a
+  // apagaria nunca chega, e o clique SEGUINTE é que era engolido (#241).
+  const descida = useRef<{ x: number; y: number } | null>(null);
+
+  // Enquanto o painel está aberto, quem fica em evidência é a obra dele: o
+  // `showModal` leva o foco embora do livro, e sem isto o andar voltava para o
+  // primeiro livro no instante em que o painel abria (#241).
+  const emEvidencia = grupo.itens.some((obra) => obra.id === selecionado) ? selecionado : null;
 
   useEffect(() => {
     const lista = trilho.current;
@@ -224,7 +239,7 @@ function Prateleira({ grupo, numero, aoAbrir, simples }: {
             botoes[proximo]?.scrollIntoView({ block: "nearest", inline: "nearest" });
           }}
           onPointerDown={(evento) => {
-            suprimirClique.current = false;
+            descida.current = { x: evento.clientX, y: evento.clientY };
             if (evento.pointerType !== "mouse" || evento.button !== 0) return;
             arraste.current = { x: evento.clientX, scroll: evento.currentTarget.scrollLeft, moveu: false };
           }}
@@ -232,21 +247,28 @@ function Prateleira({ grupo, numero, aoAbrir, simples }: {
             const gesto = arraste.current;
             if (!gesto) return;
             const distancia = evento.clientX - gesto.x;
-            if (Math.abs(distancia) > 6) gesto.moveu = true;
+            if (Math.abs(distancia) > ARRASTE_MINIMO) gesto.moveu = true;
             if (gesto.moveu) {
               evento.currentTarget.setPointerCapture(evento.pointerId);
               evento.currentTarget.scrollLeft = gesto.scroll - distancia;
-              suprimirClique.current = true;
             }
           }}
           onPointerUp={() => { arraste.current = null; }}
-          onPointerCancel={() => { arraste.current = null; suprimirClique.current = false; }}
+          onPointerCancel={() => { arraste.current = null; descida.current = null; }}
           onPointerLeave={() => { arraste.current = null; }}
           onClickCapture={(evento) => {
-            if (suprimirClique.current) { evento.preventDefault(); evento.stopPropagation(); suprimirClique.current = false; }
+            const inicio = descida.current;
+            descida.current = null;
+            // Enter e Espaço também chegam como clique, sem ponteiro nenhum
+            // (`detail` zero) — esses nunca são arraste.
+            if (!inicio || evento.detail === 0) return;
+            if (Math.hypot(evento.clientX - inicio.x, evento.clientY - inicio.y) <= ARRASTE_MINIMO) return;
+            evento.preventDefault();
+            evento.stopPropagation();
           }}>
           {grupo.itens.map((obra, indice) => (
-            <li key={obra.id} className={estilos.livro} data-vitrine={indice === 0 || undefined}
+            <li key={obra.id} className={estilos.livro}
+              data-vitrine={(emEvidencia === null ? indice === 0 : obra.id === emEvidencia) || undefined}
               onTransitionEnd={(evento) => {
                 if (evento.target === evento.currentTarget && evento.propertyName === "width"
                   && evento.currentTarget.contains(document.activeElement)) {

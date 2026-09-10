@@ -42,18 +42,29 @@
 .capa::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #0006, #ffffff25 3%, #0002 6%, transparent 10%); border: 1px solid #0002; border-radius: inherit; }
 .capa img { object-fit: cover; }
 .tituloCapa { position: absolute; inset: auto 0 0; padding: 30px 12px 13px; background: linear-gradient(transparent, #000d); color: white; font-size: 12px; line-height: 1.4; font-weight: 600; }
-.livro[data-vitrine], .livro:focus-within { width: var(--largura-aberta, 168px); }
-.livro[data-vitrine] .capa, .livro:focus-within .capa { opacity: 1; }
-/* Só um livro aberto por vez: quando outro abre, a vitrine volta a ser lombada,
-   e a largura total do trilho não muda — o último livro abre sem estourar. */
-.trilho:has(.livro:focus-within) .livro[data-vitrine]:not(:focus-within) { width: var(--largura-lombada); }
-.trilho:has(.livro:focus-within) .livro[data-vitrine]:not(:focus-within) .capa { opacity: 0; }
-.livro:focus-within .volume { transform: translateY(-10px) rotateY(-8deg); box-shadow: 9px 12px 14px #0003; }
+/* `:focus-visible`, não `:focus-within` (#241): ao fechar o painel o foco volta
+   para o botão que o abriu, e com `:focus-within` aquele livro ficava aberto
+   para sempre depois de um clique de mouse. O teclado continua abrindo o livro
+   que recebe o foco — é assim que quem navega por Tab sabe onde está. */
+.livro[data-vitrine], .livro:has(:focus-visible) { width: var(--largura-aberta, 168px); }
+.livro[data-vitrine] .capa, .livro:has(:focus-visible) .capa { opacity: 1; }
+/* Só um livro aberto por vez: quando outro abre, os demais voltam a ser lombada,
+   e a largura total do trilho não muda — o último livro abre sem estourar. As
+   regras miram QUALQUER livro aberto, não só a vitrine: mirando só nela, o livro
+   focado e o livro sob o mouse abriam juntos e o andar estourava (#241).
+   `:has()` não aninha dentro de `:has()` — o seletor inteiro seria descartado —,
+   e aqui não precisa: o único focável dentro do trilho é o botão do livro. */
+.trilho:has(:focus-visible) .livro:not(:has(:focus-visible)):not(:hover) { width: var(--largura-lombada); }
+.trilho:has(:focus-visible) .livro:not(:has(:focus-visible)):not(:hover) .capa { opacity: 0; }
+.livro:has(:focus-visible) .volume { transform: translateY(-10px) rotateY(-8deg); box-shadow: 9px 12px 14px #0003; }
 @media (hover: hover) and (pointer: fine) {
   .livro:hover { width: var(--largura-aberta, 168px); }
   .livro:hover .capa { opacity: 1; }
-  .trilho:has(.livro:hover) .livro[data-vitrine]:not(:hover) { width: var(--largura-lombada); }
-  .trilho:has(.livro:hover) .livro[data-vitrine]:not(:hover) .capa { opacity: 0; }
+  .trilho:has(.livro:hover) .livro:not(:hover) { width: var(--largura-lombada); }
+  .trilho:has(.livro:hover) .livro:not(:hover) .capa { opacity: 0; }
+  /* O mouse manda enquanto está na prateleira: o livro que ficou com o foco
+     do teclado baixa junto com os outros, senão sobrava uma lombada erguida. */
+  .trilho:has(.livro:hover) .livro:not(:hover) .volume { transform: none; box-shadow: 3px 0 5px #0003, inset 1px 0 #ffffff30; }
   .livro:hover .volume { transform: translateY(-10px) rotateY(-8deg); box-shadow: 9px 12px 14px #0003; }
 }
 .base { position: relative; height: 15px; border-top: 2px solid color-mix(in srgb, var(--superficie) 75%, var(--borda)); border-bottom: 1px solid var(--borda); border-radius: 1px 1px 3px 3px; background: linear-gradient(var(--borda), color-mix(in srgb, var(--borda) 65%, var(--fundo))); box-shadow: 0 13px 18px -12px color-mix(in srgb, var(--texto) 45%, transparent); }
@@ -88,5 +99,5 @@
 @media (prefers-reduced-motion: reduce) {
   .livro, .volume, .capa { transition: none; }
   .painel { animation: none; }
-  .livro:focus-within .volume, .livro:hover .volume { transform: none; }
+  .livro:has(:focus-visible) .volume, .livro:hover .volume { transform: none; }
 }

@@ -361,11 +361,13 @@ async function PainelDoUsuario({
   if (minha === null)
   {
     return (
-      <section className="flex items-center gap-4 rounded-lg border border-borda bg-superficie p-4">
+      <section className="flex flex-wrap items-center gap-4 rounded-lg border border-borda bg-superficie p-4">
         <BotaoEstante anilistId={anilistId} atualizarAoSalvar />
         <span className="text-sm text-texto-suave">
           {t("painel.adicionar")}
         </span>
+        {/* Lista é curadoria, não leitura (#237): dá para listar sem ter na estante. */}
+        <AdicionarALista anilistId={anilistId} />
       </section>
     );
   }

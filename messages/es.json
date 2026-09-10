@@ -397,7 +397,24 @@
         "titulo": "Lista"
       },
       "autoria": "por <autor>{username}</autor> · {n, plural, one {# obra} other {# obras}}",
-      "vazia": "Lista vacía — añade obras desde el botón de lista en la página de cada obra.",
+      "vazia": "Lista vacía por ahora.",
+      "vaziaPropria": "Lista vacía — busca una obra arriba para añadirla.",
+      "busca": {
+        "rotulo": "Buscar obra para añadir",
+        "placeholder": "Buscar obra para añadir…",
+        "buscando": "Buscando…",
+        "semResultado": "No se encontró nada para \"{termo}\".",
+        "indisponivel": "AniList no respondió ahora. Inténtalo de nuevo en unos instantes.",
+        "muitosPedidos": "Demasiadas búsquedas desde aquí. Espera un momento y vuelve a intentarlo.",
+        "adicionar": "+ añadir",
+        "jaNaLista": "✓ en la lista",
+        "erros": {
+          "cheia": "la lista llegó a su límite de obras",
+          "limite": "demasiadas adiciones en poco tiempo — espera un poco",
+          "indisponivel": "el catálogo no respondió — inténtalo de nuevo",
+          "geral": "no se pudo añadir — inténtalo de nuevo"
+        }
+      },
       "remover": "quitar",
       "removerConfirmacao": "¿Quitar esta obra de la lista?",
       "curtida": {

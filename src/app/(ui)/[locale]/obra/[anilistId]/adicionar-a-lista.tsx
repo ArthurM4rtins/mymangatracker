@@ -2,7 +2,8 @@
 
 /**
  * O botão de listas da página da obra: abre as listas do usuário com o
- * "já contém" marcado; clicar alterna a obra (entra/sai).
+ * "já contém" marcado; clicar põe (POST) ou tira (DELETE) a obra da lista.
+ * Dois verbos, não toggle (#237): a tela sabe o estado e pede o que quer.
  */
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -21,8 +22,8 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
   const [aberto, setAberto] = useState(false);
   const [listas, setListas] = useState<MinhaLista[] | null>(null);
   const [erro, setErro] = useState<string | null>(null);
-  // Em voo (#148, item 13): a rota é um toggle, então dois cliques rápidos
-  // viravam adicionar e remover, e o item sumia sem a pessoa querer desfazer.
+  // Em voo (#148, item 13): um clique por vez, para o estado local não
+  // atropelar a resposta que ainda não chegou.
   const [emVoo, setEmVoo] = useState<string | null>(null);
 
   async function abrir()
@@ -67,7 +68,7 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
     try
     {
       const resposta = await fetch(`/api/v1/listas/${lista.listaId}/itens`, {
-        method: "POST",
+        method: lista.jaContem ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ anilistId }),
       });
@@ -77,13 +78,13 @@ export function AdicionarALista({ anilistId }: { anilistId: number })
         return;
       }
 
-      const corpo = await resposta.json();
+      const contem = !lista.jaContem;
       setListas(function (atuais)
       {
         return (atuais ?? []).map(function (item)
         {
           return item.listaId === lista.listaId
-            ? { ...item, jaContem: corpo.contem }
+            ? { ...item, jaContem: contem }
             : item;
         });
       });
