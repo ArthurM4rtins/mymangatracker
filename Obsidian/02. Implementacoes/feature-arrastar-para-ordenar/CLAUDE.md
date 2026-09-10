@@ -28,16 +28,25 @@ Junto veio o Salvar explícito: ordem e remoção passam a ser rascunho.
   no meio do gesto não tem efeito, o valor vale desde o `touchstart`.
 - **Durante o arraste os OUTROS livros fecham.** Larguras viram lombadas iguais
   e estáveis; com vários abertos o alvo do solto vira loteria.
-- **O livro agarrado segue o ponteiro** pelo ponto exato onde a pegada caiu, e
-  mantém a largura que tinha na hora. Encolhendo junto com os outros, mover
-  pouco não mexia nada na tela e agarrar pela capa aberta encolhia 168px para
-  46px debaixo da mão — parecia que o gesto não pegava.
+- **O livro agarrado fecha como os outros e segue o ponteiro.** Quem resolve o
+  "nada se mexe" é ele acompanhar o cursor, não o tamanho: arrastar uma capa
+  aberta pela prateleira lê estranho. Solto na primeira posição ele reabre
+  sozinho, porque volta a ser a vitrine do andar.
+- **A pegada é guardada como fração da largura, não em pixel.** O livro fecha ao
+  ser agarrado, e 138px medidos numa capa de 168px cairiam fora de uma lombada
+  de 46px.
+- **Ponteiro fora de qualquer lombada cai na ponta do andar.** Ao agarrar, a
+  prateleira inteira fecha e encolhe, e o cursor que mirava um livro sobra do
+  lado de fora; sem a ponta, arrastar para o fim não respondia.
 - **O livro agarrado sai do teste de acerto** (`pointer-events: none`): o cursor
   está grudado nele, então ele seria sempre o resultado e nenhum destino
   apareceria.
-- **A medida do deslocamento roda num quadro à parte.** A troca de posição
-  acontece no mesmo movimento; medindo na hora, o valor é o de ANTES da troca e
-  o livro escapa do cursor por um quadro a cada vizinho cruzado (medido: 55px).
+- **A medida do deslocamento roda num efeito de layout**, disparado por
+  [arrastado, itens]. Agarrar fecha o livro e cruzar um vizinho muda a posição
+  de fila: nas duas o DOM muda depois da medida feita no movimento, e o livro
+  saía do cursor por um quadro (medido: 137px ao agarrar uma capa aberta, 55px
+  a cada troca). Efeito de layout roda depois do commit e antes de pintar, e
+  ainda funciona em aba oculta, onde requestAnimationFrame nem dispara.
 - **A vaga abre ao vivo**: a ordem é reescrita a cada vizinho cruzado, então a
   prateleira que se vê antes de soltar já é a final.
 - Andar é preenchido por largura, então mover um livro pode empurrar outro para
@@ -85,8 +94,10 @@ Junto veio o Salvar explícito: ordem e remoção passam a ser rascunho.
 
 - 717 testes, lint e `tsc` limpos. Cada commit compila sozinho (provado com
   `git stash` na árvore do commit do gesto).
-- O livro arrastado foi medido a cada movimento: o cursor fica cravado nos
-  mesmos 138px dentro do livro em todas as trocas, e a largura fica em 168px.
+- O livro arrastado foi medido a cada movimento: pego numa capa aberta de 168px
+  na fração 0,82, vira lombada de 46px e o cursor fica cravado em 0,82 dela em
+  todos os passos. Arrastado para além da última lombada, foi para o fim da
+  fila; ao soltar, o que ficou em primeiro reabriu em 168px.
 - Chromium local, lista própria: arrastar o terceiro livro para a primeira
   posição reordenou na tela; o painel apareceu com "1 mudança por salvar";
   Salvar gravou (`PUT ... /ordem 200`) e a ordem sobreviveu ao recarregar.
