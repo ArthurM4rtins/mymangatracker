@@ -54,9 +54,18 @@ não lê sessão e não vai dinâmica.
   interface não é decorativa, quem usa leitor de tela precisa do texto.
 - Sem número de versão da extensão na página: sai de sincronia sozinho.
 
+## Feito
+
+Página, cinco idiomas, link do rodapé e as quatro capturas — popup sem sessão,
+popup em uso, badge âmbar e badge verde. Conferida na tela nos cinco idiomas.
+
+No caminho apareceu um defeito na própria extensão: o par site→obra só era
+gravado quando a resposta era 200, e o `nao_avanca` responde 409 — então obra já
+lida além daquele capítulo nunca pareava, e o badge nunca acendia naquele site.
+A decisão virou `deveParear` no `comum.js`, com teste.
+
 ## Pendências
 
-- As três capturas (lista abaixo).
 - Ícone próprio da extensão continua pendente no `extension/README.md`.
 - No dia da publicação: preencher `LOJA_DA_EXTENSAO` e mergear.
 
