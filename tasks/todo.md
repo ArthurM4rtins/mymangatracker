@@ -1137,3 +1137,61 @@ reais, duas contas. Cinco PRs na `main`, todos com o job do CI verde antes do me
 
 Conta `provadona` (`provadona@teste.local`): senha regravada nesta sessao, so no banco
 local, anotada em `tasks/lessons.md`. Berserk esta no cap. 3 depois dos testes.
+
+## Sessao 09/09 — prateleira vira estante, e o AniList fora
+
+### Contexto que manda em tudo
+
+O AniList responde **403** no GraphQL desde 06/09 (#215, aberta). Todo o catalogo,
+a home, a pagina da obra e agora o adicionar na estante vivem do **Kitsu**, que tem
+63.065 obras contra as ~300 mil do AniList. O espelho proprio (#219, desenho no
+Obsidian em `02. Implementacoes/feature-acervo-proprio/`) segue esperando o AniList
+voltar, e a pendencia de tamanho do banco continua de pe.
+
+### Fechado
+
+- **#222, #225, #229, #234** — a prateleira virou estante de verdade. Sem cabecalho
+  "01 · N obras" e sem setas; os andares ficam colados; o trilho nao rola. A
+  prateleira **mede a propria largura** e enche cada andar com o que cabe
+  (`componentes/andares.ts`, com teste em `tests/ui/`). So um livro aberto por vez:
+  quando outro abre, a vitrine fecha, entao a largura total nao muda e o ultimo
+  livro abre sem estourar. Home: 36 populares, teto de 9 por andar — o andar fecha
+  **cheio** apertando a capa aberta ate 120 px. Catalogo: sem teto, cada andar leva
+  o que couber. Grupo com nome proprio (estante por status, laboratorio) mantem so
+  o nome em cima do primeiro andar — **decisao do usuario**, contra tirar o nome ou
+  manter a contagem.
+- **#227** — "+ Estante" respondia "nao deu" para toda obra fora do cache:
+  `adicionarNaEstante` e `obraParaPagina` so sabiam buscar no AniList. Agora descem
+  para o Kitsu. O Kitsu nao conhecer a obra **nao** vira "nao encontrada" quando ha
+  cache velho: o acervo dele e menor.
+- **#228** — o catalogo dizia "chegou ao fim" com ~55 obras. Duas causas: a pagina
+  pedia 36 da fonte e o dominio descartava parte (`oneshot`, `oel`, obra sem
+  mapeamento), entao o offset seguinte pulava o descartado; e `temMais` era a
+  contagem depois do descarte. Agora a pagina cobre uma **fatia fixa de 60 obras da
+  fonte** e o `temMais` e resposta da fonte. Provado: 4 paginas, 230 obras
+  distintas, nenhuma repetida. A vitrine do Kitsu passou a ser lembrada por 30 s,
+  como a do AniList.
+
+### Aberto
+
+- **#215** — AniList fora, sem previsao. Nada a fazer alem de esperar e monitorar.
+- **#176** (recuperacao de senha) e **#16** (curadoria narrativa), os dois no backlog.
+
+### Proxima sessao
+
+O usuario quer continuar em **design de telas e botoes** — pedido dele ao encerrar
+em 09/09. Nada especificado ainda; esperar ele apontar as telas.
+
+### Como provar cada coisa
+
+`pnpm dev` sobe **com banco e sessao logada** (usuario `prova146b1788961683`): e
+onde se prova estante, listas, perfil e o botao de adicionar. O build de producao
+local (`pnpm build && pnpm start --port 3002`) e o certo para medir HTML e payload,
+e o unico onde o laboratorio da prateleira **nao** existe (`notFound()` fora de
+desenvolvimento). Aba do Chrome minimizada mente: congela transicao CSS, nao casa
+`:focus` e faz o screenshot estourar o tempo — ver `tasks/lessons.md`.
+
+### Dado de teste
+
+My Hero Academia entrou na estante da conta de desenvolvimento como **Planejado**,
+ao provar o #227 de ponta a ponta. Da para tirar pela propria tela da obra.
