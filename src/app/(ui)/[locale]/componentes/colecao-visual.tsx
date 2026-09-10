@@ -130,7 +130,7 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
             <p className={estilos.dica}>{t("dica")}</p>
             {andares.filter((grupo) => grupo.itens.length > 0).map((grupo, indice) => (
               <Prateleira key={grupo.id} grupo={grupo} numero={indice + 1} aoAbrir={setSelecionado}
-                simples={andarSimples} />
+                simples={andarSimples} selecionado={selecionado} />
             ))}
           </div>
         )}
@@ -143,11 +143,13 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
   );
 }
 
-function Prateleira({ grupo, numero, aoAbrir, simples }: {
+function Prateleira({ grupo, numero, aoAbrir, simples, selecionado }: {
   grupo: GrupoDaColecao;
   numero: number;
   aoAbrir: (id: number) => void;
   simples: boolean;
+  /** A obra com o painel aberto, em qualquer andar da coleção. */
+  selecionado: number | null;
 })
 {
   const t = useTranslations("colecao");
@@ -157,6 +159,11 @@ function Prateleira({ grupo, numero, aoAbrir, simples }: {
   const [limites, setLimites] = useState({ inicio: true, fim: true });
   const arraste = useRef<{ x: number; scroll: number; moveu: boolean } | null>(null);
   const suprimirClique = useRef(false);
+
+  // Enquanto o painel está aberto, quem fica em evidência é a obra dele: o
+  // `showModal` leva o foco embora do livro, e sem isto o andar voltava para o
+  // primeiro livro no instante em que o painel abria (#241).
+  const emEvidencia = grupo.itens.some((obra) => obra.id === selecionado) ? selecionado : null;
 
   useEffect(() => {
     const lista = trilho.current;
@@ -247,7 +254,8 @@ function Prateleira({ grupo, numero, aoAbrir, simples }: {
             if (suprimirClique.current) { evento.preventDefault(); evento.stopPropagation(); suprimirClique.current = false; }
           }}>
           {grupo.itens.map((obra, indice) => (
-            <li key={obra.id} className={estilos.livro} data-vitrine={indice === 0 || undefined}
+            <li key={obra.id} className={estilos.livro}
+              data-vitrine={(emEvidencia === null ? indice === 0 : obra.id === emEvidencia) || undefined}
               onTransitionEnd={(evento) => {
                 if (evento.target === evento.currentTarget && evento.propertyName === "width"
                   && evento.currentTarget.contains(document.activeElement)) {
