@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
+import { FonteDosDados } from "./fonte-dos-dados";
 import { LinkDeRelato } from "./link-de-relato";
 
 /**
@@ -70,6 +71,9 @@ export async function Rodape({
           <Coluna titulo={t("dados.titulo")}>
             <li className="max-w-[16rem] leading-relaxed">{t("dados.anilist")}</li>
             <li className="max-w-[16rem] leading-relaxed">{t("dados.kitsu")}</li>
+            {/* De qual fonte esta vindo AGORA. So para quem esta logado: a #148
+                decidiu nao publicar estado de dependencia para anonimo. */}
+            {logado && <FonteDosDados />}
           </Coluna>
         </div>
       </div>

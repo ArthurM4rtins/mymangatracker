@@ -46,7 +46,10 @@
       "anilist": "Catálogo e capas do AniList.",
       "kitsu": "Kitsu como fonte reserva quando o AniList não responde."
     },
-    "direitos": "© {ano} Kidoku · trabalho acadêmico"
+    "direitos": "© {ano} Kidoku · trabalho acadêmico",
+    "fonte": {
+      "agora": "Vindo do {fonte} agora"
+    }
   },
   "comum": {
     "salvar": "Salvar",
@@ -206,8 +209,8 @@
     "erros": {
       "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes.",
       "muitosPedidos": "Buscas demais a partir daqui. Espere um momento e tente de novo.",
-      "doCache": "Resultados do que já visitamos: o AniList não respondeu agora, então o catálogo está limitado às obras que já passaram por aqui.",
-      "doKitsu": "O AniList não respondeu agora, então estes resultados vêm do Kitsu. Alguns títulos podem aparecer romanizados."
+      "doCache": "Resultados limitados às obras que já passaram por aqui.",
+      "doKitsu": "Alguns títulos podem aparecer romanizados."
     },
     "vazio": {
       "semTermo": "O catálogo não respondeu nada agora. Tente de novo em instantes.",
@@ -371,9 +374,6 @@
       "obras": "{n, plural, =1 {obra} other {obras}}",
       "curtidas": "{n, plural, =1 {curtida} other {curtidas}}",
       "curtidasLeitorDeTela": "{n, plural, =1 {curtida} other {curtidas}}"
-    },
-    "rodape": {
-      "verificado": "{estado} · verificado em {quando}"
     }
   },
   "listas": {

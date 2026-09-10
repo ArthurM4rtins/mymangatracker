@@ -1,6 +1,8 @@
 .colecao { min-width: 0; }
-.barra { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.75rem; }
-.contagem { color: var(--texto-suave); font-size: .8rem; }
+/* A barra só carrega o seletor de visualização, então ele fica à direita
+   sozinho. A contagem de obras saiu daqui (#251): as obras estão logo abaixo e
+   o número não dizia nada que a tela já não mostrasse. */
+.barra { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 1rem; margin-bottom: 1.75rem; }
 .modos { display: flex; padding: 4px; border: 1px solid var(--borda); border-radius: 9px; gap: 3px; }
 .modos button { display: flex; align-items: center; gap: .5rem; padding: .55rem .85rem; border-radius: 5px; color: var(--texto-suave); font-size: .8rem; cursor: pointer; }
 .modos button[aria-pressed="true"] { background: var(--texto); color: var(--fundo); }
