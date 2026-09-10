@@ -117,16 +117,38 @@ function montar(corpo: Resposta): MediaDoAniList[]
   return obras;
 }
 
-export async function buscarNoKitsu(termo: string): Promise<MediaDoAniList[]>
+/**
+ * Quantas obras uma página nossa tem. O Kitsu entrega no máximo 20 por pedido,
+ * então cada página nossa são dois pedidos dele, em sequência — o segundo só
+ * sai se o primeiro veio cheio.
+ */
+export const OBRAS_POR_PAGINA = 36;
+
+export async function buscarNoKitsu(termo: string, pagina = 1): Promise<MediaDoAniList[]>
 {
   const limpo = termo.trim();
+  const inicio = (Math.max(1, pagina) - 1) * OBRAS_POR_PAGINA;
+  const obras: MediaDoAniList[] = [];
 
-  const caminho = limpo === ""
-    // Sem termo, as mais lidas — é a vitrine possível sem o AniList.
-    ? `?page%5Blimit%5D=${POR_PAGINA}&sort=-userCount&include=mappings`
-    : `?page%5Blimit%5D=${POR_PAGINA}&filter%5Btext%5D=${encodeURIComponent(limpo)}&include=mappings`;
+  for (let offset = inicio; offset < inicio + OBRAS_POR_PAGINA; offset += POR_PAGINA)
+  {
+    const limite = Math.min(POR_PAGINA, inicio + OBRAS_POR_PAGINA - offset);
+    const base = `?page%5Blimit%5D=${limite}&page%5Boffset%5D=${offset}&include=mappings`;
+    const caminho = limpo === ""
+      // Sem termo, as mais lidas — é a vitrine possível sem o AniList.
+      ? `${base}&sort=-userCount`
+      : `${base}&filter%5Btext%5D=${encodeURIComponent(limpo)}`;
 
-  return montar(await pedir(caminho));
+    const lote = montar(await pedir(caminho));
+    obras.push(...lote);
+
+    if (lote.length < limite)
+    {
+      break;
+    }
+  }
+
+  return obras;
 }
 
 /**

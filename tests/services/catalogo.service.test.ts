@@ -38,7 +38,7 @@ describe("buscarNoCatalogo com termo ou filtro", function ()
 
     const resultado = await buscarNoCatalogo(filtro, deps);
 
-    expect(deps.filtrado).toHaveBeenCalledWith(filtro);
+    expect(deps.filtrado).toHaveBeenCalledWith(filtro, 1);
     expect(resultado).toEqual({ estado: "ok", termo: "vinland", obras: [OBRA] });
     expect(deps.populares).not.toHaveBeenCalled();
   });
@@ -210,7 +210,7 @@ describe("fallback para o cache quando o AniList cai", function ()
     );
 
     expect(resultado).toEqual({ estado: "cache", termo: "vinland", obras: [OBRA] });
-    expect(doCache).toHaveBeenCalledWith("vinland");
+    expect(doCache).toHaveBeenCalledWith("vinland", 1);
   });
 
   it("a vitrine sem termo também cai no cache", async function ()
@@ -288,7 +288,7 @@ describe("Kitsu como fallback do AniList", function ()
     );
 
     expect(resultado).toEqual({ estado: "kitsu", termo: "vagabond", obras: [OUTRA] });
-    expect(noKitsu).toHaveBeenCalledWith("vagabond");
+    expect(noKitsu).toHaveBeenCalledWith("vagabond", 1);
   });
 
   it("com o AniList de pe, o Kitsu nem e consultado", async function ()
@@ -342,5 +342,53 @@ describe("Kitsu como fallback do AniList", function ()
     );
 
     expect(resultado).toEqual({ estado: "indisponivel", termo: "vinland" });
+  });
+});
+
+// Prateleiras com mais andares: a home mostra 36 populares em 4 andares, e o
+// catalogo carrega mais paginas sob demanda. A pagina e' repassada as fontes;
+// so a primeira pagina da vitrine e' lembrada, porque e' a unica igual para
+// todo mundo.
+describe("paginacao do catalogo", function ()
+{
+  it("repassa a pagina para a busca filtrada", async function ()
+  {
+    const deps = fakeDeps();
+    const filtro = interpretarFiltros({ q: "vinland" });
+
+    await buscarNoCatalogo(filtro, deps, undefined, 3);
+
+    expect(deps.filtrado).toHaveBeenCalledWith(filtro, 3);
+  });
+
+  it("repassa a pagina para a vitrine", async function ()
+  {
+    const deps = fakeDeps();
+
+    await buscarNoCatalogo(interpretarFiltros({}), deps, undefined, 2);
+
+    expect(deps.populares).toHaveBeenCalledWith(2);
+  });
+
+  it("sem pagina, e' a primeira", async function ()
+  {
+    const deps = fakeDeps();
+
+    await buscarNoCatalogo(interpretarFiltros({}), deps);
+
+    expect(deps.populares).toHaveBeenCalledWith(1);
+  });
+
+  it("a pagina chega ao Kitsu e ao cache no fallback", async function ()
+  {
+    const deps = fakeDeps();
+    deps.populares.mockRejectedValue(new Error("fora"));
+    const noKitsu = vi.fn(async function (): Promise<typeof OBRA[]> { return []; });
+    const doCache = vi.fn(async function () { return [OBRA]; });
+
+    await buscarNoCatalogo(interpretarFiltros({}), { ...deps, noKitsu, doCache }, undefined, 2);
+
+    expect(noKitsu).toHaveBeenCalledWith("", 2);
+    expect(doCache).toHaveBeenCalledWith("", 2);
   });
 });

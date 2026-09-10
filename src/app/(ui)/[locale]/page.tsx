@@ -32,7 +32,11 @@ import { ContinuarLeitura } from "./estante/continuar-leitura";
 export const dynamic = "force-dynamic";
 
 const LIMITE_CONTINUAR = 4;
-const LIMITE_POPULARES = 12;
+// 36 populares em quatro andares de nove na prateleira (decisao de 09/09/2026).
+// Custo medido: ~700 B de HTML por obra e capa de ~45 KB carregada so quando
+// entra na tela, entao 36 em vez de 12 pesa ~17 KB a mais de HTML.
+const LIMITE_POPULARES = 36;
+const OBRAS_POR_ANDAR = 9;
 
 /** As dependências que têm rótulo traduzido; o health check pode listar outras. */
 const DEPENDENCIAS_COM_ROTULO = ["database", "anilist"] as const;
@@ -57,6 +61,15 @@ export default async function Home()
   ]);
 
   const resumoDaSaude = t(`saude.resumo.${saude.status}`);
+  const itensPopulares = temObras(populares)
+    ? populares.obras.slice(0, LIMITE_POPULARES).map((obra) => ({
+      id: obra.anilistId,
+      titulo: obra.titleEnglish ?? obra.titleRomaji,
+      capa: obra.coverImageUrl ?? null,
+      detalhe: <CartaoObra anilistId={obra.anilistId}
+        titulo={obra.titleEnglish ?? obra.titleRomaji} capa={obra.coverImageUrl ?? null} />,
+    }))
+    : [];
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-12 px-6 py-12">
@@ -113,12 +126,11 @@ export default async function Home()
               <ColecaoVisual
                 titulo={t("populares.titulo")}
                 classeGrade="grid grid-cols-3 gap-3 sm:grid-cols-4"
-                itens={populares.obras.slice(0, LIMITE_POPULARES).map((obra) => ({
-                  id: obra.anilistId,
-                  titulo: obra.titleEnglish ?? obra.titleRomaji,
-                  capa: obra.coverImageUrl ?? null,
-                  detalhe: <CartaoObra anilistId={obra.anilistId}
-                    titulo={obra.titleEnglish ?? obra.titleRomaji} capa={obra.coverImageUrl ?? null} />,
+                itens={itensPopulares}
+                grupos={emAndares(itensPopulares, OBRAS_POR_ANDAR).map((andar, indice) => ({
+                  id: `populares-${indice + 1}`,
+                  titulo: t("populares.andar", { n: indice + 1 }),
+                  itens: andar,
                 }))}
               />
               <Link
@@ -166,6 +178,19 @@ export default async function Home()
       </footer>
     </main>
   );
+}
+
+/** Corta a lista em andares de `tamanho`; o último pode vir mais curto. */
+function emAndares<T>(itens: T[], tamanho: number): T[][]
+{
+  const andares: T[][] = [];
+
+  for (let inicio = 0; inicio < itens.length; inicio += tamanho)
+  {
+    andares.push(itens.slice(inicio, inicio + tamanho));
+  }
+
+  return andares;
 }
 
 /** Os estados de `buscarNoCatalogo` que vêm com obras, venham de onde vierem. */
