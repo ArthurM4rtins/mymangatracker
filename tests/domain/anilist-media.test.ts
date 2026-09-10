@@ -303,7 +303,7 @@ describe("mapearAutor", () =>
       descricao: "Autor de Slam Dunk.\nFã de basquete.",
       obras: [
         {
-          anilistId: 30656,
+          chave: "anilist:30656",
           titleRomaji: "Vagabond",
           titleEnglish: null,
           coverImageUrl: "https://capa/vagabond.jpg",
@@ -311,7 +311,7 @@ describe("mapearAutor", () =>
           papel: "Story & Art",
         },
         {
-          anilistId: 30051,
+          chave: "anilist:30051",
           titleRomaji: "Slam Dunk",
           titleEnglish: null,
           coverImageUrl: null,
@@ -388,14 +388,14 @@ describe("mapearAutor — só autoria", () =>
 {
   it("deixa de fora a obra onde o staff foi só assistente", () =>
   {
-    const ids = mapearAutor(HARA)?.obras.map((obra) => obra.anilistId);
+    const ids = mapearAutor(HARA)?.obras.map((obra) => obra.chave);
 
-    expect(ids).toEqual([46765, 99999]);
+    expect(ids).toEqual(["anilist:46765", "anilist:99999"]);
   });
 
   it("obra com edge de assistência e de autoria fica, com o papel de autoria", () =>
   {
-    const mista = mapearAutor(HARA)?.obras.find((obra) => obra.anilistId === 99999);
+    const mista = mapearAutor(HARA)?.obras.find((obra) => obra.chave === "anilist:99999");
 
     expect(mista?.papel).toBe("Story");
   });

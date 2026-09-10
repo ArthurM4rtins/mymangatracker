@@ -79,6 +79,29 @@ export function caminhoDaObra(referencia: ReferenciaDaObra): string
 }
 
 /**
+ * A obra como um texto só: `anilist:30002`, `kitsu:54598`.
+ *
+ * É esta chave que substitui o `anilistId: number` em DTO, chave de lista do
+ * React, corpo de API e conjunto de "já na estante". Um campo e um tipo em cada
+ * ponta, em vez de um objeto aninhado — e greppável, o que importa numa troca
+ * que atravessa o sistema inteiro.
+ */
+export function chaveDaObra(referencia: ReferenciaDaObra): string
+{
+  return `${referencia.fonte}:${referencia.id}`;
+}
+
+/** Nada aqui é de confiança: a chave chega pelo corpo de uma requisição. */
+export function referenciaDaChave(chave: string): ReferenciaDaObra | null
+{
+  const partes = chave.split(":");
+
+  return partes.length === 2
+    ? interpretarReferencia(partes[0], partes[1])
+    : null;
+}
+
+/**
  * A referência de uma linha do banco. Com os dois ids, o AniList manda: é o
  * nome canônico da obra, e mantê-lo estável preserva os links que já existem.
  */

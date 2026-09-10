@@ -1,3 +1,4 @@
+import { chaveDaObra, type ReferenciaDaObra } from "./referencia-da-obra";
 /**
  * Traducao da resposta do AniList para o formato do nosso `Media`.
  *
@@ -19,8 +20,23 @@ export type AutorDaObra = {
   papel: string;
 };
 
-export type MediaDoAniList = {
-  anilistId: number;
+/**
+ * A identidade externa da obra (#254). Pelo menos um dos dois nomes existe, e o
+ * TIPO garante isso — é a mesma regra do `CHECK` da migration, aqui em cima.
+ *
+ * Obra com mapeamento carrega os dois: é a mesma linha com dois nomes. Obra que
+ * só o Kitsu conhece — como "The Beginning After the End" — carrega só o dele.
+ */
+export type IdentidadeDaObra =
+  | { anilistId: number; kitsuId?: number }
+  | { anilistId?: number; kitsuId: number };
+
+/**
+ * O nome ficou histórico: hoje a obra também vem do Kitsu. Trocar o nome mexe
+ * em 22 arquivos e não muda comportamento nenhum, então fica para um commit
+ * mecânico próprio.
+ */
+export type MediaDoAniList = IdentidadeDaObra & {
   type: TipoMedia;
   titleRomaji: string;
   countryOfOrigin?: PaisDeOrigem;
@@ -35,6 +51,17 @@ export type MediaDoAniList = {
   averageScore?: number;
   autores?: AutorDaObra[];
 };
+
+/**
+ * Como esta obra é chamada de fora. Com os dois nomes o AniList manda: é o nome
+ * canônico, e mantê-lo estável preserva os links que já existem.
+ */
+export function referenciaDaObra(obra: IdentidadeDaObra): ReferenciaDaObra
+{
+  return obra.anilistId === undefined
+    ? { fonte: "kitsu", id: obra.kitsuId as number }
+    : { fonte: "anilist", id: obra.anilistId };
+}
 
 /** Papéis do staff que contam como autoria — o resto (tradução etc.) fica fora. */
 const PAPEIS_DE_AUTOR = ["Story", "Art"];
@@ -212,17 +239,23 @@ function mapearAutores(staff: unknown): AutorDaObra[]
  */
 export function semRepetidas(obras: readonly MediaDoAniList[]): MediaDoAniList[]
 {
-  const vistas = new Set<number>();
+  // A chave é a REFERÊNCIA, não o `anilistId` (#254): sem a fonte, duas obras
+  // que só o Kitsu conhece seriam ambas "sem AniList" e uma sumiria — e
+  // `anilistId 8` e `kitsuId 8` são obras diferentes.
+  const vistas = new Set<string>();
   const saida: MediaDoAniList[] = [];
 
   for (const obra of obras)
   {
-    if (vistas.has(obra.anilistId))
+    const referencia = referenciaDaObra(obra);
+    const chave = `${referencia.fonte}:${referencia.id}`;
+
+    if (vistas.has(chave))
     {
       continue;
     }
 
-    vistas.add(obra.anilistId);
+    vistas.add(chave);
     saida.push(obra);
   }
 
@@ -311,7 +344,8 @@ export function mapearRecomendacoes(resposta: unknown): MediaDoAniList[]
 }
 
 export type ObraDoAutor = {
-  anilistId: number;
+  /** A obra pela chave (#254). */
+  chave: string;
   titleRomaji: string;
   titleEnglish: string | null;
   coverImageUrl: string | null;
@@ -418,7 +452,7 @@ export function mapearAutor(resposta: unknown): AutorDoAniList | null
       const inicio = ehObjeto(node.startDate) ? node.startDate.year : undefined;
 
       obras.push({
-        anilistId,
+        chave: chaveDaObra({ fonte: "anilist", id: anilistId }),
         titleRomaji: titulo.romaji,
         titleEnglish: typeof titulo.english === "string" ? titulo.english : null,
         coverImageUrl: typeof capa === "string" ? capa : null,

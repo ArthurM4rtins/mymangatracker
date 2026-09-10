@@ -54,6 +54,14 @@ function texto(valor: unknown): string | undefined
 
 function inteiro(valor: unknown): number | undefined
 {
+  // `Number(null)` e `Number("")` dao 0, e o Kitsu manda `chapterCount: null`
+  // em obra em andamento (#254). Zero capitulos e' mentira; ausencia e' a
+  // verdade, e quem exibe ja sabe omitir o que nao veio.
+  if (valor === null || valor === undefined || valor === "")
+  {
+    return undefined;
+  }
+
   const numero = typeof valor === "number" ? valor : Number(valor);
 
   return Number.isFinite(numero) ? Math.trunc(numero) : undefined;
@@ -61,9 +69,14 @@ function inteiro(valor: unknown): number | undefined
 
 export function traduzirDoKitsu(obra: ObraDoKitsu): MediaDoAniList | null
 {
+  // #254: o mapeamento para o AniList deixa de ser exigido. Ele era a unica
+  // identidade aceita, e sem ele a obra era descartada -- "The Beginning After
+  // the End" nao tem nenhum dos tres registros mapeado. Agora o id do KITSU
+  // basta, e quando ha mapeamento a obra carrega os dois nomes.
   const anilistId = inteiro(obra.anilistId);
+  const kitsuId = inteiro(obra.dados.id);
 
-  if (anilistId === undefined || anilistId <= 0)
+  if (kitsuId === undefined || kitsuId <= 0)
   {
     return null;
   }
@@ -95,7 +108,8 @@ export function traduzirDoKitsu(obra: ObraDoKitsu): MediaDoAniList | null
   const nota = inteiro(atributos.averageRating);
 
   return {
-    anilistId,
+    ...(anilistId === undefined || anilistId <= 0 ? {} : { anilistId }),
+    kitsuId,
     type: formato.type,
     titleRomaji,
     ...(formato.pais === undefined ? {} : { countryOfOrigin: formato.pais }),
