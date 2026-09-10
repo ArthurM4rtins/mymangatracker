@@ -2,8 +2,8 @@
 
 /**
  * A coleção do catálogo com "ver mais": a primeira página vem renderizada pelo
- * servidor, as seguintes chegam pela API quando a pessoa pede, e cada página
- * vira mais andares na prateleira.
+ * servidor, as seguintes chegam pela API quando a pessoa pede, e a prateleira
+ * enche cada andar com o que cabe na largura.
  *
  * Botão, não rolagem automática, de propósito: cada página é uma ida ao AniList
  * (ou ao Kitsu) pela cota compartilhada, e rolagem infinita dispara isso sem a
@@ -17,9 +17,6 @@ import type { ObraDoCatalogoDTO, PaginaDoCatalogoDTO } from "@/server/services/c
 import { CartaoObra } from "../componentes/cartao-obra";
 import { ColecaoVisual, type ItemDaColecao } from "../componentes/colecao-visual";
 import { BotaoEstante } from "./botao-estante";
-
-/** Nove por andar: o que cabe numa prateleira sem rolar, na largura do site. */
-const OBRAS_POR_ANDAR = 9;
 
 export function ColecaoDoCatalogo({ inicial, temMaisInicial, consulta, tituloDoGrupo }: {
   inicial: ObraDoCatalogoDTO[];
@@ -105,21 +102,9 @@ export function ColecaoDoCatalogo({ inicial, temMaisInicial, consulta, tituloDoG
     };
   });
 
-  const grupos = [];
-
-  for (let inicio = 0; inicio < itens.length; inicio += OBRAS_POR_ANDAR)
-  {
-    const numero = inicio / OBRAS_POR_ANDAR + 1;
-    grupos.push({
-      id: `andar-${numero}`,
-      titulo: t("mais.andar", { n: numero }),
-      itens: itens.slice(inicio, inicio + OBRAS_POR_ANDAR),
-    });
-  }
-
   return (
     <section className="flex flex-col gap-4">
-      <ColecaoVisual itens={itens} titulo={tituloDoGrupo} grupos={grupos} andarSimples />
+      <ColecaoVisual itens={itens} titulo={tituloDoGrupo} andarSimples />
 
       {/* O "ver mais" mora no fim do último andar: é onde a pessoa está quando
           acabou de ver o que tinha. */}
