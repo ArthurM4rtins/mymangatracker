@@ -80,7 +80,7 @@ export function AvaliacaoDaObra({
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                chave,
+                obra: chave,
                 rating: dados.rating,
                 review,
                 containsSpoilers: dados.containsSpoilers,

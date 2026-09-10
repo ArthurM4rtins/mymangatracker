@@ -191,7 +191,7 @@ async function Entrada({ entrada }: { entrada: EntradaDaEstante })
           <span className="rounded-full border border-borda px-2 py-0.5">
             {obra.type === "NOVEL" ? c("formato.NOVEL") : rotulo}
           </span>
-          {obra.chapters !== null && (
+          {obra.chapters !== null && obra.chapters > 0 && (
             <span className="tabular-nums">{t("capitulos", { capitulo: String(obra.chapters) })}</span>
           )}
           <EditarProgresso

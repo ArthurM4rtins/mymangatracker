@@ -203,7 +203,9 @@ export default async function PaginaDaObra({ params }: Props)
               })}
               {/* Sem plural de propósito: a tela sempre disse "capítulos", inclusive
                   no one-shot. `{n}` cru também não agrupa milhar, como era antes. */}
-              {obra.chapters !== null && (
+              {/* Zero capítulos não existe: é linha cacheada de quando
+                  `chapterCount` nulo do Kitsu virava 0 (#254). */}
+              {obra.chapters !== null && obra.chapters > 0 && (
                 <span className="tabular-nums">
                   {t("contagem.capitulos", { n: obra.chapters })}
                 </span>

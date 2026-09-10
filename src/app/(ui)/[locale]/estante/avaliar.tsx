@@ -53,7 +53,7 @@ export function Avaliar({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          chave,
+          obra: chave,
           rating: nota,
           review: resenha.trim() === "" ? null : resenha,
           containsSpoilers: spoilers,

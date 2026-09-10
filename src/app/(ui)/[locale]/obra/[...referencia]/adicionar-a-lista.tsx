@@ -115,7 +115,7 @@ export function AdicionarALista({ chave }: { chave: string })
       const resposta = await fetch(`/api/v1/listas/${lista.listaId}/itens`, {
         method: lista.jaContem ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chave }),
+        body: JSON.stringify({ obra: chave }),
       });
 
       if (!resposta.ok)

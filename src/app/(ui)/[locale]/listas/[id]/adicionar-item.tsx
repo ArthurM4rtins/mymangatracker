@@ -34,7 +34,7 @@ export function AdicionarItem({
       const resposta = await fetch(`/api/v1/listas/${listaId}/itens`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chave }),
+        body: JSON.stringify({ obra: chave }),
       });
 
       if (resposta.status === 401)

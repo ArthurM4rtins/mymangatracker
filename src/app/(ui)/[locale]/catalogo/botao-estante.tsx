@@ -37,7 +37,7 @@ export function BotaoEstante({
       const resposta = await fetch("/api/v1/estante", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chave }),
+        body: JSON.stringify({ obra: chave }),
       });
 
       if (resposta.status === 401)

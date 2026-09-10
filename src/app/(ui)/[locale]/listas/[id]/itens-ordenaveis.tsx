@@ -128,7 +128,7 @@ export function ItensOrdenaveis({
         const resposta = await fetch(`/api/v1/listas/${listaId}/itens`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ chave }),
+          body: JSON.stringify({ obra: chave }),
         });
 
         // 404 é obra que já não estava lá: o rascunho queria isso mesmo.
