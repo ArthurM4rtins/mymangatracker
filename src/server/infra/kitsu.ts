@@ -118,37 +118,54 @@ function montar(corpo: Resposta): MediaDoAniList[]
 }
 
 /**
- * Quantas obras uma página nossa tem. O Kitsu entrega no máximo 20 por pedido,
- * então cada página nossa são dois pedidos dele, em sequência — o segundo só
- * sai se o primeiro veio cheio.
+ * A fatia da FONTE que cada página nossa cobre — 60 obras do Kitsu, três
+ * pedidos de 20.
+ *
+ * A conta é da fonte, não do que entregamos: o domínio descarta o que não cabe
+ * no nosso modelo (`oneshot`, `oel`, obra sem mapeamento para o AniList), então
+ * uma fatia de 60 costuma virar ~50 na tela. Paginar pelo que sobrou abriria
+ * buraco ou repetiria obra entre uma página e a seguinte (#228).
  */
-export const OBRAS_POR_PAGINA = 36;
+const OBRAS_DA_FONTE_POR_PAGINA = 60;
 
-export async function buscarNoKitsu(termo: string, pagina = 1): Promise<MediaDoAniList[]>
+/** Uma página do Kitsu: o que passou no domínio, e se a fonte ainda tem mais. */
+export type PaginaDoKitsu = {
+  obras: MediaDoAniList[];
+  temMais: boolean;
+};
+
+export async function buscarNoKitsu(termo: string, pagina = 1): Promise<PaginaDoKitsu>
 {
   const limpo = termo.trim();
-  const inicio = (Math.max(1, pagina) - 1) * OBRAS_POR_PAGINA;
+  const inicio = (Math.max(1, pagina) - 1) * OBRAS_DA_FONTE_POR_PAGINA;
   const obras: MediaDoAniList[] = [];
+  let temMais = false;
 
-  for (let offset = inicio; offset < inicio + OBRAS_POR_PAGINA; offset += POR_PAGINA)
+  for (let lido = 0; lido < OBRAS_DA_FONTE_POR_PAGINA; lido += POR_PAGINA)
   {
-    const limite = Math.min(POR_PAGINA, inicio + OBRAS_POR_PAGINA - offset);
-    const base = `?page%5Blimit%5D=${limite}&page%5Boffset%5D=${offset}&include=mappings`;
+    const offset = inicio + lido;
+    const base = `?page%5Blimit%5D=${POR_PAGINA}&page%5Boffset%5D=${offset}&include=mappings`;
     const caminho = limpo === ""
       // Sem termo, as mais lidas — é a vitrine possível sem o AniList.
       ? `${base}&sort=-userCount`
       : `${base}&filter%5Btext%5D=${encodeURIComponent(limpo)}`;
 
-    const lote = montar(await pedir(caminho));
-    obras.push(...lote);
+    const corpo = await pedir(caminho);
+    const nesteLote = corpo.data?.length ?? 0;
+    obras.push(...montar(corpo));
 
-    if (lote.length < limite)
+    if (nesteLote < POR_PAGINA)
     {
-      break;
+      // A fonte acabou no meio da fatia: não há próxima página.
+      return { obras, temMais: false };
     }
+
+    // Lote cheio: a fonte tinha pelo menos até aqui. Se for o último da fatia,
+    // é a nossa pista de que a página seguinte tem o que mostrar.
+    temMais = true;
   }
 
-  return obras;
+  return { obras, temMais };
 }
 
 /**
