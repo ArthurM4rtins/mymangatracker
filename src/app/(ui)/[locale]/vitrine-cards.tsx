@@ -11,7 +11,7 @@ import { estrelasTexto } from "./componentes/estrelas";
 
 export function CardResenha({
   username,
-  anilistId,
+  chave,
   titulo,
   coverImageUrl,
   rating,
@@ -21,7 +21,7 @@ export function CardResenha({
   quando,
 }: {
   username: string;
-  anilistId: number;
+  chave: string;
   titulo: string;
   coverImageUrl: string | null;
   rating: string | null;
@@ -38,7 +38,7 @@ export function CardResenha({
     // altura; sem isso cada um fica do tamanho do próprio texto.
     <article className="flex h-56 w-72 flex-col gap-2 rounded-lg border border-borda bg-superficie p-3">
       <div className="flex gap-3">
-        <Link href={`/obra/${anilistId}`} className="shrink-0">
+        <Link href={`/obra/${chave.replace(":", "/")}`} className="shrink-0">
           {coverImageUrl ? (
             <Image
               src={coverImageUrl}
@@ -53,7 +53,7 @@ export function CardResenha({
           )}
         </Link>
         <div className="flex min-w-0 flex-col gap-0.5">
-          <Link href={`/obra/${anilistId}`} className="line-clamp-2 text-sm font-medium hover:text-acento">
+          <Link href={`/obra/${chave.replace(":", "/")}`} className="line-clamp-2 text-sm font-medium hover:text-acento">
             {titulo}
           </Link>
           {rating !== null && (

@@ -1,3 +1,4 @@
+import { referenciaDaChave } from "@/server/domain/referencia-da-obra";
 /**
  * POST /api/v1/avaliacoes — salvar (criar ou editar) a avaliação de uma
  * entrada da estante. Nota e/ou resenha; vazia não existe.
@@ -12,7 +13,8 @@ import { usuarioDaSessao } from "../_shared/sessao";
 export const dynamic = "force-dynamic";
 
 const ESQUEMA = z.object({
-  anilistId: z.number().int().positive(),
+  /** A obra pela chave (#254): `anilist:30002` ou `kitsu:54598`. */
+  obra: z.string().min(3).max(40),
   rating: z.number().nullable(),
   review: z.string().max(20000).nullable(),
   containsSpoilers: z.boolean().default(false),
@@ -49,11 +51,22 @@ export async function POST(request: Request)
     );
   }
 
+  // A chave chega do corpo: nada nela e de confianca (#254).
+  const referencia = referenciaDaChave(analise.data.obra);
+
+  if (referencia === null)
+  {
+    return NextResponse.json(
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
+      { status: 400 },
+    );
+  }
+
   try
   {
     const resultado = await salvarAvaliacaoDoSistema({
       userId,
-      anilistId: analise.data.anilistId,
+      referencia,
       rating: analise.data.rating,
       review: analise.data.review,
       containsSpoilers: analise.data.containsSpoilers,

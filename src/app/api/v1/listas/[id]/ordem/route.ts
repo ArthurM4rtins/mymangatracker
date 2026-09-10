@@ -13,7 +13,8 @@ import { usuarioDaSessao } from "../../../_shared/sessao";
 export const dynamic = "force-dynamic";
 
 const ESQUEMA = z.object({
-  anilistIds: z.array(z.number().int().positive()).max(500),
+  /** A ordem por chave (#254): obra so-Kitsu nao tem anilistId para entrar. */
+  chaves: z.array(z.string().min(3).max(40)).max(500),
 });
 
 export async function PUT(
@@ -57,7 +58,7 @@ export async function PUT(
     const resultado = await reordenarItensDoSistema({
       userId,
       listaId: id,
-      anilistIds: analise.data.anilistIds,
+      chaves: analise.data.chaves,
     });
 
     if (resultado.estado === "muitos_pedidos")

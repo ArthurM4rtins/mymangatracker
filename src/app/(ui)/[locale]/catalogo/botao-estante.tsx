@@ -12,11 +12,11 @@ import { useRouter } from "@/i18n/navigation";
 type Estado = "parado" | "salvando" | "salvo" | "erro";
 
 export function BotaoEstante({
-  anilistId,
+  chave,
   jaNaEstante = false,
   atualizarAoSalvar = false,
 }: {
-  anilistId: number;
+  chave: string;
   /** Vem do servidor: obra que já está na estante nasce marcada. */
   jaNaEstante?: boolean;
   /** Na página da obra, salvar recarrega os dados para os controles aparecerem. */
@@ -37,7 +37,7 @@ export function BotaoEstante({
       const resposta = await fetch("/api/v1/estante", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ anilistId }),
+        body: JSON.stringify({ obra: chave }),
       });
 
       if (resposta.status === 401)

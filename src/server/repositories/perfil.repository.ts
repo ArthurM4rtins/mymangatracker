@@ -3,10 +3,11 @@
 // fez em cima de obras (nota, resenha, curtida) — nada de status da estante,
 // progresso, fonte ou capítulo. A estante do dono vem do shelf.repository,
 // e só o serviço decide quando ela entra.
+import { chaveDaObra, referenciaDeMedia } from "@/server/domain/referencia-da-obra";
 import { getPrisma } from "./prisma";
 
 type ObraDoPerfil = {
-  anilistId: number;
+  chave: string;
   titleRomaji: string;
   titleEnglish: string | null;
   coverImageUrl: string | null;
@@ -28,6 +29,7 @@ export type ResenhaDoPerfil = ObraDoPerfil & {
 
 const SELECT_DA_OBRA = {
   anilistId: true,
+      kitsuId: true,
   titleRomaji: true,
   titleEnglish: true,
   coverImageUrl: true,
@@ -47,15 +49,12 @@ export async function listarAvaliadas(userId: string, limite: number): Promise<A
     select: { rating: true, reviewedAt: true, media: { select: SELECT_DA_OBRA } },
   });
 
-  // SEM_ANILIST (#254, fase 1): obra sem AniList fica de fora AQUI, a vista.
-  // A fase 2 troca por referencia (fonte, id).
   return linhas
-    .filter(function (linha) { return linha.media.anilistId !== null; })
     .map(function (linha)
   {
     return {
       ...linha.media,
-      anilistId: linha.media.anilistId as number,
+      chave: chaveDaObra(referenciaDeMedia(linha.media) ?? { fonte: "anilist", id: 0 }),
       rating: Number(linha.rating),
       avaliadaEm: linha.reviewedAt,
     };
@@ -101,15 +100,12 @@ export async function listarResenhasRecentes(
     },
   });
 
-  // SEM_ANILIST (#254, fase 1): obra sem AniList fica de fora AQUI, a vista.
-  // A fase 2 troca por referencia (fonte, id).
   return linhas
-    .filter(function (linha) { return linha.media.anilistId !== null; })
     .map(function (linha)
   {
     return {
       ...linha.media,
-      anilistId: linha.media.anilistId as number,
+      chave: chaveDaObra(referenciaDeMedia(linha.media) ?? { fonte: "anilist", id: 0 }),
       entryId: linha.id,
       rating: linha.rating?.toString() ?? null,
       review: linha.review ?? "",

@@ -4,6 +4,7 @@ import type { Veredito } from "@/server/domain/limite-de-tentativas";
 // Teto de listas por usuario (#136); livre por padrao, bloqueado so no caso que o pede.
 const limitar = vi.fn(async function (): Promise<Veredito> { return { bloqueado: false }; });
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
+import type { ResultadoDaFonte } from "@/server/services/obra-externa.service";
 import {
   adicionarObraNaLista,
   removerObraDaLista,
@@ -77,15 +78,18 @@ describe("adicionarObraNaLista", function ()
     {
       return cenario.media === undefined ? { id: "m1" } : cenario.media;
     });
-    const buscarNoAniList = vi.fn(async function (): Promise<MediaDoAniList | null>
+    // A escada de fontes virou uma so (#254).
+    const buscarNaFonte = vi.fn(async function (): Promise<ResultadoDaFonte>
     {
-      if (cenario.aniList instanceof Error) throw cenario.aniList;
-      return cenario.aniList === undefined ? OBRA : cenario.aniList;
-    });
-    const buscarNoKitsu = vi.fn(async function (): Promise<MediaDoAniList | null>
-    {
-      if (cenario.kitsu instanceof Error) throw cenario.kitsu;
-      return cenario.kitsu === undefined ? null : cenario.kitsu;
+      if (cenario.aniList instanceof Error)
+      {
+        if (cenario.kitsu instanceof Error || cenario.kitsu === undefined)
+        {
+          return { estado: "indisponivel" };
+        }
+        return { estado: "ok", obra: cenario.kitsu, respondeu: "kitsu" };
+      }
+      return { estado: "ok", obra: cenario.aniList === undefined ? OBRA : cenario.aniList, respondeu: "anilist" };
     });
     const salvarMedia = vi.fn(async function () { return { id: "m-novo" }; });
     const adicionar = vi.fn(async function (): Promise<{ jaExistia: boolean } | { cheia: true } | null>
@@ -94,35 +98,35 @@ describe("adicionarObraNaLista", function ()
     });
 
     return {
-      deps: { buscarMedia, buscarNoAniList, buscarNoKitsu, salvarMedia, adicionar, limitar },
-      buscarNoAniList,
-      buscarNoKitsu,
+      deps: { buscarMedia, buscarNaFonte, salvarMedia, adicionar, limitar },
+      buscarNaFonte,
       salvarMedia,
       adicionar,
     };
   }
 
-  const PEDIDO = { userId: "u1", listaId: "l1", anilistId: 30013 };
+  const REFERENCIA = { fonte: "anilist" as const, id: 30013 };
+  const PEDIDO = { userId: "u1", listaId: "l1", referencia: REFERENCIA };
 
   it("acima do teto por usuario nao consulta o AniList nem grava", async function ()
   {
-    const { deps, buscarNoAniList, adicionar } = fakeDeps({ media: null });
+    const { deps, buscarNaFonte, adicionar } = fakeDeps({ media: null });
     limitar.mockResolvedValueOnce({ bloqueado: true, esperarSegundos: 45 });
 
     await expect(adicionarObraNaLista(PEDIDO, deps))
       .resolves.toEqual({ estado: "limitado", esperarSegundos: 45 });
-    expect(buscarNoAniList).not.toHaveBeenCalled();
+    expect(buscarNaFonte).not.toHaveBeenCalled();
     expect(adicionar).not.toHaveBeenCalled();
   });
 
   it("obra em cache entra sem ir ao AniList, em qualquer idade", async function ()
   {
-    const { deps, adicionar, buscarNoAniList, salvarMedia } = fakeDeps({});
+    const { deps, adicionar, buscarNaFonte, salvarMedia } = fakeDeps({});
 
     await expect(adicionarObraNaLista(PEDIDO, deps))
       .resolves.toEqual({ estado: "ok", contem: true });
     expect(adicionar).toHaveBeenCalledWith("u1", "l1", "m1");
-    expect(buscarNoAniList).not.toHaveBeenCalled();
+    expect(buscarNaFonte).not.toHaveBeenCalled();
     expect(salvarMedia).not.toHaveBeenCalled();
   });
 
@@ -134,15 +138,15 @@ describe("adicionarObraNaLista", function ()
       .resolves.toEqual({ estado: "ok", contem: true });
   });
 
-  it("obra fora do cache vem do AniList, é cacheada e entra", async function ()
+  it("obra fora do cache vem da fonte, é cacheada e entra", async function ()
   {
-    const { deps, salvarMedia, adicionar, buscarNoKitsu } = fakeDeps({ media: null });
+    const { deps, salvarMedia, adicionar, buscarNaFonte } = fakeDeps({ media: null });
 
     await expect(adicionarObraNaLista(PEDIDO, deps))
       .resolves.toEqual({ estado: "ok", contem: true });
     expect(salvarMedia).toHaveBeenCalledWith(OBRA, expect.any(Date));
     expect(adicionar).toHaveBeenCalledWith("u1", "l1", "m-novo");
-    expect(buscarNoKitsu).not.toHaveBeenCalled();
+    expect(buscarNaFonte).toHaveBeenCalledWith(REFERENCIA);
   });
 
   it("AniList fora: busca no Kitsu, cacheia e entra", async function ()
@@ -226,7 +230,7 @@ describe("removerObraDaLista", function ()
     const { deps, remover } = fakeDeps({});
 
     const resultado = await removerObraDaLista(
-      { userId: "u1", listaId: "l1", anilistId: 30656 },
+      { userId: "u1", listaId: "l1", referencia: { fonte: "anilist" as const, id: 30656 } },
       deps,
     );
 
@@ -239,7 +243,7 @@ describe("removerObraDaLista", function ()
     const { deps } = fakeDeps({ remover: null });
 
     const resultado = await removerObraDaLista(
-      { userId: "u1", listaId: "l1", anilistId: 30656 },
+      { userId: "u1", listaId: "l1", referencia: { fonte: "anilist" as const, id: 30656 } },
       deps,
     );
 
@@ -251,7 +255,7 @@ describe("removerObraDaLista", function ()
     const { deps, remover } = fakeDeps({ media: null });
 
     const resultado = await removerObraDaLista(
-      { userId: "u1", listaId: "l1", anilistId: 30656 },
+      { userId: "u1", listaId: "l1", referencia: { fonte: "anilist" as const, id: 30656 } },
       deps,
     );
 

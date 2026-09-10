@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import type { MediaCompleta } from "@/server/repositories/media.repository";
+import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { obraParaPagina } from "@/server/services/obra.service";
+import type { ResultadoDaFonte } from "@/server/services/obra-externa.service";
+import type { ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
 
 // As regras da issue #35: cache fresco não gasta cota; velho rebusca e
 // regrava; AniList fora serve o cache que houver (página é leitura) e só é
@@ -14,6 +17,7 @@ const VELHO = new Date(AGORA.getTime() - 25 * 60 * 60 * 1000);
 const NO_CACHE: MediaCompleta = {
   id: "m1",
   anilistId: 30656,
+  kitsuId: null,
   type: "MANGA",
   countryOfOrigin: "JP",
   titleRomaji: "Vagabond",
@@ -30,18 +34,25 @@ const NO_CACHE: MediaCompleta = {
   syncedAt: FRESCO,
 };
 
-const DO_ANILIST = {
+const DO_ANILIST: MediaDoAniList = {
   anilistId: 30656,
   type: "MANGA" as const,
   titleRomaji: "Vagabond",
   chapters: 327,
 };
 
+// A obra que so existe no Kitsu (#254): sem anilistId nenhum.
+const DO_KITSU: MediaDoAniList = {
+  kitsuId: 54598,
+  type: "NOVEL" as const,
+  titleRomaji: "The Beginning After the End",
+};
+
 function fakeDeps(cenario: {
   noCache?: MediaCompleta | null;
-  noAniList?: typeof DO_ANILIST | null;
+  noAniList?: MediaDoAniList | null;
   anilistFora?: boolean;
-  noKitsu?: typeof DO_ANILIST | null;
+  noKitsu?: MediaDoAniList | null;
   kitsuFora?: boolean;
   similaresFora?: boolean;
   notasFora?: boolean;
@@ -72,6 +83,41 @@ function fakeDeps(cenario: {
       throw new Error("fora");
     }
     return cenario.noKitsu === undefined ? null : cenario.noKitsu;
+  });
+  // A escada de fontes virou um servico so (#254). Aqui ela e reproduzida
+  // chamando as mesmas duas pontas, para as asercoes continuarem falando de
+  // quem foi consultado; a escada de verdade tem os testes dela.
+  const buscarNaFonte = vi.fn(async function (
+    referencia: ReferenciaDaObra,
+  ): Promise<ResultadoDaFonte>
+  {
+    if (referencia.fonte === "kitsu")
+    {
+      try
+      {
+        return { estado: "ok", obra: await buscarNoKitsu(), respondeu: "kitsu" };
+      }
+      catch
+      {
+        return { estado: "indisponivel" };
+      }
+    }
+
+    try
+    {
+      return { estado: "ok", obra: await buscarNoAniList(), respondeu: "anilist" };
+    }
+    catch
+    {
+      try
+      {
+        return { estado: "ok", obra: await buscarNoKitsu(), respondeu: "kitsu" };
+      }
+      catch
+      {
+        return { estado: "indisponivel" };
+      }
+    }
   });
   const salvarMedia = vi.fn(async function ()
   {
@@ -163,8 +209,7 @@ function fakeDeps(cenario: {
   return {
     deps: {
       buscarCompleta,
-      buscarNoAniList,
-      buscarNoKitsu,
+      buscarNaFonte,
       salvarMedia,
       buscarSimilares,
       buscarEntrada,
@@ -177,6 +222,7 @@ function fakeDeps(cenario: {
     },
     buscarNoAniList,
     buscarNoKitsu,
+    buscarNaFonte,
     salvarMedia,
     buscarEntrada,
     listarReviews,
@@ -191,7 +237,7 @@ describe("obraParaPagina", function ()
   {
     const { deps, buscarNoAniList } = fakeDeps({ noCache: NO_CACHE });
 
-    const resultado = await obraParaPagina(30656, null, deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps);
 
     if (resultado.estado !== "ok")
     {
@@ -210,7 +256,7 @@ describe("obraParaPagina", function ()
   {
     const { deps, contarNotas } = fakeDeps({ noCache: NO_CACHE });
 
-    const resultado = await obraParaPagina(30656, null, deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps);
 
     if (resultado.estado !== "ok")
     {
@@ -227,7 +273,7 @@ describe("obraParaPagina", function ()
   {
     const { deps } = fakeDeps({ noCache: NO_CACHE, notasFora: true });
 
-    const resultado = await obraParaPagina(30656, null, deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps);
 
     if (resultado.estado !== "ok")
     {
@@ -243,7 +289,7 @@ describe("obraParaPagina", function ()
     const { deps, listarReviews } = fakeDeps({ noCache: NO_CACHE });
     listarReviews.mockRejectedValue(new Error("fora"));
 
-    const resultado = await obraParaPagina(30656, null, deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps);
 
     if (resultado.estado !== "ok")
     {
@@ -255,14 +301,14 @@ describe("obraParaPagina", function ()
 
   it("cache velho rebusca e regrava", async function ()
   {
-    const { deps, buscarNoAniList, salvarMedia } = fakeDeps({
+    const { deps, buscarNaFonte, salvarMedia } = fakeDeps({
       noCache: { ...NO_CACHE, syncedAt: VELHO },
     });
 
-    const resultado = await obraParaPagina(30656, null, deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps);
 
     expect(resultado.estado).toBe("ok");
-    expect(buscarNoAniList).toHaveBeenCalledWith(30656);
+    expect(buscarNaFonte).toHaveBeenCalledWith({ fonte: "anilist", id: 30656 });
     expect(salvarMedia).toHaveBeenCalled();
   });
 
@@ -270,7 +316,7 @@ describe("obraParaPagina", function ()
   {
     const { deps } = fakeDeps({ noCache: null, noAniList: null });
 
-    await expect(obraParaPagina(1, null, deps)).resolves.toEqual({
+    await expect(obraParaPagina({ fonte: "anilist", id: 1 }, null, deps)).resolves.toEqual({
       estado: "nao_encontrada",
     });
   });
@@ -282,7 +328,7 @@ describe("obraParaPagina", function ()
       anilistFora: true,
     });
 
-    const resultado = await obraParaPagina(30656, null, deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps);
 
     expect(resultado.estado).toBe("ok");
   });
@@ -296,7 +342,7 @@ describe("obraParaPagina", function ()
       anilistFora: true,
     });
 
-    const resultado = await obraParaPagina(30656, null, deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps);
 
     expect(resultado.estado).toBe("ok");
     expect(deps.buscarSimilares).not.toHaveBeenCalled();
@@ -312,10 +358,10 @@ describe("obraParaPagina", function ()
       noKitsu: DO_ANILIST,
     });
 
-    const resultado = await obraParaPagina(30013, null, deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30013 }, null, deps);
 
     expect(resultado.estado).toBe("ok");
-    expect(buscarNoKitsu).toHaveBeenCalledWith(30013);
+    expect(buscarNoKitsu).toHaveBeenCalled();
     expect(salvarMedia).toHaveBeenCalled();
   });
 
@@ -323,7 +369,7 @@ describe("obraParaPagina", function ()
   {
     const { deps, buscarNoKitsu } = fakeDeps({ noCache: null });
 
-    const resultado = await obraParaPagina(30013, null, deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30013 }, null, deps);
 
     expect(resultado.estado).toBe("ok");
     expect(buscarNoKitsu).not.toHaveBeenCalled();
@@ -333,16 +379,70 @@ describe("obraParaPagina", function ()
   {
     const { deps } = fakeDeps({ noCache: null, anilistFora: true, noKitsu: null });
 
-    const resultado = await obraParaPagina(30013, null, deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30013 }, null, deps);
 
     expect(resultado.estado).toBe("nao_encontrada");
+  });
+
+  // #254: a obra pode nascer NO Kitsu — "The Beginning After the End" e o caso
+  // real. A referencia do Kitsu vai direto ao Kitsu; passar o id dele como se
+  // fosse do AniList era o que fazia a pagina dizer "o AniList nao respondeu".
+  it("referencia do Kitsu abre a página pela fonte dela", async function ()
+  {
+    const { deps, buscarNoKitsu, buscarNoAniList, salvarMedia } = fakeDeps({
+      noCache: null,
+      noKitsu: DO_KITSU,
+    });
+
+    const resultado = await obraParaPagina({ fonte: "kitsu", id: 54598 }, null, deps);
+
+    expect(resultado.estado).toBe("ok");
+    expect(buscarNoKitsu).toHaveBeenCalled();
+    expect(buscarNoAniList).not.toHaveBeenCalled();
+    expect(salvarMedia).toHaveBeenCalled();
+    expect(deps.buscarCompleta).toHaveBeenCalledWith({ fonte: "kitsu", id: 54598 });
+  });
+
+  it("obra so-Kitsu que o Kitsu nao tem é nao_encontrada", async function ()
+  {
+    const { deps } = fakeDeps({ noCache: null, noKitsu: null });
+
+    await expect(obraParaPagina({ fonte: "kitsu", id: 1 }, null, deps)).resolves.toEqual({
+      estado: "nao_encontrada",
+    });
+  });
+
+  it("obra so-Kitsu com o Kitsu fora e sem cache é indisponivel", async function ()
+  {
+    const { deps } = fakeDeps({ noCache: null, kitsuFora: true });
+
+    await expect(obraParaPagina({ fonte: "kitsu", id: 54598 }, null, deps)).resolves.toEqual({
+      estado: "indisponivel",
+    });
+  });
+
+  // O Kitsu nao conhecer uma obra DO ANILIST nao prova que ela sumiu: ele tem
+  // bem menos obras. Com cache na mao, a pagina serve o cache velho em vez de
+  // trocar uma pagina que funcionava por um 404.
+  it("AniList fora e Kitsu sem a obra, mas com cache: serve o cache, não é 404", async function ()
+  {
+    const { deps } = fakeDeps({
+      noCache: { ...NO_CACHE, syncedAt: VELHO },
+      anilistFora: true,
+      noKitsu: null,
+    });
+
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps);
+
+    expect(resultado.estado).toBe("ok");
+    expect(deps.salvarMedia).not.toHaveBeenCalled();
   });
 
   it("as duas fontes fora sem cache é indisponivel", async function ()
   {
     const { deps } = fakeDeps({ noCache: null, anilistFora: true, kitsuFora: true });
 
-    await expect(obraParaPagina(30656, null, deps)).resolves.toEqual({
+    await expect(obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps)).resolves.toEqual({
       estado: "indisponivel",
     });
   });
@@ -353,7 +453,7 @@ describe("obraParaPagina", function ()
   {
     const { deps, buscarNoAniList } = fakeDeps({ bancoFora: true });
 
-    await expect(obraParaPagina(30656, null, deps)).resolves.toEqual({
+    await expect(obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps)).resolves.toEqual({
       estado: "indisponivel",
     });
     expect(buscarNoAniList).not.toHaveBeenCalled();
@@ -363,7 +463,7 @@ describe("obraParaPagina", function ()
   {
     const { deps } = fakeDeps({ noCache: NO_CACHE, similaresFora: true });
 
-    const resultado = await obraParaPagina(30656, null, deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps);
 
     if (resultado.estado !== "ok")
     {
@@ -377,7 +477,7 @@ describe("obraParaPagina", function ()
   {
     const { deps } = fakeDeps({ noCache: NO_CACHE, historicoFora: true });
 
-    const resultado = await obraParaPagina(30656, "u1", deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, "u1", deps);
 
     if (resultado.estado !== "ok")
     {
@@ -392,7 +492,7 @@ describe("obraParaPagina", function ()
   {
     const { deps, buscarEntrada, listarAberturas, listarReviews } = fakeDeps({ noCache: NO_CACHE });
 
-    const resultado = await obraParaPagina(30656, "u1", deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, "u1", deps);
 
     if (resultado.estado !== "ok")
     {
@@ -442,7 +542,7 @@ describe("obraParaPagina", function ()
     const { deps } = fakeDeps({ noCache: NO_CACHE });
     deps.buscarEntrada = vi.fn(async function () { return null; });
 
-    const resultado = await obraParaPagina(30656, "u1", deps);
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, "u1", deps);
 
     if (resultado.estado !== "ok")
     {

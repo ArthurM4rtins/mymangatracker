@@ -213,6 +213,39 @@ export async function buscarNoKitsu(
 }
 
 /**
+ * Uma obra pelo id DO KITSU (#254). É o caminho de quem o AniList não conhece —
+ * "The Beginning After the End", por exemplo, não tem mapeamento em nenhum dos
+ * três registros dela.
+ */
+export async function buscarNoKitsuPorId(kitsuId: number): Promise<MediaDoAniList | null>
+{
+  const corpo = await pedirEm(`${BASE}/${kitsuId}`, "?include=mappings");
+  const linha = (corpo as { data?: { id?: unknown; attributes?: unknown } }).data;
+
+  if (linha === undefined)
+  {
+    return null;
+  }
+
+  const mapeamento = (corpo.included ?? []).find(function (incluido)
+  {
+    const atributos = (incluido.attributes ?? {}) as Record<string, unknown>;
+
+    return incluido.type === "mappings" && atributos.externalSite === "anilist/manga";
+  });
+
+  const externo = ((mapeamento?.attributes ?? {}) as Record<string, unknown>).externalId;
+
+  return traduzirDoKitsu({
+    dados: {
+      id: String(linha.id ?? ""),
+      attributes: (linha.attributes ?? {}) as Record<string, unknown>,
+    },
+    anilistId: typeof externo === "string" ? externo : null,
+  });
+}
+
+/**
  * Uma obra pelo `anilistId`, para a página da obra e para a estante.
  *
  * Vai pelo caminho inverso, em `/mappings`: filtrar a lista de obras por

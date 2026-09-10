@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { getPrisma } from "@/server/repositories/prisma";
+import { buscarMediasEmCache } from "@/server/repositories/media.repository";
 import { limparBanco } from "./apoio";
 
 /**
@@ -68,5 +69,23 @@ describe("identidade externa da obra", function ()
     await expect(
       prisma.media.create({ data: { ...CAMPOS_OBRIGATORIOS, kitsuId: 54598 } }),
     ).rejects.toThrow();
+  });
+
+  // A fase 1 deixou a obra so-Kitsu de fora das leituras, a vista, ate as
+  // telas saberem falar dela. Agora elas sabem: se ela sumir da busca em
+  // cache, o catalogo volta a esconder justamente o que motivou a #254.
+  it("obra so do Kitsu aparece na busca em cache", async function ()
+  {
+    await getPrisma().media.create({
+      data: {
+        ...CAMPOS_OBRIGATORIOS,
+        titleRomaji: "The Beginning After the End",
+        kitsuId: 54598,
+      },
+    });
+
+    const achadas = await buscarMediasEmCache("beginning");
+
+    expect(achadas.map(function (obra) { return obra.kitsuId; })).toEqual([54598]);
   });
 });

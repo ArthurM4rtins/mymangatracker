@@ -1,3 +1,5 @@
+import { chaveDaObra, referenciaDeMedia, type ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
+import { referenciaDaObra } from "@/server/domain/anilist-media";
 /**
  * Caso de uso: a página da obra — sinopse, ano, autores, gêneros, similares e
  * o recorte do usuário logado (entrada, fonte, avaliação).
@@ -13,10 +15,10 @@ import {
 } from "@/server/domain/nota-media";
 import type { AutorDaObra, MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId, buscarSimilares } from "@/server/infra/anilist";
-import { buscarNoKitsuPorAnilistId } from "@/server/infra/kitsu";
 import { lembrarPorChave } from "@/server/domain/memoria-curta";
+import { buscarObraNaFonte, type ResultadoDaFonte } from "@/server/services/obra-externa.service";
 import {
-  buscarMediaCompletaPorAnilistId,
+  buscarMediaCompletaPorReferencia,
   salvarMediaDoAniList,
   type MediaCompleta,
 } from "@/server/repositories/media.repository";
@@ -37,7 +39,7 @@ import {
 
 /** O que a página mostra da obra. Contrato — sem id interno, sem syncedAt. */
 export type ObraDaPagina = {
-  anilistId: number;
+  chave: string;
   type: "MANGA" | "NOVEL";
   countryOfOrigin: string | null;
   titleRomaji: string;
@@ -55,7 +57,8 @@ export type ObraDaPagina = {
 
 /** O card de similar — o mínimo para capa + link. */
 export type ObraSimilar = {
-  anilistId: number;
+  /** A obra pela chave (#254): similar sem AniList também tem para onde levar. */
+  chave: string;
   titleRomaji: string;
   titleEnglish: string | null;
   coverImageUrl: string | null;
@@ -93,10 +96,9 @@ export type ResultadoDaObra =
   | { estado: "indisponivel" };
 
 export type DependenciasDaObra = {
-  buscarCompleta: (anilistId: number) => Promise<MediaCompleta | null>;
-  buscarNoAniList: (anilistId: number) => Promise<MediaDoAniList | null>;
-  /** O degrau de baixo, só com o AniList fora (#219). */
-  buscarNoKitsu: (anilistId: number) => Promise<MediaDoAniList | null>;
+  buscarCompleta: (referencia: ReferenciaDaObra) => Promise<MediaCompleta | null>;
+  /** A escada de fontes, uma só para as três telas que a usavam (#254). */
+  buscarNaFonte: (referencia: ReferenciaDaObra) => Promise<ResultadoDaFonte>;
   salvarMedia: (
     obra: MediaDoAniList,
     sincronizadoEm: Date,
@@ -143,7 +145,7 @@ const LIMITE_DO_HISTORICO = 20;
 const REVIEWS_NA_OBRA = 20;
 
 export async function obraParaPagina(
-  anilistId: number,
+  referencia: ReferenciaDaObra,
   userId: string | null,
   deps: DependenciasDaObra,
 ): Promise<ResultadoDaObra>
@@ -154,7 +156,7 @@ export async function obraParaPagina(
 
   try
   {
-    cache = await deps.buscarCompleta(anilistId);
+    cache = await deps.buscarCompleta(referencia);
   }
   catch
   {
@@ -164,78 +166,61 @@ export async function obraParaPagina(
   }
 
   // Se o AniList cair aqui, não pagar outro timeout em série nos similares (#65, item 3).
-  let anilistFora = false;
+  let fonteFora = false;
 
   if (cache === null || !cacheEstaFresco(cache.syncedAt, agora))
   {
-    try
+    const resposta = await deps.buscarNaFonte(referencia);
+
+    if (resposta.estado === "indisponivel")
     {
-      let doAniList: MediaDoAniList | null;
-
-      try
-      {
-        doAniList = await deps.buscarNoAniList(anilistId);
-
-        if (doAniList === null)
-        {
-          // O AniList respondeu e a obra não existe (ou o domínio descartou).
-          // Cache antigo de algo que sumiu não ressuscita a página.
-          return { estado: "nao_encontrada" };
-        }
-      }
-      catch
-      {
-        // AniList fora: desce um degrau, como o catálogo e a home (#219). Sem
-        // isso, obra que a vitrine do Kitsu acabou de mostrar não abria (#227).
-        // Kitsu fora também: o erro sobe para o catch de baixo.
-        doAniList = await deps.buscarNoKitsu(anilistId);
-
-        if (doAniList === null)
-        {
-          // O Kitsu não conhecer a obra não prova que ela sumiu: ele tem bem
-          // menos obras que o AniList. Cache velho ainda serve (página é
-          // leitura); sem cache, não há o que mostrar.
-          if (cache === null)
-          {
-            return { estado: "nao_encontrada" };
-          }
-
-          anilistFora = true;
-        }
-      }
-
-      if (doAniList !== null)
-      {
-        const salvo = await deps.salvarMedia(doAniList, agora);
-        cache = {
-          id: salvo.id,
-          anilistId: doAniList.anilistId,
-          type: doAniList.type,
-          countryOfOrigin: doAniList.countryOfOrigin ?? null,
-          titleRomaji: doAniList.titleRomaji,
-          titleEnglish: doAniList.titleEnglish ?? null,
-          titleNative: doAniList.titleNative ?? null,
-          coverImageUrl: doAniList.coverImageUrl ?? null,
-          bannerImageUrl: doAniList.bannerImageUrl ?? null,
-          description: doAniList.description ?? null,
-          chapters: doAniList.chapters ?? null,
-          startYear: doAniList.startYear ?? null,
-          genres: doAniList.genres ?? [],
-          averageScore: doAniList.averageScore ?? null,
-          autores: doAniList.autores ?? [],
-          syncedAt: salvo.syncedAt,
-        };
-      }
-    }
-    catch
-    {
-      // AniList fora. Página é leitura: cache velho serve; sem cache, não há página.
+      // Ninguém respondeu. Página é leitura: cache velho serve; sem cache, não
+      // há página.
       if (cache === null)
       {
         return { estado: "indisponivel" };
       }
 
-      anilistFora = true;
+      fonteFora = true;
+    }
+    else if (resposta.obra === null)
+    {
+      // Quem respondeu decide o peso do "não existe". A fonte DONA da
+      // referência dizendo que não tem a obra é definitivo: cache antigo de
+      // algo que sumiu não ressuscita a página. Já o Kitsu, respondendo no
+      // lugar do AniList caído, não prova nada — ele tem bem menos obras —,
+      // então com cache na mão a página serve o cache em vez de virar 404.
+      if (resposta.respondeu === referencia.fonte || cache === null)
+      {
+        return { estado: "nao_encontrada" };
+      }
+
+      fonteFora = true;
+    }
+    else
+    {
+      const daFonte = resposta.obra;
+      const salvo = await deps.salvarMedia(daFonte, agora);
+
+      cache = {
+        id: salvo.id,
+        anilistId: daFonte.anilistId ?? null,
+        kitsuId: daFonte.kitsuId ?? null,
+        type: daFonte.type,
+        countryOfOrigin: daFonte.countryOfOrigin ?? null,
+        titleRomaji: daFonte.titleRomaji,
+        titleEnglish: daFonte.titleEnglish ?? null,
+        titleNative: daFonte.titleNative ?? null,
+        coverImageUrl: daFonte.coverImageUrl ?? null,
+        bannerImageUrl: daFonte.bannerImageUrl ?? null,
+        description: daFonte.description ?? null,
+        chapters: daFonte.chapters ?? null,
+        startYear: daFonte.startYear ?? null,
+        genres: daFonte.genres ?? [],
+        averageScore: daFonte.averageScore ?? null,
+        autores: daFonte.autores ?? [],
+        syncedAt: salvo.syncedAt,
+      };
     }
   }
 
@@ -247,7 +232,11 @@ export async function obraParaPagina(
   }
 
   const [similares, minha, minhaAvaliacao, reviews, contagens] = await Promise.all([
-    anilistFora ? Promise.resolve([]) : similaresSemDerrubar(anilistId, deps),
+    // Similares só existem no AniList: obra que nasceu no Kitsu não tem de
+    // onde tirá-los, e a página vive bem sem a fileira (#254).
+    fonteFora || cache.anilistId === null
+      ? Promise.resolve([])
+      : similaresSemDerrubar(cache.anilistId, deps),
     userId === null ? Promise.resolve(null) : minhaRelacao(userId, cache.id, deps),
     // Avaliar não exige estante — a avaliação anda separada do recorte.
     userId === null
@@ -269,7 +258,7 @@ export async function obraParaPagina(
   ]);
 
   const obra: ObraDaPagina = {
-    anilistId: cache.anilistId,
+    chave: chaveDaObra(referenciaDeMedia({ anilistId: cache.anilistId, kitsuId: cache.kitsuId }) ?? { fonte: "anilist", id: 0 }),
     type: cache.type,
     countryOfOrigin: cache.countryOfOrigin,
     titleRomaji: cache.titleRomaji,
@@ -308,7 +297,7 @@ async function similaresSemDerrubar(
     return obras.map(function (obra)
     {
       return {
-        anilistId: obra.anilistId,
+        chave: chaveDaObra(referenciaDaObra(obra)),
         titleRomaji: obra.titleRomaji,
         titleEnglish: obra.titleEnglish ?? null,
         coverImageUrl: obra.coverImageUrl ?? null,
@@ -378,14 +367,13 @@ const similaresLembrados = lembrarPorChave(
 
 /** A composição de produção. */
 export function obraParaPaginaDoSistema(
-  anilistId: number,
+  referencia: ReferenciaDaObra,
   userId: string | null,
 ): Promise<ResultadoDaObra>
 {
-  return obraParaPagina(anilistId, userId, {
-    buscarCompleta: buscarMediaCompletaPorAnilistId,
-    buscarNoAniList: buscarMediaPorId,
-    buscarNoKitsu: buscarNoKitsuPorAnilistId,
+  return obraParaPagina(referencia, userId, {
+    buscarCompleta: buscarMediaCompletaPorReferencia,
+    buscarNaFonte: buscarObraNaFonte,
     salvarMedia: salvarMediaDoAniList,
     buscarSimilares: similaresLembrados,
     buscarEntrada: buscarEntradaPorMedia,

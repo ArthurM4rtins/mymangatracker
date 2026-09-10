@@ -31,7 +31,7 @@ function fakeDeps(media: { id: string } | null = { id: "m1" })
 
 const PEDIDO = {
   userId: "u1",
-  anilistId: 30002,
+  referencia: { fonte: "anilist" as const, id: 30002 },
   rating: 4.5 as number | null,
   review: "obra-prima" as string | null,
   containsSpoilers: false,
@@ -126,7 +126,7 @@ describe("removerAvaliacaoDaEntrada", function ()
     const { deps, remover } = fakeDeps();
 
     const resultado = await removerAvaliacaoDaEntrada(
-      { userId: "u1", anilistId: 30002 },
+      { userId: "u1", referencia: { fonte: "anilist" as const, id: 30002 } },
       deps,
     );
 
@@ -140,7 +140,7 @@ describe("removerAvaliacaoDaEntrada", function ()
     remover.mockResolvedValue(null);
 
     const resultado = await removerAvaliacaoDaEntrada(
-      { userId: "u1", anilistId: 30002 },
+      { userId: "u1", referencia: { fonte: "anilist" as const, id: 30002 } },
       deps,
     );
 

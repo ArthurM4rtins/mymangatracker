@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { getPrisma } from "@/server/repositories/prisma";
 import {
-  buscarMediaPorAnilistId,
+  buscarMediaPorReferencia,
   salvarMediaDoAniList,
 } from "@/server/repositories/media.repository";
 import { adicionarOuAtualizarEntrada } from "@/server/repositories/shelf.repository";
@@ -33,7 +33,7 @@ describe("salvarMediaDoAniList", function ()
     expect(b.id).toBe(a.id);
     expect(await getPrisma().media.count({ where: { anilistId: 30013 } })).toBe(1);
 
-    const lido = await buscarMediaPorAnilistId(30013);
+    const lido = await buscarMediaPorReferencia({ fonte: "anilist", id: 30013 });
     expect(lido?.syncedAt).toEqual(segunda);
   });
 });

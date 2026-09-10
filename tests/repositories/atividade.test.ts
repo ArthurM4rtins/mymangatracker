@@ -42,7 +42,7 @@ describe("listarResenhasDaComunidade", function ()
       ["bia", "recente"],
       ["ana", "antiga"],
     ]);
-    expect(resenhas[0]).toMatchObject({ anilistId: 30002, containsSpoilers: true, rating: "4", curtidas: 0 });
+    expect(resenhas[0]).toMatchObject({ chave: "anilist:30002", containsSpoilers: true, rating: "4", curtidas: 0 });
 
     const serializado = JSON.stringify(resenhas);
     expect(serializado).not.toContain("@exemplo.test");

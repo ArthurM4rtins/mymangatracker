@@ -11,11 +11,11 @@ import { useRouter } from "@/i18n/navigation";
 
 export function AdicionarItem({
   listaId,
-  anilistId,
+  chave,
   jaNaLista,
 }: {
   listaId: string;
-  anilistId: number;
+  chave: string;
   jaNaLista: boolean;
 })
 {
@@ -34,7 +34,7 @@ export function AdicionarItem({
       const resposta = await fetch(`/api/v1/listas/${listaId}/itens`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ anilistId }),
+        body: JSON.stringify({ obra: chave }),
       });
 
       if (resposta.status === 401)

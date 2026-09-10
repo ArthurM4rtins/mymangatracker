@@ -1,12 +1,13 @@
 // O feed da comunidade (issue #50). LEITURA PÚBLICA, mesmo recorte do social:
 // só resenhas COM TEXTO, username de quem escreveu, e-mail e ids de usuário
 // nunca. Progresso e fonte não passam nem perto daqui.
+import { chaveDaObra, referenciaDeMedia } from "@/server/domain/referencia-da-obra";
 import { getPrisma } from "./prisma";
 
 export type ResenhaDaComunidade = {
   entryId: string;
   username: string;
-  anilistId: number;
+  chave: string;
   titulo: string;
   coverImageUrl: string | null;
   rating: string | null;
@@ -25,7 +26,8 @@ const SELECT_DA_RESENHA = {
   createdAt: true,
   user: { select: { username: true } },
   media: {
-    select: { anilistId: true, titleRomaji: true, titleEnglish: true, coverImageUrl: true },
+    select: { anilistId: true,
+      kitsuId: true, titleRomaji: true, titleEnglish: true, coverImageUrl: true },
   },
   _count: { select: { likes: true } },
 } as const;
@@ -39,7 +41,7 @@ type LinhaDaResenha = {
   createdAt: Date;
   user: { username: string };
   media: {
-    anilistId: number;
+    chave: string;
     titleRomaji: string;
     titleEnglish: string | null;
     coverImageUrl: string | null;
@@ -52,7 +54,7 @@ function paraResenha(linha: LinhaDaResenha): ResenhaDaComunidade
   return {
     entryId: linha.id,
     username: linha.user.username,
-    anilistId: linha.media.anilistId,
+    chave: linha.media.chave,
     titulo: linha.media.titleEnglish ?? linha.media.titleRomaji,
     coverImageUrl: linha.media.coverImageUrl,
     rating: linha.rating?.toString() ?? null,
@@ -79,12 +81,15 @@ export async function listarResenhasDaComunidade(
     select: SELECT_DA_RESENHA,
   });
 
-  // SEM_ANILIST (#254, fase 1): obra sem AniList fica de fora AQUI, a vista.
-  // A fase 2 troca por referencia (fonte, id).
   return linhas
-    .filter(function (linha) { return linha.media.anilistId !== null; })
     .map(function (linha)
     {
-      return paraResenha({ ...linha, media: { ...linha.media, anilistId: linha.media.anilistId as number } });
+      return paraResenha({
+        ...linha,
+        media: {
+          ...linha.media,
+          chave: chaveDaObra(referenciaDeMedia(linha.media) ?? { fonte: "anilist", id: 0 }),
+        },
+      });
     });
 }

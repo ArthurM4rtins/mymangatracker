@@ -1,4 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
+import { chaveDaObra } from "@/server/domain/referencia-da-obra";
+import { referenciaDaObra } from "@/server/domain/anilist-media";
 import { Link } from "@/i18n/navigation";
 import { verificarSaudeDoSistema } from "@/server/services/sistema.service";
 import { buscarNoCatalogo, type ResultadoBusca } from "@/server/services/catalogo.service";
@@ -61,10 +63,10 @@ export default async function Home()
   const resumoDaSaude = t(`saude.resumo.${saude.status}`);
   const itensPopulares = temObras(populares)
     ? populares.obras.slice(0, LIMITE_POPULARES).map((obra) => ({
-      id: obra.anilistId,
+      id: chaveDaObra(referenciaDaObra(obra)),
       titulo: obra.titleEnglish ?? obra.titleRomaji,
       capa: obra.coverImageUrl ?? null,
-      detalhe: <CartaoObra anilistId={obra.anilistId}
+      detalhe: <CartaoObra chave={chaveDaObra(referenciaDaObra(obra))}
         titulo={obra.titleEnglish ?? obra.titleRomaji} capa={obra.coverImageUrl ?? null} />,
     }))
     : [];
@@ -235,10 +237,10 @@ async function BoasVindas({ leitura }: { leitura: DadosDeLeitura })
             titulo={t("boasVindas.continuarLendo")}
             classeGrade="grid grid-cols-2 gap-4 sm:grid-cols-4"
             itens={leitura.continuar.map((entrada) => ({
-              id: entrada.obra.anilistId,
+              id: entrada.obra.chave,
               titulo: entrada.obra.titleEnglish ?? entrada.obra.titleRomaji,
               capa: entrada.obra.coverImageUrl,
-              detalhe: <CartaoObra anilistId={entrada.obra.anilistId}
+              detalhe: <CartaoObra chave={entrada.obra.chave}
                 titulo={entrada.obra.titleEnglish ?? entrada.obra.titleRomaji}
                 capa={entrada.obra.coverImageUrl}
                 acoes={<ContinuarLeitura continuarEm={entrada.continuarEm} compacto />} />,
@@ -295,7 +297,7 @@ function itemParaTela(item: AtividadeDaComunidade, formato: Intl.DateTimeFormat)
       tipo: "resenha",
       chave: `r-${item.entryId}`,
       username: item.username,
-      anilistId: item.anilistId,
+      obraChave: item.chave,
       titulo: item.titulo,
       coverImageUrl: item.coverImageUrl,
       rating: item.rating,
@@ -330,7 +332,7 @@ function cardsDeResenhas(vitrine: VitrineDaHome, idioma: string)
       <CardResenha
         key={r.entryId}
         username={r.username}
-        anilistId={r.anilistId}
+        chave={r.chave}
         titulo={r.titulo}
         coverImageUrl={r.coverImageUrl}
         rating={r.rating}

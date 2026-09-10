@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { buscarNoCatalogo, obraParaDTO } from "@/server/services/catalogo.service";
-import { anilistIdsNaEstanteDoSistema } from "@/server/services/estante.service";
+import { chavesNaEstanteDoSistema } from "@/server/services/estante.service";
 import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
 import { headers } from "next/headers";
 import { alternativasDeIdioma } from "@/i18n/navigation";
@@ -137,7 +137,7 @@ export default async function Catalogo({ searchParams }: Props)
 }
 
 /** Banco fora ou sem sessão: nada marcado, o catálogo segue de pé. */
-async function idsNaEstante(): Promise<Set<number>>
+async function idsNaEstante(): Promise<Set<string>>
 {
   try
   {
@@ -148,7 +148,7 @@ async function idsNaEstante(): Promise<Set<number>>
       return new Set();
     }
 
-    return new Set(await anilistIdsNaEstanteDoSistema(userId));
+    return new Set(await chavesNaEstanteDoSistema(userId));
   }
   catch
   {

@@ -46,7 +46,7 @@ export type EntradaDaEstanteDoDono = {
   /** Só o dono vê — nunca sai para outro usuário. */
   progressChapter: string | null;
   obra: {
-    anilistId: number;
+    chave: string;
     titleRomaji: string;
     titleEnglish: string | null;
     coverImageUrl: string | null;
@@ -174,7 +174,7 @@ export function perfilDoUsuarioDoSistema(
           status: entrada.status,
           progressChapter: entrada.progressChapter,
           obra: {
-            anilistId: entrada.obra.anilistId,
+            chave: entrada.obra.chave,
             titleRomaji: entrada.obra.titleRomaji,
             titleEnglish: entrada.obra.titleEnglish,
             coverImageUrl: entrada.obra.coverImageUrl,

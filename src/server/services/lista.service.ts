@@ -15,9 +15,11 @@ import { buscarMediaPorId } from "@/server/infra/anilist";
 import { buscarNoKitsuPorAnilistId } from "@/server/infra/kitsu";
 import { limitarItemDeLista, limitarLista, limitarOrdem } from "./limite.service";
 import {
-  buscarMediaPorAnilistId,
+  buscarMediaPorReferencia,
   salvarMediaDoAniList,
 } from "@/server/repositories/media.repository";
+import { buscarObraNaFonte, type ResultadoDaFonte } from "./obra-externa.service";
+import { chaveDaObra, referenciaDeMedia, type ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
 import {
   adicionarItem,
   alternarCurtidaDaLista,
@@ -80,10 +82,9 @@ export async function criarListaDoUsuario(
 }
 
 export type DependenciasDeAdicao = {
-  buscarMedia: (anilistId: number) => Promise<{ id: string } | null>;
-  buscarNoAniList: (anilistId: number) => Promise<MediaDoAniList | null>;
-  /** O degrau de baixo, só com o AniList fora (#219). */
-  buscarNoKitsu: (anilistId: number) => Promise<MediaDoAniList | null>;
+  buscarMedia: (referencia: ReferenciaDaObra) => Promise<{ id: string } | null>;
+  /** A escada de fontes, uma só para o sistema inteiro (#254). */
+  buscarNaFonte: (referencia: ReferenciaDaObra) => Promise<ResultadoDaFonte>;
   salvarMedia: (obra: MediaDoAniList, sincronizadoEm: Date) => Promise<{ id: string }>;
   adicionar: (
     userId: string,
@@ -96,7 +97,7 @@ export type DependenciasDeAdicao = {
 };
 
 export type DependenciasDeRemocao = {
-  buscarMedia: (anilistId: number) => Promise<{ id: string } | null>;
+  buscarMedia: (referencia: ReferenciaDaObra) => Promise<{ id: string } | null>;
   remover: (
     userId: string,
     listaId: string,
@@ -114,7 +115,7 @@ export type DependenciasDeRemocao = {
  * idade: pertencer a uma lista não precisa de dados frescos, e poupa cota.
  */
 export async function adicionarObraNaLista(
-  pedido: { userId: string; listaId: string; anilistId: number },
+  pedido: { userId: string; listaId: string; referencia: ReferenciaDaObra },
   deps: DependenciasDeAdicao,
 ): Promise<
   | { estado: "ok"; contem: true }
@@ -132,7 +133,7 @@ export async function adicionarObraNaLista(
     return { estado: "limitado", esperarSegundos: limite.esperarSegundos };
   }
 
-  const emCache = await deps.buscarMedia(pedido.anilistId);
+  const emCache = await deps.buscarMedia(pedido.referencia);
 
   let mediaId: string;
 
@@ -142,23 +143,14 @@ export async function adicionarObraNaLista(
   }
   else
   {
-    let obra: MediaDoAniList | null;
+    const daFonte = await deps.buscarNaFonte(pedido.referencia);
 
-    try
+    if (daFonte.estado === "indisponivel")
     {
-      obra = await deps.buscarNoAniList(pedido.anilistId);
+      return { estado: "indisponivel" };
     }
-    catch
-    {
-      try
-      {
-        obra = await deps.buscarNoKitsu(pedido.anilistId);
-      }
-      catch
-      {
-        return { estado: "indisponivel" };
-      }
-    }
+
+    const obra = daFonte.obra;
 
     if (obra === null)
     {
@@ -190,7 +182,7 @@ export async function adicionarObraNaLista(
  * `nao_encontrada` cobre lista alheia/inexistente e obra que já não estava.
  */
 export async function removerObraDaLista(
-  pedido: { userId: string; listaId: string; anilistId: number },
+  pedido: { userId: string; listaId: string; referencia: ReferenciaDaObra },
   deps: DependenciasDeRemocao,
 ): Promise<
   | { estado: "ok" }
@@ -198,7 +190,7 @@ export async function removerObraDaLista(
   | { estado: "obra_desconhecida" }
 >
 {
-  const media = await deps.buscarMedia(pedido.anilistId);
+  const media = await deps.buscarMedia(pedido.referencia);
 
   if (media === null)
   {
@@ -227,13 +219,12 @@ export function criarListaDoSistema(pedido: {
 export function adicionarObraNaListaDoSistema(pedido: {
   userId: string;
   listaId: string;
-  anilistId: number;
+  referencia: ReferenciaDaObra;
 })
 {
   return adicionarObraNaLista(pedido, {
-    buscarMedia: buscarMediaPorAnilistId,
-    buscarNoAniList: buscarMediaPorId,
-    buscarNoKitsu: buscarNoKitsuPorAnilistId,
+    buscarMedia: buscarMediaPorReferencia,
+    buscarNaFonte: function (referencia) { return buscarObraNaFonte(referencia); },
     salvarMedia: salvarMediaDoAniList,
     adicionar: adicionarItem,
     limitar: function (userId) { return limitarItemDeLista({ userId }); },
@@ -244,11 +235,11 @@ export function adicionarObraNaListaDoSistema(pedido: {
 export function removerObraDaListaDoSistema(pedido: {
   userId: string;
   listaId: string;
-  anilistId: number;
+  referencia: ReferenciaDaObra;
 })
 {
   return removerObraDaLista(pedido, {
-    buscarMedia: buscarMediaPorAnilistId,
+    buscarMedia: buscarMediaPorReferencia,
     remover: removerItem,
   });
 }
@@ -301,11 +292,11 @@ export function listaComItensDoSistema(
  */
 export async function minhasListasDoSistema(
   userId: string,
-  anilistId: number | null,
+  referencia: ReferenciaDaObra | null,
 ): Promise<Array<{ listaId: string; nome: string; jaContem: boolean }>>
 {
   const media =
-    anilistId === null ? null : await buscarMediaPorAnilistId(anilistId);
+    referencia === null ? null : await buscarMediaPorReferencia(referencia);
 
   return listarMinhasListas(userId, media?.id ?? null);
 }
@@ -354,7 +345,7 @@ export type DependenciasDeOrdem = {
   listarItens: (
     userId: string,
     listaId: string,
-  ) => Promise<Array<{ anilistId: number; mediaId: string }> | null>;
+  ) => Promise<Array<{ chave: string; mediaId: string }> | null>;
   reordenar: (
     userId: string,
     listaId: string,
@@ -372,7 +363,7 @@ export type DependenciasDeOrdem = {
  * bloqueado não custa nem a leitura dos itens.
  */
 export async function reordenarItensDaLista(
-  pedido: { userId: string; listaId: string; anilistIds: number[] },
+  pedido: { userId: string; listaId: string; chaves: string[] },
   deps: DependenciasDeOrdem,
 ): Promise<
   | { estado: "ok" }
@@ -395,17 +386,17 @@ export async function reordenarItensDaLista(
     return { estado: "nao_encontrada" };
   }
 
-  const atuaisIds = atuais.map(function (item) { return item.anilistId; });
+  const atuaisIds = atuais.map(function (item) { return item.chave; });
 
-  if (!mesmoConjunto(atuaisIds, pedido.anilistIds))
+  if (!mesmoConjunto(atuaisIds, pedido.chaves))
   {
     return { estado: "ordem_invalida" };
   }
 
-  const porAnilistId = new Map(atuais.map(function (item) { return [item.anilistId, item.mediaId]; }));
-  const mediaIds = pedido.anilistIds.map(function (anilistId)
+  const porChave = new Map(atuais.map(function (item) { return [item.chave, item.mediaId]; }));
+  const mediaIds = pedido.chaves.map(function (chave)
   {
-    return porAnilistId.get(anilistId) as string;
+    return porChave.get(chave) as string;
   });
 
   const gravada = await deps.reordenar(pedido.userId, pedido.listaId, mediaIds);
@@ -473,7 +464,7 @@ export function editarListaDoSistema(pedido: {
 export function reordenarItensDoSistema(pedido: {
   userId: string;
   listaId: string;
-  anilistIds: number[];
+  chaves: string[];
 })
 {
   return reordenarItensDaLista(pedido, {

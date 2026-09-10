@@ -14,13 +14,15 @@ import {
 import { lerJson } from "../_shared/corpo";
 import { ERRO } from "../_shared/erros";
 import { usuarioDaSessao } from "../_shared/sessao";
+import { referenciaDaChave } from "@/server/domain/referencia-da-obra";
 
 export const dynamic = "force-dynamic";
 
 const STATUS = z.enum(["READING", "COMPLETED", "PLANNED", "PAUSED", "DROPPED"]);
 
 const ESQUEMA_ESTANTE = z.object({
-  anilistId: z.number().int().positive(),
+  // A obra pela chave (#254): `anilist:30002` ou `kitsu:54598`.
+  obra: z.string().min(3).max(40),
   status: STATUS.default("PLANNED"),
 });
 
@@ -98,11 +100,22 @@ export async function POST(request: Request)
     );
   }
 
+  // A chave chega do corpo: nada nela e de confianca (#254).
+  const referencia = referenciaDaChave(analise.data.obra);
+
+  if (referencia === null)
+  {
+    return NextResponse.json(
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
+      { status: 400 },
+    );
+  }
+
   try
   {
     const resultado = await adicionarNaEstanteDoSistema({
       userId,
-      anilistId: analise.data.anilistId,
+      referencia,
       status: analise.data.status,
     });
 

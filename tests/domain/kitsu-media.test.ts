@@ -33,6 +33,24 @@ function obra(atributos: Record<string, unknown> = {}, anilistId: string | null 
 
 describe("traduzirDoKitsu", function ()
 {
+  // #254: o Kitsu manda `chapterCount: null` em obra em andamento — e `null`
+  // vira 0 em `Number()`. A pagina dizia "0 capitulos", que e' mentira: o
+  // certo e' nao dizer numero nenhum.
+  it("sem contagem de capitulos, o campo nao vem — nao vira zero", function ()
+  {
+    const media = traduzirDoKitsu(obra({
+      attributes: {
+        canonicalTitle: "The Beginning After the End",
+        titles: { en: "The Beginning After the End" },
+        subtype: "novel",
+        chapterCount: null,
+      },
+    }, null));
+
+    expect(media).not.toBeNull();
+    expect(media).not.toHaveProperty("chapters");
+  });
+
   it("traduz o essencial, com o anilistId do mapeamento", function ()
   {
     const media = traduzirDoKitsu(obra());
@@ -46,10 +64,15 @@ describe("traduzirDoKitsu", function ()
     });
   });
 
-  it("sem anilistId, NAO vira obra", function ()
+  // Era "sem anilistId, NAO vira obra". Deixou de valer em #254: o mapeamento
+  // nao e mais a unica identidade aceita, e exigi-lo apagava do Kidoku toda
+  // obra que o AniList nao conhece. O que a obra nao pode e ficar SEM nenhuma
+  // identidade -- isso e testado logo acima, pelo id do Kitsu vazio.
+  it("mapeamento invalido nao impede a obra de existir pelo Kitsu", function ()
   {
-    expect(traduzirDoKitsu(obra({}, null))).toBeNull();
-    expect(traduzirDoKitsu(obra({}, "nao-e-numero"))).toBeNull();
+    expect(traduzirDoKitsu(obra({}, null))?.anilistId).toBeUndefined();
+    expect(traduzirDoKitsu(obra({}, "nao-e-numero"))?.anilistId).toBeUndefined();
+    expect(traduzirDoKitsu(obra({}, null))?.kitsuId).toBeGreaterThan(0);
   });
 
   it("manhwa e manhua viram pais de origem; manga NAO assume Japao", function ()

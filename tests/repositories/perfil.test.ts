@@ -93,10 +93,10 @@ describe("perfil público", function ()
     const { dona } = await semearLeitora();
 
     const avaliadas = await listarAvaliadas(dona.id, 200);
-    expect(avaliadas.map(function (a) { return [a.anilistId, a.rating]; })).toEqual(
+    expect(avaliadas.map(function (a) { return [a.chave, a.rating]; })).toEqual(
       expect.arrayContaining([
-        [30002, 5],
-        [30013, 4],
+        ["anilist:30002", 5],
+        ["anilist:30013", 4],
       ]),
     );
     expect(avaliadas).toHaveLength(2);
@@ -106,7 +106,7 @@ describe("perfil público", function ()
 
     const resenhas = await listarResenhasRecentes(dona.id, 5);
     expect(resenhas.map(function (r) { return r.review; })).toEqual(["obra-prima"]);
-    expect(resenhas[0]).toMatchObject({ anilistId: 30002, rating: "5", curtidas: 1 });
+    expect(resenhas[0]).toMatchObject({ chave: "anilist:30002", rating: "5", curtidas: 1 });
 
     const listas = await listarListasDoUsuario(dona.id, 50);
     expect(listas.map(function (l) { return l.nome; })).toEqual(["seinen"]);

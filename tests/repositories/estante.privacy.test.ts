@@ -4,7 +4,7 @@ import {
   adicionarOuAtualizarEntrada,
   atualizarProgressoDaEntrada,
   atualizarStatusDaEntrada,
-  listarAnilistIdsDaEstante,
+  listarChavesDaEstante,
   listarEntradasDoUsuario,
 } from "@/server/repositories/shelf.repository";
 import { limparBanco, semearUsuario } from "./apoio";
@@ -99,7 +99,7 @@ describe("atualizarProgressoDaEntrada", function ()
   });
 });
 
-describe("listarAnilistIdsDaEstante", function ()
+describe("listarChavesDaEstante", function ()
 {
   it("devolve só os ids da estante do usuário consultado", async function ()
   {
@@ -111,8 +111,8 @@ describe("listarAnilistIdsDaEstante", function ()
     await adicionarOuAtualizarEntrada({ userId: um.id, mediaId: media.id, status: "READING" });
     await adicionarOuAtualizarEntrada({ userId: outro.id, mediaId: outraMedia.id, status: "PLANNED" });
 
-    await expect(listarAnilistIdsDaEstante(um.id)).resolves.toEqual([30013]);
-    await expect(listarAnilistIdsDaEstante(outro.id)).resolves.toEqual([30002]);
+    await expect(listarChavesDaEstante(um.id)).resolves.toEqual(["anilist:30013"]);
+    await expect(listarChavesDaEstante(outro.id)).resolves.toEqual(["anilist:30002"]);
   });
 });
 

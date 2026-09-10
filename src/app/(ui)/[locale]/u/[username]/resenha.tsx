@@ -12,7 +12,7 @@ import { estrelasTexto } from "../../componentes/estrelas";
 
 export type ResenhaParaTela = {
   entryId: string;
-  anilistId: number;
+  chave: string;
   titulo: string;
   coverImageUrl: string | null;
   rating: string | null;
@@ -28,7 +28,7 @@ export function ResenhaDoPerfil({ resenha }: { resenha: ResenhaParaTela })
 
   return (
     <li className="flex gap-4 rounded-lg border border-borda bg-superficie p-4">
-      <Link href={`/obra/${resenha.anilistId}`} className="shrink-0">
+      <Link href={`/obra/${resenha.chave.replace(":", "/")}`} className="shrink-0">
         {resenha.coverImageUrl ? (
           <Image
             src={resenha.coverImageUrl}
@@ -46,7 +46,7 @@ export function ResenhaDoPerfil({ resenha }: { resenha: ResenhaParaTela })
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <p className="flex flex-wrap items-center gap-2 text-sm">
           <Link
-            href={`/obra/${resenha.anilistId}`}
+            href={`/obra/${resenha.chave.replace(":", "/")}`}
             className="font-medium hover:text-acento"
           >
             {resenha.titulo}
