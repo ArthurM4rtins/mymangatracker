@@ -11,6 +11,12 @@ export const LARGURA_ABERTA = 168;
 export const RECUO_DO_TRILHO = 12;
 /** Vão entre um livro e outro. */
 export const VAO = 4;
+/**
+ * O quanto o livro aberto pode encolher para o andar fechar com o número cheio
+ * de obras. Abaixo disso ele deixa de parecer uma capa, e aí é melhor o andar
+ * levar uma obra a menos.
+ */
+export const VITRINE_MINIMA = 120;
 
 /** Lombada de 46, 51 ou 56 px, decidida pelo id — livros diferentes, lombadas diferentes. */
 export function larguraDaLombada(id: number): number
@@ -19,10 +25,39 @@ export function larguraDaLombada(id: number): number
 }
 
 /**
+ * Quanto sobra para o livro aberto depois das lombadas do andar. É por aí que
+ * um andar com teto (a home pede nove) fecha com o número cheio: as lombadas
+ * variam de largura, então quem cede é a vitrine — nunca abaixo de
+ * `VITRINE_MINIMA`, e nunca acima do tamanho normal.
+ */
+export function larguraDaVitrine<T extends { id: number }>(
+  andar: readonly T[],
+  larguraDoTrilho: number,
+): number
+{
+  if (larguraDoTrilho <= 0 || andar.length === 0)
+  {
+    return LARGURA_ABERTA;
+  }
+
+  const lombadas = andar.slice(1).reduce(function (soma, obra)
+  {
+    return soma + larguraDaLombada(obra.id) + VAO;
+  }, 0);
+
+  const sobra = larguraDoTrilho - 2 * RECUO_DO_TRILHO - lombadas;
+
+  return Math.max(VITRINE_MINIMA, Math.min(LARGURA_ABERTA, sobra));
+}
+
+/**
  * Corta `itens` em andares que cabem em `larguraDoTrilho`. O primeiro livro de
  * cada andar fica aberto; os demais, de lombada. Sem largura medida ainda
  * (zero), tudo vai num andar só — respeitando o teto, se houver. Um livro
  * sempre cabe, mesmo num trilho estreito demais: melhor sobrar que sumir.
+ *
+ * Com teto, o andar tenta fechar com o número cheio apertando a vitrine até
+ * `VITRINE_MINIMA` (#229). Se nem assim couber, volta a encher pela largura.
  */
 export function emAndaresPelaLargura<T extends { id: number }>(
   itens: readonly T[],
@@ -31,6 +66,8 @@ export function emAndaresPelaLargura<T extends { id: number }>(
 ): T[][]
 {
   const util = larguraDoTrilho > 0 ? larguraDoTrilho - 2 * RECUO_DO_TRILHO : Number.POSITIVE_INFINITY;
+  // Com teto, a vitrine pode ceder; sem teto ela fica no tamanho cheio.
+  const vitrine = Number.isFinite(maximoPorAndar) ? VITRINE_MINIMA : LARGURA_ABERTA;
   const andares: T[][] = [];
   let andar: T[] = [];
   let ocupado = 0;
@@ -48,7 +85,7 @@ export function emAndaresPelaLargura<T extends { id: number }>(
     }
 
     andar.push(obra);
-    ocupado += andar.length === 1 ? LARGURA_ABERTA : largura;
+    ocupado += andar.length === 1 ? vitrine : largura;
   }
 
   if (andar.length > 0)
