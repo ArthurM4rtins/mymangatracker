@@ -10,12 +10,14 @@
  * do manifest: é o que aparece para quem tem o navegador em qualquer idioma
  * fora dos cinco, ou seja, para a maioria de quem não lê em português.
  *
- * A lista não cresce junto com os idiomas do site de propósito. Captura custa
- * idiomas × telas, e o custo volta a cada mudança de visual do popup — o que a
- * imagem mostra é ONDE as coisas ficam, e o que cada uma faz já está escrito no
- * idioma de quem lê, no texto e na legenda.
+ * A lista não cresce junto com os idiomas do site de propósito, e hoje tem um
+ * item só. Captura custa idiomas × telas, e o custo volta a cada mudança de
+ * visual do popup — enquanto o que a imagem mostra é ONDE as coisas ficam, e o
+ * que cada uma faz já está escrito no idioma de quem lê, no texto e na legenda.
+ * Manter a interface numa língua só, com o texto ao redor traduzido, é o que a
+ * maioria dos produtos faz.
  */
-export const IDIOMAS_COM_CAPTURA = ["en", "pt-BR"] as const;
+export const IDIOMAS_COM_CAPTURA = ["en"] as const;
 
 /**
  * O tamanho real de cada arquivo. Muda com o idioma — o mesmo popup fica alguns
@@ -24,12 +26,10 @@ export const IDIOMAS_COM_CAPTURA = ["en", "pt-BR"] as const;
  */
 const TAMANHOS: Record<string, Record<string, { largura: number; altura: number }>> = {
   "popup-em-uso": {
-    "en": { largura: 396, altura: 657 },
-    "pt-BR": { largura: 399, altura: 658 },
+    "en": { largura: 398, altura: 680 },
   },
   "popup-sem-sessao": {
     "en": { largura: 401, altura: 125 },
-    "pt-BR": { largura: 400, altura: 122 },
   },
 };
 
