@@ -1,11 +1,11 @@
 /**
- * POST   /api/v1/listas/:id/itens — alternar a obra na lista (entra/sai).
+ * POST   /api/v1/listas/:id/itens — adicionar a obra à lista (idempotente, #237).
  * DELETE /api/v1/listas/:id/itens — remover a obra da lista (nunca adiciona).
  */
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import {
-  alternarObraNaListaDoSistema,
+  adicionarObraNaListaDoSistema,
   removerObraDaListaDoSistema,
 } from "@/server/services/lista.service";
 import { lerJson } from "../../../_shared/corpo";
@@ -56,7 +56,7 @@ export async function POST(
 
   try
   {
-    const resultado = await alternarObraNaListaDoSistema({
+    const resultado = await adicionarObraNaListaDoSistema({
       userId,
       listaId: id,
       anilistId: analise.data.anilistId,
@@ -86,11 +86,27 @@ export async function POST(
       );
     }
 
+    if (resultado.estado === "indisponivel")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.CATALOGO_INDISPONIVEL } },
+        { status: 503 },
+      );
+    }
+
+    if (resultado.estado === "limitado")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
+        { status: 429, headers: { "Retry-After": String(resultado.esperarSegundos) } },
+      );
+    }
+
     return NextResponse.json({ contem: resultado.contem }, { status: 200 });
   }
   catch (erro)
   {
-    console.error("[listas] falha no toggle:", erro instanceof Error ? erro.message : erro);
+    console.error("[listas] falha ao adicionar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
       { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },

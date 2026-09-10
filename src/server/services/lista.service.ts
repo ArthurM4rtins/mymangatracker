@@ -1,6 +1,6 @@
 /**
- * Casos de uso das listas (issue #41): criar, apagar e alternar obra (toggle
- * a partir da página da obra). Quem resolve a sessão é o controller.
+ * Casos de uso das listas (issue #41): criar, apagar, adicionar e remover obra.
+ * Quem resolve a sessão é o controller.
  */
 import { mesmoConjunto } from "@/server/domain/lista-ordem";
 import { podeSeRelacionar } from "@/server/domain/social";
@@ -10,8 +10,14 @@ import {
   noMaximoPorAutor,
 } from "@/server/domain/rodizio-de-autoria";
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
-import { limitarLista, limitarOrdem } from "./limite.service";
-import { buscarMediaPorAnilistId } from "@/server/repositories/media.repository";
+import type { MediaDoAniList } from "@/server/domain/anilist-media";
+import { buscarMediaPorId } from "@/server/infra/anilist";
+import { buscarNoKitsuPorAnilistId } from "@/server/infra/kitsu";
+import { limitarItemDeLista, limitarLista, limitarOrdem } from "./limite.service";
+import {
+  buscarMediaPorAnilistId,
+  salvarMediaDoAniList,
+} from "@/server/repositories/media.repository";
 import {
   adicionarItem,
   alternarCurtidaDaLista,
@@ -73,13 +79,24 @@ export async function criarListaDoUsuario(
   return { estado: "ok", listaId: criada.id };
 }
 
-export type DependenciasDeToggle = {
+export type DependenciasDeAdicao = {
   buscarMedia: (anilistId: number) => Promise<{ id: string } | null>;
+  buscarNoAniList: (anilistId: number) => Promise<MediaDoAniList | null>;
+  /** O degrau de baixo, só com o AniList fora (#219). */
+  buscarNoKitsu: (anilistId: number) => Promise<MediaDoAniList | null>;
+  salvarMedia: (obra: MediaDoAniList, sincronizadoEm: Date) => Promise<{ id: string }>;
   adicionar: (
     userId: string,
     listaId: string,
     mediaId: string,
   ) => Promise<{ jaExistia: boolean } | { cheia: true } | null>;
+  /** Teto de itens por usuário na janela. Antes do AniList: é I/O de terceiro. */
+  limitar: (userId: string) => Promise<Veredito>;
+  relogio?: () => Date;
+};
+
+export type DependenciasDeRemocao = {
+  buscarMedia: (anilistId: number) => Promise<{ id: string } | null>;
   remover: (
     userId: string,
     listaId: string,
@@ -88,27 +105,71 @@ export type DependenciasDeToggle = {
 };
 
 /**
- * Toggle: obra fora entra, obra dentro sai. A obra precisa existir no cache —
- * quem chega aqui veio da página da obra, então ela já foi cacheada.
+ * Adicionar é idempotente: obra que já estava continua lá (#237). Antes era
+ * toggle, e dois cliques rápidos removiam sem querer (#148, item 13).
+ *
+ * A obra não precisa estar na estante nem no cache — lista é curadoria, quem
+ * só conhece a obra também lista. Fora do cache, vem do AniList (Kitsu como
+ * degrau de baixo) e é cacheada, como na estante. Em cache, serve em qualquer
+ * idade: pertencer a uma lista não precisa de dados frescos, e poupa cota.
  */
-export async function alternarObraNaLista(
+export async function adicionarObraNaLista(
   pedido: { userId: string; listaId: string; anilistId: number },
-  deps: DependenciasDeToggle,
+  deps: DependenciasDeAdicao,
 ): Promise<
-  | { estado: "ok"; contem: boolean }
+  | { estado: "ok"; contem: true }
   | { estado: "nao_encontrada" }
   | { estado: "obra_desconhecida" }
+  | { estado: "indisponivel" }
   | { estado: "lista_cheia" }
+  | { estado: "limitado"; esperarSegundos: number }
 >
 {
-  const media = await deps.buscarMedia(pedido.anilistId);
+  const limite = await deps.limitar(pedido.userId);
 
-  if (media === null)
+  if (limite.bloqueado)
   {
-    return { estado: "obra_desconhecida" };
+    return { estado: "limitado", esperarSegundos: limite.esperarSegundos };
   }
 
-  const adicionado = await deps.adicionar(pedido.userId, pedido.listaId, media.id);
+  const emCache = await deps.buscarMedia(pedido.anilistId);
+
+  let mediaId: string;
+
+  if (emCache !== null)
+  {
+    mediaId = emCache.id;
+  }
+  else
+  {
+    let obra: MediaDoAniList | null;
+
+    try
+    {
+      obra = await deps.buscarNoAniList(pedido.anilistId);
+    }
+    catch
+    {
+      try
+      {
+        obra = await deps.buscarNoKitsu(pedido.anilistId);
+      }
+      catch
+      {
+        return { estado: "indisponivel" };
+      }
+    }
+
+    if (obra === null)
+    {
+      return { estado: "obra_desconhecida" };
+    }
+
+    const salvo = await deps.salvarMedia(obra, deps.relogio?.() ?? new Date());
+    mediaId = salvo.id;
+  }
+
+  const adicionado = await deps.adicionar(pedido.userId, pedido.listaId, mediaId);
 
   if (adicionado === null)
   {
@@ -120,14 +181,7 @@ export async function alternarObraNaLista(
     return { estado: "lista_cheia" };
   }
 
-  if (!adicionado.jaExistia)
-  {
-    return { estado: "ok", contem: true };
-  }
-
-  await deps.remover(pedido.userId, pedido.listaId, media.id);
-
-  return { estado: "ok", contem: false };
+  return { estado: "ok", contem: true };
 }
 
 /**
@@ -137,7 +191,7 @@ export async function alternarObraNaLista(
  */
 export async function removerObraDaLista(
   pedido: { userId: string; listaId: string; anilistId: number },
-  deps: Pick<DependenciasDeToggle, "buscarMedia" | "remover">,
+  deps: DependenciasDeRemocao,
 ): Promise<
   | { estado: "ok" }
   | { estado: "nao_encontrada" }
@@ -170,16 +224,19 @@ export function criarListaDoSistema(pedido: {
 }
 
 /** A composição de produção. */
-export function alternarObraNaListaDoSistema(pedido: {
+export function adicionarObraNaListaDoSistema(pedido: {
   userId: string;
   listaId: string;
   anilistId: number;
 })
 {
-  return alternarObraNaLista(pedido, {
+  return adicionarObraNaLista(pedido, {
     buscarMedia: buscarMediaPorAnilistId,
+    buscarNoAniList: buscarMediaPorId,
+    buscarNoKitsu: buscarNoKitsuPorAnilistId,
+    salvarMedia: salvarMediaDoAniList,
     adicionar: adicionarItem,
-    remover: removerItem,
+    limitar: function (userId) { return limitarItemDeLista({ userId }); },
   });
 }
 

@@ -157,6 +157,9 @@ const LEITURAS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 
 const AVATARES_POR_USUARIO: RegraDeLimite = { maximo: 10, janelaMs: 60 * 60_000 };
 const LISTAS_POR_USUARIO: RegraDeLimite = { maximo: 20, janelaMs: 60 * 60_000 };
 const ENTRADAS_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 };
+// Item de lista (#237): adicionar pode ir ao AniList quando a obra não está em
+// cache, então o teto corre antes do terceiro, como na estante.
+const ITENS_DE_LISTA_POR_USUARIO: RegraDeLimite = { maximo: 60, janelaMs: 60 * 60_000 };
 // Reordenar (#146, achado 16): a escrita mais cara do sistema — uma lista no
 // teto reescreve 500 linhas por pedido. Arrastar itens na tela salva a ordem
 // inteira a cada solta, então o teto é folgado para quem organiza de verdade.
@@ -281,6 +284,12 @@ export function limitarLista(pedido: { userId: string }): Promise<Veredito>
 export function limitarEntrada(pedido: { userId: string }): Promise<Veredito>
 {
   return limitarPorUsuario("estante", ENTRADAS_POR_USUARIO, pedido.userId);
+}
+
+/** A composição de produção. Antes de adicionar uma obra a uma lista (#237). */
+export function limitarItemDeLista(pedido: { userId: string }): Promise<Veredito>
+{
+  return limitarPorUsuario("item-de-lista", ITENS_DE_LISTA_POR_USUARIO, pedido.userId);
 }
 
 /** A composição de produção. Antes de salvar uma avaliação. */
