@@ -397,7 +397,24 @@
         "titulo": "Lista"
       },
       "autoria": "por <autor>{username}</autor> · {n, plural, =1 {# obra} other {# obras}}",
-      "vazia": "Lista vazia — adicione obras pelo botão de lista na página de cada obra.",
+      "vazia": "Lista vazia por enquanto.",
+      "vaziaPropria": "Lista vazia — busque uma obra acima para adicionar.",
+      "busca": {
+        "rotulo": "Buscar obra para adicionar",
+        "placeholder": "Buscar obra para adicionar…",
+        "buscando": "Buscando…",
+        "semResultado": "Nada encontrado para \"{termo}\".",
+        "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes.",
+        "muitosPedidos": "Buscas demais a partir daqui. Espere um momento e tente de novo.",
+        "adicionar": "+ adicionar",
+        "jaNaLista": "✓ na lista",
+        "erros": {
+          "cheia": "a lista chegou ao limite de obras",
+          "limite": "muitas adições em pouco tempo — aguarde um pouco",
+          "indisponivel": "o catálogo não respondeu — tente de novo",
+          "geral": "não deu para adicionar — tente de novo"
+        }
+      },
       "remover": "remover",
       "removerConfirmacao": "Remover esta obra da lista?",
       "curtida": {
