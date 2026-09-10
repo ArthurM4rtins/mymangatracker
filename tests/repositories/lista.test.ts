@@ -66,8 +66,8 @@ describe("listas públicas", function ()
 
     const detalhe = await buscarListaComItens(lista.id, dono.id);
     expect(detalhe?.minha).toBe(true);
-    expect(detalhe?.itens.map(function (i) { return i.anilistId; })).toEqual([
-      30002, 30013,
+    expect(detalhe?.itens.map(function (i) { return i.chave; })).toEqual([
+      "anilist:30002", "anilist:30013",
     ]);
   });
 
@@ -92,8 +92,8 @@ describe("listas públicas", function ()
 
     // Com contagem + 1, m1 voltaria na posição 2 e passaria na frente de m3 (3).
     const detalhe = await buscarListaComItens(lista.id, dono.id);
-    expect(detalhe?.itens.map(function (i) { return i.anilistId; })).toEqual([
-      30656, 30013,
+    expect(detalhe?.itens.map(function (i) { return i.chave; })).toEqual([
+      "anilist:30656", "anilist:30013",
     ]);
   });
 });

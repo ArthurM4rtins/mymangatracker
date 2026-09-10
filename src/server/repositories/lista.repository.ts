@@ -3,6 +3,7 @@
 // dono: toda mutação carrega userId no where ou verifica a posse antes.
 import type { OrdemDasListas } from "@/server/domain/lista-listagem";
 import { Prisma } from "@/generated/prisma/client";
+import { chaveDaObra, referenciaDeMedia, type ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
 import { getPrisma } from "./prisma";
 
 export type CapaDePreview = string | null;
@@ -19,7 +20,7 @@ export type ListaPublica = {
 };
 
 export type ItemDaLista = {
-  anilistId: number;
+  chave: string;
   titleRomaji: string;
   titleEnglish: string | null;
   coverImageUrl: string | null;
@@ -188,6 +189,7 @@ export async function buscarListaComItens(
           media: {
             select: {
               anilistId: true,
+              kitsuId: true,
               titleRomaji: true,
               titleEnglish: true,
               coverImageUrl: true,
@@ -209,10 +211,13 @@ export async function buscarListaComItens(
     descricao: linha.descricao,
     username: linha.user.username,
     minha: linha.userId === userId,
-    // SEM_ANILIST (#254, fase 1)
     itens: linha.itens
-      .filter(function (item) { return item.media.anilistId !== null; })
-      .map(function (item) { return { ...item.media, anilistId: item.media.anilistId as number }; }),
+      .map(function (item) { return { media: item.media, referencia: referenciaDeMedia(item.media) }; })
+      .filter(function (item) { return item.referencia !== null; })
+      .map(function (item)
+      {
+        return { ...item.media, chave: chaveDaObra(item.referencia as ReferenciaDaObra) };
+      }),
     curtidas: linha._count.likes,
     curtiPorMim: Array.isArray(linha.likes) && linha.likes.length > 0,
   };
@@ -240,14 +245,14 @@ export async function editarLista(
 export async function listarItensParaOrdem(
   userId: string,
   listaId: string,
-): Promise<Array<{ anilistId: number; mediaId: string }> | null>
+): Promise<Array<{ chave: string; mediaId: string }> | null>
 {
   const lista = await getPrisma().list.findFirst({
     where: { id: listaId, userId },
     select: {
       itens: {
         orderBy: [{ position: "asc" }, { createdAt: "asc" }],
-        select: { mediaId: true, media: { select: { anilistId: true } } },
+        select: { mediaId: true, media: { select: { anilistId: true, kitsuId: true } } },
       },
     },
   });
@@ -257,12 +262,18 @@ export async function listarItensParaOrdem(
     return null;
   }
 
-  // SEM_ANILIST (#254, fase 1)
   return lista.itens
-    .filter(function (item) { return item.media.anilistId !== null; })
     .map(function (item)
     {
-      return { anilistId: item.media.anilistId as number, mediaId: item.mediaId };
+      return { referencia: referenciaDeMedia(item.media), mediaId: item.mediaId };
+    })
+    .filter(function (item): item is { referencia: ReferenciaDaObra; mediaId: string }
+    {
+      return item.referencia !== null;
+    })
+    .map(function (item)
+    {
+      return { chave: chaveDaObra(item.referencia), mediaId: item.mediaId };
     });
 }
 

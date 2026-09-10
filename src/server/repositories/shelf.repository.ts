@@ -1,6 +1,7 @@
 // ShelfEntry: uma linha por obra por usuário — `@@unique([userId, mediaId])` é
 // regra do banco, e o upsert aqui só a respeita. Toda operação carrega userId.
 import type { ShelfStatus } from "@/generated/prisma/enums";
+import { chaveDaObra, referenciaDeMedia, type ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
 import { getPrisma } from "./prisma";
 
 /** Uma entrada com o recorte da obra que a tela da estante mostra. */
@@ -10,7 +11,7 @@ export type EntradaComObra = {
   status: ShelfStatus;
   progressChapter: string | null;
   obra: {
-    anilistId: number;
+    chave: string;
     titleRomaji: string;
     titleEnglish: string | null;
     titleNative: string | null;
@@ -42,6 +43,7 @@ export async function listarEntradasDoUsuario(
       media: {
         select: {
           anilistId: true,
+      kitsuId: true,
           titleRomaji: true,
           titleEnglish: true,
           titleNative: true,
@@ -58,7 +60,7 @@ export async function listarEntradasDoUsuario(
   // em anilistId. Obra sem AniList fica de fora AQUI, a vista, em vez de
   // escondida num tipo que mente. A fase 2 troca por referencia (fonte, id).
   return linhas
-    .filter(function (linha) { return linha.media.anilistId !== null; })
+    
     .map(function (linha)
     {
       return {
@@ -66,7 +68,7 @@ export async function listarEntradasDoUsuario(
         mediaId: linha.mediaId,
         status: linha.status,
         progressChapter: linha.progressChapter?.toString() ?? null,
-        obra: { ...linha.media, anilistId: linha.media.anilistId as number },
+        obra: { ...linha.media, chave: chaveDaObra(referenciaDeMedia(linha.media) ?? { fonte: "anilist", id: 0 }) },
       };
     });
 }
@@ -170,24 +172,23 @@ export async function atualizarProgressoDaEntrada(
 }
 
 /**
- * Os anilistIds das obras na estante DO USUÁRIO — o catálogo usa para marcar
- * o que já foi adicionado sem uma consulta por card.
+ * As chaves das obras na estante DO USUÁRIO — o catálogo usa para marcar o que
+ * já foi adicionado sem uma consulta por card.
+ *
+ * Era uma lista de `anilistId` (#254): obra que só o Kitsu conhece nunca ficava
+ * marcada, porque não tinha número nenhum para comparar.
  */
-export async function listarAnilistIdsDaEstante(userId: string): Promise<number[]>
+export async function listarChavesDaEstante(userId: string): Promise<string[]>
 {
   const linhas = await getPrisma().shelfEntry.findMany({
     where: { userId },
-    select: { media: { select: { anilistId: true } } },
+    select: { media: { select: { anilistId: true, kitsuId: true } } },
   });
 
-  // Fase 1 de #254: a coluna virou anulável, mas as telas ainda falam em
-  // anilistId. Enquanto isso, obra sem AniList fica de fora AQUI, à vista, e não
-  // escondida num tipo que mente. A fase 2 troca isto por referência (fonte, id).
-  //  -> procure por SEM_ANILIST para achar todos os pontos.
-  // SEM_ANILIST
   return linhas
-    .map(function (linha) { return linha.media.anilistId; })
-    .filter(function (id): id is number { return id !== null; });
+    .map(function (linha) { return referenciaDeMedia(linha.media); })
+    .filter(function (referencia): referencia is ReferenciaDaObra { return referencia !== null; })
+    .map(chaveDaObra);
 }
 
 export function adicionarOuAtualizarEntrada(dados: {
