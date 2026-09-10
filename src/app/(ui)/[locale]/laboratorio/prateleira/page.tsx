@@ -58,7 +58,7 @@ export default async function LaboratorioPrateleira()
         <h1 className="font-marca text-4xl font-bold tracking-tight sm:text-5xl">{t("laboratorio")}</h1>
         <p className="max-w-xl text-sm leading-relaxed text-texto-suave">{t("descricaoLaboratorio")}</p>
       </header>
-      <ColecaoVisual itens={itens} titulo={t("laboratorio")} inicial="prateleira" grupos={[
+      <ColecaoVisual itens={itens} titulo={t("laboratorio")} inicial="prateleira" andarSimples grupos={[
         { id: "descobrir", titulo: t("selecao"), itens: itens.slice(0, 10) },
         { id: "guardar", titulo: t("favoritos"), itens: itens.slice(10) },
       ]} />

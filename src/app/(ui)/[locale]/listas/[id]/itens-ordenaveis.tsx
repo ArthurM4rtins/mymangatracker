@@ -85,7 +85,7 @@ export function ItensOrdenaveis({
   }
 
   return (
-    <ColecaoVisual titulo={titulo}
+    <ColecaoVisual titulo={titulo} andarSimples
       classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6"
       itens={ordem.map((item, indice) => ({
         id: item.anilistId,
