@@ -26,8 +26,22 @@ Junto veio o Salvar explícito: ordem e remoção passam a ser rascunho.
   para entrar no modo de reordenar; arrastar direto continua rolando. Enquanto
   reordena, `touchmove` é barrado em listener NÃO passivo — mudar `touch-action`
   no meio do gesto não tem efeito, o valor vale desde o `touchstart`.
-- **Durante o arraste os OUTROS livros fecham.** Larguras viram lombadas iguais
-  e estáveis; com vários abertos o alvo do solto vira loteria.
+- **Durante o arraste a prateleira não muda de largura.** A capa que fica
+  aberta é congelada na pegada, pelo identificador e não por posição, e nunca é
+  o livro da mão: quem agarra a própria capa aberta a vê passar para o vizinho.
+  Sempre existe exatamente um livro aberto, então a largura total é invariante.
+  Antes a capa fechava junto e o andar encolhia uns 120px na pegada, fugindo do
+  cursor — 156px de zona morta medidos antes da primeira troca.
+- **Hover e foco não abrem livro durante o arraste.** Livro que abre sob o
+  ponteiro muda de largura no meio do gesto e o alvo do solto vira loteria.
+- **Duas guardas contra o piscar, e nenhuma basta sozinha.** O livro só cede a
+  vez depois que o ponteiro passa do MEIO dele, no sentido em que a mão anda, e
+  cede uma vez só por travessia, ficando travado até o ponteiro sair de cima.
+  A capa aberta tem 168px contra 46 da lombada: trocar de lugar com ela a
+  desloca uns 50px e ela cruza o cursor de volta, o que dava 26 trocas seguidas
+  de quatro em quatro pixels.
+- **Vão entre lombadas e a vaga do próprio livro na mão ficam quietos.** Tratar
+  o vão como ponta do andar fazia a ordem trocar e destrocar a cada 4px.
 - **O livro agarrado fecha como os outros e segue o ponteiro.** Quem resolve o
   "nada se mexe" é ele acompanhar o cursor, não o tamanho: arrastar uma capa
   aberta pela prateleira lê estranho. Solto na primeira posição ele reabre
@@ -35,9 +49,10 @@ Junto veio o Salvar explícito: ordem e remoção passam a ser rascunho.
 - **A pegada é guardada como fração da largura, não em pixel.** O livro fecha ao
   ser agarrado, e 138px medidos numa capa de 168px cairiam fora de uma lombada
   de 46px.
-- **Ponteiro fora de qualquer lombada cai na ponta do andar.** Ao agarrar, a
-  prateleira inteira fecha e encolhe, e o cursor que mirava um livro sobra do
-  lado de fora; sem a ponta, arrastar para o fim não respondia.
+- **Passar das pontas do andar vale como começo ou fim, mas só quando o
+  movimento concorda com a ponta.** Sem checar o sentido, arrastar para a
+  esquerda a partir de fora da prateleira era lido como "passou do fim" e o
+  livro ia para o fim da fila — o contrário do gesto.
 - **O livro agarrado sai do teste de acerto** (`pointer-events: none`): o cursor
   está grudado nele, então ele seria sempre o resultado e nenhum destino
   apareceria.
@@ -91,6 +106,11 @@ Junto veio o Salvar explícito: ordem e remoção passam a ser rascunho.
 - O arraste no toque não foi provado em aparelho real, só a lógica.
 
 ## Validação em 10/09/2026
+
+- Soma das larguras dos livros constante em 275px do início ao fim do arraste,
+  medida a cada quatro pixels: a prateleira não se mexe mais sob o ponteiro.
+- Duas trocas por arraste de 240px, nos dois sentidos, sem nenhuma corrida de
+  4px. A primeira troca caiu de 156px para 52px de movimento.
 
 - 717 testes, lint e `tsc` limpos. Cada commit compila sozinho (provado com
   `git stash` na árvore do commit do gesto).
