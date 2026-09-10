@@ -8,7 +8,7 @@ import { feedDaComunidade } from "@/server/services/atividade.service";
 const RESENHA = {
   entryId: "e1",
   username: "leitora",
-  anilistId: 30002,
+  chave: "anilist:30002",
   titulo: "Berserk",
   coverImageUrl: null,
   rating: "5",

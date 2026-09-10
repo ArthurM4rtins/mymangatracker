@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import type { ResultadoDaFonte } from "@/server/services/obra-externa.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import {
   adicionarNaEstante,
@@ -40,22 +41,21 @@ function fakeDeps(cenario: {
     return { id: "m-nova", syncedAt: AGORA };
   });
 
-  const buscarNoAniList = vi.fn(async function (): Promise<MediaDoAniList | null>
+  // A escada de fontes virou uma so (#254): o servico nao sabe mais quem e
+  // AniList e quem e Kitsu, so pergunta pela referencia.
+  const buscarNaFonte = vi.fn(async function (): Promise<ResultadoDaFonte>
   {
+    if (cenario.anilistFora && cenario.kitsuFora)
+    {
+      return { estado: "indisponivel" };
+    }
+
     if (cenario.anilistFora)
     {
-      throw new Error("anilist fora");
+      return { estado: "ok", obra: cenario.noKitsu ?? null, respondeu: "kitsu" };
     }
-    return cenario.noAniList ?? null;
-  });
 
-  const buscarNoKitsu = vi.fn(async function (): Promise<MediaDoAniList | null>
-  {
-    if (cenario.kitsuFora)
-    {
-      throw new Error("kitsu fora");
-    }
-    return cenario.noKitsu ?? null;
+    return { estado: "ok", obra: cenario.noAniList ?? null, respondeu: "anilist" };
   });
 
   const gravarEntrada = vi.fn(async function (dados: {
@@ -73,40 +73,40 @@ function fakeDeps(cenario: {
   const deps: DependenciasDaEstante = {
     buscarMediaNoBanco,
     salvarMedia,
-    buscarNoAniList,
-    buscarNoKitsu,
+    buscarNaFonte,
     gravarEntrada,
     limitar,
     relogio: function () { return AGORA; },
   };
 
-  return { deps, buscarMediaNoBanco, salvarMedia, buscarNoAniList, buscarNoKitsu, gravarEntrada, limitar };
+  return { deps, buscarMediaNoBanco, salvarMedia, buscarNaFonte, gravarEntrada, limitar };
 }
 
-const PEDIDO = { userId: "u1", anilistId: 30013, status: "PLANNED" as const };
+const REFERENCIA = { fonte: "anilist" as const, id: 30013 };
+const PEDIDO = { userId: "u1", referencia: REFERENCIA, status: "PLANNED" as const };
 
 describe("adicionarNaEstante", function ()
 {
   it("acima do teto por usuario nao grava nem consulta o AniList (#136)", async function ()
   {
-    const { deps, limitar, buscarNoAniList, gravarEntrada } = fakeDeps({});
+    const { deps, limitar, buscarNaFonte, gravarEntrada } = fakeDeps({});
     limitar.mockResolvedValueOnce({ bloqueado: true, esperarSegundos: 30 });
 
     await expect(adicionarNaEstante(PEDIDO, deps)).resolves.toEqual({ estado: "limitado", esperarSegundos: 30 });
-    expect(buscarNoAniList).not.toHaveBeenCalled();
+    expect(buscarNaFonte).not.toHaveBeenCalled();
     expect(gravarEntrada).not.toHaveBeenCalled();
   });
 
   it("cache fresco: não chama o AniList e usa o media do banco", async function ()
   {
-    const { deps, buscarNoAniList, salvarMedia, gravarEntrada } = fakeDeps({
+    const { deps, buscarNaFonte, salvarMedia, gravarEntrada } = fakeDeps({
       noBanco: { id: "m1", syncedAt: FRESCO },
     });
 
     const resultado = await adicionarNaEstante(PEDIDO, deps);
 
     expect(resultado.estado).toBe("ok");
-    expect(buscarNoAniList).not.toHaveBeenCalled();
+    expect(buscarNaFonte).not.toHaveBeenCalled();
     expect(salvarMedia).not.toHaveBeenCalled();
     expect(gravarEntrada).toHaveBeenCalledExactlyOnceWith({
       userId: "u1",
@@ -115,9 +115,9 @@ describe("adicionarNaEstante", function ()
     });
   });
 
-  it("cache velho: chama o AniList e regrava o media", async function ()
+  it("cache velho: volta a fonte e regrava o media", async function ()
   {
-    const { deps, buscarNoAniList, salvarMedia, gravarEntrada } = fakeDeps({
+    const { deps, buscarNaFonte, salvarMedia, gravarEntrada } = fakeDeps({
       noBanco: { id: "m1", syncedAt: VELHO },
       noAniList: OBRA_DO_ANILIST,
     });
@@ -125,7 +125,7 @@ describe("adicionarNaEstante", function ()
     const resultado = await adicionarNaEstante(PEDIDO, deps);
 
     expect(resultado.estado).toBe("ok");
-    expect(buscarNoAniList).toHaveBeenCalledExactlyOnceWith(30013);
+    expect(buscarNaFonte).toHaveBeenCalledExactlyOnceWith(REFERENCIA);
     expect(salvarMedia).toHaveBeenCalledExactlyOnceWith(OBRA_DO_ANILIST, AGORA);
     expect(gravarEntrada).toHaveBeenCalledExactlyOnceWith({
       userId: "u1",
@@ -177,7 +177,7 @@ describe("adicionarNaEstante", function ()
   // botão "+ Estante" respondia "não deu" para toda obra fora do cache (#227).
   it("AniList fora: busca no Kitsu, grava media e entrada", async function ()
   {
-    const { deps, buscarNoKitsu, salvarMedia, gravarEntrada } = fakeDeps({
+    const { deps, buscarNaFonte, salvarMedia, gravarEntrada } = fakeDeps({
       anilistFora: true,
       noKitsu: OBRA_DO_ANILIST,
     });
@@ -185,19 +185,22 @@ describe("adicionarNaEstante", function ()
     const resultado = await adicionarNaEstante(PEDIDO, deps);
 
     expect(resultado).toEqual({ estado: "ok", entradaId: "e1" });
-    expect(buscarNoKitsu).toHaveBeenCalledWith(PEDIDO.anilistId);
+    expect(buscarNaFonte).toHaveBeenCalledWith(REFERENCIA);
     expect(salvarMedia).toHaveBeenCalledWith(OBRA_DO_ANILIST, AGORA);
     expect(gravarEntrada).toHaveBeenCalled();
   });
 
-  it("AniList de pé nunca chama o Kitsu", async function ()
+  // Era "AniList de pé nunca chama o Kitsu". A escolha entre as fontes saiu
+  // daqui em #254 e virou o `obra-externa.service`, que tem teste proprio; o
+  // que a estante garante e que a obra vem da fonte e vira entrada.
+  it("obra fora do cache vem da fonte e vira entrada", async function ()
   {
-    const { deps, buscarNoKitsu, gravarEntrada } = fakeDeps({ noAniList: OBRA_DO_ANILIST });
+    const { deps, buscarNaFonte, gravarEntrada } = fakeDeps({ noAniList: OBRA_DO_ANILIST });
 
     const resultado = await adicionarNaEstante(PEDIDO, deps);
 
     expect(resultado.estado).toBe("ok");
-    expect(buscarNoKitsu).not.toHaveBeenCalled();
+    expect(buscarNaFonte).toHaveBeenCalledWith(REFERENCIA);
     expect(gravarEntrada).toHaveBeenCalled();
   });
 
@@ -217,7 +220,7 @@ describe("adicionarNaEstante", function ()
 
   it("AniList fora com cache FRESCO nem consulta o Kitsu", async function ()
   {
-    const { deps, buscarNoAniList, buscarNoKitsu, gravarEntrada } = fakeDeps({
+    const { deps, buscarNaFonte, gravarEntrada } = fakeDeps({
       noBanco: { id: "m1", syncedAt: FRESCO },
       anilistFora: true,
     });
@@ -225,8 +228,8 @@ describe("adicionarNaEstante", function ()
     const resultado = await adicionarNaEstante(PEDIDO, deps);
 
     expect(resultado.estado).toBe("ok");
-    expect(buscarNoAniList).not.toHaveBeenCalled();
-    expect(buscarNoKitsu).not.toHaveBeenCalled();
+    expect(buscarNaFonte).not.toHaveBeenCalled();
+    expect(buscarNaFonte).not.toHaveBeenCalled();
     expect(gravarEntrada).toHaveBeenCalledWith(expect.objectContaining({ mediaId: "m1" }));
   });
 });

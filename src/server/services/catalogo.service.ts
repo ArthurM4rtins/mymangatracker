@@ -1,3 +1,5 @@
+import { chaveDaObra } from "@/server/domain/referencia-da-obra";
+import { referenciaDaObra } from "@/server/domain/anilist-media";
 /**
  * Busca no catalogo. Nao toca banco: e o que faz `/catalogo` mostrar algo real
  * mesmo com o Postgres fora.
@@ -69,7 +71,8 @@ export const OBRAS_POR_PAGINA = 36;
  * de controller (o `boundaries` cobra), e as duas precisam da mesma forma.
  */
 export type ObraDoCatalogoDTO = {
-  anilistId: number;
+  /** A obra pela chave (#254): `anilist:30002`, `kitsu:54598`. */
+  chave: string;
   titulo: string;
   capa: string | null;
   tipo: "MANGA" | "NOVEL";
@@ -86,17 +89,19 @@ export type PaginaDoCatalogoDTO = {
   temMais: boolean;
 };
 
-export function obraParaDTO(obra: MediaDoAniList, naEstante: ReadonlySet<number>): ObraDoCatalogoDTO
+export function obraParaDTO(obra: MediaDoAniList, naEstante: ReadonlySet<string>): ObraDoCatalogoDTO
 {
+  const chave = chaveDaObra(referenciaDaObra(obra));
+
   return {
-    anilistId: obra.anilistId,
+    chave,
     titulo: obra.titleEnglish ?? obra.titleRomaji,
     capa: obra.coverImageUrl ?? null,
     tipo: obra.type,
     pais: obra.countryOfOrigin ?? null,
     capitulos: obra.chapters ?? null,
     descricao: obra.description ?? null,
-    jaNaEstante: naEstante.has(obra.anilistId),
+    jaNaEstante: naEstante.has(chave),
   };
 }
 

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  anilistIdsNaEstante,
+  chavesNaEstante,
   definirProgresso,
   listarEstante,
   mudarStatusDaEntrada,
@@ -12,7 +12,7 @@ import {
 // encontrada (não "proibida": não revelamos que existe).
 
 const OBRA = {
-  anilistId: 30013,
+  chave: "anilist:30013",
   titleRomaji: "Vinland Saga",
   titleEnglish: null,
   titleNative: null,
@@ -182,16 +182,16 @@ describe("definirProgresso", function ()
   });
 });
 
-describe("anilistIdsNaEstante", function ()
+describe("chavesNaEstante", function ()
 {
   it("delega ao repositório com o userId — o catálogo marca o que já está na estante", async function ()
   {
-    const listarAnilistIds = vi.fn(async function () { return [30013, 30002]; });
+    const listarChaves = vi.fn(async function () { return ["anilist:30013", "anilist:30002"]; });
 
-    const ids = await anilistIdsNaEstante("u1", { listarAnilistIds });
+    const ids = await chavesNaEstante("u1", { listarChaves });
 
-    expect(listarAnilistIds).toHaveBeenCalledWith("u1");
-    expect(ids).toEqual([30013, 30002]);
+    expect(listarChaves).toHaveBeenCalledWith("u1");
+    expect(ids).toEqual(["anilist:30013", "anilist:30002"]);
   });
 });
 

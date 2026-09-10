@@ -14,7 +14,7 @@ const USUARIO = {
 };
 
 const OBRA = {
-  anilistId: 30002,
+  chave: "anilist:30002",
   titleRomaji: "Berserk",
   titleEnglish: null,
   coverImageUrl: null,
@@ -32,9 +32,9 @@ function fakeDeps(cenario: { usuario?: typeof USUARIO | null
     listarAvaliadas: vi.fn(async function ()
     {
       return [
-        { ...OBRA, anilistId: 1, rating: 3, avaliadaEm: new Date("2026-08-01") },
-        { ...OBRA, anilistId: 2, rating: 5, avaliadaEm: new Date("2026-08-03") },
-        { ...OBRA, anilistId: 3, rating: 4.5, avaliadaEm: new Date("2026-08-02") },
+        { ...OBRA, chave: "anilist:1", rating: 3, avaliadaEm: new Date("2026-08-01") },
+        { ...OBRA, chave: "anilist:2", rating: 5, avaliadaEm: new Date("2026-08-03") },
+        { ...OBRA, chave: "anilist:3", rating: 4.5, avaliadaEm: new Date("2026-08-02") },
       ];
     }),
     contarResenhas: vi.fn(async function () { return 1; }),
@@ -127,7 +127,7 @@ describe("perfilDoUsuario", function ()
       estante: null,
       numeros: { avaliadas: 3, resenhas: 1, listas: 1, curtidasDadas: 7 },
     });
-    expect(perfil?.avaliadas.map(function (a) { return a.anilistId; })).toEqual([2, 3, 1]);
+    expect(perfil?.avaliadas.map(function (a) { return a.chave; })).toEqual(["anilist:2", "anilist:3", "anilist:1"]);
     expect(perfil?.resenhasRecentes.map(function (r) { return r.titleRomaji; })).toEqual([
       "Berserk",
     ]);
@@ -187,7 +187,7 @@ describe("perfilDoUsuario", function ()
       fakeDeps({}),
     );
 
-    expect(perfil?.avaliadas.map(function (a) { return a.anilistId; })).toEqual([2]);
+    expect(perfil?.avaliadas.map(function (a) { return a.chave; })).toEqual(["anilist:2"]);
     // O total conta todas, não só as filtradas.
     expect(perfil?.numeros.avaliadas).toBe(3);
   });

@@ -57,7 +57,7 @@ describe("editarListaDoUsuario", function ()
 describe("reordenarItensDaLista", function ()
 {
   function fakeDeps(
-    atual: Array<{ anilistId: number; mediaId: string }> | null,
+    atual: Array<{ chave: string; mediaId: string }> | null,
     veredito: Veredito = { bloqueado: false },
   )
   {
@@ -71,13 +71,13 @@ describe("reordenarItensDaLista", function ()
   it("grava a ordem proposta traduzida para mediaIds", async function ()
   {
     const deps = fakeDeps([
-      { anilistId: 1, mediaId: "m1" },
-      { anilistId: 2, mediaId: "m2" },
-      { anilistId: 3, mediaId: "m3" },
+      { chave: "anilist:1", mediaId: "m1" },
+      { chave: "anilist:2", mediaId: "m2" },
+      { chave: "anilist:3", mediaId: "m3" },
     ]);
 
     await expect(
-      reordenarItensDaLista({ userId: "u1", listaId: "l1", anilistIds: [3, 1, 2] }, deps),
+      reordenarItensDaLista({ userId: "u1", listaId: "l1", chaves: ["anilist:3", "anilist:1", "anilist:2"] }, deps),
     ).resolves.toEqual({ estado: "ok" });
     expect(deps.reordenar).toHaveBeenCalledWith("u1", "l1", ["m3", "m1", "m2"]);
   });
@@ -85,15 +85,15 @@ describe("reordenarItensDaLista", function ()
   it("proposta que não é permutação exata é ordem_invalida sem gravar", async function ()
   {
     const deps = fakeDeps([
-      { anilistId: 1, mediaId: "m1" },
-      { anilistId: 2, mediaId: "m2" },
+      { chave: "anilist:1", mediaId: "m1" },
+      { chave: "anilist:2", mediaId: "m2" },
     ]);
 
     await expect(
-      reordenarItensDaLista({ userId: "u1", listaId: "l1", anilistIds: [1] }, deps),
+      reordenarItensDaLista({ userId: "u1", listaId: "l1", chaves: ["anilist:1"] }, deps),
     ).resolves.toEqual({ estado: "ordem_invalida" });
     await expect(
-      reordenarItensDaLista({ userId: "u1", listaId: "l1", anilistIds: [1, 1] }, deps),
+      reordenarItensDaLista({ userId: "u1", listaId: "l1", chaves: ["anilist:1", "anilist:1"] }, deps),
     ).resolves.toEqual({ estado: "ordem_invalida" });
     expect(deps.reordenar).not.toHaveBeenCalled();
   });
@@ -103,7 +103,7 @@ describe("reordenarItensDaLista", function ()
     const deps = fakeDeps(null);
 
     await expect(
-      reordenarItensDaLista({ userId: "u2", listaId: "l1", anilistIds: [] }, deps),
+      reordenarItensDaLista({ userId: "u2", listaId: "l1", chaves: [] }, deps),
     ).resolves.toEqual({ estado: "nao_encontrada" });
     expect(deps.reordenar).not.toHaveBeenCalled();
   });
@@ -113,12 +113,12 @@ describe("reordenarItensDaLista", function ()
   it("acima do teto é muitos_pedidos, sem ler nem gravar", async function ()
   {
     const deps = fakeDeps(
-      [{ anilistId: 1, mediaId: "m1" }],
+      [{ chave: "anilist:1", mediaId: "m1" }],
       { bloqueado: true, esperarSegundos: 42 },
     );
 
     await expect(
-      reordenarItensDaLista({ userId: "u1", listaId: "l1", anilistIds: [1] }, deps),
+      reordenarItensDaLista({ userId: "u1", listaId: "l1", chaves: ["anilist:1"] }, deps),
     ).resolves.toEqual({ estado: "muitos_pedidos", esperarSegundos: 42 });
     expect(deps.listarItens).not.toHaveBeenCalled();
     expect(deps.reordenar).not.toHaveBeenCalled();
@@ -126,10 +126,10 @@ describe("reordenarItensDaLista", function ()
 
   it("dentro do teto, o limite é chamado com o dono e a ordem grava", async function ()
   {
-    const deps = fakeDeps([{ anilistId: 1, mediaId: "m1" }]);
+    const deps = fakeDeps([{ chave: "anilist:1", mediaId: "m1" }]);
 
     await expect(
-      reordenarItensDaLista({ userId: "u1", listaId: "l1", anilistIds: [1] }, deps),
+      reordenarItensDaLista({ userId: "u1", listaId: "l1", chaves: ["anilist:1"] }, deps),
     ).resolves.toEqual({ estado: "ok" });
     expect(deps.limitar).toHaveBeenCalledWith("u1");
   });

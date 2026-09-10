@@ -1,3 +1,5 @@
+import { buscarObraNaFonte, type ResultadoDaFonte } from "./obra-externa.service";
+import type { ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
 /**
  * Caso de uso: adicionar uma obra à estante.
  *
@@ -13,14 +15,14 @@ import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId } from "@/server/infra/anilist";
 import { buscarNoKitsuPorAnilistId } from "@/server/infra/kitsu";
 import {
-  buscarMediaPorAnilistId,
+  buscarMediaPorReferencia,
   salvarMediaDoAniList,
 } from "@/server/repositories/media.repository";
 import {
   adicionarOuAtualizarEntrada,
   atualizarProgressoDaEntrada,
   atualizarStatusDaEntrada,
-  listarAnilistIdsDaEstante,
+  listarChavesDaEstante,
   listarEntradasDoUsuario,
 } from "@/server/repositories/shelf.repository";
 import {
@@ -38,7 +40,8 @@ export type StatusDaEstante =
 
 export type PedidoDeEstante = {
   userId: string;
-  anilistId: number;
+  /** A obra pela referência (#254): pode não ter AniList nenhum. */
+  referencia: ReferenciaDaObra;
   status: StatusDaEstante;
 };
 
@@ -50,15 +53,14 @@ export type ResultadoDaEstante =
 
 export type DependenciasDaEstante = {
   buscarMediaNoBanco: (
-    anilistId: number,
+    referencia: ReferenciaDaObra,
   ) => Promise<{ id: string; syncedAt: Date } | null>;
   salvarMedia: (
     obra: MediaDoAniList,
     sincronizadoEm: Date,
   ) => Promise<{ id: string; syncedAt: Date }>;
-  buscarNoAniList: (anilistId: number) => Promise<MediaDoAniList | null>;
-  /** O degrau de baixo, só com o AniList fora (#219). */
-  buscarNoKitsu: (anilistId: number) => Promise<MediaDoAniList | null>;
+  /** A escada de fontes, uma só para o sistema inteiro (#254). */
+  buscarNaFonte: (referencia: ReferenciaDaObra) => Promise<ResultadoDaFonte>;
   gravarEntrada: (dados: {
     userId: string;
     mediaId: string;
@@ -83,7 +85,7 @@ export async function adicionarNaEstante(
     return { estado: "limitado", esperarSegundos: limite.esperarSegundos };
   }
 
-  const emCache = await deps.buscarMediaNoBanco(pedido.anilistId);
+  const emCache = await deps.buscarMediaNoBanco(pedido.referencia);
 
   let mediaId: string;
 
@@ -93,28 +95,16 @@ export async function adicionarNaEstante(
   }
   else
   {
-    let obra: MediaDoAniList | null;
-    try
+    const daFonte = await deps.buscarNaFonte(pedido.referencia);
+
+    if (daFonte.estado === "indisponivel")
     {
-      obra = await deps.buscarNoAniList(pedido.anilistId);
+      // Mesmo com cache velho não gravamos entrada: a obra pode ter mudado de
+      // formato e sido descartada — melhor pedir para tentar depois.
+      return { estado: "indisponivel" };
     }
-    catch
-    {
-      // AniList fora: desce um degrau, como o catálogo e a home (#219). Sem
-      // isso, "+ Estante" respondia "não deu" para toda obra fora do cache,
-      // inclusive as que a própria vitrine tinha acabado de mostrar (#227).
-      try
-      {
-        obra = await deps.buscarNoKitsu(pedido.anilistId);
-      }
-      catch
-      {
-        // As duas fontes fora. Mesmo com cache velho não gravamos entrada: a
-        // obra pode ter mudado de formato e sido descartada — melhor pedir
-        // para tentar depois.
-        return { estado: "indisponivel" };
-      }
-    }
+
+    const obra = daFonte.obra;
 
     if (obra === null)
     {
@@ -141,7 +131,7 @@ export type EntradaDaEstante = {
   status: StatusDaEstante;
   progressChapter: string | null;
   obra: {
-    anilistId: number;
+    chave: string;
     titleRomaji: string;
     titleEnglish: string | null;
     /** Para a extensão casar o nome em site de outra língua (#171). */
@@ -323,24 +313,26 @@ export function definirProgressoDoSistema(
 }
 
 export type DependenciasDeMarcacao = {
-  listarAnilistIds: (userId: string) => Promise<number[]>;
+  listarChaves: (userId: string) => Promise<string[]>;
 };
 
-/** O que da estante já existe, por anilistId — para o catálogo marcar os cards. */
-export function anilistIdsNaEstante(
+/**
+ * O que da estante já existe, por CHAVE da obra — para o catálogo marcar os
+ * cards. Era por `anilistId` (#254): obra que só o Kitsu conhece nunca ficava
+ * marcada, porque não tinha número nenhum para comparar.
+ */
+export function chavesNaEstante(
   userId: string,
   deps: DependenciasDeMarcacao,
-): Promise<number[]>
+): Promise<string[]>
 {
-  return deps.listarAnilistIds(userId);
+  return deps.listarChaves(userId);
 }
 
 /** A composição de produção. */
-export function anilistIdsNaEstanteDoSistema(userId: string): Promise<number[]>
+export function chavesNaEstanteDoSistema(userId: string): Promise<string[]>
 {
-  return anilistIdsNaEstante(userId, {
-    listarAnilistIds: listarAnilistIdsDaEstante,
-  });
+  return chavesNaEstante(userId, { listarChaves: listarChavesDaEstante });
 }
 
 export type PedidoDeStatus = {
@@ -406,10 +398,9 @@ export function adicionarNaEstanteDoSistema(
 ): Promise<ResultadoDaEstante>
 {
   return adicionarNaEstante(pedido, {
-    buscarMediaNoBanco: buscarMediaPorAnilistId,
+    buscarMediaNoBanco: buscarMediaPorReferencia,
     salvarMedia: salvarMediaDoAniList,
-    buscarNoAniList: buscarMediaPorId,
-    buscarNoKitsu: buscarNoKitsuPorAnilistId,
+    buscarNaFonte: function (referencia) { return buscarObraNaFonte(referencia); },
     gravarEntrada: adicionarOuAtualizarEntrada,
     limitar: function (userId) { return limitarEntrada({ userId }); },
   });
