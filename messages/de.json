@@ -6,6 +6,7 @@
     "andar": "Regal {n}",
     "contagem": "{n, plural, one {# Werk} other {# Werke}}",
     "dica": "Erkunde die Buchrücken. Nutze die Pfeile, ziehe oder wische. Wähle ein Werk aus, um Details zu sehen.",
+    "dicaOrdenavel": "Ziehe die Bücher, um die Reihenfolge zu ändern. Am Handy ein Buch gedrückt halten und ziehen. Wähle ein Werk, um die Details zu sehen.",
     "anterior": "Im Regal {grupo} zurückblättern",
     "proxima": "Im Regal {grupo} weiterblättern",
     "abrir": "Details zu {titulo} ansehen",

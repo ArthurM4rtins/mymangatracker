@@ -6,6 +6,7 @@
     "andar": "Étagère {n}",
     "contagem": "{n, plural, one {# œuvre} other {# œuvres}}",
     "dica": "Explorez les dos des livres. Utilisez les flèches ou faites glisser. Sélectionnez une œuvre pour voir ses détails.",
+    "dicaOrdenavel": "Fais glisser les livres pour changer l'ordre. Sur mobile, appuie longuement sur un livre puis fais-le glisser. Sélectionne une œuvre pour voir les détails.",
     "anterior": "Reculer dans l’étagère {grupo}",
     "proxima": "Avancer dans l’étagère {grupo}",
     "abrir": "Voir les détails de {titulo}",

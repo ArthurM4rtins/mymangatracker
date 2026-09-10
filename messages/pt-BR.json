@@ -6,6 +6,7 @@
     "andar": "Andar {n}",
     "contagem": "{n, plural, =1 {# obra} other {# obras}}",
     "dica": "Explore as lombadas. Use as setas, arraste ou deslize. Selecione uma obra para ver os detalhes.",
+    "dicaOrdenavel": "Arraste os livros para mudar a ordem. No celular, segure um livro e arraste. Selecione uma obra para ver os detalhes.",
     "anterior": "Voltar na prateleira {grupo}",
     "proxima": "Avançar na prateleira {grupo}",
     "abrir": "Ver detalhes de {titulo}",

@@ -6,6 +6,7 @@
     "andar": "Estante {n}",
     "contagem": "{n, plural, one {# obra} other {# obras}}",
     "dica": "Explora los lomos. Usa las flechas, arrastra o desliza. Selecciona una obra para ver sus detalles.",
+    "dicaOrdenavel": "Arrastra los libros para cambiar el orden. En el móvil, mantén pulsado un libro y arrástralo. Selecciona una obra para ver los detalles.",
     "anterior": "Retroceder en la estantería {grupo}",
     "proxima": "Avanzar en la estantería {grupo}",
     "abrir": "Ver detalles de {titulo}",

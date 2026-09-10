@@ -67,6 +67,20 @@
   .trilho:has(.livro:hover) .livro:not(:hover) .volume { transform: none; box-shadow: 3px 0 5px #0003, inset 1px 0 #ffffff30; }
   .livro:hover .volume { transform: translateY(-10px) rotateY(-8deg); box-shadow: 9px 12px 14px #0003; }
 }
+/* Arrastando (#242): todos os livros fecham. Com um aberto sob o ponteiro as
+   larguras mudam durante o gesto e o alvo do solto vira loteria. As regras
+   vencem hover, foco e vitrine porque desligam a origem de cada um. */
+.prateleiras[data-arrastando] .livro { width: var(--largura-lombada); }
+.prateleiras[data-arrastando] .capa { opacity: 0; }
+.prateleiras[data-arrastando] .volume { transform: none; box-shadow: 3px 0 5px #0003, inset 1px 0 #ffffff30; }
+.prateleiras[data-arrastando] .trilho { cursor: grabbing; }
+/* O livro na mão: erguido e translúcido, para a vaga aberta ficar legível. */
+.prateleiras[data-arrastando] .livro[data-arrastado] { opacity: .55; }
+.prateleiras[data-arrastando] .livro[data-arrastado] .volume { transform: translateY(-12px); box-shadow: 10px 14px 18px #0004; outline: 2px solid var(--acento); outline-offset: 2px; }
+/* O texto não pode ser selecionado no meio do gesto, nem no toque nem no mouse. */
+.prateleiras[data-arrastando] { user-select: none; -webkit-user-select: none; }
+.livro[data-obra] .volume { cursor: grab; }
+
 .base { position: relative; height: 15px; border-top: 2px solid color-mix(in srgb, var(--superficie) 75%, var(--borda)); border-bottom: 1px solid var(--borda); border-radius: 1px 1px 3px 3px; background: linear-gradient(var(--borda), color-mix(in srgb, var(--borda) 65%, var(--fundo))); box-shadow: 0 13px 18px -12px color-mix(in srgb, var(--texto) 45%, transparent); }
 .dialogo { position: fixed; inset: 0; width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: var(--texto); }
 .dialogo::backdrop { background: #0007; backdrop-filter: blur(3px); }

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Fragment, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
+import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 
 import {
   emAndaresDosGrupos,
@@ -34,7 +34,12 @@ export type GrupoDaColecao = {
 
 const CORES = ["#733c35", "#344d53", "#586044", "#71516b", "#865f33", "#364868", "#55504a"];
 
-export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", classeGrade = "grid gap-4 sm:grid-cols-2", andarSimples = false, maximoPorAndar }: {
+/** Quanto o dedo precisa ficar parado para o gesto virar reordenar, e não rolar. */
+const ESPERA_DO_TOQUE_MS = 400;
+/** A partir de quantos pixels o gesto do mouse deixa de ser clique e vira arraste. */
+const ARRASTE_MINIMO = 6;
+
+export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", classeGrade = "grid gap-4 sm:grid-cols-2", andarSimples = false, maximoPorAndar, aoReordenar }: {
   itens: ItemDaColecao[];
   grupos?: GrupoDaColecao[];
   titulo: string;
@@ -54,6 +59,12 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
   andarSimples?: boolean;
   /** Teto de obras por andar no modo simples, se a tela quiser um (a home usa 9). */
   maximoPorAndar?: number;
+  /**
+   * Quando existe, arrastar um livro reordena a coleção (#242): `destino` é o
+   * índice que a obra passa a ocupar na ordem final. Só a lista de quem é dono
+   * passa isto; nas demais telas a prateleira segue sem arraste.
+   */
+  aoReordenar?: (id: number, destino: number) => void;
 })
 {
   const t = useTranslations("colecao");
@@ -67,6 +78,8 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
 
   // Uma remoção ou filtro não deve reabrir o painel se a obra reaparecer.
   if (selecionado !== null && !item) setSelecionado(null);
+
+  const arraste = useArrasteParaOrdenar(estante, itens, aoReordenar);
 
   // Antes de pintar, para o andar já nascer com o tanto que cabe; e de novo a
   // cada mudança de largura (janela, painel lateral, rotação do celular).
@@ -126,11 +139,12 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
             {itens.map((obra) => <Fragment key={obra.id}>{obra.detalhe}</Fragment>)}
           </ul>
         ) : (
-          <div ref={estante} className={estilos.prateleiras} data-simples={andarSimples || undefined}>
-            <p className={estilos.dica}>{t("dica")}</p>
+          <div ref={estante} className={estilos.prateleiras} data-simples={andarSimples || undefined}
+            data-arrastando={arraste.arrastando || undefined} {...arraste.gestos}>
+            <p className={estilos.dica}>{aoReordenar ? t("dicaOrdenavel") : t("dica")}</p>
             {andares.filter((grupo) => grupo.itens.length > 0).map((grupo, indice) => (
               <Prateleira key={grupo.id} grupo={grupo} numero={indice + 1} aoAbrir={setSelecionado}
-                simples={andarSimples} selecionado={selecionado} />
+                simples={andarSimples} selecionado={selecionado} arrastado={arraste.arrastado} />
             ))}
           </div>
         )}
@@ -143,16 +157,141 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
   );
 }
 
-/** A partir de quantos pixels o gesto do mouse deixa de ser clique e vira arraste. */
-const ARRASTE_MINIMO = 6;
+/**
+ * O arraste que reordena a coleção (#242).
+ *
+ * O gesto vive aqui, e não na `Prateleira`, porque quem sabe o índice global de
+ * cada obra é a coleção: o andar é só o desenho. Por isso arrastar de um andar
+ * para o outro sai de graça — o destino vem do livro sob o ponteiro, achado por
+ * `elementFromPoint`, não da posição dentro do andar.
+ *
+ * A vaga abre ao vivo porque a ordem é reescrita a cada vizinho cruzado: o que
+ * se vê antes de soltar já é a prateleira final.
+ */
+function useArrasteParaOrdenar(
+  caixa: RefObject<HTMLDivElement | null>,
+  itens: ItemDaColecao[],
+  aoReordenar?: (id: number, destino: number) => void,
+)
+{
+  const [arrastado, setArrastado] = useState<number | null>(null);
+  const gesto = useRef<{ id: number; x: number; y: number; solto: boolean } | null>(null);
+  const espera = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-function Prateleira({ grupo, numero, aoAbrir, simples, selecionado }: {
+  const cancelarEspera = useCallback(() => {
+    if (espera.current !== null) { clearTimeout(espera.current); espera.current = null; }
+  }, []);
+
+  const encerrar = useCallback(() => {
+    cancelarEspera();
+    gesto.current = null;
+    setArrastado(null);
+  }, [cancelarEspera]);
+
+  /** O id da obra sob o ponteiro, seja qual for o andar. */
+  function idSobOPonteiro(x: number, y: number): number | null
+  {
+    const alvo = document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-obra]");
+    const id = alvo?.dataset.obra;
+    return id === undefined ? null : Number(id);
+  }
+
+  function levarPara(destinoId: number)
+  {
+    const atual = gesto.current;
+    if (!atual || destinoId === atual.id) return;
+    const destino = itens.findIndex((obra) => obra.id === destinoId);
+    if (destino >= 0) aoReordenar?.(atual.id, destino);
+  }
+
+  // Enquanto reordena, o dedo não pode rolar a prateleira. `touch-action` não
+  // resolve: o valor vale desde o `touchstart`, e a essa altura o gesto já
+  // começou. Só um `touchmove` não passivo com `preventDefault` segura.
+  useEffect(() => {
+    const elemento = caixa.current;
+    if (arrastado === null || !elemento) return;
+    function segurar(evento: TouchEvent) { evento.preventDefault(); }
+    elemento.addEventListener("touchmove", segurar, { passive: false });
+    return () => elemento.removeEventListener("touchmove", segurar);
+  }, [arrastado, caixa]);
+
+  useEffect(() => cancelarEspera, [cancelarEspera]);
+
+  if (!aoReordenar)
+  {
+    return { arrastando: false, arrastado: null as number | null, gestos: {} };
+  }
+
+  const gestos = {
+    onPointerDown(evento: React.PointerEvent<HTMLDivElement>)
+    {
+      const alvo = (evento.target as HTMLElement).closest<HTMLElement>("[data-obra]");
+      const id = alvo?.dataset.obra;
+      if (id === undefined || evento.button !== 0) return;
+
+      gesto.current = { id: Number(id), x: evento.clientX, y: evento.clientY, solto: false };
+
+      // No mouse o arraste começa no primeiro movimento: no andar simples não
+      // há rolagem para disputar. No toque, arrastar já significa rolar, então
+      // só segurar entra no modo de reordenar (#242).
+      if (evento.pointerType === "mouse") return;
+
+      const alvoDoToque = evento.currentTarget;
+      const ponteiro = evento.pointerId;
+      espera.current = setTimeout(() => {
+        if (!gesto.current) return;
+        alvoDoToque.setPointerCapture(ponteiro);
+        navigator.vibrate?.(12);
+        setArrastado(gesto.current.id);
+      }, ESPERA_DO_TOQUE_MS);
+    },
+    onPointerMove(evento: React.PointerEvent<HTMLDivElement>)
+    {
+      const atual = gesto.current;
+      if (!atual) return;
+
+      const andou = Math.hypot(evento.clientX - atual.x, evento.clientY - atual.y);
+
+      if (arrastado === null)
+      {
+        // Dedo que saiu do lugar antes da espera é rolagem, não reordenar.
+        if (evento.pointerType !== "mouse")
+        {
+          if (andou > ARRASTE_MINIMO) { encerrar(); }
+          return;
+        }
+
+        if (andou <= ARRASTE_MINIMO) return;
+        evento.currentTarget.setPointerCapture(evento.pointerId);
+        setArrastado(atual.id);
+      }
+
+      const destino = idSobOPonteiro(evento.clientX, evento.clientY);
+      if (destino !== null) levarPara(destino);
+    },
+    onPointerUp() { encerrar(); },
+    onPointerCancel() { encerrar(); },
+    onClickCapture(evento: React.MouseEvent<HTMLDivElement>)
+    {
+      // O clique que fecha um arraste não pode abrir o painel da obra.
+      if (arrastado === null) return;
+      evento.preventDefault();
+      evento.stopPropagation();
+    },
+  };
+
+  return { arrastando: arrastado !== null, arrastado, gestos };
+}
+
+function Prateleira({ grupo, numero, aoAbrir, simples, selecionado, arrastado }: {
   grupo: GrupoDaColecao;
   numero: number;
   aoAbrir: (id: number) => void;
   simples: boolean;
   /** A obra com o painel aberto, em qualquer andar da coleção. */
   selecionado: number | null;
+  /** A obra que está sendo arrastada, em qualquer andar (#242). */
+  arrastado: number | null;
 })
 {
   const t = useTranslations("colecao");
@@ -267,7 +406,8 @@ function Prateleira({ grupo, numero, aoAbrir, simples, selecionado }: {
             evento.stopPropagation();
           }}>
           {grupo.itens.map((obra, indice) => (
-            <li key={obra.id} className={estilos.livro}
+            <li key={obra.id} className={estilos.livro} data-obra={obra.id}
+              data-arrastado={obra.id === arrastado || undefined}
               data-vitrine={(emEvidencia === null ? indice === 0 : obra.id === emEvidencia) || undefined}
               onTransitionEnd={(evento) => {
                 if (evento.target === evento.currentTarget && evento.propertyName === "width"

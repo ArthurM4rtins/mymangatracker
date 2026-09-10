@@ -6,6 +6,7 @@
     "andar": "Shelf {n}",
     "contagem": "{n, plural, one {# series} other {# series}}",
     "dica": "Explore the spines. Use the arrows, drag or swipe. Select a series to see its details.",
+    "dicaOrdenavel": "Drag the books to change the order. On a phone, press and hold a book, then drag. Select a series to see the details.",
     "anterior": "Scroll back on {grupo}",
     "proxima": "Scroll forward on {grupo}",
     "abrir": "View details for {titulo}",
