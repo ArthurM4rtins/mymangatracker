@@ -61,3 +61,49 @@ ser a página da própria lista: o dono busca no catálogo ali e adiciona. A lis
 
 - Issue: #237
 - `feature-lists/CLAUDE.md` — a implementação original das listas (#41, #51).
+
+---
+
+# Prateleiras: padrão e ciclo abrir/fechar — #241
+
+Entrou na mesma branch, a pedido do usuário.
+
+## O que muda
+
+- `ColecaoVisual` nasce em `prateleira`, não em `grade`. O seletor continua.
+- A vitrine do andar segue a obra do painel enquanto ele está aberto.
+- `:focus-visible` no lugar de `:focus-within` para o livro aberto.
+- As regras de fechar-os-outros miram qualquer livro aberto, não só a vitrine.
+- O arraste decide pela posição do próprio clique, não por bandeira.
+
+## As três causas
+
+1. **Volta para a primeira ao abrir o painel.** `data-vitrine` era fixo no
+   índice 0; `showModal()` tira o foco do livro e `:focus-within` deixa de valer.
+2. **Livro travado aberto ao fechar.** O cleanup devolve o foco ao botão que
+   abriu, e `:focus-within` não distingue foco de teclado de foco restaurado
+   por clique.
+3. **Linha travada.** As regras de fechar-os-outros só miravam `[data-vitrine]`,
+   então o livro focado e o livro sob o mouse abriam juntos e o andar estourava.
+   Somado a isso, `suprimirClique` só era apagado pelo clique que ela suprimia:
+   arraste terminado fora do trilho deixava a bandeira ligada e engolia o
+   clique seguinte.
+
+## Decisões tomadas
+
+- No teclado o livro focado continua abrindo: é como quem navega por Tab sabe
+  onde está. No mouse não, e é isso que destrava a linha.
+- `:has()` não aninha dentro de `:has()` — a primeira tentativa de
+  `.trilho:has(.livro:has(:focus-visible))` foi descartada pelo navegador em
+  silêncio e dois livros abriram juntos. O seletor usa `.trilho:has(:focus-visible)`.
+
+## Validação em 10/09/2026
+
+- 710 testes, lint e `tsc` limpos.
+- Chromium local, laboratório e home: prateleira abre por padrão; o painel do
+  Vagabond mantém o Vagabond em evidência; fechar com o ✕ volta ao primeiro
+  livro; fechar com Escape mantém o livro focado aberto e fecha o primeiro;
+  o mouse em outro livro fecha o focado e nada estoura; arraste não abre o
+  painel e o clique seguinte abre.
+- Home com teto de nove: obra do meio aberta, andar continua fechando dentro
+  do trilho.
