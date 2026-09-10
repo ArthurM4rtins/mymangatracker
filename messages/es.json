@@ -32,6 +32,22 @@
     "entrar": "Iniciar sesión",
     "idioma": "Idioma"
   },
+  "rodape": {
+    "explorar": {
+      "titulo": "Explorar"
+    },
+    "conta": {
+      "titulo": "Tu cuenta",
+      "ajustes": "Ajustes de la cuenta",
+      "cadastrar": "Crear cuenta"
+    },
+    "dados": {
+      "titulo": "Datos",
+      "anilist": "Catálogo y portadas de AniList.",
+      "kitsu": "Kitsu como fuente de reserva cuando AniList no responde."
+    },
+    "direitos": "© {ano} Kidoku · trabajo académico"
+  },
   "comum": {
     "salvar": "Guardar",
     "salvando": "Guardando…",

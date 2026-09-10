@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import "../globals.css";
 import { perfilDoUsuarioDoSistema } from "@/server/services/usuario.service";
 import { Link } from "@/i18n/navigation";
-import { LinkDeRelato } from "./componentes/link-de-relato";
+import { Rodape } from "./componentes/rodape";
 import { idiomaDoSegmento, routing } from "@/i18n/routing";
 import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
 import { BotaoSair } from "./componentes/botao-sair";
@@ -159,12 +159,10 @@ export default async function RootLayout({
             </div>
           </header>
           {children}
-          {/* Rodapé global (#158): o caminho para apontar erro de tradução
-              precisa existir em TODA tela, porque o erro aparece em qualquer
-              uma — e são cinco idiomas sem revisor nativo no time. */}
-          <footer className="border-t border-borda px-6 py-4 text-xs text-texto-suave">
-            <LinkDeRelato />
-          </footer>
+          {/* Rodapé global. O caminho para apontar erro de tradução precisa
+              existir em TODA tela (#158), porque o erro aparece em qualquer uma
+              — e são cinco idiomas sem revisor nativo no time. */}
+          <Rodape logado={userId !== null} username={username} />
         </NextIntlClientProvider>
       </body>
     </html>

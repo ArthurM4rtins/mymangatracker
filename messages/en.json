@@ -32,6 +32,22 @@
     "entrar": "Sign in",
     "idioma": "Language"
   },
+  "rodape": {
+    "explorar": {
+      "titulo": "Explore"
+    },
+    "conta": {
+      "titulo": "Your account",
+      "ajustes": "Account settings",
+      "cadastrar": "Create account"
+    },
+    "dados": {
+      "titulo": "Data",
+      "anilist": "Catalogue and covers from AniList.",
+      "kitsu": "Kitsu as a backup source when AniList does not respond."
+    },
+    "direitos": "© {ano} Kidoku · academic project"
+  },
   "comum": {
     "salvar": "Save",
     "salvando": "Saving…",
