@@ -3,6 +3,7 @@
     "visualizacao": "Collection view",
     "grade": "Grid",
     "prateleira": "Bookshelf",
+    "andar": "Shelf {n}",
     "contagem": "{n, plural, one {# series} other {# series}}",
     "dica": "Explore the spines. Use the arrows, drag or swipe. Select a series to see its details.",
     "anterior": "Scroll back on {grupo}",
@@ -206,7 +207,6 @@
       "erro": "didn't work — try again"
     },
     "mais": {
-      "andar": "Shelf {n}",
       "verMais": "Show more works",
       "carregando": "Loading…",
       "fim": "That's everything we have here.",
@@ -335,8 +335,7 @@
     "populares": {
       "titulo": "Popular now",
       "verMais": "see more →",
-      "indisponivel": "The catalog didn't respond just now — try again in a moment.",
-      "andar": "Shelf {n}"
+      "indisponivel": "The catalog didn't respond just now — try again in a moment."
     },
     "atividade": {
       "titulo": "Recent activity",

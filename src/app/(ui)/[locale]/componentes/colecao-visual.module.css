@@ -6,6 +6,11 @@
 .modos button[aria-pressed="true"] { background: var(--texto); color: var(--fundo); }
 .colecao button:focus-visible { outline: 2px solid var(--acento); outline-offset: 4px; }
 .prateleiras { display: flex; flex-direction: column; gap: 2.75rem; }
+/* Andares simples: sem cabeçalho, colados um no outro como numa estante. */
+.prateleiras[data-simples] { gap: .5rem; }
+.secao[data-simples] .movel { margin-top: 0; }
+/* Sem rolagem: os nove cabem na largura porque a vitrine fecha quando outro livro abre. */
+.secao[data-simples] .trilho { padding-inline: var(--recuo-do-trilho); gap: var(--vao); overflow-x: hidden; }
 .dica { margin-bottom: -1rem; color: var(--texto-suave); font-size: .75rem; line-height: 1.7; }
 .secao { min-width: 0; }
 .cabecalho { display: flex; justify-content: space-between; align-items: center; gap: .75rem; }
@@ -33,12 +38,18 @@
 .capa::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #0006, #ffffff25 3%, #0002 6%, transparent 10%); border: 1px solid #0002; border-radius: inherit; }
 .capa img { object-fit: cover; }
 .tituloCapa { position: absolute; inset: auto 0 0; padding: 30px 12px 13px; background: linear-gradient(transparent, #000d); color: white; font-size: 12px; line-height: 1.4; font-weight: 600; }
-.livro[data-vitrine], .livro:focus-within { width: 168px; }
+.livro[data-vitrine], .livro:focus-within { width: var(--largura-aberta, 168px); }
 .livro[data-vitrine] .capa, .livro:focus-within .capa { opacity: 1; }
+/* Só um livro aberto por vez: quando outro abre, a vitrine volta a ser lombada,
+   e a largura total do trilho não muda — o último livro abre sem estourar. */
+.trilho:has(.livro:focus-within) .livro[data-vitrine]:not(:focus-within) { width: var(--largura-lombada); }
+.trilho:has(.livro:focus-within) .livro[data-vitrine]:not(:focus-within) .capa { opacity: 0; }
 .livro:focus-within .volume { transform: translateY(-10px) rotateY(-8deg); box-shadow: 9px 12px 14px #0003; }
 @media (hover: hover) and (pointer: fine) {
-  .livro:hover { width: 168px; }
+  .livro:hover { width: var(--largura-aberta, 168px); }
   .livro:hover .capa { opacity: 1; }
+  .trilho:has(.livro:hover) .livro[data-vitrine]:not(:hover) { width: var(--largura-lombada); }
+  .trilho:has(.livro:hover) .livro[data-vitrine]:not(:hover) .capa { opacity: 0; }
   .livro:hover .volume { transform: translateY(-10px) rotateY(-8deg); box-shadow: 9px 12px 14px #0003; }
 }
 .base { position: relative; height: 15px; border-top: 2px solid color-mix(in srgb, var(--superficie) 75%, var(--borda)); border-bottom: 1px solid var(--borda); border-radius: 1px 1px 3px 3px; background: linear-gradient(var(--borda), color-mix(in srgb, var(--borda) 65%, var(--fundo))); box-shadow: 0 13px 18px -12px color-mix(in srgb, var(--texto) 45%, transparent); }
@@ -60,6 +71,10 @@
 .cardDetalhe [data-capa-vazia] { align-self: center; width: min(100%, 176px); height: auto; aspect-ratio: 2 / 3; }
 .cardDetalhe [data-titulo-obra] { font-size: 1.5rem; font-weight: 600; color: var(--texto); -webkit-line-clamp: unset; overflow-wrap: anywhere; }
 @keyframes abrir { from { opacity: 0; translate: 24px 0; } to { opacity: 1; translate: 0 0; } }
+/* Tela estreita: os nove não cabem, então o andar simples volta a rolar. */
+@media (max-width: 720px) {
+  .secao[data-simples] .trilho { overflow-x: auto; }
+}
 @media (max-width: 480px) {
   .trilho { padding-inline: 12px; }
   .prateleiras { gap: 2rem; }

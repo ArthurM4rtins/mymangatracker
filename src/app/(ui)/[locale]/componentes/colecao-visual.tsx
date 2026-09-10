@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Fragment, useEffect, useId, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
+import { Fragment, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 
+import { emAndaresPelaLargura, LARGURA_ABERTA, larguraDaLombada, RECUO_DO_TRILHO, VAO } from "./andares";
 import estilos from "./colecao-visual.module.css";
 
 /** Os cards chegam prontos do servidor; a prateleira só controla a apresentação. */
@@ -22,18 +23,23 @@ export type GrupoDaColecao = {
 
 const CORES = ["#733c35", "#344d53", "#586044", "#71516b", "#865f33", "#364868", "#55504a"];
 
-export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classeGrade = "grid gap-4 sm:grid-cols-2", andarSimples = false }: {
+export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classeGrade = "grid gap-4 sm:grid-cols-2", andarSimples = false, maximoPorAndar }: {
   itens: ItemDaColecao[];
   grupos?: GrupoDaColecao[];
   titulo: string;
   inicial?: "grade" | "prateleira";
   classeGrade?: string;
   /**
-   * Andar que é só um corte (1, 2, 3...) não precisa de título nem de setas
-   * na tela: fica o número e a contagem, e o trilho rola pelo dedo ou pela
-   * roda. O título segue existindo para o leitor de tela.
+   * Andares simples: a coleção vira uma estante de verdade. A prateleira mede
+   * a própria largura e enche cada andar com o que cabe; não tem cabeçalho
+   * (nem título, nem número, nem setas), os andares ficam colados, e o trilho
+   * não rola — a vitrine fecha quando outro livro abre, então a largura total
+   * não muda. `grupos` é ignorado nesse modo; o nome de cada andar existe só
+   * para o leitor de tela.
    */
   andarSimples?: boolean;
+  /** Teto de obras por andar no modo simples, se a tela quiser um (a home usa 9). */
+  maximoPorAndar?: number;
 })
 {
   const t = useTranslations("colecao");
@@ -42,12 +48,41 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classe
   const item = itens.find((obra) => obra.id === selecionado);
   const conteudoId = useId();
   const botaoPrateleira = useRef<HTMLButtonElement>(null);
+  const estante = useRef<HTMLDivElement>(null);
+  const [larguraDoTrilho, setLarguraDoTrilho] = useState(0);
 
   // Uma remoção ou filtro não deve reabrir o painel se a obra reaparecer.
   if (selecionado !== null && !item) setSelecionado(null);
 
+  // Antes de pintar, para o andar já nascer com o tanto que cabe; e de novo a
+  // cada mudança de largura (janela, painel lateral, rotação do celular).
+  useLayoutEffect(() => {
+    const caixa = estante.current;
+    if (!andarSimples || modo !== "prateleira" || !caixa) return;
+    function medir() { if (caixa) setLarguraDoTrilho(caixa.clientWidth); }
+    medir();
+    const observador = new ResizeObserver(medir);
+    observador.observe(caixa);
+    return () => observador.disconnect();
+  }, [andarSimples, modo]);
+
+  const andares: GrupoDaColecao[] = andarSimples
+    ? emAndaresPelaLargura(itens, larguraDoTrilho, maximoPorAndar).map((andar, indice) => ({
+      id: `andar-${indice + 1}`,
+      titulo: t("andar", { n: indice + 1 }),
+      itens: andar,
+    }))
+    : grupos ?? [{ id: "obras", titulo, itens }];
+
+  // As medidas que o empacotamento usa são as mesmas que o CSS desenha.
+  const medidas = {
+    "--largura-aberta": `${LARGURA_ABERTA}px`,
+    "--recuo-do-trilho": `${RECUO_DO_TRILHO}px`,
+    "--vao": `${VAO}px`,
+  } as CSSProperties;
+
   return (
-    <div className={estilos.colecao}>
+    <div className={estilos.colecao} style={medidas}>
       <div className={estilos.barra}>
         <p className={estilos.contagem}>{t("contagem", { n: itens.length })}</p>
         <div className={estilos.modos} role="group" aria-label={t("visualizacao")}>
@@ -68,9 +103,9 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classe
             {itens.map((obra) => <Fragment key={obra.id}>{obra.detalhe}</Fragment>)}
           </ul>
         ) : (
-          <div className={estilos.prateleiras}>
+          <div ref={estante} className={estilos.prateleiras} data-simples={andarSimples || undefined}>
             <p className={estilos.dica}>{t("dica")}</p>
-            {(grupos ?? [{ id: "obras", titulo, itens }]).filter((grupo) => grupo.itens.length > 0).map((grupo, indice) => (
+            {andares.filter((grupo) => grupo.itens.length > 0).map((grupo, indice) => (
               <Prateleira key={grupo.id} grupo={grupo} numero={indice + 1} aoAbrir={setSelecionado}
                 simples={andarSimples} />
             ))}
@@ -126,25 +161,27 @@ function Prateleira({ grupo, numero, aoAbrir, simples }: {
   }
 
   return (
-    <section aria-labelledby={tituloId} className={estilos.secao}>
-      <div className={estilos.cabecalho}>
-        <div className={estilos.identificacao}>
-          <span aria-hidden className={estilos.numero}>{String(numero).padStart(2, "0")}</span>
-          <h2 id={tituloId} className={simples ? "sr-only" : undefined}>{grupo.titulo}</h2>
-          <span className={estilos.quantidade}>{t("contagem", { n: grupo.itens.length })}</span>
-        </div>
-        {!simples && (
+    <section aria-labelledby={simples ? undefined : tituloId} aria-label={simples ? grupo.titulo : undefined}
+      className={estilos.secao} data-simples={simples || undefined}>
+      {!simples && (
+        <div className={estilos.cabecalho}>
+          <div className={estilos.identificacao}>
+            <span aria-hidden className={estilos.numero}>{String(numero).padStart(2, "0")}</span>
+            <h2 id={tituloId}>{grupo.titulo}</h2>
+            <span className={estilos.quantidade}>{t("contagem", { n: grupo.itens.length })}</span>
+          </div>
           <div className={estilos.setas}>
             <button type="button" aria-label={t("anterior", { grupo: grupo.titulo })}
               aria-controls={trilhoId} disabled={limites.inicio} onClick={() => rolar(-1)}>←</button>
             <button type="button" aria-label={t("proxima", { grupo: grupo.titulo })}
               aria-controls={trilhoId} disabled={limites.fim} onClick={() => rolar(1)}>→</button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className={estilos.movel}>
-        <ul ref={trilho} id={trilhoId} aria-labelledby={tituloId} className={estilos.trilho}
+        <ul ref={trilho} id={trilhoId} aria-labelledby={simples ? undefined : tituloId}
+          aria-label={simples ? grupo.titulo : undefined} className={estilos.trilho}
           onKeyDown={(evento) => {
             if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(evento.key)) return;
             const botoes = Array.from(evento.currentTarget.querySelectorAll<HTMLButtonElement>("button"));
@@ -188,7 +225,7 @@ function Prateleira({ grupo, numero, aoAbrir, simples }: {
               }}
               style={{ "--cor-lombada": CORES[obra.id % CORES.length],
                 "--altura-livro": `${224 + (obra.id % 5) * 9}px`,
-                "--largura-lombada": `${46 + (obra.id % 3) * 5}px` } as CSSProperties}>
+                "--largura-lombada": `${larguraDaLombada(obra.id)}px` } as CSSProperties}>
               <button type="button" className={estilos.volume} aria-label={t("abrir", { titulo: obra.titulo })}
                 aria-haspopup="dialog" onClick={() => aoAbrir(obra.id)}>
                 <span className={estilos.lombada} aria-hidden>

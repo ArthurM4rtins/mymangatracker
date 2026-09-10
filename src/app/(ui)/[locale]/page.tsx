@@ -32,11 +32,12 @@ import { ContinuarLeitura } from "./estante/continuar-leitura";
 export const dynamic = "force-dynamic";
 
 const LIMITE_CONTINUAR = 4;
-// 36 populares em quatro andares de nove na prateleira (decisao de 09/09/2026).
+// 36 populares na prateleira, no maximo nove por andar (decisao de 09/09/2026);
+// a prateleira enche cada andar com o que cabe na largura, ate esse teto.
 // Custo medido: ~700 B de HTML por obra e capa de ~45 KB carregada so quando
 // entra na tela, entao 36 em vez de 12 pesa ~17 KB a mais de HTML.
 const LIMITE_POPULARES = 36;
-const OBRAS_POR_ANDAR = 9;
+const MAXIMO_POR_ANDAR = 9;
 
 /** As dependências que têm rótulo traduzido; o health check pode listar outras. */
 const DEPENDENCIAS_COM_ROTULO = ["database", "anilist"] as const;
@@ -128,11 +129,7 @@ export default async function Home()
                 classeGrade="grid grid-cols-3 gap-3 sm:grid-cols-4"
                 itens={itensPopulares}
                 andarSimples
-                grupos={emAndares(itensPopulares, OBRAS_POR_ANDAR).map((andar, indice) => ({
-                  id: `populares-${indice + 1}`,
-                  titulo: t("populares.andar", { n: indice + 1 }),
-                  itens: andar,
-                }))}
+                maximoPorAndar={MAXIMO_POR_ANDAR}
               />
               <Link
                 href="/catalogo"
@@ -179,19 +176,6 @@ export default async function Home()
       </footer>
     </main>
   );
-}
-
-/** Corta a lista em andares de `tamanho`; o último pode vir mais curto. */
-function emAndares<T>(itens: T[], tamanho: number): T[][]
-{
-  const andares: T[][] = [];
-
-  for (let inicio = 0; inicio < itens.length; inicio += tamanho)
-  {
-    andares.push(itens.slice(inicio, inicio + tamanho));
-  }
-
-  return andares;
 }
 
 /** Os estados de `buscarNoCatalogo` que vêm com obras, venham de onde vierem. */

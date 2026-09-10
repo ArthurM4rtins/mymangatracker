@@ -3,6 +3,7 @@
     "visualizacao": "Sammlungsansicht",
     "grade": "Raster",
     "prateleira": "Bücherregal",
+    "andar": "Regal {n}",
     "contagem": "{n, plural, one {# Werk} other {# Werke}}",
     "dica": "Erkunde die Buchrücken. Nutze die Pfeile, ziehe oder wische. Wähle ein Werk aus, um Details zu sehen.",
     "anterior": "Im Regal {grupo} zurückblättern",
@@ -206,7 +207,6 @@
       "erro": "hat nicht geklappt — versuch es noch mal"
     },
     "mais": {
-      "andar": "Regal {n}",
       "verMais": "Mehr Werke anzeigen",
       "carregando": "Wird geladen…",
       "fim": "Das ist alles, was wir hier haben.",
@@ -335,8 +335,7 @@
     "populares": {
       "titulo": "Gerade beliebt",
       "verMais": "mehr anzeigen →",
-      "indisponivel": "Der Katalog hat gerade nicht geantwortet — versuch es gleich noch einmal.",
-      "andar": "Regal {n}"
+      "indisponivel": "Der Katalog hat gerade nicht geantwortet — versuch es gleich noch einmal."
     },
     "atividade": {
       "titulo": "Letzte Aktivität",
