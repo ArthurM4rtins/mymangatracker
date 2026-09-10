@@ -202,38 +202,56 @@ function useArrasteParaOrdenar(
   }, [cancelarEspera]);
 
   /**
-   * O id da obra que o ponteiro elege como destino, seja qual for o andar. O
-   * livro arrastado sai do teste de acerto pelo CSS (`pointer-events: none`),
-   * senão ele estaria sempre sob o cursor — é nele que o cursor está grudado —
-   * e nunca acharia destino.
+   * A POSIÇÃO que o ponteiro elege como destino, seja qual for o andar. O livro
+   * arrastado sai do teste de acerto pelo CSS (`pointer-events: none`), senão
+   * ele estaria sempre sob o cursor — é nele que o cursor está grudado — e nunca
+   * acharia destino.
    *
-   * Ponteiro nos vãos ou passando da última lombada ainda vale: ao agarrar, a
-   * prateleira inteira fecha e encolhe, e o cursor que mirava um livro sobra do
-   * lado de fora. Sem a ponta, arrastar para o fim simplesmente não respondia.
+   * Passar das pontas do andar vale como ir para o começo ou para o fim, mas só
+   * quando o movimento CONCORDA com a ponta: ao agarrar, a prateleira fecha e
+   * encolhe uns 120 px, e o cursor sobra do lado de fora dela. Sem checar o
+   * sentido, arrastar para a esquerda a partir dali era lido como "passou do
+   * fim" e o livro ia parar no fim da fila — o contrário do gesto.
+   *
+   * Já o vão entre lombadas e a vaga do próprio livro na mão NÃO valem: tratá-los
+   * como ponta fazia a ordem trocar e destrocar a cada quatro pixels — cinco
+   * viradas em vinte pixels, que é o piscar que se via na prateleira. Ficando
+   * quieto ali, a vaga aberta é justamente o lugar onde o livro vai cair, e o
+   * gesto para de brigar consigo mesmo.
    */
-  function idSobOPonteiro(x: number, y: number): number | null
+  function destinoDoPonteiro(x: number, y: number, sentido: number): number | null
   {
     const embaixo = document.elementFromPoint(x, y);
     const direto = embaixo?.closest<HTMLElement>("[data-obra]");
 
     if (direto?.dataset.obra !== undefined)
     {
-      return Number(direto.dataset.obra);
+      return itens.findIndex((obra) => obra.id === Number(direto.dataset.obra));
     }
 
     const andar = embaixo?.closest<HTMLElement>("[data-trilho]");
-    const livros = andar === null || andar === undefined
-      ? []
-      : [...andar.querySelectorAll<HTMLElement>("[data-obra]")];
 
-    if (livros.length === 0)
+    if (!andar)
     {
       return null;
     }
 
-    const ponta = x < livros[0].getBoundingClientRect().x ? livros[0] : livros[livros.length - 1];
+    // O livro na mão fica de fora: a lombada dele acompanha o cursor, então a
+    // borda que ela marca não diz nada sobre onde o andar termina.
+    const parados = [...andar.querySelectorAll<HTMLElement>("[data-obra]:not([data-arrastado])")];
 
-    return ponta.dataset.obra === undefined ? null : Number(ponta.dataset.obra);
+    if (parados.length === 0)
+    {
+      return null;
+    }
+
+    const primeiro = parados[0].getBoundingClientRect();
+    const ultimo = parados[parados.length - 1].getBoundingClientRect();
+
+    if (x < primeiro.x && sentido < 0) return 0;
+    if (x > ultimo.x + ultimo.width && sentido > 0) return itens.length - 1;
+
+    return null;
   }
 
   function elementoDoLivro(id: number): HTMLElement | null
@@ -272,12 +290,13 @@ function useArrasteParaOrdenar(
     setDeslize(novo);
   }
 
-  function levarPara(destinoId: number)
+  function levarPara(destino: number)
   {
     const atual = gesto.current;
-    if (!atual || destinoId === atual.id) return;
-    const destino = itens.findIndex((obra) => obra.id === destinoId);
-    if (destino >= 0) aoReordenar?.(atual.id, destino);
+    if (!atual || destino < 0) return;
+    const daMao = itens.findIndex((obra) => obra.id === atual.id);
+    if (destino === daMao) return;
+    aoReordenar?.(atual.id, destino);
   }
 
   // Agarrar fecha o livro e cruzar um vizinho muda a posição de fila: nas duas
@@ -318,6 +337,7 @@ function useArrasteParaOrdenar(
       if (id === undefined || evento.button !== 0) return;
 
       gesto.current = { id: Number(id), x: evento.clientX, y: evento.clientY, fracao: 0.5 };
+      ultimoX.current = evento.clientX;
 
       // No mouse o arraste começa no primeiro movimento: no andar simples não
       // há rolagem para disputar. No toque, arrastar já significa rolar, então
@@ -357,10 +377,11 @@ function useArrasteParaOrdenar(
         agarrar(atual.id, atual.x);
       }
 
+      const sentido = evento.clientX - ultimoX.current;
       ultimoX.current = evento.clientX;
       acompanhar(atual.id, evento.clientX);
 
-      const destino = idSobOPonteiro(evento.clientX, evento.clientY);
+      const destino = destinoDoPonteiro(evento.clientX, evento.clientY, sentido);
       if (destino !== null) levarPara(destino);
     },
     onPointerUp() { encerrar(); },
