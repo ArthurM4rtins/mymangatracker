@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { buscarNoCatalogo, OBRAS_POR_PAGINA, obraParaDTO } from "@/server/services/catalogo.service";
+import { buscarNoCatalogo, obraParaDTO } from "@/server/services/catalogo.service";
 import { anilistIdsNaEstanteDoSistema } from "@/server/services/estante.service";
 import { interpretarFiltros } from "@/server/domain/catalogo-filtros";
 import { headers } from "next/headers";
@@ -125,7 +125,7 @@ export default async function Catalogo({ searchParams }: Props)
           )}
           <ColecaoDoCatalogo
             inicial={obras}
-            temMaisInicial={obras.length >= OBRAS_POR_PAGINA}
+            temMaisInicial={"temMais" in resultado && resultado.temMais}
             consulta={consulta.toString()}
             tituloDoGrupo={resultado.estado === "destaques" ? t("destaques") : t("titulo")}
           />
