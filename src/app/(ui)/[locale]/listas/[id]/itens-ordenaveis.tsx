@@ -1,15 +1,21 @@
 "use client";
 
 /**
- * A grade da PRÓPRIA lista (issue #51): setas subir/descer montam a ordem
- * nova com a regra pura do domínio e mandam a ordem inteira num PUT; remover
- * continua o toggle de itens. Ordem otimista, volta se o servidor recusar.
+ * A prateleira da PRÓPRIA lista (#51, #242). Arrastar um livro muda a posição;
+ * as setas do painel fazem o mesmo pelo teclado, que arraste não tem.
+ *
+ * Ordem e remoção ficam em RASCUNHO até o Salvar: numa lista a ordem é o
+ * conteúdo, e mexer nela grava a lista inteira a cada passo — quem organiza dez
+ * obras mandava dez escritas e não podia desistir do caminho. Adicionar pela
+ * busca continua entrando na hora: ali a pessoa procurou e escolheu.
+ *
+ * Salvar aplica os DELETE e só então o PUT da ordem — a rota exige permutação
+ * exata do que restou, então a ordem não pode chegar antes das remoções.
  */
 import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { mover, type Direcao } from "@/server/domain/lista-ordem";
+import { useEffect, useState } from "react";
+import { mover, reposicionar, type Direcao } from "@/server/domain/lista-ordem";
 import { useRouter } from "@/i18n/navigation";
-import { RemoverDaLista } from "./acoes-da-lista";
 import { ColecaoVisual } from "../../componentes/colecao-visual";
 import { CartaoObra } from "../../componentes/cartao-obra";
 
@@ -18,6 +24,11 @@ export type ItemParaOrdenar = {
   titulo: string;
   coverImageUrl: string | null;
 };
+
+function mesmosIds(a: ItemParaOrdenar[], b: ItemParaOrdenar[]): boolean
+{
+  return a.length === b.length && a.every((item, i) => item.anilistId === b[i].anilistId);
+}
 
 export function ItensOrdenaveis({
   listaId,
@@ -32,90 +43,199 @@ export function ItensOrdenaveis({
   const roteador = useRouter();
   const t = useTranslations("listas");
   const [ordem, setOrdem] = useState(itens);
+  const [removidos, setRemovidos] = useState<number[]>([]);
   const [recebidos, setRecebidos] = useState(itens);
-  const [ocupado, setOcupado] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
-  // Atualiza após refresh sem remontar a coleção: reordenar mantém o painel
-  // aberto, e remover tira da prateleira o item que deixou de existir.
+  // Chegou lista nova do servidor (adicionar pela busca dá refresh): o rascunho
+  // é preservado em vez de descartado. As obras que sumiram no servidor saem do
+  // rascunho, e as que ele passou a ter entram no fim, onde a rota as colocou.
   if (itens !== recebidos)
   {
+    const presentes = new Set(itens.map((item) => item.anilistId));
+    const aindaRemovidos = removidos.filter((id) => presentes.has(id));
+    const porId = new Map(itens.map((item) => [item.anilistId, item]));
+    const mantidos = ordem
+      .filter((item) => presentes.has(item.anilistId))
+      .map((item) => porId.get(item.anilistId) as ItemParaOrdenar);
+    const conhecidos = new Set([...ordem.map((item) => item.anilistId), ...aindaRemovidos]);
+
     setRecebidos(itens);
+    setRemovidos(aindaRemovidos);
+    setOrdem([...mantidos, ...itens.filter((item) => !conhecidos.has(item.anilistId))]);
+  }
+
+  const ordemMudou = !mesmosIds(ordem, itens.filter((item) => !removidos.includes(item.anilistId)));
+  const pendentes = removidos.length + (ordemMudou ? 1 : 0);
+
+  // Fechar a aba com rascunho por salvar pede confirmação do navegador. O texto
+  // é dele, não nosso — desde 2016 nenhum navegador deixa a página escolher.
+  useEffect(() => {
+    if (pendentes === 0) return;
+    function avisar(evento: BeforeUnloadEvent) { evento.preventDefault(); }
+    window.addEventListener("beforeunload", avisar);
+    return () => window.removeEventListener("beforeunload", avisar);
+  }, [pendentes]);
+
+  function moverItem(anilistId: number, direcao: Direcao)
+  {
+    setErro(null);
+    setOrdem(function (atual)
+    {
+      const ids = mover(atual.map((item) => item.anilistId), anilistId, direcao);
+      const porId = new Map(atual.map((item) => [item.anilistId, item]));
+      return ids.map((id) => porId.get(id) as ItemParaOrdenar);
+    });
+  }
+
+  function arrastarItem(anilistId: number, destino: number)
+  {
+    setErro(null);
+    setOrdem(function (atual)
+    {
+      const ids = reposicionar(atual.map((item) => item.anilistId), anilistId, destino);
+      const porId = new Map(atual.map((item) => [item.anilistId, item]));
+      return ids.map((id) => porId.get(id) as ItemParaOrdenar);
+    });
+  }
+
+  function removerItem(anilistId: number)
+  {
+    setErro(null);
+    setRemovidos(function (atual) { return [...atual, anilistId]; });
+    setOrdem(function (atual) { return atual.filter((item) => item.anilistId !== anilistId); });
+  }
+
+  function descartar()
+  {
+    setErro(null);
+    setRemovidos([]);
     setOrdem(itens);
   }
 
-  async function moverItem(anilistId: number, direcao: Direcao)
+  async function salvar()
   {
-    const ids = ordem.map(function (i) { return i.anilistId; });
-    const novosIds = mover(ids, anilistId, direcao);
-
-    if (novosIds.join() === ids.join())
-    {
-      return;
-    }
-
-    const antes = ordem;
-    const porId = new Map(ordem.map(function (i) { return [i.anilistId, i]; }));
-    setOrdem(novosIds.map(function (id) { return porId.get(id) as ItemParaOrdenar; }));
-    setOcupado(true);
+    setSalvando(true);
+    setErro(null);
 
     try
     {
-      const resposta = await fetch(`/api/v1/listas/${listaId}/ordem`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ anilistIds: novosIds }),
-      });
-
-      if (!resposta.ok)
+      // As remoções primeiro: a rota de ordem exige permutação exata do que
+      // sobrou, então mandar a ordem antes seria pedido inválido.
+      for (const anilistId of removidos)
       {
-        setOrdem(antes);
-        return;
+        const resposta = await fetch(`/api/v1/listas/${listaId}/itens`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ anilistId }),
+        });
+
+        // 404 é obra que já não estava lá: o rascunho queria isso mesmo.
+        if (!resposta.ok && resposta.status !== 404)
+        {
+          setErro(t("detalhe.rascunho.erro"));
+          return;
+        }
       }
 
+      if (ordemMudou && ordem.length > 0)
+      {
+        const resposta = await fetch(`/api/v1/listas/${listaId}/ordem`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ anilistIds: ordem.map((item) => item.anilistId) }),
+        });
+
+        if (!resposta.ok)
+        {
+          setErro(resposta.status === 429
+            ? t("detalhe.rascunho.limite")
+            : t("detalhe.rascunho.erro"));
+          return;
+        }
+      }
+
+      setRemovidos([]);
       roteador.refresh();
     }
     catch
     {
-      setOrdem(antes);
+      setErro(t("detalhe.rascunho.erro"));
     }
     finally
     {
-      setOcupado(false);
+      setSalvando(false);
     }
   }
 
   return (
-    <ColecaoVisual titulo={titulo} andarSimples
-      classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6"
-      itens={ordem.map((item, indice) => ({
-        id: item.anilistId,
-        titulo: item.titulo,
-        capa: item.coverImageUrl,
-        detalhe: (
-          <CartaoObra anilistId={item.anilistId} titulo={item.titulo} capa={item.coverImageUrl} acoes={
-            <div className="flex items-center justify-between gap-2 text-xs">
-              <span className="flex gap-1">
-                <Seta
-                  rotulo={t("detalhe.ordenar.antes", { titulo: item.titulo })}
-                  desativada={ocupado || indice === 0}
-                  aoClicar={function () { void moverItem(item.anilistId, "cima"); }}
+    <div className="flex flex-col gap-3">
+      <ColecaoVisual titulo={titulo} andarSimples
+        classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6"
+        aoReordenar={arrastarItem}
+        itens={ordem.map((item, indice) => ({
+          id: item.anilistId,
+          titulo: item.titulo,
+          capa: item.coverImageUrl,
+          detalhe: (
+            <CartaoObra anilistId={item.anilistId} titulo={item.titulo} capa={item.coverImageUrl} acoes={
+              <div className="flex items-center justify-between gap-2 text-xs">
+                <span className="flex gap-1">
+                  <Seta
+                    rotulo={t("detalhe.ordenar.antes", { titulo: item.titulo })}
+                    desativada={salvando || indice === 0}
+                    aoClicar={function () { moverItem(item.anilistId, "cima"); }}
+                  >
+                    ←
+                  </Seta>
+                  <Seta
+                    rotulo={t("detalhe.ordenar.depois", { titulo: item.titulo })}
+                    desativada={salvando || indice === ordem.length - 1}
+                    aoClicar={function () { moverItem(item.anilistId, "baixo"); }}
+                  >
+                    →
+                  </Seta>
+                </span>
+                <button
+                  type="button"
+                  disabled={salvando}
+                  onClick={function () { removerItem(item.anilistId); }}
+                  className="text-texto-suave underline underline-offset-4 hover:text-texto disabled:opacity-40"
                 >
-                  ←
-                </Seta>
-                <Seta
-                  rotulo={t("detalhe.ordenar.depois", { titulo: item.titulo })}
-                  desativada={ocupado || indice === ordem.length - 1}
-                  aoClicar={function () { void moverItem(item.anilistId, "baixo"); }}
-                >
-                  →
-                </Seta>
-              </span>
-              <RemoverDaLista listaId={listaId} anilistId={item.anilistId} />
-            </div>
-          } />
-        ),
-      }))}
-    />
+                  {t("detalhe.remover")}
+                </button>
+              </div>
+            } />
+          ),
+        }))}
+      />
+
+      {pendentes > 0 && (
+        <div className="flex flex-wrap items-center gap-3 rounded-md border border-acento/40 bg-superficie p-3 text-sm">
+          <span aria-live="polite" className="flex-1 text-texto-suave">
+            {t("detalhe.rascunho.pendentes", { n: pendentes })}
+          </span>
+          {erro && <span role="alert" className="text-texto-suave">{erro}</span>}
+          <button
+            type="button"
+            disabled={salvando}
+            onClick={descartar}
+            className="text-texto-suave underline underline-offset-4 hover:text-texto disabled:opacity-40"
+          >
+            {t("detalhe.rascunho.descartar")}
+          </button>
+          <button
+            type="button"
+            disabled={salvando}
+            onClick={function () { void salvar(); }}
+            className="rounded-md bg-acento px-3 py-1.5 font-medium text-fundo disabled:opacity-60"
+          >
+            {salvando ? t("detalhe.rascunho.salvando") : t("detalhe.rascunho.salvar")}
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 

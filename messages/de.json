@@ -417,7 +417,14 @@
         }
       },
       "remover": "entfernen",
-      "removerConfirmacao": "Dieses Werk aus der Liste entfernen?",
+      "rascunho": {
+        "salvar": "Speichern",
+        "salvando": "Wird gespeichert…",
+        "descartar": "Verwerfen",
+        "pendentes": "{n, plural, one {# ungespeicherte Änderung} other {# ungespeicherte Änderungen}}",
+        "erro": "Speichern nicht möglich — versuche es erneut",
+        "limite": "zu viele Änderungen in kurzer Zeit — warte kurz"
+      },
       "curtida": {
         "curtir": "die Liste liken",
         "descurtir": "Like von der Liste entfernen"

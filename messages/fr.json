@@ -417,7 +417,14 @@
         }
       },
       "remover": "retirer",
-      "removerConfirmacao": "Retirer cette œuvre de la liste ?",
+      "rascunho": {
+        "salvar": "Enregistrer",
+        "salvando": "Enregistrement…",
+        "descartar": "Abandonner",
+        "pendentes": "{n, plural, one {# modification non enregistrée} other {# modifications non enregistrées}}",
+        "erro": "impossible d'enregistrer — réessaie",
+        "limite": "trop de modifications en peu de temps — patiente un peu"
+      },
       "curtida": {
         "curtir": "aimer la liste",
         "descurtir": "retirer le j’aime de la liste"

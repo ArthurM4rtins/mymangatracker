@@ -1,83 +1,15 @@
 "use client";
 
 /**
- * Ações do dono na página da lista: remover uma obra e apagar a lista.
+ * Ação do dono na página da lista: apagar a lista.
+ *
+ * Remover uma obra saiu daqui (#242): virou rascunho na prateleira, aplicado
+ * pelo Salvar, e o botão de dois passos deixou de fazer sentido.
  */
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { useRouter } from "@/i18n/navigation";
-
-export function RemoverDaLista({
-  listaId,
-  anilistId,
-}: {
-  listaId: string;
-  anilistId: number;
-})
-{
-  const roteador = useRouter();
-  const t = useTranslations("listas");
-  // Dois passos (#139): um clique so era o alvo mais facil de clickjacking, e
-  // remover e irreversivel do ponto de vista de quem nao lembra a ordem da lista.
-  const [confirmando, setConfirmando] = useState(false);
-  const [ocupado, setOcupado] = useState(false);
-
-  async function remover()
-  {
-    setOcupado(true);
-
-    try
-    {
-      // DELETE, não o toggle: numa página desatualizada o toggle ADICIONAVA (#65, item 9).
-      await fetch(`/api/v1/listas/${listaId}/itens`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ anilistId }),
-      });
-      roteador.refresh();
-    }
-    finally
-    {
-      setOcupado(false);
-      setConfirmando(false);
-    }
-  }
-
-  if (!confirmando)
-  {
-    return (
-      <button
-        type="button"
-        onClick={function () { setConfirmando(true); }}
-        className="text-xs text-texto-suave underline underline-offset-4 hover:text-texto"
-      >
-        {t("detalhe.remover")}
-      </button>
-    );
-  }
-
-  return (
-    <span className="flex items-center gap-2 text-xs">
-      <span className="text-texto-suave">{t("detalhe.removerConfirmacao")}</span>
-      <button
-        type="button"
-        onClick={function () { void remover(); }}
-        disabled={ocupado}
-        className="text-acento underline underline-offset-4 disabled:opacity-60"
-      >
-        {t("detalhe.apagar.sim")}
-      </button>
-      <button
-        type="button"
-        onClick={function () { setConfirmando(false); }}
-        className="text-texto-suave hover:text-texto"
-      >
-        {t("detalhe.apagar.nao")}
-      </button>
-    </span>
-  );
-}
 
 export function ApagarLista({ listaId }: { listaId: string })
 {

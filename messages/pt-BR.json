@@ -417,7 +417,14 @@
         }
       },
       "remover": "remover",
-      "removerConfirmacao": "Remover esta obra da lista?",
+      "rascunho": {
+        "salvar": "Salvar",
+        "salvando": "Salvando…",
+        "descartar": "Descartar",
+        "pendentes": "{n, plural, =1 {# mudança por salvar} other {# mudanças por salvar}}",
+        "erro": "não deu para salvar — tente de novo",
+        "limite": "muitas mudanças em pouco tempo — aguarde um pouco"
+      },
       "curtida": {
         "curtir": "curtir a lista",
         "descurtir": "descurtir a lista"

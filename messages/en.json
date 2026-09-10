@@ -417,7 +417,14 @@
         }
       },
       "remover": "remove",
-      "removerConfirmacao": "Remove this series from the list?",
+      "rascunho": {
+        "salvar": "Save",
+        "salvando": "Saving…",
+        "descartar": "Discard",
+        "pendentes": "{n, plural, =1 {# unsaved change} other {# unsaved changes}}",
+        "erro": "could not save — try again",
+        "limite": "too many changes in a short time — wait a bit"
+      },
       "curtida": {
         "curtir": "like the list",
         "descurtir": "unlike the list"
