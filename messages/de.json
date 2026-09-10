@@ -520,8 +520,8 @@
     "listas": {
       "botao": "+ Liste",
       "titulo": "Meine Listen",
-      "fechar": "schließen",
-      "vazia": "Noch keine Liste — erstell eine auf der Seite „Listen“."
+      "carregando": "Wird geladen…",
+      "vazia": "Du hast noch keine Liste erstellt. <link>Die erste erstellen</link>"
     },
     "erros": {
       "salvar": "Speichern hat nicht geklappt — versuch es noch mal",

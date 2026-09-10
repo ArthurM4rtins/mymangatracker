@@ -520,8 +520,8 @@
     "listas": {
       "botao": "+ Lista",
       "titulo": "Minhas listas",
-      "fechar": "fechar",
-      "vazia": "Nenhuma lista ainda — crie uma na página de Listas."
+      "carregando": "Carregando…",
+      "vazia": "Você ainda não criou lista. <link>Criar a primeira</link>"
     },
     "erros": {
       "salvar": "não deu para salvar — tente de novo",
