@@ -127,6 +127,7 @@ export default async function Home()
                 titulo={t("populares.titulo")}
                 classeGrade="grid grid-cols-3 gap-3 sm:grid-cols-4"
                 itens={itensPopulares}
+                andarSimples
                 grupos={emAndares(itensPopulares, OBRAS_POR_ANDAR).map((andar, indice) => ({
                   id: `populares-${indice + 1}`,
                   titulo: t("populares.andar", { n: indice + 1 }),

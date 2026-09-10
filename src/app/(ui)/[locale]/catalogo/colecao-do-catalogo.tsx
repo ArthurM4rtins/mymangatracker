@@ -119,7 +119,7 @@ export function ColecaoDoCatalogo({ inicial, temMaisInicial, consulta, tituloDoG
 
   return (
     <section className="flex flex-col gap-4">
-      <ColecaoVisual itens={itens} titulo={tituloDoGrupo} grupos={grupos} />
+      <ColecaoVisual itens={itens} titulo={tituloDoGrupo} grupos={grupos} andarSimples />
 
       {/* O "ver mais" mora no fim do último andar: é onde a pessoa está quando
           acabou de ver o que tinha. */}
