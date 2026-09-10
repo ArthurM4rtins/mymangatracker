@@ -593,3 +593,9 @@ o comportamento desenhado na Fase 1.
 - **Tentativa**: com `pnpm test:db` verde e a migration escrita, abri a página da obra do Kitsu no `pnpm dev` e vi "o AniList não respondeu". Fui atrás de erro na fonte, no User-Agent e no timeout.
 - **Erro**: `test:db` roda contra o banco de TESTE, que a suíte prepara sozinha. O banco de desenvolvimento estava uma migration atrás, e o `findUnique` por uma coluna que ainda não existia lá estourava — a página caía no degrau de "fonte indisponível" e escondia a causa.
 - **Regra**: antes de julgar comportamento no `pnpm dev`, rodar `pnpm prisma migrate status`. Erro de coluna inexistente vira "serviço fora do ar" em qualquer camada que degrade com `try/catch`, então o `catch` mudo é o primeiro lugar a instrumentar, não a rede.
+
+## Renomear campo de contrato: o cliente não é typescript-checado contra a rota
+
+- **Tentativa**: a obra passou a ser dita por chave textual, e renomeei o campo do corpo para `obra` nas rotas de estante, itens de lista e avaliações. `tsc`, `lint`, 766 testes de unidade, 110 de banco e o build passaram.
+- **Erro**: as seis chamadas do lado do cliente continuavam mandando `chave`. O Zod recusava com 400 antes de qualquer regra rodar, e a tela mostrava "não deu — tente de novo". Nada disso é typecheck: o corpo do `fetch` é um objeto solto, e o esquema do Zod vive do outro lado da rede. Só apareceu quando o usuário clicou.
+- **Regra**: nome de campo de corpo ou query é contrato entre dois lados que nenhum portão compara. Ao renomear um, `grep` pelo NOME ANTIGO em `src/app/(ui)` antes de dizer que acabou, e clicar no botão que usa a rota. Mesma família do [portoes-nao-leem-a-saida]: o que atravessa a rede não é lido por `tsc`.
