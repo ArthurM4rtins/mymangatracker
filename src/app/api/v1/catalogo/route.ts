@@ -16,7 +16,7 @@ import {
   obraParaDTO,
   type PaginaDoCatalogoDTO,
 } from "@/server/services/catalogo.service";
-import { anilistIdsNaEstanteDoSistema } from "@/server/services/estante.service";
+import { chavesNaEstanteDoSistema } from "@/server/services/estante.service";
 import { ERRO } from "../_shared/erros";
 import { ipDoPedido } from "../_shared/ip";
 import { usuarioDaSessao } from "../_shared/sessao";
@@ -48,8 +48,8 @@ export async function GET(request: Request)
     ]);
 
     const naEstante = userId === null
-      ? new Set<number>()
-      : new Set(await anilistIdsNaEstanteDoSistema(userId).catch(function (): number[] { return []; }));
+      ? new Set<string>()
+      : new Set(await chavesNaEstanteDoSistema(userId).catch(function (): string[] { return []; }));
 
     const obras = "obras" in resultado
       ? resultado.obras.map(function (obra) { return obraParaDTO(obra, naEstante); })

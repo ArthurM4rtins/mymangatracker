@@ -6,12 +6,13 @@ import { NextResponse } from "next/server";
 import { removerAvaliacaoDoSistema } from "@/server/services/avaliacao.service";
 import { ERRO } from "../../_shared/erros";
 import { usuarioDaSessao } from "../../_shared/sessao";
+import { referenciaDaChave } from "@/server/domain/referencia-da-obra";
 
 export const dynamic = "force-dynamic";
 
 export async function DELETE(
   _request: Request,
-  contexto: { params: Promise<{ anilistId: string }> },
+  contexto: { params: Promise<{ obra: string }> },
 )
 {
   const userId = await usuarioDaSessao();
@@ -24,9 +25,9 @@ export async function DELETE(
     );
   }
 
-  const anilistId = Number((await contexto.params).anilistId);
+  const referencia = referenciaDaChave(decodeURIComponent((await contexto.params).obra));
 
-  if (!Number.isInteger(anilistId) || anilistId <= 0)
+  if (referencia === null)
   {
     return NextResponse.json(
       { erros: { _geral: ERRO.OBRA_INVALIDA } },
@@ -36,7 +37,7 @@ export async function DELETE(
 
   try
   {
-    const resultado = await removerAvaliacaoDoSistema({ userId, anilistId });
+    const resultado = await removerAvaliacaoDoSistema({ userId, referencia });
 
     if (resultado.estado !== "ok")
     {

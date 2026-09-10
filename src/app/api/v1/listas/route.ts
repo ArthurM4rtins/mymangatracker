@@ -1,5 +1,5 @@
 /**
- * GET /api/v1/listas?anilistId=N — as listas do usuário logado, com o
+ * GET /api/v1/listas?obra=<chave> — as listas do usuário logado, com o
  * "já contém" da obra (dropdown da página da obra).
  * POST /api/v1/listas — criar lista.
  */
@@ -12,6 +12,7 @@ import {
 import { lerJson } from "../_shared/corpo";
 import { ERRO } from "../_shared/erros";
 import { usuarioDaSessao } from "../_shared/sessao";
+import { referenciaDaChave } from "@/server/domain/referencia-da-obra";
 
 export const dynamic = "force-dynamic";
 
@@ -32,10 +33,12 @@ export async function GET(request: Request)
     );
   }
 
-  const bruto = new URL(request.url).searchParams.get("anilistId");
-  const anilistId = bruto === null ? null : Number(bruto);
+  // A obra pela chave (#254): `anilist:30002` ou `kitsu:54598`. O id solto não
+  // serve mais — obra que só o Kitsu conhece não tem número do AniList.
+  const bruto = new URL(request.url).searchParams.get("obra");
+  const referencia = bruto === null ? null : referenciaDaChave(bruto);
 
-  if (anilistId !== null && (!Number.isInteger(anilistId) || anilistId <= 0))
+  if (bruto !== null && referencia === null)
   {
     return NextResponse.json(
       { erros: { _geral: ERRO.ANILIST_ID_INVALIDO } },
@@ -45,7 +48,7 @@ export async function GET(request: Request)
 
   try
   {
-    const listas = await minhasListasDoSistema(userId, anilistId);
+    const listas = await minhasListasDoSistema(userId, referencia);
 
     return NextResponse.json({ listas }, { status: 200 });
   }

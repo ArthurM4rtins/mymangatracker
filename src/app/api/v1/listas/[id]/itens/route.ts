@@ -11,11 +11,13 @@ import {
 import { lerJson } from "../../../_shared/corpo";
 import { ERRO } from "../../../_shared/erros";
 import { usuarioDaSessao } from "../../../_shared/sessao";
+import { referenciaDaChave } from "@/server/domain/referencia-da-obra";
 
 export const dynamic = "force-dynamic";
 
 const ESQUEMA = z.object({
-  anilistId: z.number().int().positive(),
+  /** A obra pela chave (#254): `anilist:30002` ou `kitsu:54598`. */
+  obra: z.string().min(3).max(40),
 });
 
 export async function POST(
@@ -52,6 +54,17 @@ export async function POST(
     );
   }
 
+  // A chave chega do corpo: nada nela e de confianca (#254).
+  const referencia = referenciaDaChave(analise.data.obra);
+
+  if (referencia === null)
+  {
+    return NextResponse.json(
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
+      { status: 400 },
+    );
+  }
+
   const { id } = await contexto.params;
 
   try
@@ -59,7 +72,7 @@ export async function POST(
     const resultado = await adicionarObraNaListaDoSistema({
       userId,
       listaId: id,
-      anilistId: analise.data.anilistId,
+      referencia,
     });
 
     if (resultado.estado === "nao_encontrada")
@@ -148,6 +161,17 @@ export async function DELETE(
     );
   }
 
+  // A chave chega do corpo: nada nela e de confianca (#254).
+  const referencia = referenciaDaChave(analise.data.obra);
+
+  if (referencia === null)
+  {
+    return NextResponse.json(
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
+      { status: 400 },
+    );
+  }
+
   const { id } = await contexto.params;
 
   try
@@ -155,7 +179,7 @@ export async function DELETE(
     const resultado = await removerObraDaListaDoSistema({
       userId,
       listaId: id,
-      anilistId: analise.data.anilistId,
+      referencia,
     });
 
     if (resultado.estado === "nao_encontrada")
