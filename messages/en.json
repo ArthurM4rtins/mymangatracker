@@ -320,6 +320,7 @@
     },
     "titulo": "The Kidoku extension",
     "subtitulo": "Logs the chapter you're reading to your shelf without leaving the tab. You name the work once; from then on it recognises the site on its own.",
+    "capturaEmOutroIdioma": "The screenshots show the extension in another language. Once installed, it speaks your browser's language.",
     "instalar": {
       "titulo": "Install",
       "loja": "Install from the Chrome Web Store",

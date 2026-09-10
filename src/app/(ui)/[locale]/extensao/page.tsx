@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { alternativasDeIdioma, Link } from "@/i18n/navigation";
 import { idiomaDoSegmento } from "@/i18n/routing";
+import { captura, capturaEmOutroIdioma } from "./capturas";
 import { LOJA_DA_EXTENSAO } from "./loja";
 
 // Conteúdo puro: não lê banco, não lê sessão, não vai dinâmica.
@@ -76,9 +77,14 @@ function Captura({
   );
 }
 
-export default async function Extensao()
+export default async function Extensao({ params }: PageProps<"/[locale]/extensao">)
 {
+  const { locale } = await params;
+  const idioma = idiomaDoSegmento(locale);
   const t = await getTranslations("extensao");
+  // A extensao fala o idioma do NAVEGADOR: quando a captura nao existe no
+  // idioma de quem le, a pagina diz isso em vez de fingir que bate.
+  const outroIdioma = capturaEmOutroIdioma(idioma);
 
   return (
     <main className="mx-auto w-full max-w-3xl space-y-10 px-6 py-12">
@@ -128,12 +134,13 @@ export default async function Extensao()
         <p>{t("usar.obra")}</p>
         <p>{t("usar.capitulo")}</p>
         <Captura
-          src="/extensao/popup-em-uso.png"
+          src={captura("popup-em-uso", idioma)}
           alt={t("usar.captura.alt")}
           largura={399}
           altura={658}
           legenda={t("usar.captura.legenda")}
         />
+        {outroIdioma && <p className="text-xs">{t("capturaEmOutroIdioma")}</p>}
       </Secao>
 
       <Secao titulo={t("badge.titulo")}>
@@ -184,7 +191,7 @@ export default async function Extensao()
             <h3 className="text-sm font-bold text-texto">{t("problemas.sessao.titulo")}</h3>
             <p className="mt-1">{t("problemas.sessao.texto")}</p>
             <Captura
-              src="/extensao/popup-sem-sessao.png"
+              src={captura("popup-sem-sessao", idioma)}
               alt={t("problemas.sessao.alt")}
               largura={400}
               altura={122}

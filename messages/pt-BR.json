@@ -320,6 +320,7 @@
     },
     "titulo": "A extensão do Kidoku",
     "subtitulo": "Registra na sua estante o capítulo que você está lendo, sem sair da aba. Você diz qual é a obra uma vez; daí em diante ela reconhece o site sozinha.",
+    "capturaEmOutroIdioma": "As capturas mostram a extensão em outro idioma. Instalada, ela fala o idioma do seu navegador.",
     "instalar": {
       "titulo": "Instalar",
       "loja": "Instalar pela Chrome Web Store",

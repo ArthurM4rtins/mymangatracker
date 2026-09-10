@@ -320,6 +320,7 @@
     },
     "titulo": "L'extension Kidoku",
     "subtitulo": "Elle enregistre dans votre bibliothèque le chapitre que vous lisez, sans quitter l'onglet. Vous indiquez l'œuvre une fois ; ensuite elle reconnaît le site toute seule.",
+    "capturaEmOutroIdioma": "Les captures montrent l'extension dans une autre langue. Une fois installée, elle parle la langue de votre navigateur.",
     "instalar": {
       "titulo": "Installer",
       "loja": "Installer depuis le Chrome Web Store",

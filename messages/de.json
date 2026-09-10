@@ -320,6 +320,7 @@
     },
     "titulo": "Die Kidoku-Erweiterung",
     "subtitulo": "Trägt das Kapitel, das du gerade liest, in dein Regal ein, ohne den Tab zu verlassen. Du nennst das Werk einmal; danach erkennt sie die Seite von allein.",
+    "capturaEmOutroIdioma": "Die Aufnahmen zeigen die Erweiterung in einer anderen Sprache. Installiert spricht sie die Sprache deines Browsers.",
     "instalar": {
       "titulo": "Installieren",
       "loja": "Im Chrome Web Store installieren",
