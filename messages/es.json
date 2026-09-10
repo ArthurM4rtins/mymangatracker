@@ -6,6 +6,7 @@
     "andar": "Estante {n}",
     "contagem": "{n, plural, one {# obra} other {# obras}}",
     "dica": "Explora los lomos. Usa las flechas, arrastra o desliza. Selecciona una obra para ver sus detalles.",
+    "dicaOrdenavel": "Arrastra los libros para cambiar el orden. En el móvil, mantén pulsado un libro y arrástralo. Selecciona una obra para ver los detalles.",
     "anterior": "Retroceder en la estantería {grupo}",
     "proxima": "Avanzar en la estantería {grupo}",
     "abrir": "Ver detalles de {titulo}",
@@ -416,7 +417,14 @@
         }
       },
       "remover": "quitar",
-      "removerConfirmacao": "¿Quitar esta obra de la lista?",
+      "rascunho": {
+        "salvar": "Guardar",
+        "salvando": "Guardando…",
+        "descartar": "Descartar",
+        "pendentes": "{n, plural, =1 {# cambio sin guardar} other {# cambios sin guardar}}",
+        "erro": "no se pudo guardar — inténtalo de nuevo",
+        "limite": "demasiados cambios en poco tiempo — espera un poco"
+      },
       "curtida": {
         "curtir": "dar me gusta a la lista",
         "descurtir": "quitar el me gusta a la lista"

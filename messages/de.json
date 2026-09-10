@@ -6,6 +6,7 @@
     "andar": "Regal {n}",
     "contagem": "{n, plural, one {# Werk} other {# Werke}}",
     "dica": "Erkunde die Buchrücken. Nutze die Pfeile, ziehe oder wische. Wähle ein Werk aus, um Details zu sehen.",
+    "dicaOrdenavel": "Ziehe die Bücher, um die Reihenfolge zu ändern. Am Handy ein Buch gedrückt halten und ziehen. Wähle ein Werk, um die Details zu sehen.",
     "anterior": "Im Regal {grupo} zurückblättern",
     "proxima": "Im Regal {grupo} weiterblättern",
     "abrir": "Details zu {titulo} ansehen",
@@ -416,7 +417,14 @@
         }
       },
       "remover": "entfernen",
-      "removerConfirmacao": "Dieses Werk aus der Liste entfernen?",
+      "rascunho": {
+        "salvar": "Speichern",
+        "salvando": "Wird gespeichert…",
+        "descartar": "Verwerfen",
+        "pendentes": "{n, plural, one {# ungespeicherte Änderung} other {# ungespeicherte Änderungen}}",
+        "erro": "Speichern nicht möglich — versuche es erneut",
+        "limite": "zu viele Änderungen in kurzer Zeit — warte kurz"
+      },
       "curtida": {
         "curtir": "die Liste liken",
         "descurtir": "Like von der Liste entfernen"

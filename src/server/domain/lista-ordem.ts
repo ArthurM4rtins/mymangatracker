@@ -48,3 +48,31 @@ export function mover<T>(ordem: ReadonlyArray<T>, item: T, direcao: Direcao): T[
 
   return copia;
 }
+
+/**
+ * Leva o item para uma posição qualquer (#242): é o que o arraste precisa, e a
+ * seta não dá, porque ela só troca com o vizinho.
+ *
+ * `destino` é o índice que o item passa a ocupar na ordem FINAL, contado depois
+ * de tirá-lo da origem. É essa contagem que faz a vaga aberta durante o arraste
+ * ser a mesma posição que se grava — contar sobre a ordem original erraria por
+ * um sempre que o item anda para a direita.
+ *
+ * Destino fora da faixa gruda na ponta em vez de sumir com o item: um ponteiro
+ * fora da prateleira não pode encurtar a lista.
+ */
+export function reposicionar<T>(ordem: ReadonlyArray<T>, item: T, destino: number): T[]
+{
+  const copia = [...ordem];
+  const indice = copia.indexOf(item);
+
+  if (indice === -1)
+  {
+    return copia;
+  }
+
+  copia.splice(indice, 1);
+  copia.splice(Math.max(0, Math.min(copia.length, destino)), 0, item);
+
+  return copia;
+}
