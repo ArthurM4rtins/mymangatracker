@@ -556,3 +556,9 @@ Correcao aplicada: as 9 branches orfas apagadas e o recurso Neon restrito a
 `Production environment only` na Vercel — preview e development nao recebem mais
 banco, o build passa e a tela degrada com o aviso de configuracao pendente, que e
 o comportamento desenhado na Fase 1.
+
+## Aba oculta do Chrome parece página travada
+
+- **Tentativa**: screenshot e sonda com `requestAnimationFrame` numa aba do Chrome; ambos estouraram 30-45 s e a ferramenta disse "renderer may be frozen". Fui atrás de bug na prateleira (ResizeObserver, capas, CSS) por meia hora.
+- **Erro**: a aba estava com `document.visibilityState === "hidden"` (janela minimizada ou outra aba/janela na frente). Aba oculta não pinta frame: `Page.captureScreenshot` não retorna e `requestAnimationFrame` nunca dispara. JS sem rAF respondia na hora.
+- **Regra**: antes de diagnosticar "travou", rodar `document.visibilityState` pelo `javascript_tool`. Se vier `hidden`, o problema é a janela, não a página. Sonda de desempenho usa `setTimeout`/`PerformanceObserver` (longtask), nunca rAF. Uma aba por vez para captura: ação em outra aba tira a primeira do primeiro plano.
