@@ -441,7 +441,7 @@ async function Similares({ similares }: { similares: ObraSimilar[] })
       <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">
         {t("similares")}
       </h2>
-      <ColecaoVisual titulo={t("similares")} classeGrade="grid grid-cols-3 gap-3 sm:grid-cols-6"
+      <ColecaoVisual titulo={t("similares")} andarSimples classeGrade="grid grid-cols-3 gap-3 sm:grid-cols-6"
         itens={similares.map((similar) => ({
           id: similar.anilistId,
           titulo: similar.titleEnglish ?? similar.titleRomaji,

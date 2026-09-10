@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  emAndaresDosGrupos,
   emAndaresPelaLargura,
   LARGURA_ABERTA,
   larguraDaLombada,
@@ -127,5 +128,71 @@ describe("andar com teto fecha cheio", function ()
 
       expect(ocupado).toBeLessThanOrEqual(260 - 2 * RECUO_DO_TRILHO);
     }
+  });
+});
+
+// #234: as telas com grupo de nome próprio (estante por status, laboratório)
+// também viram estante — cada grupo rende vários andares, e o nome fica em
+// cima do primeiro.
+describe("emAndaresDosGrupos", function ()
+{
+  const LARGURA = 2 * RECUO_DO_TRILHO + LARGURA_ABERTA + 4 * (larguraDaLombada(1) + VAO);
+
+  it("cada grupo vira quantos andares couberem, na ordem", function ()
+  {
+    const grupos = [
+      { id: "lendo", titulo: "Lendo", itens: obras([1, 1, 1, 1, 1, 1, 1]) },
+      { id: "terminado", titulo: "Terminado", itens: obras([1, 1]) },
+    ];
+
+    const andares = emAndaresDosGrupos(grupos, LARGURA);
+
+    expect(andares.map(function (a) { return [a.grupo, a.itens.length, a.abreOGrupo]; })).toEqual([
+      ["lendo", 5, true],
+      ["lendo", 2, false],
+      ["terminado", 2, true],
+    ]);
+  });
+
+  it("só o primeiro andar do grupo carrega o nome na tela", function ()
+  {
+    const grupos = [{ id: "lendo", titulo: "Lendo", itens: obras([1, 1, 1, 1, 1, 1]) }];
+
+    const [primeiro, segundo] = emAndaresDosGrupos(grupos, LARGURA);
+
+    expect(primeiro.titulo).toBe("Lendo");
+    expect(primeiro.abreOGrupo).toBe(true);
+    expect(segundo.abreOGrupo).toBe(false);
+  });
+
+  it("grupo vazio não vira andar nenhum", function ()
+  {
+    const grupos = [
+      { id: "lendo", titulo: "Lendo", itens: [] },
+      { id: "terminado", titulo: "Terminado", itens: obras([1]) },
+    ];
+
+    expect(emAndaresDosGrupos(grupos, LARGURA).map(function (a) { return a.grupo; })).toEqual(["terminado"]);
+  });
+
+  it("id de andar não se repete entre grupos", function ()
+  {
+    const grupos = [
+      { id: "lendo", titulo: "Lendo", itens: obras([1, 1, 1, 1, 1, 1]) },
+      { id: "terminado", titulo: "Terminado", itens: obras([1, 1, 1, 1, 1, 1]) },
+    ];
+
+    const ids = emAndaresDosGrupos(grupos, LARGURA).map(function (a) { return a.id; });
+
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("respeita o teto por andar", function ()
+  {
+    const grupos = [{ id: "g", titulo: "G", itens: obras([1, 1, 1, 1, 1, 1, 1]) }];
+
+    const andares = emAndaresDosGrupos(grupos, 10_000, 3);
+
+    expect(andares.map(function (a) { return a.itens.length; })).toEqual([3, 3, 1]);
   });
 });

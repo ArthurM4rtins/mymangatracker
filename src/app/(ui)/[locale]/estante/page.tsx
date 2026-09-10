@@ -141,7 +141,7 @@ export default async function Estante({ searchParams }: Props)
       )}
 
       {entradas !== null && entradas.length > 0 && (
-        <ColecaoVisual itens={itens} grupos={grupos} titulo={t("titulo")} />
+        <ColecaoVisual itens={itens} grupos={grupos} titulo={t("titulo")} andarSimples />
       )}
     </main>
   );

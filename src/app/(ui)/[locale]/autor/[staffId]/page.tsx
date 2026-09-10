@@ -116,7 +116,7 @@ export default async function PaginaDoAutor({ params }: Props)
             {t("obras.vazia")}
           </p>
         ) : (
-          <ColecaoVisual titulo={t("obras.titulo")}
+          <ColecaoVisual titulo={t("obras.titulo")} andarSimples
             classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6"
             itens={autor.obras.map((obra) => ({
               id: obra.anilistId,

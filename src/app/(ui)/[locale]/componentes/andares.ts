@@ -95,3 +95,45 @@ export function emAndaresPelaLargura<T extends { id: number }>(
 
   return andares;
 }
+
+/** Um andar já montado: de qual grupo veio, e se é o que leva o nome dele. */
+export type AndarDaEstante<T> = {
+  id: string;
+  grupo: string;
+  titulo: string;
+  itens: T[];
+  /** Primeiro andar do grupo: é ele que mostra o nome na tela. */
+  abreOGrupo: boolean;
+};
+
+/**
+ * Quebra grupos de nome próprio (a estante por status, o laboratório) em
+ * andares de estante. O nome fica em cima do primeiro andar do grupo; os
+ * seguintes seguem sem cabeçalho, como na home (#234).
+ */
+export function emAndaresDosGrupos<T extends { id: number }>(
+  grupos: ReadonlyArray<{ id: string; titulo: string; itens: T[] }>,
+  larguraDoTrilho: number,
+  maximoPorAndar?: number,
+): Array<AndarDaEstante<T>>
+{
+  const andares: Array<AndarDaEstante<T>> = [];
+
+  for (const grupo of grupos)
+  {
+    const fatias = emAndaresPelaLargura(grupo.itens, larguraDoTrilho, maximoPorAndar);
+
+    fatias.forEach(function (itens, indice)
+    {
+      andares.push({
+        id: `${grupo.id}-${indice + 1}`,
+        grupo: grupo.id,
+        titulo: grupo.titulo,
+        itens,
+        abreOGrupo: indice === 0,
+      });
+    });
+  }
+
+  return andares;
+}

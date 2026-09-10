@@ -8,6 +8,10 @@
 .prateleiras { display: flex; flex-direction: column; gap: 2.75rem; }
 /* Andares simples: sem cabeçalho, colados um no outro como numa estante. */
 .prateleiras[data-simples] { gap: .5rem; }
+/* O nome do grupo (o status, na estante) respira antes do primeiro andar dele. */
+.nomeDoGrupo { margin-bottom: .35rem; font-weight: 600; font-size: 1rem; }
+.secao[data-simples]:has(.nomeDoGrupo) { margin-top: 1.75rem; }
+.secao[data-simples]:has(.nomeDoGrupo):first-child { margin-top: 0; }
 .secao[data-simples] .movel { margin-top: 0; }
 /* Sem rolagem: os nove cabem na largura porque a vitrine fecha quando outro livro abre. */
 .secao[data-simples] .trilho { padding-inline: var(--recuo-do-trilho); gap: var(--vao); overflow-x: hidden; }

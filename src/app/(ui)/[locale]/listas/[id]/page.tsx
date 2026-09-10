@@ -114,7 +114,7 @@ export default async function PaginaDaLista({ params }: PageProps<"/[locale]/lis
           })}
         />
       ) : (
-        <ColecaoVisual titulo={lista.nome}
+        <ColecaoVisual titulo={lista.nome} andarSimples
           classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6"
           itens={lista.itens.map((item) => ({
             id: item.anilistId,

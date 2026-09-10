@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Fragment, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 
 import {
-  emAndaresPelaLargura,
+  emAndaresDosGrupos,
   LARGURA_ABERTA,
   larguraDaLombada,
   larguraDaVitrine,
@@ -28,6 +28,8 @@ export type GrupoDaColecao = {
   itens: ItemDaColecao[];
   /** Quanto o livro aberto ocupa neste andar. Sem isso, a largura padrão. */
   larguraDaVitrine?: number;
+  /** No modo estante, o andar que leva o nome do grupo na tela. */
+  abreOGrupo?: boolean;
 };
 
 const CORES = ["#733c35", "#344d53", "#586044", "#71516b", "#865f33", "#364868", "#55504a"];
@@ -38,13 +40,15 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classe
   titulo: string;
   inicial?: "grade" | "prateleira";
   classeGrade?: string;
-  /**
+   /**
    * Andares simples: a coleção vira uma estante de verdade. A prateleira mede
-   * a própria largura e enche cada andar com o que cabe; não tem cabeçalho
-   * (nem título, nem número, nem setas), os andares ficam colados, e o trilho
-   * não rola — a vitrine fecha quando outro livro abre, então a largura total
-   * não muda. `grupos` é ignorado nesse modo; o nome de cada andar existe só
-   * para o leitor de tela.
+   * a própria largura e enche cada andar com o que cabe; não tem número, nem
+   * contagem, nem setas, os andares ficam colados, e o trilho não rola — a
+   * vitrine fecha quando outro livro abre, então a largura total não muda.
+   *
+   * Com `grupos` de nome próprio (a estante por status), cada grupo rende
+   * quantos andares couberem e o nome fica em cima do primeiro (#234). Sem
+   * grupos, o nome do andar existe só para o leitor de tela.
    */
   andarSimples?: boolean;
   /** Teto de obras por andar no modo simples, se a tela quiser um (a home usa 9). */
@@ -75,16 +79,22 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classe
     return () => observador.disconnect();
   }, [andarSimples, modo]);
 
+  // Sem grupo de nome próprio, o "grupo" é a coleção inteira e o título fica
+  // só para o leitor de tela.
+  const comNomeProprio = grupos !== undefined;
+  const paraFatiar = grupos ?? [{ id: "colecao", titulo, itens }];
+
   const andares: GrupoDaColecao[] = andarSimples
-    ? emAndaresPelaLargura(itens, larguraDoTrilho, maximoPorAndar).map((andar, indice) => ({
-      id: `andar-${indice + 1}`,
-      titulo: t("andar", { n: indice + 1 }),
-      itens: andar,
+    ? emAndaresDosGrupos(paraFatiar, larguraDoTrilho, maximoPorAndar).map((andar, indice) => ({
+      id: andar.id,
+      titulo: comNomeProprio ? andar.titulo : t("andar", { n: indice + 1 }),
+      itens: andar.itens,
       // O andar com teto fecha cheio apertando a vitrine (#229); os outros
       // ficam com a largura normal.
-      larguraDaVitrine: larguraDaVitrine(andar, larguraDoTrilho),
+      larguraDaVitrine: larguraDaVitrine(andar.itens, larguraDoTrilho),
+      abreOGrupo: comNomeProprio && andar.abreOGrupo,
     }))
-    : grupos ?? [{ id: "obras", titulo, itens }];
+    : paraFatiar;
 
   // As medidas que o empacotamento usa são as mesmas que o CSS desenha.
   const medidas = {
@@ -173,12 +183,16 @@ function Prateleira({ grupo, numero, aoAbrir, simples }: {
   }
 
   return (
-    <section aria-labelledby={simples ? undefined : tituloId} aria-label={simples ? grupo.titulo : undefined}
+    <section aria-labelledby={simples && !grupo.abreOGrupo ? undefined : tituloId}
+      aria-label={simples && !grupo.abreOGrupo ? grupo.titulo : undefined}
       className={estilos.secao} data-simples={simples || undefined}
       style={grupo.larguraDaVitrine === undefined
         ? undefined
         : ({ "--largura-aberta": `${grupo.larguraDaVitrine}px` } as CSSProperties)}>
-      {!simples && (
+      {simples ? grupo.abreOGrupo && (
+        // Nome do grupo e nada mais: sem número, sem contagem, sem setas (#234).
+        <h2 id={tituloId} className={estilos.nomeDoGrupo}>{grupo.titulo}</h2>
+      ) : (
         <div className={estilos.cabecalho}>
           <div className={estilos.identificacao}>
             <span aria-hidden className={estilos.numero}>{String(numero).padStart(2, "0")}</span>
@@ -195,8 +209,9 @@ function Prateleira({ grupo, numero, aoAbrir, simples }: {
       )}
 
       <div className={estilos.movel}>
-        <ul ref={trilho} id={trilhoId} aria-labelledby={simples ? undefined : tituloId}
-          aria-label={simples ? grupo.titulo : undefined} className={estilos.trilho}
+        <ul ref={trilho} id={trilhoId}
+          aria-labelledby={simples && !grupo.abreOGrupo ? undefined : tituloId}
+          aria-label={simples && !grupo.abreOGrupo ? grupo.titulo : undefined} className={estilos.trilho}
           onKeyDown={(evento) => {
             if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(evento.key)) return;
             const botoes = Array.from(evento.currentTarget.querySelectorAll<HTMLButtonElement>("button"));

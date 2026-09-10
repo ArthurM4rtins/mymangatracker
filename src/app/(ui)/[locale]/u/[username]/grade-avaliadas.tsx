@@ -21,7 +21,7 @@ export function GradeAvaliadas({ avaliadas }: { avaliadas: AvaliadaParaTela[] })
   const t = useTranslations("perfil");
 
   return (
-    <ColecaoVisual titulo={t("avaliadas.titulo")}
+    <ColecaoVisual titulo={t("avaliadas.titulo")} andarSimples
       classeGrade="grid grid-cols-3 gap-4 sm:grid-cols-5 md:grid-cols-6"
       itens={avaliadas.map((obra) => ({
         id: obra.anilistId,
