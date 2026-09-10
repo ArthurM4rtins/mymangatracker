@@ -43,7 +43,7 @@ export type DependenciasDoCatalogo = {
   /** As obras já cacheadas que casam com o termo. Só entra no fallback (#165). */
   doCache: (termo: string, pagina: number) => Promise<MediaDoAniList[]>;
   /** O tapa-buraco enquanto o AniList está fora (#219). Nunca com ele de pé. */
-  noKitsu: (termo: string, pagina: number) => Promise<PaginaDaFonte>;
+  noKitsu: (filtro: FiltroDoCatalogo, pagina: number) => Promise<PaginaDaFonte>;
 };
 
 /**
@@ -129,8 +129,10 @@ const primeiraPaginaDaVitrine = lembrarPorTempo(
  * bate em todo render, e cada página são três pedidos ao Kitsu. Guardar o que
  * se exibe por uma janela curta é o que a documentação deles pede.
  */
+const VITRINE_SEM_FILTRO: FiltroDoCatalogo = { termo: "", ordem: "popular" };
+
 const primeiraPaginaDaVitrineDoKitsu = lembrarPorTempo(
-  function () { return buscarNoKitsu("", 1); },
+  function () { return buscarNoKitsu(VITRINE_SEM_FILTRO, 1); },
   JANELA_DA_VITRINE_MS,
 );
 
@@ -142,11 +144,14 @@ export const DEPS_DE_PRODUCAO: DependenciasDoCatalogo = {
   filtrado: function (filtro, pagina) { return buscarFiltrado(filtro, OBRAS_POR_PAGINA, pagina); },
   limitar: function (ip) { return limitarBuscaDoCatalogo({ ip }); },
   doCache: buscarMediasEmCache,
-  noKitsu: function (termo, pagina)
+  noKitsu: function (filtro, pagina)
   {
-    return termo === "" && pagina === 1
+    // Só a vitrine é lembrada: ela é a mesma para todo visitante. Busca com
+    // termo OU com qualquer filtro tem chave escolhida por quem pede, e memo
+    // não defende chave que o outro lado inventa (#134).
+    return filtro.termo === "" && !temFiltroAtivo(filtro) && pagina === 1
       ? primeiraPaginaDaVitrineDoKitsu()
-      : buscarNoKitsu(termo, pagina);
+      : buscarNoKitsu(filtro, pagina);
   },
 };
 
@@ -228,7 +233,9 @@ async function semOAniList(
 {
   try
   {
-    const daFonte = await deps.noKitsu(filtro.termo, pagina);
+    // O filtro INTEIRO, não só o termo (#252): antes tipo, gênero, década e
+    // ordenação sumiam em silêncio sempre que o AniList estava fora.
+    const daFonte = await deps.noKitsu(filtro, pagina);
 
     if (daFonte.obras.length > 0)
     {

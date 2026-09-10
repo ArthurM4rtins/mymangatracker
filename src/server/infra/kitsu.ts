@@ -11,6 +11,8 @@
  */
 import { traduzirDoKitsu, type ObraDoKitsu } from "@/server/domain/kitsu-media";
 import { semRepetidas, type MediaDoAniList } from "@/server/domain/anilist-media";
+import { consultaDoKitsu } from "@/server/domain/kitsu-filtros";
+import type { FiltroDoCatalogo } from "@/server/domain/catalogo-filtros";
 
 const BASE = "https://kitsu.io/api/edge/manga";
 const TIMEOUT_MS = 8000;
@@ -134,6 +136,35 @@ export type PaginaDoKitsu = {
   temMais: boolean;
 };
 
+/** Os filtros da tela, na sintaxe de query que o Kitsu entende (#252). */
+function paramsDoFiltro(filtro: FiltroDoCatalogo): string
+{
+  const consulta = consultaDoKitsu(filtro);
+  const partes = [`sort=${encodeURIComponent(consulta.ordem)}`];
+
+  if (consulta.texto !== undefined)
+  {
+    partes.push(`filter%5Btext%5D=${encodeURIComponent(consulta.texto)}`);
+  }
+
+  if (consulta.subtipo !== undefined)
+  {
+    partes.push(`filter%5Bsubtype%5D=${encodeURIComponent(consulta.subtipo)}`);
+  }
+
+  if (consulta.categoria !== undefined)
+  {
+    partes.push(`filter%5Bcategories%5D=${encodeURIComponent(consulta.categoria)}`);
+  }
+
+  if (consulta.anos !== undefined)
+  {
+    partes.push(`filter%5Byear%5D=${encodeURIComponent(consulta.anos)}`);
+  }
+
+  return partes.join("&");
+}
+
 /**
  * A busca do Kitsu repete linha entre offsets (#240): pedindo "berserk", os
  * offsets 0 e 20 devolvem as vinte mesmas linhas. A regra por trás disso varia
@@ -143,22 +174,25 @@ export type PaginaDoKitsu = {
  * `temMais` continua vindo da FONTE, pelo lote cheio, e não da contagem do que
  * sobrou: a página cobre uma fatia fixa da fonte, e contar o que restou depois
  * do descarte pararia a paginação cedo demais (a lição de 09/09).
+ *
+ * Recebe o FILTRO inteiro, não só o termo (#252): tipo, gênero, década e
+ * ordenação sumiam em silêncio enquanto o AniList estava fora.
  */
-export async function buscarNoKitsu(termo: string, pagina = 1): Promise<PaginaDoKitsu>
+export async function buscarNoKitsu(
+  filtro: FiltroDoCatalogo,
+  pagina = 1,
+): Promise<PaginaDoKitsu>
 {
-  const limpo = termo.trim();
   const inicio = (Math.max(1, pagina) - 1) * OBRAS_DA_FONTE_POR_PAGINA;
+  const params = paramsDoFiltro(filtro);
   const obras: MediaDoAniList[] = [];
   let temMais = false;
 
   for (let lido = 0; lido < OBRAS_DA_FONTE_POR_PAGINA; lido += POR_PAGINA)
   {
     const offset = inicio + lido;
-    const base = `?page%5Blimit%5D=${POR_PAGINA}&page%5Boffset%5D=${offset}&include=mappings`;
-    const caminho = limpo === ""
-      // Sem termo, as mais lidas — é a vitrine possível sem o AniList.
-      ? `${base}&sort=-userCount`
-      : `${base}&filter%5Btext%5D=${encodeURIComponent(limpo)}`;
+    const caminho =
+      `?page%5Blimit%5D=${POR_PAGINA}&page%5Boffset%5D=${offset}&include=mappings&${params}`;
 
     const corpo = await pedir(caminho);
     const nesteLote = corpo.data?.length ?? 0;
