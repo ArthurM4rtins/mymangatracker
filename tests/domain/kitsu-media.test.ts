@@ -19,7 +19,11 @@ function obra(atributos: Record<string, unknown> = {}, anilistId: string | null 
         startDate: "1998-09-03",
         averageRating: "84.22",
         synopsis: "Miyamoto Musashi",
-        posterImage: { original: "https://exemplo/capa.jpg" },
+        posterImage: {
+          original: "https://exemplo/capa-original.jpg",
+          medium: "https://exemplo/capa-medium.jpg",
+          small: "https://exemplo/capa-small.jpg",
+        },
       },
       ...atributos,
     },
@@ -76,6 +80,15 @@ describe("traduzirDoKitsu", function ()
     expect(media?.startYear).toBeUndefined();
     expect(media?.coverImageUrl).toBeUndefined();
     expect(media?.averageScore).toBeUndefined();
+  });
+
+  it("a capa e' a media, nunca a original — a original chega a 900 KB", function ()
+  {
+    expect(traduzirDoKitsu(obra())?.coverImageUrl).toBe("https://exemplo/capa-medium.jpg");
+    expect(
+      traduzirDoKitsu(obra({ attributes: { canonicalTitle: "x", subtype: "manga",
+        posterImage: { original: "https://exemplo/so-original.jpg" } } }))?.coverImageUrl,
+    ).toBe("https://exemplo/so-original.jpg");
   });
 
   it("a nota do Kitsu vem em texto e vira numero inteiro", function ()

@@ -77,7 +77,12 @@ export function traduzirDoKitsu(obra: ObraDoKitsu): MediaDoAniList | null
     return null;
   }
 
+  // `medium` (390 px, ~45 KB), não `original`: a original chega a 900 KB por
+  // capa, e a lombada mostra 56 px. Medido em 09/09/2026 — tiny 15 KB, small
+  // 29 KB, medium 45 KB, large 64 KB, original 908 KB. Vinte originais na
+  // vitrine travaram a aba.
   const capa = (atributos.posterImage ?? {}) as Record<string, unknown>;
+  const urlDaCapa = texto(capa.medium) ?? texto(capa.small) ?? texto(capa.large) ?? texto(capa.original);
   const inicio = texto(atributos.startDate);
   const nota = inteiro(atributos.averageRating);
 
@@ -88,7 +93,7 @@ export function traduzirDoKitsu(obra: ObraDoKitsu): MediaDoAniList | null
     ...(formato.pais === undefined ? {} : { countryOfOrigin: formato.pais }),
     ...(texto(titulos.en) === undefined ? {} : { titleEnglish: texto(titulos.en) }),
     ...(texto(titulos.ja_jp) === undefined ? {} : { titleNative: texto(titulos.ja_jp) }),
-    ...(texto(capa.original) === undefined ? {} : { coverImageUrl: texto(capa.original) }),
+    ...(urlDaCapa === undefined ? {} : { coverImageUrl: urlDaCapa }),
     ...(texto(atributos.synopsis) === undefined ? {} : { description: texto(atributos.synopsis) }),
     ...(inteiro(atributos.chapterCount) === undefined
       ? {}
