@@ -204,6 +204,13 @@
       "naEstante": "Im Regal",
       "adicionar": "+ Regal",
       "erro": "hat nicht geklappt — versuch es noch mal"
+    },
+    "mais": {
+      "andar": "Regal {n}",
+      "verMais": "Mehr Werke anzeigen",
+      "carregando": "Wird geladen…",
+      "fim": "Das ist alles, was wir hier haben.",
+      "erroMais": "Gerade konnte nichts nachgeladen werden. Versuch es noch mal."
     }
   },
   "componentes": {
@@ -328,7 +335,8 @@
     "populares": {
       "titulo": "Gerade beliebt",
       "verMais": "mehr anzeigen →",
-      "indisponivel": "Der Katalog hat gerade nicht geantwortet — versuch es gleich noch einmal."
+      "indisponivel": "Der Katalog hat gerade nicht geantwortet — versuch es gleich noch einmal.",
+      "andar": "Regal {n}"
     },
     "atividade": {
       "titulo": "Letzte Aktivität",

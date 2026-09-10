@@ -204,6 +204,13 @@
       "naEstante": "En la estantería",
       "adicionar": "+ Estantería",
       "erro": "no se pudo — inténtalo de nuevo"
+    },
+    "mais": {
+      "andar": "Estante {n}",
+      "verMais": "Ver más obras",
+      "carregando": "Cargando…",
+      "fim": "Llegaste al final de lo que tenemos.",
+      "erroMais": "No se pudo cargar más ahora. Inténtalo de nuevo."
     }
   },
   "componentes": {
@@ -328,7 +335,8 @@
     "populares": {
       "titulo": "Populares ahora",
       "verMais": "ver más →",
-      "indisponivel": "El catálogo no respondió ahora mismo — inténtalo de nuevo en unos instantes."
+      "indisponivel": "El catálogo no respondió ahora mismo — inténtalo de nuevo en unos instantes.",
+      "andar": "Estante {n}"
     },
     "atividade": {
       "titulo": "Actividad reciente",

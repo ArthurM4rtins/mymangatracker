@@ -204,6 +204,13 @@
       "naEstante": "Dans ta bibliothèque",
       "adicionar": "+ Bibliothèque",
       "erro": "ça n’a pas marché — réessaie"
+    },
+    "mais": {
+      "andar": "Étagère {n}",
+      "verMais": "Voir plus d'œuvres",
+      "carregando": "Chargement…",
+      "fim": "Tu as atteint la fin de ce que nous avons ici.",
+      "erroMais": "Impossible d'en charger plus pour l'instant. Réessaie."
     }
   },
   "componentes": {
@@ -328,7 +335,8 @@
     "populares": {
       "titulo": "Populaires en ce moment",
       "verMais": "voir plus →",
-      "indisponivel": "Le catalogue n’a pas répondu — réessaie dans un instant."
+      "indisponivel": "Le catalogue n’a pas répondu — réessaie dans un instant.",
+      "andar": "Étagère {n}"
     },
     "atividade": {
       "titulo": "Activité récente",

@@ -204,6 +204,13 @@
       "naEstante": "Na estante",
       "adicionar": "+ Estante",
       "erro": "não deu — tente de novo"
+    },
+    "mais": {
+      "andar": "Andar {n}",
+      "verMais": "Ver mais obras",
+      "carregando": "Carregando…",
+      "fim": "Chegou ao fim do que temos por aqui.",
+      "erroMais": "Não deu para carregar mais agora. Tente de novo."
     }
   },
   "componentes": {
@@ -328,7 +335,8 @@
     "populares": {
       "titulo": "Populares agora",
       "verMais": "ver mais →",
-      "indisponivel": "O catálogo não respondeu agora — tente de novo em instantes."
+      "indisponivel": "O catálogo não respondeu agora — tente de novo em instantes.",
+      "andar": "Andar {n}"
     },
     "atividade": {
       "titulo": "Atividade recente",
