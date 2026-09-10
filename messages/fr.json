@@ -32,6 +32,25 @@
     "entrar": "Se connecter",
     "idioma": "Langue"
   },
+  "rodape": {
+    "explorar": {
+      "titulo": "Explorer"
+    },
+    "conta": {
+      "titulo": "Ton compte",
+      "ajustes": "Paramètres du compte",
+      "cadastrar": "Créer un compte"
+    },
+    "dados": {
+      "titulo": "Données",
+      "anilist": "Catalogue et couvertures d'AniList.",
+      "kitsu": "Kitsu comme source de secours quand AniList ne répond pas."
+    },
+    "direitos": "© {ano} Kidoku · projet universitaire",
+    "fonte": {
+      "agora": "Actuellement servi par {fonte}"
+    }
+  },
   "comum": {
     "salvar": "Enregistrer",
     "salvando": "Enregistrement…",
@@ -190,8 +209,8 @@
     "erros": {
       "indisponivel": "AniList n’a pas répondu. Réessaie dans un instant.",
       "muitosPedidos": "Trop de recherches depuis ici. Patiente un instant et réessaie.",
-      "doCache": "Résultats de ce que nous avons déjà visité : AniList n'a pas répondu, donc le catalogue se limite aux œuvres déjà passées par ici.",
-      "doKitsu": "AniList n'a pas répondu, donc ces résultats viennent de Kitsu. Certains titres peuvent apparaître romanisés."
+      "doCache": "Résultats limités aux œuvres déjà passées par ici.",
+      "doKitsu": "Certains titres peuvent apparaître romanisés."
     },
     "vazio": {
       "semTermo": "Le catalogue n’a rien renvoyé. Réessaie dans un instant.",
@@ -355,9 +374,6 @@
       "obras": "{n, plural, one {œuvre} other {œuvres}}",
       "curtidas": "{n, plural, other {j’aime}}",
       "curtidasLeitorDeTela": "{n, plural, other {j’aime}}"
-    },
-    "rodape": {
-      "verificado": "{estado} · vérifié le {quando}"
     }
   },
   "listas": {
@@ -615,7 +631,7 @@
     "avisoPublico": "Ce que tu écris devient une issue publique dans le dépôt du projet, avec ton nom d'utilisateur et l'écran où tu étais. N'y écris rien de personnel.",
     "precisaEntrar": "Pour signaler, connecte-toi à ton compte.",
     "entrar": "se connecter",
-    "linkDoRodape": "signaler une erreur de traduction",
+    "linkDoRodape": "Signaler une erreur de traduction",
     "obrigado": "Bien reçu, merci. L'équipe le voit dans le dépôt.",
     "enviar": "Envoyer le signalement",
     "enviando": "Envoi…",

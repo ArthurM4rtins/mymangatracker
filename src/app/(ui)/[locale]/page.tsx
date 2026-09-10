@@ -1,7 +1,4 @@
 import { getLocale, getTranslations } from "next-intl/server";
-// A rota de API não tem prefixo de idioma (D2 do desenho): o link do rodapé usa
-// o `Link` cru, não o de `@/i18n/navigation`, senão vira `/pt-BR/api/v1/health`.
-import LinkExterno from "next/link";
 import { Link } from "@/i18n/navigation";
 import { verificarSaudeDoSistema } from "@/server/services/sistema.service";
 import { buscarNoCatalogo, type ResultadoBusca } from "@/server/services/catalogo.service";
@@ -165,15 +162,6 @@ export default async function Home()
         </section>
       </div>
 
-      <footer className="mt-auto border-t border-borda pt-4 text-xs text-texto-suave">
-        <p>
-          <span aria-hidden>{saude.status === "ok" ? "●" : "○"}</span>{" "}
-          {t("rodape.verificado", { estado: resumoDaSaude, quando: saude.checkedAt })} ·{" "}
-          <LinkExterno href="/api/v1/health" className="underline underline-offset-4">
-            /api/v1/health
-          </LinkExterno>
-        </p>
-      </footer>
     </main>
   );
 }

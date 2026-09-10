@@ -32,6 +32,25 @@
     "entrar": "Sign in",
     "idioma": "Language"
   },
+  "rodape": {
+    "explorar": {
+      "titulo": "Explore"
+    },
+    "conta": {
+      "titulo": "Your account",
+      "ajustes": "Account settings",
+      "cadastrar": "Create account"
+    },
+    "dados": {
+      "titulo": "Data",
+      "anilist": "Catalogue and covers from AniList.",
+      "kitsu": "Kitsu as a backup source when AniList does not respond."
+    },
+    "direitos": "© {ano} Kidoku · academic project",
+    "fonte": {
+      "agora": "Currently served by {fonte}"
+    }
+  },
   "comum": {
     "salvar": "Save",
     "salvando": "Saving…",
@@ -190,8 +209,8 @@
     "erros": {
       "indisponivel": "AniList didn't respond just now. Try again in a moment.",
       "muitosPedidos": "Too many searches from here. Wait a moment and try again.",
-      "doCache": "Results from what we've already visited: AniList didn't respond just now, so the catalog is limited to works that passed through here.",
-      "doKitsu": "AniList didn't respond just now, so these results come from Kitsu. Some titles may appear romanized."
+      "doCache": "Results limited to the series that have already been through here.",
+      "doKitsu": "Some titles may appear romanised."
     },
     "vazio": {
       "semTermo": "The catalog didn't return anything just now. Try again in a moment.",
@@ -355,9 +374,6 @@
       "obras": "{n, plural, one {series} other {series}}",
       "curtidas": "{n, plural, one {like} other {likes}}",
       "curtidasLeitorDeTela": "{n, plural, one {like} other {likes}}"
-    },
-    "rodape": {
-      "verificado": "{estado} · checked at {quando}"
     }
   },
   "listas": {
@@ -615,7 +631,7 @@
     "avisoPublico": "What you write becomes a public issue in the project repository, along with your username and the screen you were on. Don't write anything personal.",
     "precisaEntrar": "To report, sign in to your account.",
     "entrar": "sign in",
-    "linkDoRodape": "report a translation issue",
+    "linkDoRodape": "Report a translation issue",
     "obrigado": "Got it, thanks. The team sees the report in the repository.",
     "enviar": "Send report",
     "enviando": "Sending…",

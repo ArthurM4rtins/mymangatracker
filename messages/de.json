@@ -32,6 +32,25 @@
     "entrar": "Anmelden",
     "idioma": "Sprache"
   },
+  "rodape": {
+    "explorar": {
+      "titulo": "Entdecken"
+    },
+    "conta": {
+      "titulo": "Dein Konto",
+      "ajustes": "Kontoeinstellungen",
+      "cadastrar": "Konto erstellen"
+    },
+    "dados": {
+      "titulo": "Daten",
+      "anilist": "Katalog und Cover von AniList.",
+      "kitsu": "Kitsu als Ersatzquelle, wenn AniList nicht antwortet."
+    },
+    "direitos": "© {ano} Kidoku · Studienprojekt",
+    "fonte": {
+      "agora": "Kommt gerade von {fonte}"
+    }
+  },
   "comum": {
     "salvar": "Speichern",
     "salvando": "Wird gespeichert…",
@@ -190,8 +209,8 @@
     "erros": {
       "indisponivel": "AniList hat gerade nicht geantwortet. Versuch es gleich noch mal.",
       "muitosPedidos": "Zu viele Suchanfragen von hier aus. Warte einen Moment und versuche es erneut.",
-      "doCache": "Ergebnisse aus dem, was wir schon besucht haben: AniList hat gerade nicht geantwortet, der Katalog beschränkt sich also auf bereits gesehene Werke.",
-      "doKitsu": "AniList hat gerade nicht geantwortet, diese Ergebnisse kommen daher von Kitsu. Manche Titel erscheinen romanisiert."
+      "doCache": "Ergebnisse auf die Werke beschränkt, die schon hier waren.",
+      "doKitsu": "Manche Titel erscheinen womöglich romanisiert."
     },
     "vazio": {
       "semTermo": "Der Katalog hat gerade nichts geliefert. Versuch es gleich noch mal.",
@@ -355,9 +374,6 @@
       "obras": "{n, plural, one {Werk} other {Werke}}",
       "curtidas": "{n, plural, one {Like} other {Likes}}",
       "curtidasLeitorDeTela": "{n, plural, one {Like} other {Likes}}"
-    },
-    "rodape": {
-      "verificado": "{estado} · geprüft: {quando}"
     }
   },
   "listas": {

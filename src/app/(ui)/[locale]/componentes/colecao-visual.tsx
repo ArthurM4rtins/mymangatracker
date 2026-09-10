@@ -120,7 +120,6 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
   return (
     <div className={estilos.colecao} style={medidas}>
       <div className={estilos.barra}>
-        <p className={estilos.contagem}>{t("contagem", { n: itens.length })}</p>
         <div className={estilos.modos} role="group" aria-label={t("visualizacao")}>
           {(["grade", "prateleira"] as const).map((opcao) => (
             <button key={opcao} type="button" aria-pressed={modo === opcao}

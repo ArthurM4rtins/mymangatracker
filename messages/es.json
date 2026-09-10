@@ -32,6 +32,25 @@
     "entrar": "Iniciar sesión",
     "idioma": "Idioma"
   },
+  "rodape": {
+    "explorar": {
+      "titulo": "Explorar"
+    },
+    "conta": {
+      "titulo": "Tu cuenta",
+      "ajustes": "Ajustes de la cuenta",
+      "cadastrar": "Crear cuenta"
+    },
+    "dados": {
+      "titulo": "Datos",
+      "anilist": "Catálogo y portadas de AniList.",
+      "kitsu": "Kitsu como fuente de reserva cuando AniList no responde."
+    },
+    "direitos": "© {ano} Kidoku · trabajo académico",
+    "fonte": {
+      "agora": "Ahora viene de {fonte}"
+    }
+  },
   "comum": {
     "salvar": "Guardar",
     "salvando": "Guardando…",
@@ -190,8 +209,8 @@
     "erros": {
       "indisponivel": "AniList no respondió. Inténtalo de nuevo en unos instantes.",
       "muitosPedidos": "Demasiadas búsquedas desde aquí. Espera un momento e inténtalo de nuevo.",
-      "doCache": "Resultados de lo que ya visitamos: AniList no respondió ahora, así que el catálogo se limita a las obras que ya pasaron por aquí.",
-      "doKitsu": "AniList no respondió ahora, así que estos resultados vienen de Kitsu. Algunos títulos pueden aparecer romanizados."
+      "doCache": "Resultados limitados a las obras que ya pasaron por aquí.",
+      "doKitsu": "Algunos títulos pueden aparecer romanizados."
     },
     "vazio": {
       "semTermo": "El catálogo no devolvió nada. Inténtalo de nuevo en unos instantes.",
@@ -355,9 +374,6 @@
       "obras": "{n, plural, one {obra} other {obras}}",
       "curtidas": "{n, plural, other {me gusta}}",
       "curtidasLeitorDeTela": "{n, plural, other {me gusta}}"
-    },
-    "rodape": {
-      "verificado": "{estado} · verificado el {quando}"
     }
   },
   "listas": {
@@ -615,7 +631,7 @@
     "avisoPublico": "Lo que escribas se convierte en una issue pública en el repositorio del proyecto, junto con tu nombre de usuario y la pantalla en la que estabas. No escribas nada personal.",
     "precisaEntrar": "Para reportar, entra en tu cuenta.",
     "entrar": "entrar",
-    "linkDoRodape": "reportar error de traducción",
+    "linkDoRodape": "Reportar error de traducción",
     "obrigado": "Recibido, gracias. El equipo lo ve en el repositorio.",
     "enviar": "Enviar reporte",
     "enviando": "Enviando…",
