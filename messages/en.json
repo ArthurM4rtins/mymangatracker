@@ -21,7 +21,7 @@
   },
   "meta": {
     "titulo": "Kidoku",
-    "descricao": "A Letterboxd for manga, manhwa, and novels, with automatic, private reading progress."
+    "descricao": "Your shelf for manga, manhwa, and novels, with automatic, private reading progress."
   },
   "cabecalho": {
     "navegacao": "Navigation",
@@ -46,7 +46,7 @@
       "anilist": "Catalogue and covers from AniList.",
       "kitsu": "Kitsu as a backup source when AniList does not respond."
     },
-    "direitos": "© {ano} Kidoku · academic project",
+    "direitos": "© {ano} Kidoku",
     "fonte": {
       "agora": "Currently served by {fonte}"
     }
