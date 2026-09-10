@@ -79,5 +79,12 @@ export async function listarResenhasDaComunidade(
     select: SELECT_DA_RESENHA,
   });
 
-  return linhas.map(paraResenha);
+  // SEM_ANILIST (#254, fase 1): obra sem AniList fica de fora AQUI, a vista.
+  // A fase 2 troca por referencia (fonte, id).
+  return linhas
+    .filter(function (linha) { return linha.media.anilistId !== null; })
+    .map(function (linha)
+    {
+      return paraResenha({ ...linha, media: { ...linha.media, anilistId: linha.media.anilistId as number } });
+    });
 }

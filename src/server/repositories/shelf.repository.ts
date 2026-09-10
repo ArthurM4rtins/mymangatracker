@@ -54,16 +54,21 @@ export async function listarEntradasDoUsuario(
     },
   });
 
-  return linhas.map(function (linha)
-  {
-    return {
-      entradaId: linha.id,
-      mediaId: linha.mediaId,
-      status: linha.status,
-      progressChapter: linha.progressChapter?.toString() ?? null,
-      obra: linha.media,
-    };
-  });
+  // SEM_ANILIST (#254, fase 1): a coluna virou anulavel e as telas ainda falam
+  // em anilistId. Obra sem AniList fica de fora AQUI, a vista, em vez de
+  // escondida num tipo que mente. A fase 2 troca por referencia (fonte, id).
+  return linhas
+    .filter(function (linha) { return linha.media.anilistId !== null; })
+    .map(function (linha)
+    {
+      return {
+        entradaId: linha.id,
+        mediaId: linha.mediaId,
+        status: linha.status,
+        progressChapter: linha.progressChapter?.toString() ?? null,
+        obra: { ...linha.media, anilistId: linha.media.anilistId as number },
+      };
+    });
 }
 
 /**
@@ -175,7 +180,14 @@ export async function listarAnilistIdsDaEstante(userId: string): Promise<number[
     select: { media: { select: { anilistId: true } } },
   });
 
-  return linhas.map(function (linha) { return linha.media.anilistId; });
+  // Fase 1 de #254: a coluna virou anulável, mas as telas ainda falam em
+  // anilistId. Enquanto isso, obra sem AniList fica de fora AQUI, à vista, e não
+  // escondida num tipo que mente. A fase 2 troca isto por referência (fonte, id).
+  //  -> procure por SEM_ANILIST para achar todos os pontos.
+  // SEM_ANILIST
+  return linhas
+    .map(function (linha) { return linha.media.anilistId; })
+    .filter(function (id): id is number { return id !== null; });
 }
 
 export function adicionarOuAtualizarEntrada(dados: {

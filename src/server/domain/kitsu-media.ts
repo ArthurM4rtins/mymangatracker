@@ -37,6 +37,14 @@ const TIPO_POR_SUBTIPO: Record<string, { type: TipoMedia; pais?: PaisDeOrigem }>
   manhwa: { type: "MANGA", pais: "KR" },
   manhua: { type: "MANGA", pais: "CN" },
   novel: { type: "NOVEL" },
+  // #254: os tres viviam descartados, e com eles ia embora cerca de 15% das
+  // linhas em buscas japonesas. `oneshot` e `doujin` sao manga japones. `oel`
+  // e quadrinho de fora do Japao, Coreia e China — entra sem pais, que e a
+  // verdade, e o campo e anulavel justamente para isso. E onde mora, por
+  // exemplo, "The Beginning After the End".
+  oneshot: { type: "MANGA", pais: "JP" },
+  doujin: { type: "MANGA", pais: "JP" },
+  oel: { type: "MANGA" },
 };
 
 function texto(valor: unknown): string | undefined

@@ -62,12 +62,35 @@ describe("traduzirDoKitsu", function ()
     expect(traduzirDoKitsu(obra())?.countryOfOrigin).toBeUndefined();
   });
 
-  it("novel vira NOVEL; formato que nao cabe no nosso enum e' descartado", function ()
+  it("novel vira NOVEL", function ()
   {
     expect(traduzirDoKitsu(obra({ attributes: { canonicalTitle: "x", subtype: "novel" } }))?.type).toBe("NOVEL");
-    // oneshot, doujin e oel nao existem no nosso modelo — a obra nao entra.
-    expect(traduzirDoKitsu(obra({ attributes: { canonicalTitle: "x", subtype: "oneshot" } }))).toBeNull();
-    expect(traduzirDoKitsu(obra({ attributes: { canonicalTitle: "x", subtype: "doujin" } }))).toBeNull();
+  });
+
+  // #254: os tres eram descartados, e com eles ia embora cerca de 15% das
+  // linhas em buscas japonesas. `oneshot` e `doujin` sao mangá japonês; `oel`
+  // e quadrinho de fora do Japao, Coreia e China, entao entra sem pais — que e
+  // honesto, e o pais e anulavel de proposito.
+  it("oneshot e doujin sao manga japones", function ()
+  {
+    const umTiro = traduzirDoKitsu(obra({ attributes: { canonicalTitle: "x", subtype: "oneshot" } }));
+    const doujin = traduzirDoKitsu(obra({ attributes: { canonicalTitle: "x", subtype: "doujin" } }));
+
+    expect(umTiro).toMatchObject({ type: "MANGA", countryOfOrigin: "JP" });
+    expect(doujin).toMatchObject({ type: "MANGA", countryOfOrigin: "JP" });
+  });
+
+  it("oel entra como obra sem pais definido, em vez de sumir", function ()
+  {
+    const oel = traduzirDoKitsu(obra({ attributes: { canonicalTitle: "The Beginning After the End", subtype: "oel" } }));
+
+    expect(oel?.type).toBe("MANGA");
+    expect(oel?.countryOfOrigin).toBeUndefined();
+  });
+
+  it("subtipo que o Kitsu nao documenta continua descartado", function ()
+  {
+    expect(traduzirDoKitsu(obra({ attributes: { canonicalTitle: "x", subtype: "coisanova" } }))).toBeNull();
   });
 
   it("campo ausente fica ausente, nunca chutado", function ()
