@@ -26,6 +26,8 @@ function fakeDeps(cenario: {
   noBanco?: { id: string; syncedAt: Date };
   noAniList?: MediaDoAniList | null;
   anilistFora?: boolean;
+  noKitsu?: MediaDoAniList | null;
+  kitsuFora?: boolean;
 })
 {
   const buscarMediaNoBanco = vi.fn(async function ()
@@ -47,6 +49,15 @@ function fakeDeps(cenario: {
     return cenario.noAniList ?? null;
   });
 
+  const buscarNoKitsu = vi.fn(async function (): Promise<MediaDoAniList | null>
+  {
+    if (cenario.kitsuFora)
+    {
+      throw new Error("kitsu fora");
+    }
+    return cenario.noKitsu ?? null;
+  });
+
   const gravarEntrada = vi.fn(async function (dados: {
     userId: string;
     mediaId: string;
@@ -63,12 +74,13 @@ function fakeDeps(cenario: {
     buscarMediaNoBanco,
     salvarMedia,
     buscarNoAniList,
+    buscarNoKitsu,
     gravarEntrada,
     limitar,
     relogio: function () { return AGORA; },
   };
 
-  return { deps, buscarMediaNoBanco, salvarMedia, buscarNoAniList, gravarEntrada, limitar };
+  return { deps, buscarMediaNoBanco, salvarMedia, buscarNoAniList, buscarNoKitsu, gravarEntrada, limitar };
 }
 
 const PEDIDO = { userId: "u1", anilistId: 30013, status: "PLANNED" as const };
@@ -146,11 +158,12 @@ describe("adicionarNaEstante", function ()
     expect(gravarEntrada).not.toHaveBeenCalled();
   });
 
-  it("AniList fora com cache velho: indisponível, nada gravado", async function ()
+  it("as duas fontes fora com cache velho: indisponível, nada gravado", async function ()
   {
     const { deps, salvarMedia, gravarEntrada } = fakeDeps({
       noBanco: { id: "m1", syncedAt: VELHO },
       anilistFora: true,
+      kitsuFora: true,
     });
 
     const resultado = await adicionarNaEstante(PEDIDO, deps);
@@ -158,5 +171,62 @@ describe("adicionarNaEstante", function ()
     expect(resultado.estado).toBe("indisponivel");
     expect(salvarMedia).not.toHaveBeenCalled();
     expect(gravarEntrada).not.toHaveBeenCalled();
+  });
+
+  // O degrau do #219: com o AniList fora, o Kitsu segura a adição. Sem isso o
+  // botão "+ Estante" respondia "não deu" para toda obra fora do cache (#227).
+  it("AniList fora: busca no Kitsu, grava media e entrada", async function ()
+  {
+    const { deps, buscarNoKitsu, salvarMedia, gravarEntrada } = fakeDeps({
+      anilistFora: true,
+      noKitsu: OBRA_DO_ANILIST,
+    });
+
+    const resultado = await adicionarNaEstante(PEDIDO, deps);
+
+    expect(resultado).toEqual({ estado: "ok", entradaId: "e1" });
+    expect(buscarNoKitsu).toHaveBeenCalledWith(PEDIDO.anilistId);
+    expect(salvarMedia).toHaveBeenCalledWith(OBRA_DO_ANILIST, AGORA);
+    expect(gravarEntrada).toHaveBeenCalled();
+  });
+
+  it("AniList de pé nunca chama o Kitsu", async function ()
+  {
+    const { deps, buscarNoKitsu, gravarEntrada } = fakeDeps({ noAniList: OBRA_DO_ANILIST });
+
+    const resultado = await adicionarNaEstante(PEDIDO, deps);
+
+    expect(resultado.estado).toBe("ok");
+    expect(buscarNoKitsu).not.toHaveBeenCalled();
+    expect(gravarEntrada).toHaveBeenCalled();
+  });
+
+  it("AniList fora e Kitsu sem a obra: obra desconhecida, nada gravado", async function ()
+  {
+    const { deps, salvarMedia, gravarEntrada } = fakeDeps({
+      anilistFora: true,
+      noKitsu: null,
+    });
+
+    const resultado = await adicionarNaEstante(PEDIDO, deps);
+
+    expect(resultado.estado).toBe("obra_desconhecida");
+    expect(salvarMedia).not.toHaveBeenCalled();
+    expect(gravarEntrada).not.toHaveBeenCalled();
+  });
+
+  it("AniList fora com cache FRESCO nem consulta o Kitsu", async function ()
+  {
+    const { deps, buscarNoAniList, buscarNoKitsu, gravarEntrada } = fakeDeps({
+      noBanco: { id: "m1", syncedAt: FRESCO },
+      anilistFora: true,
+    });
+
+    const resultado = await adicionarNaEstante(PEDIDO, deps);
+
+    expect(resultado.estado).toBe("ok");
+    expect(buscarNoAniList).not.toHaveBeenCalled();
+    expect(buscarNoKitsu).not.toHaveBeenCalled();
+    expect(gravarEntrada).toHaveBeenCalledWith(expect.objectContaining({ mediaId: "m1" }));
   });
 });

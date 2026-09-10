@@ -11,6 +11,7 @@ import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import { limitarEntrada } from "./limite.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId } from "@/server/infra/anilist";
+import { buscarNoKitsuPorAnilistId } from "@/server/infra/kitsu";
 import {
   buscarMediaPorAnilistId,
   salvarMediaDoAniList,
@@ -56,6 +57,8 @@ export type DependenciasDaEstante = {
     sincronizadoEm: Date,
   ) => Promise<{ id: string; syncedAt: Date }>;
   buscarNoAniList: (anilistId: number) => Promise<MediaDoAniList | null>;
+  /** O degrau de baixo, só com o AniList fora (#219). */
+  buscarNoKitsu: (anilistId: number) => Promise<MediaDoAniList | null>;
   gravarEntrada: (dados: {
     userId: string;
     mediaId: string;
@@ -97,9 +100,20 @@ export async function adicionarNaEstante(
     }
     catch
     {
-      // AniList fora. Mesmo com cache velho não gravamos entrada: a obra pode
-      // ter mudado de formato e sido descartada — melhor pedir para tentar depois.
-      return { estado: "indisponivel" };
+      // AniList fora: desce um degrau, como o catálogo e a home (#219). Sem
+      // isso, "+ Estante" respondia "não deu" para toda obra fora do cache,
+      // inclusive as que a própria vitrine tinha acabado de mostrar (#227).
+      try
+      {
+        obra = await deps.buscarNoKitsu(pedido.anilistId);
+      }
+      catch
+      {
+        // As duas fontes fora. Mesmo com cache velho não gravamos entrada: a
+        // obra pode ter mudado de formato e sido descartada — melhor pedir
+        // para tentar depois.
+        return { estado: "indisponivel" };
+      }
     }
 
     if (obra === null)
@@ -395,6 +409,7 @@ export function adicionarNaEstanteDoSistema(
     buscarMediaNoBanco: buscarMediaPorAnilistId,
     salvarMedia: salvarMediaDoAniList,
     buscarNoAniList: buscarMediaPorId,
+    buscarNoKitsu: buscarNoKitsuPorAnilistId,
     gravarEntrada: adicionarOuAtualizarEntrada,
     limitar: function (userId) { return limitarEntrada({ userId }); },
   });
