@@ -209,7 +209,10 @@ export async function buscarListaComItens(
     descricao: linha.descricao,
     username: linha.user.username,
     minha: linha.userId === userId,
-    itens: linha.itens.map(function (item) { return item.media; }),
+    // SEM_ANILIST (#254, fase 1)
+    itens: linha.itens
+      .filter(function (item) { return item.media.anilistId !== null; })
+      .map(function (item) { return { ...item.media, anilistId: item.media.anilistId as number }; }),
     curtidas: linha._count.likes,
     curtiPorMim: Array.isArray(linha.likes) && linha.likes.length > 0,
   };
@@ -254,10 +257,13 @@ export async function listarItensParaOrdem(
     return null;
   }
 
-  return lista.itens.map(function (item)
-  {
-    return { anilistId: item.media.anilistId, mediaId: item.mediaId };
-  });
+  // SEM_ANILIST (#254, fase 1)
+  return lista.itens
+    .filter(function (item) { return item.media.anilistId !== null; })
+    .map(function (item)
+    {
+      return { anilistId: item.media.anilistId as number, mediaId: item.mediaId };
+    });
 }
 
 /**

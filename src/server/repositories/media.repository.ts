@@ -56,10 +56,14 @@ export async function buscarMediasEmCache(termo: string, pagina = 1): Promise<Me
     },
   });
 
-  return linhas.map(function (linha)
+  // SEM_ANILIST (#254, fase 1): obra sem AniList fica de fora AQUI, a vista.
+  // A fase 2 troca por referencia (fonte, id).
+  return linhas
+    .filter(function (linha) { return linha.anilistId !== null; })
+    .map(function (linha)
   {
     return {
-      anilistId: linha.anilistId,
+      anilistId: linha.anilistId as number,
       type: linha.type,
       titleRomaji: linha.titleRomaji,
       ...(linha.countryOfOrigin === null ? {} : { countryOfOrigin: linha.countryOfOrigin }),
@@ -137,7 +141,9 @@ export async function buscarMediaCompletaPorAnilistId(
 
   const { authors, ...resto } = linha;
 
-  return { ...resto, autores: autoresDoJson(authors) };
+  // A busca foi POR `anilistId`, entao ele nao e nulo nesta linha -- e o
+  // `findUnique` que garante, nao uma suposicao nossa.
+  return { ...resto, anilistId: resto.anilistId as number, autores: autoresDoJson(authors) };
 }
 
 export function salvarMediaDoAniList(
