@@ -181,6 +181,23 @@ globalThis.KIDOKU = (function ()
     return par.dono === dono ? par.entradaId : null;
   }
 
+  /**
+   * Vale gravar o par site→obra com esta resposta do servidor?
+   *
+   * O par diz "esta página é esta obra", e isso continua verdade quando o
+   * capítulo NÃO avança: o servidor achou a entrada, reconheceu a obra e só
+   * recusou mexer no progresso. Parear só com 200 fazia obra já lida além
+   * daquele capítulo nunca parear — quem reabre um capítulo antigo para reler
+   * ficava sem badge naquele site para sempre.
+   *
+   * Recusa de pedido, sessão morta e falha do servidor não pareiam: nesses
+   * casos ninguém confirmou obra nenhuma.
+   */
+  function deveParear(status)
+  {
+    return status === 200 || status === 409;
+  }
+
   /** O par desta aba para a sessão atual, resolvendo tudo de uma vez. */
   async function parDaSessao(chave, token)
   {
@@ -269,5 +286,6 @@ globalThis.KIDOKU = (function ()
     donoDoToken,
     parDoDono,
     parDaSessao,
+    deveParear,
   };
 })();
