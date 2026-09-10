@@ -196,6 +196,39 @@ function mapearAutores(staff: unknown): AutorDaObra[]
  * Resposta com `errors` do GraphQL, ou em formato inesperado, vira lista vazia —
  * a tela mostra "nada encontrado" em vez de estourar.
  */
+/**
+ * A mesma obra só entra uma vez na coleção, e vale a primeira aparição — que é
+ * a mais bem colocada, já que a fonte devolve por relevância.
+ *
+ * Existe por causa do Kitsu (#240): medido contra a API em 10/09/2026, buscando
+ * "berserk" os offsets 0 e 20 devolvem as vinte MESMAS linhas, na mesma ordem,
+ * com o mesmo `id` do Kitsu — não são duas obras parecidas. Uma página nossa
+ * junta três offsets, então vinte das sessenta linhas chegavam repetidas: card
+ * em dobro na tela, e a chave repetida derrubando a lista do React.
+ *
+ * Fica no domínio porque a regra é do sistema, não da fonte: uma coleção de
+ * obras não repete a mesma obra. `anilistId` é a identidade que o sistema
+ * inteiro usa — chave de lista na tela, chave do cache em `Media`.
+ */
+export function semRepetidas(obras: readonly MediaDoAniList[]): MediaDoAniList[]
+{
+  const vistas = new Set<number>();
+  const saida: MediaDoAniList[] = [];
+
+  for (const obra of obras)
+  {
+    if (vistas.has(obra.anilistId))
+    {
+      continue;
+    }
+
+    vistas.add(obra.anilistId);
+    saida.push(obra);
+  }
+
+  return saida;
+}
+
 export function mapearBusca(resposta: unknown): MediaDoAniList[]
 {
   if (!ehObjeto(resposta) || !ehObjeto(resposta.data))

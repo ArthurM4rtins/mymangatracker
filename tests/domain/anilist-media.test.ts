@@ -5,6 +5,8 @@ import {
   mapearBusca,
   mapearMedia,
   mapearRecomendacoes,
+  semRepetidas,
+  type MediaDoAniList,
 } from "@/server/domain/anilist-media";
 
 // Registro real, capturado de graphql.anilist.co em 27/08/2026.
@@ -396,5 +398,53 @@ describe("mapearAutor — só autoria", () =>
     const mista = mapearAutor(HARA)?.obras.find((obra) => obra.anilistId === 99999);
 
     expect(mista?.papel).toBe("Story");
+  });
+});
+
+// #240: a mesma obra voltando duas vezes na MESMA resposta. Medido contra a API
+// do Kitsu em 10/09/2026: buscando "berserk", os offsets 0 e 20 devolvem as
+// vinte mesmas linhas, na mesma ordem — o `id` do Kitsu repetido, não duas
+// obras parecidas. Uma página nossa junta três offsets, então 20 das 60 linhas
+// chegavam repetidas. Na tela virava card em dobro, e a chave repetida derrubava
+// a lista do React.
+describe("semRepetidas", function ()
+{
+  const obra = function (anilistId: number, titleRomaji: string): MediaDoAniList
+  {
+    return { anilistId, type: "MANGA", titleRomaji };
+  };
+
+  it("mantem a primeira aparicao e descarta as seguintes", function ()
+  {
+    const entrada = [obra(1, "a"), obra(2, "b"), obra(1, "a de novo"), obra(3, "c")];
+
+    expect(semRepetidas(entrada)).toEqual([obra(1, "a"), obra(2, "b"), obra(3, "c")]);
+  });
+
+  it("preserva a ordem de quem sobrou", function ()
+  {
+    const ids = semRepetidas([obra(9, "i"), obra(4, "ii"), obra(9, "iii"), obra(7, "iv")])
+      .map(function (item) { return item.anilistId; });
+
+    expect(ids).toEqual([9, 4, 7]);
+  });
+
+  it("lista sem repetida atravessa intacta", function ()
+  {
+    const entrada = [obra(1, "a"), obra(2, "b")];
+
+    expect(semRepetidas(entrada)).toEqual(entrada);
+  });
+
+  it("lista vazia continua vazia", function ()
+  {
+    expect(semRepetidas([])).toEqual([]);
+  });
+
+  it("nao altera o array recebido", function ()
+  {
+    const entrada = [obra(1, "a"), obra(1, "a de novo")];
+    semRepetidas(entrada);
+    expect(entrada).toHaveLength(2);
   });
 });
