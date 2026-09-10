@@ -145,7 +145,7 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
             {andares.filter((grupo) => grupo.itens.length > 0).map((grupo, indice) => (
               <Prateleira key={grupo.id} grupo={grupo} numero={indice + 1} aoAbrir={setSelecionado}
                 simples={andarSimples} selecionado={selecionado} arrastado={arraste.arrastado}
-                deslize={arraste.deslize} />
+                deslize={arraste.deslize} vitrineCongelada={arraste.vitrineCongelada} />
             ))}
           </div>
         )}
@@ -179,6 +179,10 @@ function useArrasteParaOrdenar(
   // O livro agarrado segue o ponteiro: `deslize` é o quanto ele sai do lugar que
   // ocupa na fila.
   const [deslize, setDeslize] = useState(0);
+  // Qual livro fica aberto durante o gesto, escolhido na pegada e mantido pelo
+  // identificador. "O primeiro da fila" não serve: a fila muda enquanto se
+  // arrasta, a capa saltaria de livro em livro e a largura voltaria a mexer.
+  const [vitrineCongelada, setVitrineCongelada] = useState<number | null>(null);
   // Onde a pegada caiu DENTRO do livro, como fração da largura dele. Guardar o
   // pixel não serve: o livro fecha ao ser agarrado, e 138 px medidos numa capa
   // aberta de 168 px cairiam fora de uma lombada de 46 px.
@@ -188,6 +192,9 @@ function useArrasteParaOrdenar(
   // render, e ali o valor do estado já é o de antes.
   const deslizeAgora = useRef(0);
   const ultimoX = useRef(0);
+  // O livro que acabou de ceder a vez. Enquanto o ponteiro não sair de cima
+  // dele, ele não cede de novo.
+  const alvoTravado = useRef<number | null>(null);
 
   const cancelarEspera = useCallback(() => {
     if (espera.current !== null) { clearTimeout(espera.current); espera.current = null; }
@@ -197,8 +204,10 @@ function useArrasteParaOrdenar(
     cancelarEspera();
     gesto.current = null;
     deslizeAgora.current = 0;
+    alvoTravado.current = null;
     setArrastado(null);
     setDeslize(0);
+    setVitrineCongelada(null);
   }, [cancelarEspera]);
 
   /**
@@ -218,6 +227,17 @@ function useArrasteParaOrdenar(
    * viradas em vinte pixels, que é o piscar que se via na prateleira. Ficando
    * quieto ali, a vaga aberta é justamente o lugar onde o livro vai cair, e o
    * gesto para de brigar consigo mesmo.
+   *
+   * E o livro só cede a vez depois que o ponteiro passa do MEIO dele, no sentido
+   * em que a mão anda, e uma vez só por travessia: quem acabou de ceder fica
+   * travado até o ponteiro sair de cima dele.
+   *
+   * As duas juntas, porque nenhuma basta sozinha. Trocar de lugar com a capa
+   * aberta — 168 px contra 46 da lombada — desloca a capa uns 50 px e ela cruza
+   * o cursor de volta: só com o meio, a ordem ainda trocava e destrocava a cada
+   * quatro pixels por nove passos seguidos, porque o meio andava junto com ela.
+   * A trava fecha esse buraco, e o meio evita que sair e voltar de raspão já
+   * conte como nova travessia.
    */
   function destinoDoPonteiro(x: number, y: number, sentido: number): number | null
   {
@@ -226,8 +246,29 @@ function useArrasteParaOrdenar(
 
     if (direto?.dataset.obra !== undefined)
     {
-      return itens.findIndex((obra) => obra.id === Number(direto.dataset.obra));
+      const idAlvo = Number(direto.dataset.obra);
+
+      if (alvoTravado.current !== idAlvo)
+      {
+        alvoTravado.current = null;
+      }
+
+      const area = direto.getBoundingClientRect();
+      const meio = area.x + area.width / 2;
+
+      if (alvoTravado.current === idAlvo
+        || sentido === 0
+        || (sentido > 0 ? x <= meio : x >= meio))
+      {
+        return null;
+      }
+
+      alvoTravado.current = idAlvo;
+
+      return itens.findIndex((obra) => obra.id === idAlvo);
     }
+
+    alvoTravado.current = null;
 
     const andar = embaixo?.closest<HTMLElement>("[data-trilho]");
 
@@ -259,16 +300,32 @@ function useArrasteParaOrdenar(
     return caixa.current?.querySelector<HTMLElement>(`[data-obra="${id}"]`) ?? null;
   }
 
-  /** Começa o arraste guardando em que ponto do livro a pegada caiu. */
+  /**
+   * Começa o arraste: guarda em que ponto do livro a pegada caiu e congela qual
+   * capa fica aberta.
+   *
+   * Continua havendo exatamente UM livro aberto no andar, e ele nunca é o da
+   * mão — quem agarrar a própria capa aberta a vê passar para o vizinho. Assim a
+   * largura total do andar não muda em momento nenhum do gesto: era ela mudando
+   * que fazia a prateleira encolher uns 120 px na pegada e fugir do cursor,
+   * deixando uma zona morta de 156 px medida na tela.
+   */
   function agarrar(id: number, x: number)
   {
-    const area = elementoDoLivro(id)?.getBoundingClientRect();
+    const elemento = elementoDoLivro(id);
+    const area = elemento?.getBoundingClientRect();
 
     if (area && area.width > 0 && gesto.current)
     {
       gesto.current.fracao = (x - area.x) / area.width;
     }
 
+    const andar = elemento?.closest<HTMLElement>("[data-trilho]");
+    const livros = andar ? [...andar.querySelectorAll<HTMLElement>("[data-obra]")] : [];
+    const aberta = livros.find((livro) => livro.hasAttribute("data-vitrine"));
+    const fica = aberta === elemento ? livros.find((livro) => livro !== elemento) : aberta;
+
+    setVitrineCongelada(fica?.dataset.obra === undefined ? null : Number(fica.dataset.obra));
     setArrastado(id);
   }
 
@@ -326,7 +383,13 @@ function useArrasteParaOrdenar(
 
   if (!aoReordenar)
   {
-    return { arrastando: false, arrastado: null as number | null, deslize: 0, gestos: {} };
+    return {
+      arrastando: false,
+      arrastado: null as number | null,
+      deslize: 0,
+      vitrineCongelada: null as number | null,
+      gestos: {},
+    };
   }
 
   const gestos = {
@@ -395,10 +458,10 @@ function useArrasteParaOrdenar(
     },
   };
 
-  return { arrastando: arrastado !== null, arrastado, deslize, gestos };
+  return { arrastando: arrastado !== null, arrastado, deslize, vitrineCongelada, gestos };
 }
 
-function Prateleira({ grupo, numero, aoAbrir, simples, selecionado, arrastado, deslize }: {
+function Prateleira({ grupo, numero, aoAbrir, simples, selecionado, arrastado, deslize, vitrineCongelada }: {
   grupo: GrupoDaColecao;
   numero: number;
   aoAbrir: (id: number) => void;
@@ -409,6 +472,8 @@ function Prateleira({ grupo, numero, aoAbrir, simples, selecionado, arrastado, d
   arrastado: number | null;
   /** O quanto o livro arrastado sai da posição que ocupa na fila. */
   deslize: number;
+  /** A capa que fica aberta durante o arraste, escolhida na pegada. */
+  vitrineCongelada: number | null;
 })
 {
   const t = useTranslations("colecao");
@@ -425,8 +490,14 @@ function Prateleira({ grupo, numero, aoAbrir, simples, selecionado, arrastado, d
 
   // Enquanto o painel está aberto, quem fica em evidência é a obra dele: o
   // `showModal` leva o foco embora do livro, e sem isto o andar voltava para o
-  // primeiro livro no instante em que o painel abria (#241).
-  const emEvidencia = grupo.itens.some((obra) => obra.id === selecionado) ? selecionado : null;
+  // primeiro livro no instante em que o painel abria (#241). Durante o arraste
+  // manda a capa congelada, se ela for deste andar.
+  const congelada = vitrineCongelada !== null
+    && grupo.itens.some((obra) => obra.id === vitrineCongelada)
+    ? vitrineCongelada
+    : null;
+  const emEvidencia = congelada
+    ?? (grupo.itens.some((obra) => obra.id === selecionado) ? selecionado : null);
 
   useEffect(() => {
     const lista = trilho.current;
