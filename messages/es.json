@@ -337,7 +337,7 @@
       "obra": "La ventana lista las obras de tu estantería. Elige la que estás leyendo: las terminadas quedan fuera, y el campo de filtro está ahí para estanterías grandes.",
       "capitulo": "El capítulo sale del título de la página. Cuando no se puede saber con certeza, el campo se queda vacío en vez de adivinar y lo escribes tú. Quien decide si tu progreso avanza es el servidor, no la extensión.",
       "captura": {
-        "alt": "Ventana de la extensión con la lista de la estantería, Berserk seleccionada y el capítulo 2 rellenado automáticamente.",
+        "alt": "Ventana de la extensión con la lista de la estantería, una obra seleccionada y el capítulo rellenado automáticamente.",
         "legenda": "La ventana en un capítulo abierto, con la obra ya reconocida y el capítulo leído del título de la pestaña."
       }
     },

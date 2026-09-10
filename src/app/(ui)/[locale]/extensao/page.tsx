@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { alternativasDeIdioma, Link } from "@/i18n/navigation";
 import { idiomaDoSegmento } from "@/i18n/routing";
-import { captura, capturaEmOutroIdioma } from "./capturas";
+import { captura, capturaEmOutroIdioma, type Captura as CapturaDaTela } from "./capturas";
 import { LOJA_DA_EXTENSAO } from "./loja";
 
 // Conteúdo puro: não lê banco, não lê sessão, não vai dinâmica.
@@ -50,26 +50,22 @@ function Secao({ titulo, children }: { titulo: string; children: React.ReactNode
 
 /** Captura de tela da extensão: interface, então o `alt` conta o que se vê. */
 function Captura({
-  src,
+  imagem,
   alt,
-  largura,
-  altura,
   legenda,
 }: {
-  src: string;
+  imagem: CapturaDaTela;
   alt: string;
-  largura: number;
-  altura: number;
   legenda: string;
 })
 {
   return (
     <figure className="mt-6">
       <Image
-        src={src}
+        src={imagem.src}
         alt={alt}
-        width={largura}
-        height={altura}
+        width={imagem.largura}
+        height={imagem.altura}
         className="rounded-md border border-borda"
       />
       <figcaption className="mt-2 text-xs text-texto-suave">{legenda}</figcaption>
@@ -134,10 +130,8 @@ export default async function Extensao({ params }: PageProps<"/[locale]/extensao
         <p>{t("usar.obra")}</p>
         <p>{t("usar.capitulo")}</p>
         <Captura
-          src={captura("popup-em-uso", idioma)}
+          imagem={captura("popup-em-uso", idioma)}
           alt={t("usar.captura.alt")}
-          largura={399}
-          altura={658}
           legenda={t("usar.captura.legenda")}
         />
         {outroIdioma && <p className="text-xs">{t("capturaEmOutroIdioma")}</p>}
@@ -191,10 +185,8 @@ export default async function Extensao({ params }: PageProps<"/[locale]/extensao
             <h3 className="text-sm font-bold text-texto">{t("problemas.sessao.titulo")}</h3>
             <p className="mt-1">{t("problemas.sessao.texto")}</p>
             <Captura
-              src={captura("popup-sem-sessao", idioma)}
+              imagem={captura("popup-sem-sessao", idioma)}
               alt={t("problemas.sessao.alt")}
-              largura={400}
-              altura={122}
               legenda={t("problemas.sessao.legenda")}
             />
           </div>

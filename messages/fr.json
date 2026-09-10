@@ -337,7 +337,7 @@
       "obra": "La fenêtre liste les œuvres de votre bibliothèque. Choisissez celle que vous lisez : les œuvres terminées sont écartées, et le champ de filtre sert aux grandes bibliothèques.",
       "capitulo": "Le chapitre vient du titre de la page. Quand il n'y a pas de certitude, le champ reste vide plutôt que de deviner, et vous le saisissez. C'est le serveur qui décide si votre progression avance, pas l'extension.",
       "captura": {
-        "alt": "Fenêtre de l'extension avec la liste de la bibliothèque, Berserk sélectionnée et le chapitre 2 rempli automatiquement.",
+        "alt": "Fenêtre de l'extension avec la liste de la bibliothèque, une œuvre sélectionnée et le chapitre rempli automatiquement.",
         "legenda": "La fenêtre sur un chapitre ouvert, avec l'œuvre déjà reconnue et le chapitre lu depuis le titre de l'onglet."
       }
     },

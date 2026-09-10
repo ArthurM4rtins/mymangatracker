@@ -2,20 +2,45 @@
  * De que idioma é a captura que cada leitor vê.
  *
  * O popup da extensão fala o idioma do NAVEGADOR (`_locales`, cinco catálogos),
- * não o do site. Então mostrar a mesma captura em português para todo mundo
- * entrega ao leitor justamente a língua que ele não vai ver na tela dele.
+ * não o do site. Mostrar a mesma captura para todo mundo entregaria ao leitor
+ * de fora justamente a língua que ele não vai ver na tela dele.
  *
- * Quem não tem captura no próprio idioma cai na primeira desta lista. Ela está
- * em ordem de preferência: assim que existir captura em inglês, `en` entra na
- * frente e vira a reserva — é o `default_locale` do manifest, o que aparece
- * para quem tem o navegador em qualquer idioma fora dos cinco.
+ * Quem não tem captura no próprio idioma cai na PRIMEIRA desta lista, que está
+ * em ordem de preferência. O inglês vem na frente porque é o `default_locale`
+ * do manifest: é o que aparece para quem tem o navegador em qualquer idioma
+ * fora dos cinco, ou seja, para a maioria de quem não lê em português.
+ *
+ * A lista não cresce junto com os idiomas do site de propósito. Captura custa
+ * idiomas × telas, e o custo volta a cada mudança de visual do popup — o que a
+ * imagem mostra é ONDE as coisas ficam, e o que cada uma faz já está escrito no
+ * idioma de quem lê, no texto e na legenda.
  */
-export const IDIOMAS_COM_CAPTURA = ["pt-BR"] as const;
+export const IDIOMAS_COM_CAPTURA = ["en", "pt-BR"] as const;
 
-/** O caminho da captura, no idioma do leitor quando existe. */
-export function captura(nome: string, idioma: string): string
+/**
+ * O tamanho real de cada arquivo. Muda com o idioma — o mesmo popup fica alguns
+ * pixels mais alto em português —, e `next/image` precisa do tamanho certo para
+ * reservar o espaço antes de a imagem chegar.
+ */
+const TAMANHOS: Record<string, Record<string, { largura: number; altura: number }>> = {
+  "popup-em-uso": {
+    "en": { largura: 396, altura: 657 },
+    "pt-BR": { largura: 399, altura: 658 },
+  },
+  "popup-sem-sessao": {
+    "en": { largura: 401, altura: 125 },
+    "pt-BR": { largura: 400, altura: 122 },
+  },
+};
+
+export type Captura = { src: string; largura: number; altura: number };
+
+/** A captura no idioma do leitor quando existe; senão, a da reserva. */
+export function captura(nome: string, idioma: string): Captura
 {
-  return `/extensao/${nome}.${idiomaDaCaptura(idioma)}.png`;
+  const escolhido = idiomaDaCaptura(idioma);
+
+  return { src: `/extensao/${nome}.${escolhido}.png`, ...TAMANHOS[nome][escolhido] };
 }
 
 /** Verdadeiro quando o leitor vai ver a extensão num idioma diferente do da captura. */

@@ -337,7 +337,7 @@
       "obra": "Das Fenster listet die Werke aus deinem Regal. Wähle das, was du liest — abgeschlossene bleiben draußen, und das Filterfeld ist für große Regale da.",
       "capitulo": "Das Kapitel stammt aus dem Seitentitel. Wenn es nicht sicher zu erkennen ist, bleibt das Feld leer, statt zu raten, und du trägst es ein. Ob dein Fortschritt weiterrückt, entscheidet der Server, nicht die Erweiterung.",
       "captura": {
-        "alt": "Fenster der Erweiterung mit der Regalliste, ausgewähltem Berserk und automatisch eingetragenem Kapitel 2.",
+        "alt": "Fenster der Erweiterung mit der Regalliste, einem ausgewählten Werk und automatisch eingetragenem Kapitel.",
         "legenda": "Das Fenster bei einem offenen Kapitel, mit bereits erkanntem Werk und dem aus dem Tab-Titel gelesenen Kapitel."
       }
     },

@@ -337,7 +337,7 @@
       "obra": "The popup lists the works on your shelf. Pick the one you're reading — finished ones are left out, and the filter field is there for large shelves.",
       "capitulo": "The chapter comes from the page title. When it can't be sure, the field stays empty instead of guessing, and you type it in. Whether your progress moves forward is decided by the server, not the extension.",
       "captura": {
-        "alt": "The extension popup showing the shelf list, Berserk selected and chapter 2 filled in automatically.",
+        "alt": "The extension popup showing the shelf list, a work selected and the chapter filled in automatically.",
         "legenda": "The popup on an open chapter, with the work already recognised and the chapter read from the tab title."
       }
     },
