@@ -292,7 +292,7 @@ describe("Kitsu como fallback do AniList", function ()
     );
 
     expect(resultado).toEqual({ estado: "kitsu", termo: "vagabond", obras: [OUTRA], temMais: false });
-    expect(noKitsu).toHaveBeenCalledWith("vagabond", 1);
+    expect(noKitsu).toHaveBeenCalledWith(interpretarFiltros({ q: "vagabond" }), 1);
   });
 
   it("com o AniList de pe, o Kitsu nem e consultado", async function ()
@@ -392,7 +392,7 @@ describe("paginacao do catalogo", function ()
 
     await buscarNoCatalogo(interpretarFiltros({}), { ...deps, noKitsu, doCache }, undefined, 2);
 
-    expect(noKitsu).toHaveBeenCalledWith("", 2);
+    expect(noKitsu).toHaveBeenCalledWith(interpretarFiltros({}), 2);
     expect(doCache).toHaveBeenCalledWith("", 2);
   });
 });
@@ -425,7 +425,7 @@ describe("temMais é resposta da fonte, não contagem do que sobrou", function (
     const resultado = await buscarNoCatalogo(VITRINE, deps, undefined, 9);
 
     expect(resultado).toMatchObject({ estado: "kitsu", temMais: false });
-    expect(deps.noKitsu).toHaveBeenCalledWith("", 9);
+    expect(deps.noKitsu).toHaveBeenCalledWith(VITRINE, 9);
   });
 
   it("AniList de pé: página cheia diz que há mais", async function ()
