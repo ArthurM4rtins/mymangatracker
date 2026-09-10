@@ -22,12 +22,18 @@ export type GrupoDaColecao = {
 
 const CORES = ["#733c35", "#344d53", "#586044", "#71516b", "#865f33", "#364868", "#55504a"];
 
-export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classeGrade = "grid gap-4 sm:grid-cols-2" }: {
+export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classeGrade = "grid gap-4 sm:grid-cols-2", andarSimples = false }: {
   itens: ItemDaColecao[];
   grupos?: GrupoDaColecao[];
   titulo: string;
   inicial?: "grade" | "prateleira";
   classeGrade?: string;
+  /**
+   * Andar que é só um corte (1, 2, 3...) não precisa de título nem de setas
+   * na tela: fica o número e a contagem, e o trilho rola pelo dedo ou pela
+   * roda. O título segue existindo para o leitor de tela.
+   */
+  andarSimples?: boolean;
 })
 {
   const t = useTranslations("colecao");
@@ -65,7 +71,8 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classe
           <div className={estilos.prateleiras}>
             <p className={estilos.dica}>{t("dica")}</p>
             {(grupos ?? [{ id: "obras", titulo, itens }]).filter((grupo) => grupo.itens.length > 0).map((grupo, indice) => (
-              <Prateleira key={grupo.id} grupo={grupo} numero={indice + 1} aoAbrir={setSelecionado} />
+              <Prateleira key={grupo.id} grupo={grupo} numero={indice + 1} aoAbrir={setSelecionado}
+                simples={andarSimples} />
             ))}
           </div>
         )}
@@ -78,10 +85,11 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "grade", classe
   );
 }
 
-function Prateleira({ grupo, numero, aoAbrir }: {
+function Prateleira({ grupo, numero, aoAbrir, simples }: {
   grupo: GrupoDaColecao;
   numero: number;
   aoAbrir: (id: number) => void;
+  simples: boolean;
 })
 {
   const t = useTranslations("colecao");
@@ -122,15 +130,17 @@ function Prateleira({ grupo, numero, aoAbrir }: {
       <div className={estilos.cabecalho}>
         <div className={estilos.identificacao}>
           <span aria-hidden className={estilos.numero}>{String(numero).padStart(2, "0")}</span>
-          <h2 id={tituloId}>{grupo.titulo}</h2>
+          <h2 id={tituloId} className={simples ? "sr-only" : undefined}>{grupo.titulo}</h2>
           <span className={estilos.quantidade}>{t("contagem", { n: grupo.itens.length })}</span>
         </div>
-        <div className={estilos.setas}>
-          <button type="button" aria-label={t("anterior", { grupo: grupo.titulo })}
-            aria-controls={trilhoId} disabled={limites.inicio} onClick={() => rolar(-1)}>←</button>
-          <button type="button" aria-label={t("proxima", { grupo: grupo.titulo })}
-            aria-controls={trilhoId} disabled={limites.fim} onClick={() => rolar(1)}>→</button>
-        </div>
+        {!simples && (
+          <div className={estilos.setas}>
+            <button type="button" aria-label={t("anterior", { grupo: grupo.titulo })}
+              aria-controls={trilhoId} disabled={limites.inicio} onClick={() => rolar(-1)}>←</button>
+            <button type="button" aria-label={t("proxima", { grupo: grupo.titulo })}
+              aria-controls={trilhoId} disabled={limites.fim} onClick={() => rolar(1)}>→</button>
+          </div>
+        )}
       </div>
 
       <div className={estilos.movel}>
