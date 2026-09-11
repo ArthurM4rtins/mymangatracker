@@ -24,5 +24,5 @@
     { "field": "chapter numbering", "reason": "A obra possui numeracao por capitulos de volume, capitulos online e atualizacoes Tonari; merges, splits e redraws fazem esses sistemas divergirem. O contrato atual nao possui um identificador de edicao/sistema de numeracao." },
     { "field": "arc names", "reason": "A principal referencia comunitaria declara que os nomes de sagas e arcos sao organizacoes de fas, nao nomes oficiais." }
   ],
-  "notes": "Nao publicar arcos de One-Punch Man enquanto o modelo nao suportar uma base de numeracao explicita, por exemplo VOLUME_PUBLISHED ou TONARI_ONLINE. Quando isso existir, a curadoria deve apontar a revisao vigente de cada capitulo redraw." 
+  "notes": "Nao publicar arcos de One-Punch Man enquanto o modelo nao suportar uma base de numeracao explicita, por exemplo VOLUME_PUBLISHED ou TONARI_ONLINE. Quando isso existir, a curadoria deve apontar a revisao vigente de cada capitulo redraw."
 }
