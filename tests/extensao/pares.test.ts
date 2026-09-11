@@ -126,19 +126,19 @@ describe("deveParear", function ()
 {
   it("pareia quando o servidor registrou", function ()
   {
-    expect(KIDOKU.deveParear(200)).toBe(true);
+    expect(FOLUNIO.deveParear(200)).toBe(true);
   });
 
   it("pareia tambem quando o capitulo nao avanca: a obra foi reconhecida", function ()
   {
-    expect(KIDOKU.deveParear(409)).toBe(true);
+    expect(FOLUNIO.deveParear(409)).toBe(true);
   });
 
   it("nao pareia com pedido recusado, sessao morta nem falha do servidor", function ()
   {
     for (const status of [400, 401, 404, 422, 429, 500, 503])
     {
-      expect(KIDOKU.deveParear(status)).toBe(false);
+      expect(FOLUNIO.deveParear(status)).toBe(false);
     }
   });
 });
