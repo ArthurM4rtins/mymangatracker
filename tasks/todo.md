@@ -1373,9 +1373,10 @@ sessao: Kitsu como fonte principal e AniList como reserva.
 
 ### Arquivo solto que ninguem versionou
 
-`Obsidian/02. Implementacoes/identidade-visual/folunio/` — kit de identidade inteiro
-(README, index.html, `gerar-kit.mjs`, PNG e um zip de 530 KB), gerado por outra sessao,
-**em branch nenhuma**. Se a arvore de trabalho for limpa, some.
+`Obsidian/02. Implementacoes/identidade-visual/folunio/` — kit de identidade inteiro,
+gerado por outra sessao. **Versionado em 11/09**, menos o `folunio-kit.zip`, que era
+copia byte a byte dos outros 82 arquivos. O `index.html` roda offline e e a origem:
+o `gerar-kit.mjs` refaz os assets a partir dele.
 
 ### Ferramental que a sessao destravou
 
