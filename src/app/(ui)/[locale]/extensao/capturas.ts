@@ -26,10 +26,10 @@ export const IDIOMAS_COM_CAPTURA = ["en"] as const;
  */
 const TAMANHOS: Record<string, Record<string, { largura: number; altura: number }>> = {
   "popup-em-uso": {
-    "en": { largura: 398, altura: 680 },
+    "en": { largura: 401, altura: 697 },
   },
   "popup-sem-sessao": {
-    "en": { largura: 401, altura: 125 },
+    "en": { largura: 402, altura: 119 },
   },
 };
 

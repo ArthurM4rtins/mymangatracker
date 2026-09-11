@@ -144,8 +144,8 @@ export default async function Extensao({ params }: PageProps<"/[locale]/extensao
             <Image
               src="/extensao/badge-pareada.png"
               alt={t("badge.pareada.alt")}
-              width={48}
-              height={50}
+              width={43}
+              height={44}
               className="rounded border border-borda"
             />
             <figcaption className="text-xs">{t("badge.pareada.legenda")}</figcaption>
@@ -154,8 +154,8 @@ export default async function Extensao({ params }: PageProps<"/[locale]/extensao
             <Image
               src="/extensao/badge-registrado.png"
               alt={t("badge.registrado.alt")}
-              width={48}
-              height={48}
+              width={42}
+              height={43}
               className="rounded border border-borda"
             />
             <figcaption className="text-xs">{t("badge.registrado.legenda")}</figcaption>
