@@ -1,7 +1,15 @@
 import { afterEach, expect, it, vi } from "vitest";
-import { buscarNoKitsuPorAnilistId, buscarNoKitsuPorId } from "@/server/infra/kitsu";
+import { buscarAutorNoKitsu, buscarNoKitsuPorAnilistId, buscarNoKitsuPorId } from "@/server/infra/kitsu";
 
 afterEach(() => vi.unstubAllGlobals());
+
+it("perfil inexistente no Kitsu é ausência; limite ou falha da fonte não é 404", async () => {
+  const fetchMock = vi.fn().mockResolvedValueOnce(new Response(null, { status: 404 })).mockResolvedValueOnce(new Response(null, { status: 429 }));
+  vi.stubGlobal("fetch", fetchMock);
+  expect(await buscarAutorNoKitsu(1677)).toBeNull();
+  await expect(buscarAutorNoKitsu(1677)).rejects.toThrow("429");
+  expect(fetchMock.mock.calls[0][0]).toBe("https://kitsu.io/api/edge/people/1677?include=staff.media");
+});
 
 it("resolve o mapeamento da própria obra, mesmo com outro mapeamento incluído antes", async () => {
   const fetchMock = vi.fn<typeof fetch>(async () => Response.json({

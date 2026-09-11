@@ -12,6 +12,7 @@ import { traduzirDoKitsu, type ObraDoKitsu, type RecursoKitsu } from "@/server/d
 import { semRepetidas, type MediaDoAniList } from "@/server/domain/anilist-media";
 import { consultaDoKitsu } from "@/server/domain/kitsu-filtros";
 import type { FiltroDoCatalogo } from "@/server/domain/catalogo-filtros";
+import { mapearAutorDoKitsu, type AutorDoKitsu } from "@/server/domain/kitsu-autor";
 
 const BASE = "https://kitsu.io/api/edge/manga";
 const TIMEOUT_MS = 8000;
@@ -45,7 +46,7 @@ function pedir(caminho: string): Promise<Resposta>
   return pedirEm(BASE, caminho);
 }
 
-async function pedirEm(base: string, caminho: string): Promise<Resposta>
+async function pedirEm(base: string, caminho: string, aceitarAusente = false): Promise<Resposta>
 {
   const resposta = await fetch(`${base}${caminho}`, {
     headers: {
@@ -56,12 +57,20 @@ async function pedirEm(base: string, caminho: string): Promise<Resposta>
     cache: "no-store",
   });
 
+  if (resposta.status === 404 && aceitarAusente) return {};
   if (!resposta.ok)
   {
     throw new Error(`Kitsu respondeu ${resposta.status}`);
   }
 
   return (await resposta.json()) as Resposta;
+}
+
+/** Perfil e participações na mesma resposta; não faz uma chamada por obra. */
+export async function buscarAutorNoKitsu(personId: number): Promise<AutorDoKitsu | null>
+{
+  const corpo = await pedirEm(`https://kitsu.io/api/edge/people/${personId}`, "?include=staff.media", true);
+  return mapearAutorDoKitsu(corpo as unknown as { data?: RecursoKitsu; included?: RecursoKitsu[] });
 }
 
 /** Junta cada obra ao `anilistId` que veio no mesmo pedido, e traduz. */

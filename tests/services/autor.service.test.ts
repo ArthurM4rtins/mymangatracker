@@ -1,7 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AutorDoAniList } from "@/server/domain/anilist-media";
 import { autorParaPagina, autorParaPaginaDoSistema } from "@/server/services/autor.service";
 import { buscarAutor } from "@/server/infra/anilist";
+import { buscarAutorNoKitsu } from "@/server/infra/kitsu";
+
+vi.mock("@/server/infra/kitsu", () => ({ buscarAutorNoKitsu: vi.fn() }));
 
 vi.mock("@/server/infra/anilist", function ()
 {
@@ -22,6 +25,21 @@ const INOUE: AutorDoAniList = {
 
 describe("autorParaPagina", function ()
 {
+  it("consulta o perfil Kitsu sem confundir o ID com um staff do AniList", async () => {
+    const perfil = { kitsuPersonId: 1677, nome: "Kentarou Miura", nomeNativo: null, imagemUrl: null, descricao: null, obras: [] };
+    const buscarNoKitsu = vi.fn(async () => perfil);
+    const buscarAutor = vi.fn(async () => INOUE);
+    expect(await autorParaPagina({ fonte: "kitsu", id: 1677 }, { buscarAutor, buscarNoKitsu })).toEqual({ estado: "ok", autor: perfil });
+    expect(buscarNoKitsu).toHaveBeenCalledWith(1677);
+    expect(buscarAutor).not.toHaveBeenCalled();
+  });
+
+  it("falha do Kitsu não procura outra pessoa com o mesmo número no AniList", async () => {
+    const buscarNoKitsu = vi.fn(async () => { throw Error("fora"); });
+    const buscarAutor = vi.fn(async () => INOUE);
+    expect(await autorParaPagina({ fonte: "kitsu", id: 1677 }, { buscarAutor, buscarNoKitsu })).toEqual({ estado: "indisponivel" });
+    expect(buscarAutor).not.toHaveBeenCalled();
+  });
   it("devolve o autor quando o AniList responde", async function ()
   {
     const buscarAutor = vi.fn(async function () { return INOUE; });
@@ -59,6 +77,18 @@ describe("autorParaPagina", function ()
 // pode errar, se o memo for criado dentro da função em vez de no módulo.
 describe("autorParaPaginaDoSistema", function ()
 {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("lembra o perfil Kitsu sem compartilhar a chave numérica com o AniList", async () => {
+    const perfil = { kitsuPersonId: 1677, nome: "Kentarou Miura", nomeNativo: null, imagemUrl: null, descricao: null, obras: [] };
+    vi.mocked(buscarAutorNoKitsu).mockResolvedValue(perfil);
+    await autorParaPaginaDoSistema({ fonte: "kitsu", id: 1677 });
+    expect(await autorParaPaginaDoSistema({ fonte: "kitsu", id: 1677 })).toEqual({ estado: "ok", autor: perfil });
+    expect(buscarAutorNoKitsu).toHaveBeenCalledTimes(1);
+    vi.mocked(buscarAutor).mockResolvedValue({ ...INOUE, staffId: 1677 });
+    expect(await autorParaPaginaDoSistema(1677)).toMatchObject({ estado: "ok", autor: { staffId: 1677 } });
+    expect(buscarAutor).toHaveBeenCalledWith(1677);
+  });
   it("o mesmo autor duas vezes é uma ida só ao AniList", async function ()
   {
     vi.mocked(buscarAutor).mockResolvedValue(INOUE);

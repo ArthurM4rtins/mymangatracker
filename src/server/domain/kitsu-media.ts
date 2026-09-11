@@ -11,6 +11,7 @@
  * depois vira dado errado no banco.
  */
 import type { MediaDoAniList, PaisDeOrigem, TipoMedia } from "./anilist-media";
+import { ehPapelDeAutoria } from "./anilist-media";
 import { GENEROS } from "./catalogo-filtros";
 import { dataDePublicacao, RELACOES, STATUS_PUBLICACAO, type DetalhesDaObra, type ObraRelacionada } from "./detalhes-da-obra";
 
@@ -122,7 +123,7 @@ export function traduzirDoKitsu(obra: ObraDoKitsu): MediaDoAniList | null
     const pessoa = ligados(staff, "person")[0];
     const nome = texto(pessoa?.attributes?.name);
     const id = inteiro(pessoa?.id);
-    return papel && /story|art|author/i.test(papel) && nome && id && id > 0
+    return papel && ehPapelDeAutoria(papel) && nome && id && id > 0
       ? [{ kitsuPersonId: id, nome, papel }] : [];
   }).filter((a, i, lista) => lista.findIndex(b => b.kitsuPersonId === a.kitsuPersonId) === i);
   const related: ObraRelacionada[] = ligados(obra.dados, "mediaRelationships").flatMap(rel => {

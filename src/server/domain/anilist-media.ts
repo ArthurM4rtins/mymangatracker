@@ -436,7 +436,7 @@ export function mapearAutor(resposta: unknown): AutorDoAniList | null
 
   const imagem = ehObjeto(staff.image) ? staff.image.large : undefined;
   const descricao =
-    typeof staff.description === "string" ? semMarkdownDeLink(semHtml(staff.description)) : null;
+    typeof staff.description === "string" ? limparBiografia(staff.description) : null;
 
   const obras: ObraDoAutor[] = [];
   const vistos = new Set<number>();
@@ -493,6 +493,11 @@ export function mapearAutor(resposta: unknown): AutorDoAniList | null
 }
 
 /** O AniList usa markdown de link na bio do staff — fica só o texto. */
+export function limparBiografia(texto: string): string
+{
+  return semMarkdownDeLink(semHtml(texto)).trim();
+}
+
 function semMarkdownDeLink(texto: string): string
 {
   return texto.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").trim();

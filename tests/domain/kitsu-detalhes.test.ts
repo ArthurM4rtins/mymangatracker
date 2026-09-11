@@ -6,6 +6,11 @@ import { mapearMedia } from "@/server/domain/anilist-media";
 import { mesclarDetalhes } from "@/server/domain/detalhes-da-obra";
 
 describe("ficha enriquecida do Kitsu", () => {
+  it("autoria inclui criador original e exclui assistentes de arte", () => {
+    const autor = (id: string, role: string) => ({ type: "mediaStaff", id, attributes: { role }, relationships: { person: { data: { type: "people", id } } } });
+    const obra = traduzirDoKitsu({ anilistId: null, dados: { id: "8", attributes: { canonicalTitle: "Obra", subtype: "manga" }, relationships: { staff: { data: [{ type: "mediaStaff", id: "1" }, { type: "mediaStaff", id: "2" }] } } }, incluidos: [autor("1", "Art Assistant"), autor("2", "Original Creator"), { type: "people", id: "1", attributes: { name: "Assistente" } }, { type: "people", id: "2", attributes: { name: "Criador" } }] });
+    expect(obra?.autores).toEqual([{ kitsuPersonId: 2, nome: "Criador", papel: "Original Creator" }]);
+  });
   it("importa metadados e resolve somente os relacionamentos da obra", () => {
     const obra = traduzirDoKitsu({
       anilistId: null,
