@@ -64,7 +64,9 @@ body {
 /* Discreto, mas legivel: e' a diferenca entre gravar leitura em producao e
    no localhost (#148, item 9). */
 .ambiente {
-  flex: 1 0 auto;
+  /* Cresce para ocupar o vao, encolhe quando o endereco e longo: e espacador
+     quando esta vazio e texto quando nao esta. */
+  flex: 1 1 auto;
   min-width: 0;
   text-align: right;
   font-size: 11px;

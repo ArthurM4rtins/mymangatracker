@@ -205,12 +205,23 @@ async function iniciar()
   const sessao = await FOLUNIO.sessao();
   const base = sessao ? sessao.base : FOLUNIO.AMBIENTES[0];
 
-  // O host fica visivel (#148, item 9): o build distribuido embarca o localhost
-  // e tenta producao primeiro, entao sem isto nada na tela distingue os dois.
-  if (el.ambiente)
+  // O host so aparece quando NAO e producao (#148, item 9).
+  //
+  // O motivo de ele existir continua o mesmo: o build distribuido embarca o
+  // localhost e tenta producao primeiro, entao quem esta logado nos dois grava
+  // em producao sem nada na tela dizer. Mas isso so acontece com quem roda o
+  // projeto — para todo o resto a linha dizia "mymangatracker.vercel.app" para
+  // sempre, ocupando o topo com uma informacao que nunca muda.
+  //
+  // Aparecer so fora de producao guarda o caso inteiro e some do caminho de
+  // quem so le manga: se tem endereco no topo, a leitura NAO esta indo para o
+  // site de verdade — e isso e tudo que o aviso precisa comunicar.
+  //
+  // O elemento fica sempre no fluxo, vazio em producao: e ele que empurra o
+  // "abrir o site" para a direita. Escondido, o link colava no wordmark.
+  if (el.ambiente && base !== FOLUNIO.AMBIENTES[0])
   {
     el.ambiente.textContent = new URL(base).host;
-    el.ambiente.hidden = false;
   }
 
   el.abrirSite.href = base + "/estante";
