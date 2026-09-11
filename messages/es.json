@@ -20,7 +20,7 @@
     "verObra": "Ver página de la obra"
   },
   "meta": {
-    "titulo": "Kidoku",
+    "titulo": "Folunio",
     "descricao": "Tu estantería de manga, manhwa y novel, con progreso de lectura automático y privado."
   },
   "cabecalho": {
@@ -46,7 +46,7 @@
       "anilist": "Catálogo y portadas de AniList.",
       "kitsu": "Kitsu como fuente de reserva cuando AniList no responde."
     },
-    "direitos": "© {ano} Kidoku",
+    "direitos": "© {ano} Folunio",
     "fonte": {
       "agora": "Ahora viene de {fonte}"
     }
@@ -98,7 +98,7 @@
     "usuario_nao_encontrado": "usuario no encontrado",
     "ja_em_uso": "ya está en uso",
     "cadastro_nao_concluido": "no se pudo completar el registro — revisa los datos o, si ya tienes cuenta, inicia sesión",
-    "origem_recusada": "la solicitud no vino de Kidoku",
+    "origem_recusada": "la solicitud no vino de Folunio",
     "conteudo_nao_json": "la solicitud debe ser JSON",
     "nao_avanca": "ese capítulo no supera el progreso de tu estantería — para volver, usa el reinicio",
     "sem_fonte": "configura primero la fuente de lectura",
@@ -241,7 +241,7 @@
       "saindo": "Cerrando sesión…"
     },
     "logo": {
-      "rotulo": "Kidoku — inicio"
+      "rotulo": "Folunio — inicio"
     },
     "carrossel": {
       "anterior": "Anterior",
@@ -513,7 +513,7 @@
       "spoiler": "contiene spoiler"
     },
     "nota": {
-      "titulo": "Valoración de Kidoku",
+      "titulo": "Valoración de Folunio",
       "distribuicao": "Distribución de las valoraciones"
     },
     "resenhas": {
@@ -548,7 +548,7 @@
   },
   "perfil": {
     "voce": "tú",
-    "membroDesde": "en Kidoku desde {mes}",
+    "membroDesde": "en Folunio desde {mes}",
     "notaAria": "Valoración {nota} de 5",
     "erros": {
       "semBanco": "El perfil depende de la base de datos, que ahora mismo no respondió."
@@ -626,7 +626,7 @@
       "titulo": "Reportar error de traducción"
     },
     "titulo": "¿Encontraste un texto mal traducido?",
-    "subtitulo": "Kidoku habla cinco idiomas, y no todos tienen un revisor nativo aquí. Si algo se lee raro, cuéntanos.",
+    "subtitulo": "Folunio habla cinco idiomas, y no todos tienen un revisor nativo aquí. Si algo se lee raro, cuéntanos.",
     "avisoPublico": "Lo que escribas se convierte en una issue pública en el repositorio del proyecto, junto con tu nombre de usuario y la pantalla en la que estabas. No escribas nada personal.",
     "precisaEntrar": "Para reportar, entra en tu cuenta.",
     "entrar": "entrar",

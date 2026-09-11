@@ -26,7 +26,7 @@ async function atualizarBadge(tabId, url, titulo)
 {
   try
   {
-    const chave = KIDOKU.chaveDaObra(url, titulo);
+    const chave = FOLUNIO.chaveDaObra(url, titulo);
 
     if (chave === null)
     {
@@ -50,9 +50,9 @@ async function atualizarBadge(tabId, url, titulo)
     // não da conta. Antes bastava o par existir, e o badge de uma conta acendia
     // para a outra, prometendo registro numa página que o popup abriria sem
     // obra selecionada.
-    const sessao = await KIDOKU.sessao();
+    const sessao = await FOLUNIO.sessao();
     const pareada = sessao !== null
-      && (await KIDOKU.parDaSessao(chave, sessao.token)) !== null;
+      && (await FOLUNIO.parDaSessao(chave, sessao.token)) !== null;
 
     await chrome.action.setBadgeText({ tabId, text: pareada ? "●" : "" });
 
@@ -89,8 +89,8 @@ async function agendarAutoRegistro(tabId, url, titulo)
     return;
   }
 
-  const chave = KIDOKU.chaveDaObra(url, titulo);
-  const capitulo = KIDOKU.capituloDoTitulo(titulo);
+  const chave = FOLUNIO.chaveDaObra(url, titulo);
+  const capitulo = FOLUNIO.capituloDoTitulo(titulo);
 
   if (chave === null || capitulo === null)
   {
@@ -100,10 +100,10 @@ async function agendarAutoRegistro(tabId, url, titulo)
   // Mesma regra do badge: par de outra conta não agenda nada (#181). A
   // checagem contra a estante, em `tentarAutoRegistro`, continua sendo a que
   // vale — esta só evita agendar o que já se sabe que não é desta sessão.
-  const sessao = await KIDOKU.sessao();
+  const sessao = await FOLUNIO.sessao();
   const entradaId = sessao === null
     ? null
-    : await KIDOKU.parDaSessao(chave, sessao.token);
+    : await FOLUNIO.parDaSessao(chave, sessao.token);
 
   if (!entradaId)
   {
@@ -141,7 +141,7 @@ async function aindaNaPagina(tabId, url, capitulo)
     return false;
   }
 
-  if (!aba.active || aba.url !== url || KIDOKU.capituloDoTitulo(aba.title) !== capitulo)
+  if (!aba.active || aba.url !== url || FOLUNIO.capituloDoTitulo(aba.title) !== capitulo)
   {
     return false;
   }
@@ -160,7 +160,7 @@ async function tentarAutoRegistro({ tabId, url, titulo, capitulo, entradaId, mar
       return;
     }
 
-    const sessao = await KIDOKU.sessao();
+    const sessao = await FOLUNIO.sessao();
 
     if (sessao === null)
     {

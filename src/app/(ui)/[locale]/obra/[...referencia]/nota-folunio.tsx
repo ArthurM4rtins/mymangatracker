@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * A nota do Kidoku (issue #48): a média dos nossos usuários, a contagem e um
+ * A nota do Folunio (issue #48): a média dos nossos usuários, a contagem e um
  * histograma de dez barras (0,5 a 5,0) ao estilo Letterboxd. Vive na coluna
  * da direita, embaixo de onde a pessoa avalia (issue #81): card no mesmo
  * desenho do "Sua avaliação", histograma em largura cheia embaixo.
@@ -16,7 +16,7 @@ export type NotaParaTela = {
   histograma: Array<{ rating: number; total: number }>;
 };
 
-export function NotaKidoku({ nota }: { nota: NotaParaTela })
+export function NotaFolunio({ nota }: { nota: NotaParaTela })
 {
   const t = useTranslations("obra");
   const formato = useFormatter();

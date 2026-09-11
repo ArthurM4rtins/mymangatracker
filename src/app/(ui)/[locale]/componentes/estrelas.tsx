@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * O rating do Kidoku, compartilhado entre estante e página da obra: meia em
+ * O rating do Folunio, compartilhado entre estante e página da obra: meia em
  * meia (duas metades clicáveis por símbolo), com preview no hover — passar o
  * mouse preenche, clicar confirma.
  *

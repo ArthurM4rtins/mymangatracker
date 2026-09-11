@@ -45,7 +45,7 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
   itens: ItemDaColecao[];
   grupos?: GrupoDaColecao[];
   titulo: string;
-  /** A prateleira é o que o Kidoku tem de próprio: ela abre por padrão (#241). */
+  /** A prateleira é o que o Folunio tem de próprio: ela abre por padrão (#241). */
   inicial?: "grade" | "prateleira";
   classeGrade?: string;
    /**
@@ -612,7 +612,19 @@ function Prateleira({ grupo, numero, aoAbrir, simples, selecionado, arrastado, d
                 aria-haspopup="dialog" onClick={() => aoAbrir(obra.id)}>
                 <span className={estilos.lombada} aria-hidden>
                   {obra.capa && <ImagemDaColecao key={obra.capa} src={obra.capa} sizes="56px" className={estilos.recorte} />}
-                  <span className={estilos.selo}>既読</span>
+                  <span className={estilos.selo}>
+                    {/* O double-check da marca no lugar do 既読: aqui o glifo é
+                        status — diz que a obra foi lida —, e o desenho diz isso
+                        sem depender de idioma. Os dois vistos na cor da lombada,
+                        o primeiro mais apagado, porque o acento do tema brigaria
+                        com a cor sorteada de cada livro. */}
+                    <svg viewBox="0 0 76 36" aria-hidden>
+                      <polyline points="4,18 18,32 46,4" fill="none" stroke="currentColor"
+                        strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" opacity=".5" />
+                      <polyline points="30,18 44,32 72,4" fill="none" stroke="currentColor"
+                        strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
                   <span className={estilos.tituloLombada}>{obra.titulo}</span>
                   <span className={estilos.marca}>✦</span>
                 </span>

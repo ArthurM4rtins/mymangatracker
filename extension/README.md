@@ -1,4 +1,4 @@
-# Extensão Kidoku (Chrome, Manifest V3)
+# Extensão Folunio (Chrome, Manifest V3)
 
 Registra na estante o capítulo que você está lendo, sem sair da aba. Issue #52/#91;
 desenho em `Obsidian/02. Implementacoes/feature-extensao-navegador/CLAUDE.md`.
@@ -10,7 +10,7 @@ tudo em `src/` pertença a uma) e não entra no build da Vercel.
 ## Carregar para testar
 
 1. `chrome://extensions` → ativar **Modo do desenvolvedor** → **Carregar sem compactação** → esta pasta.
-2. Entrar no Kidoku pelo site (produção ou `http://localhost:3000`). A extensão lê o cookie de
+2. Entrar no Folunio pelo site (produção ou `http://localhost:3000`). A extensão lê o cookie de
    sessão do domínio e manda o mesmo token em `Authorization: Bearer`.
 3. Abrir um capítulo em qualquer site de leitura e clicar no ícone.
 
@@ -18,7 +18,7 @@ tudo em `src/` pertença a uma) e não entra no build da Vercel.
 
 | Passo | Como |
 |---|---|
-| Sessão | `chrome.cookies.get` do `kidoku_sessao` em produção, depois em localhost. Sem cookie: link "Entrar". |
+| Sessão | `chrome.cookies.get` do `folunio_sessao` em produção, depois em localhost. Sem cookie: link "Entrar". |
 | Estante | `GET /api/v1/estante`, escondendo as concluídas. Filtro por nome. |
 | Capítulo | Regex sobre o `document.title` da aba (a mesma de `domain/titulo-de-capitulo.ts`). Não achou = campo vazio, nunca chute. |
 | Pareamento | host + slug da URL (ou host + nome do título, quando a URL é opaca) → `entradaId`, em `chrome.storage.local`. Pré-seleciona a obra no próximo capítulo. |

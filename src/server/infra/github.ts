@@ -1,5 +1,5 @@
 /**
- * Abre issue no repositório (issue #158). É a única escrita que o Kidoku faz
+ * Abre issue no repositório (issue #158). É a única escrita que o Folunio faz
  * fora do próprio banco.
  *
  * Por que issue e não tabela: aproveita um fluxo que já existe e não cria nada

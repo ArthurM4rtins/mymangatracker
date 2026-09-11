@@ -37,7 +37,8 @@
 .lombada::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #0005, #ffffff15 12%, transparent 24%, #0003 90%, #0006); pointer-events: none; }
 .recorte { object-fit: cover; opacity: .18; filter: saturate(.7); }
 .selo, .marca, .tituloLombada { position: relative; z-index: 1; }
-.selo { font-size: 9px; letter-spacing: .12em; padding-bottom: 9px; border-bottom: 1px solid #ffffff50; }
+.selo { padding-bottom: 9px; border-bottom: 1px solid #ffffff50; }
+.selo svg { display: block; width: 16px; height: auto; overflow: visible; }
 .tituloLombada { writing-mode: vertical-rl; flex: 1; min-height: 0; margin: 12px 0; font-size: 13px; font-weight: 600; line-height: 1.2; letter-spacing: .025em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 1px 2px #0008; }
 .marca { font-size: 12px; }
 .capa { position: absolute; inset: 0; z-index: 2; overflow: hidden; opacity: 0; border-radius: inherit; background: var(--cor-lombada); transition: opacity 180ms ease; pointer-events: none; }

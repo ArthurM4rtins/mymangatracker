@@ -36,7 +36,7 @@ export async function Rodape({
           <p className="font-marca text-base font-bold tracking-tight">
             {meta("titulo")}
             <span aria-hidden className="ml-1.5 text-[0.6rem] font-bold text-acento">
-              既読
+              葉宙
             </span>
           </p>
           <p className="mt-2 text-xs leading-relaxed text-texto-suave">

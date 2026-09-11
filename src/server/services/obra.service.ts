@@ -90,7 +90,7 @@ export type ResultadoDaObra =
       minhaAvaliacao: MinhaAvaliacao | null;
       reviews: ReviewPublica[];
       /** A média dos NOSSOS usuários (issue #48). `null` sem nota ou com o agregado fora. */
-      notaDoKidoku: ResumoDeNotas | null;
+      notaDoFolunio: ResumoDeNotas | null;
     }
   | { estado: "nao_encontrada" }
   | { estado: "indisponivel" };
@@ -281,7 +281,7 @@ export async function obraParaPagina(
     minha,
     minhaAvaliacao,
     reviews,
-    notaDoKidoku: resumirNotas(contagens),
+    notaDoFolunio: resumirNotas(contagens),
   };
 }
 

@@ -6,7 +6,7 @@ import {
 } from "@/server/repositories/avaliacao.repository";
 import { limparBanco, semearUsuario } from "./apoio";
 
-// A nota do Kidoku (issue #48): agregado de TODOS os usuários por obra, só
+// A nota do Folunio (issue #48): agregado de TODOS os usuários por obra, só
 // valor e contagem — sem userId, sem resenha. Nota nula (resenha sem nota)
 // fica fora; outra obra não entra na conta.
 

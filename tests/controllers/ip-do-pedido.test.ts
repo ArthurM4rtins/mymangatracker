@@ -7,7 +7,7 @@ import { ipDoPedido } from "@/app/api/v1/_shared/ip";
 
 function pedido(cabecalhos: Record<string, string>): Request
 {
-  return new Request("https://kidoku.test/api/v1/sessao", { method: "POST", headers: cabecalhos });
+  return new Request("https://folunio.test/api/v1/sessao", { method: "POST", headers: cabecalhos });
 }
 
 describe("ipDoPedido", function ()

@@ -252,7 +252,7 @@ describe("obraParaPagina", function ()
     expect(resultado.reviews[0].username).toBe("leitor");
   });
 
-  it("a nota do Kidoku vem resumida das contagens por valor (issue #48)", async function ()
+  it("a nota do Folunio vem resumida das contagens por valor (issue #48)", async function ()
   {
     const { deps, contarNotas } = fakeDeps({ noCache: NO_CACHE });
 
@@ -265,8 +265,8 @@ describe("obraParaPagina", function ()
 
     expect(contarNotas).toHaveBeenCalledWith("m1");
     // (5 + 5 + 4) / 3 = 4.666… → 4.7
-    expect(resultado.notaDoKidoku).toMatchObject({ media: 4.7, total: 3 });
-    expect(resultado.notaDoKidoku?.histograma).toHaveLength(10);
+    expect(resultado.notaDoFolunio).toMatchObject({ media: 4.7, total: 3 });
+    expect(resultado.notaDoFolunio?.histograma).toHaveLength(10);
   });
 
   it("contagem de notas falhando some sem derrubar a página", async function ()
@@ -280,7 +280,7 @@ describe("obraParaPagina", function ()
       throw new Error("esperava ok");
     }
 
-    expect(resultado.notaDoKidoku).toBeNull();
+    expect(resultado.notaDoFolunio).toBeNull();
     expect(resultado.obra.titleRomaji).toBe("Vagabond");
   });
 

@@ -1,12 +1,12 @@
 {
   "nome": {
-    "message": "Kidoku"
+    "message": "Folunio"
   },
   "descricao": {
-    "message": "Trägt das Kapitel, das du gerade liest, in dein Kidoku-Regal ein — ohne den Tab zu verlassen."
+    "message": "Trägt das Kapitel, das du gerade liest, in dein Folunio-Regal ein — ohne den Tab zu verlassen."
   },
   "acaoTitulo": {
-    "message": "Kidoku — Lektüre eintragen"
+    "message": "Folunio — Lektüre eintragen"
   },
   "abrirSite": {
     "message": "Website öffnen"
@@ -39,13 +39,13 @@
     "message": "nur bereits gekoppelte Werke, nach 20 s auf der Kapitelseite"
   },
   "semSessao": {
-    "message": "Melde dich bei Kidoku an, um deine Lektüre einzutragen."
+    "message": "Melde dich bei Folunio an, um deine Lektüre einzutragen."
   },
   "entrar": {
     "message": "Anmelden"
   },
   "semResposta": {
-    "message": "Kidoku hat gerade nicht geantwortet — versuch es erneut"
+    "message": "Folunio hat gerade nicht geantwortet — versuch es erneut"
   },
   "estanteNaoCarregou": {
     "message": "dein Regal konnte nicht geladen werden — versuch es erneut"
@@ -123,6 +123,6 @@
     "message": "zu viele Einträge in kurzer Zeit — warte einen Moment"
   },
   "erroFalhaInterna": {
-    "message": "Kidoku konnte gerade nicht eintragen"
+    "message": "Folunio konnte gerade nicht eintragen"
   }
 }

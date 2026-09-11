@@ -54,7 +54,7 @@ function preencherObras(entradas, filtro, selecionada)
     opcao.value = entrada.entradaId;
     const cap = entrada.progressChapter === null
       ? ""
-      : KIDOKU_I18N.texto("obraNoCapitulo", [String(entrada.progressChapter)]);
+      : FOLUNIO_I18N.texto("obraNoCapitulo", [String(entrada.progressChapter)]);
     opcao.textContent = `${titulo}${cap}`;
     opcao.selected = entrada.entradaId === selecionada;
     el.obra.append(opcao);
@@ -64,8 +64,8 @@ function preencherObras(entradas, filtro, selecionada)
 async function iniciar()
 {
   const [aba] = await chrome.tabs.query({ active: true, currentWindow: true });
-  const sessao = await KIDOKU.sessao();
-  const base = sessao ? sessao.base : KIDOKU.AMBIENTES[0];
+  const sessao = await FOLUNIO.sessao();
+  const base = sessao ? sessao.base : FOLUNIO.AMBIENTES[0];
 
   // O host fica visivel (#148, item 9): o build distribuido embarca o localhost
   // e tenta producao primeiro, entao sem isto nada na tela distingue os dois.
@@ -99,7 +99,7 @@ async function iniciar()
   }
   catch
   {
-    mostrar(KIDOKU_I18N.texto("semResposta"));
+    mostrar(FOLUNIO_I18N.texto("semResposta"));
     return;
   }
 
@@ -112,7 +112,7 @@ async function iniciar()
 
   if (!resposta.ok)
   {
-    mostrar(KIDOKU_I18N.texto("estanteNaoCarregou"));
+    mostrar(FOLUNIO_I18N.texto("estanteNaoCarregou"));
     return;
   }
 
@@ -122,25 +122,25 @@ async function iniciar()
 
   if (abertas.length === 0)
   {
-    mostrar(KIDOKU_I18N.texto("estanteVazia"));
+    mostrar(FOLUNIO_I18N.texto("estanteVazia"));
     return;
   }
 
-  const chave = KIDOKU.chaveDaObra(aba && aba.url, aba && aba.title);
+  const chave = FOLUNIO.chaveDaObra(aba && aba.url, aba && aba.title);
   // O par precisa ser desta conta (#181) E estar na estante aberta. A segunda
   // condicao ja existia e continua sendo a que vale de verdade; a primeira
   // evita ate considerar par de outra conta do mesmo navegador.
-  const doDono = await KIDOKU.parDaSessao(chave, sessao.token);
+  const doDono = await FOLUNIO.parDaSessao(chave, sessao.token);
   const pareada = doDono !== null && abertas.some(function (e) { return e.entradaId === doDono; })
     ? doDono
     : null;
   // Sem par salvo, o nome no título da aba decide (#171). Par salvo ganha:
   // é o que a pessoa confirmou com um clique; o nome é só palpite.
   const peloTitulo = pareada === null
-    ? KIDOKU.casarObraPeloTitulo(aba && aba.title, abertas)
+    ? FOLUNIO.casarObraPeloTitulo(aba && aba.title, abertas)
     : null;
   const selecionada = pareada !== null ? pareada : peloTitulo;
-  const capitulo = KIDOKU.capituloDoTitulo(aba && aba.title);
+  const capitulo = FOLUNIO.capituloDoTitulo(aba && aba.title);
 
   contexto = { aba, sessao, abertas, chave };
 
@@ -150,9 +150,9 @@ async function iniciar()
   el.paginaTitulo.textContent = aba && aba.title ? aba.title : "";
   preencherObras(abertas, "", selecionada);
   el.obraOrigem.hidden = peloTitulo === null;
-  el.obraOrigem.textContent = peloTitulo === null ? "" : KIDOKU_I18N.texto("obraPeloTitulo");
+  el.obraOrigem.textContent = peloTitulo === null ? "" : FOLUNIO_I18N.texto("obraPeloTitulo");
   el.capitulo.value = capitulo === null ? "" : String(capitulo);
-  el.origem.textContent = KIDOKU_I18N.texto(
+  el.origem.textContent = FOLUNIO_I18N.texto(
     capitulo === null ? "capituloNaoLido" : "capituloLido",
   );
 
@@ -186,21 +186,21 @@ el.formulario.addEventListener("submit", async function (evento)
   if (!entradaId)
   {
     el.resultado.className = "resultado erro";
-    el.resultado.textContent = KIDOKU_I18N.texto("escolhaObra");
+    el.resultado.textContent = FOLUNIO_I18N.texto("escolhaObra");
     return;
   }
 
   if (el.capitulo.value.trim() === "" || !Number.isFinite(capitulo) || capitulo <= 0)
   {
     el.resultado.className = "resultado erro";
-    el.resultado.textContent = KIDOKU_I18N.texto("informeCapitulo");
+    el.resultado.textContent = FOLUNIO_I18N.texto("informeCapitulo");
     el.capitulo.focus();
     return;
   }
 
   el.registrar.disabled = true;
   el.resultado.className = "resultado";
-  el.resultado.textContent = KIDOKU_I18N.texto("registrando");
+  el.resultado.textContent = FOLUNIO_I18N.texto("registrando");
 
   try
   {
@@ -226,9 +226,9 @@ el.formulario.addEventListener("submit", async function (evento)
     // obra", e isso vale mesmo quando o capitulo nao avanca (409). Preso ao
     // caminho de sucesso, obra ja lida alem daquele capitulo nunca pareava, e
     // o badge nunca acendia naquele site.
-    if (KIDOKU.deveParear(resposta.status) && contexto.chave !== null)
+    if (FOLUNIO.deveParear(resposta.status) && contexto.chave !== null)
     {
-      await KIDOKU.salvarPar(contexto.chave, entradaId, KIDOKU.donoDoToken(contexto.sessao.token));
+      await FOLUNIO.salvarPar(contexto.chave, entradaId, FOLUNIO.donoDoToken(contexto.sessao.token));
       chrome.runtime.sendMessage({
         tipo: "pareou",
         tabId: contexto.aba.id,
@@ -243,7 +243,7 @@ el.formulario.addEventListener("submit", async function (evento)
       // A API responde codigo, nunca frase (fase 3 da #116): quem escolhe a
       // frase, no idioma de quem esta lendo, e quem mostra.
       // `progresso` vem junto no nao_avanca: a frase diz onde a estante esta (#172).
-      el.resultado.textContent = KIDOKU_I18N.erro(
+      el.resultado.textContent = FOLUNIO_I18N.erro(
         corpo.erros && corpo.erros._geral,
         corpo.progresso === undefined ? undefined : [String(corpo.progresso)],
       );
@@ -252,7 +252,7 @@ el.formulario.addEventListener("submit", async function (evento)
 
     el.resultado.className = "resultado ok";
     // So o que avanca grava (#172): registrado implica estante no capitulo.
-    el.resultado.textContent = KIDOKU_I18N.texto(
+    el.resultado.textContent = FOLUNIO_I18N.texto(
       "registradoAlcancou",
       [String(corpo.capitulo), String(corpo.progresso)],
     );
@@ -261,7 +261,7 @@ el.formulario.addEventListener("submit", async function (evento)
   catch
   {
     el.resultado.className = "resultado erro";
-    el.resultado.textContent = KIDOKU_I18N.texto("semResposta");
+    el.resultado.textContent = FOLUNIO_I18N.texto("semResposta");
   }
   finally
   {
@@ -272,7 +272,7 @@ el.formulario.addEventListener("submit", async function (evento)
 el.verLink.addEventListener("click", function ()
 {
   el.paginaUrl.hidden = !el.paginaUrl.hidden;
-  el.verLink.textContent = KIDOKU_I18N.texto(el.paginaUrl.hidden ? "verLink" : "ocultarLink");
+  el.verLink.textContent = FOLUNIO_I18N.texto(el.paginaUrl.hidden ? "verLink" : "ocultarLink");
 });
 
 el.auto.addEventListener("change", function ()
@@ -280,5 +280,5 @@ el.auto.addEventListener("change", function ()
   void chrome.storage.local.set({ autoRegistro: el.auto.checked });
 });
 
-KIDOKU_I18N.aplicar();
+FOLUNIO_I18N.aplicar();
 void iniciar();

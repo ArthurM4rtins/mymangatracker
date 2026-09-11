@@ -244,8 +244,8 @@ const eslintConfig = defineConfig([
           allowedStrings: [
             // Pontuacao e simbolo: nao sao frase, nao se traduzem.
             "·", "—", "–", "/", "%", "½", "+", "×", "♥", "←", "→", "✕", "●", "○",
-            // Marca: o wordmark, o simbolo e o 既読 do logo.
-            "Kidoku", "✦", "既読",
+            // Marca: o wordmark, o simbolo de nota e o 葉宙 do logo.
+            "Folunio", "✦", "葉宙",
             // Rota tecnica exibida como o proprio texto do link.
             "/api/v1/health",
           ],
