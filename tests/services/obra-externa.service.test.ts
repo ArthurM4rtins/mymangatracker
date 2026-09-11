@@ -34,23 +34,46 @@ function deps(cenario: {
 
 describe("buscarObraNaFonte", function ()
 {
-  it("referencia do AniList vai ao AniList, e nem toca no Kitsu", async function ()
+  it("referencia do AniList consulta primeiro o Kitsu pelo mapeamento", async function ()
   {
-    const fontes = deps({ anilist: DO_ANILIST });
-
-    await expect(buscarObraNaFonte({ fonte: "anilist", id: 30002 }, fontes))
-      .resolves.toEqual({ estado: "ok", obra: DO_ANILIST, respondeu: "anilist" });
-    expect(fontes.noKitsuPorAniList).not.toHaveBeenCalled();
-    expect(fontes.noKitsuPorId).not.toHaveBeenCalled();
-  });
-
-  it("AniList fora desce para o Kitsu pelo mapeamento", async function ()
-  {
-    const fontes = deps({ anilist: new Error("fora"), kitsuPorAnilist: DO_ANILIST });
+    const fontes = deps({ anilist: DO_ANILIST, kitsuPorAnilist: DO_ANILIST });
 
     await expect(buscarObraNaFonte({ fonte: "anilist", id: 30002 }, fontes))
       .resolves.toEqual({ estado: "ok", obra: DO_ANILIST, respondeu: "kitsu" });
+    expect(fontes.noAniList).not.toHaveBeenCalled();
     expect(fontes.noKitsuPorAniList).toHaveBeenCalledWith(30002);
+    expect(fontes.noKitsuPorId).not.toHaveBeenCalled();
+  });
+
+  it("Kitsu fora recorre ao AniList mantendo o id correto", async function ()
+  {
+    const fontes = deps({ anilist: DO_ANILIST, kitsuPorAnilist: new Error("fora") });
+
+    await expect(buscarObraNaFonte({ fonte: "anilist", id: 30002 }, fontes))
+      .resolves.toEqual({ estado: "ok", obra: DO_ANILIST, respondeu: "anilist" });
+    expect(fontes.noKitsuPorAniList).toHaveBeenCalledWith(30002);
+    expect(fontes.noAniList).toHaveBeenCalledWith(30002);
+    expect(fontes.noKitsuPorAniList.mock.invocationCallOrder[0]).toBeLessThan(fontes.noAniList.mock.invocationCallOrder[0]);
+  });
+
+  it("obra antiga sem mapeamento no Kitsu ainda abre pelo AniList", async function ()
+  {
+    const fontes = deps({ anilist: DO_ANILIST, kitsuPorAnilist: null });
+    await expect(buscarObraNaFonte({ fonte: "anilist", id: 30002 }, fontes))
+      .resolves.toEqual({ estado: "ok", obra: DO_ANILIST, respondeu: "anilist" });
+    expect(fontes.noKitsuPorAniList).toHaveBeenCalled();
+  });
+
+  it("link Kitsu usa o AniList quando há vínculo salvo e o Kitsu falha", async function ()
+  {
+    const fontes = {
+      ...deps({ kitsuPorId: new Error("fora"), anilist: DO_ANILIST }),
+      anilistIdDoKitsu: vi.fn(async () => 30002),
+    };
+    await expect(buscarObraNaFonte({ fonte: "kitsu", id: 1 }, fontes))
+      .resolves.toEqual({ estado: "ok", obra: { ...DO_ANILIST, kitsuId: 1 }, respondeu: "anilist" });
+    expect(fontes.anilistIdDoKitsu).toHaveBeenCalledWith(1);
+    expect(fontes.noAniList).toHaveBeenCalledWith(30002);
   });
 
   it("os dois fora: indisponivel, que nao e 'nao existe'", async function ()

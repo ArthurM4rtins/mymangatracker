@@ -39,6 +39,13 @@ function achar(relatorio: RelatorioSaude, nome: string)
 
 describe("verificarSaude", () =>
 {
+  it("mede o Kitsu quando a sonda principal está presente", async () =>
+  {
+    const relatorio = await verificarSaude({ database: ok, kitsu: ok, sessionSecret: ok, relogio });
+    expect(achar(relatorio, "kitsu")?.status).toBe("ok");
+    expect(achar(relatorio, "anilist")).toBeUndefined();
+  });
+
   it("reporta ok quando as três dependências respondem", async () =>
   {
     const relatorio = await verificarSaude({ database: ok, anilist: ok, sessionSecret: ok, relogio });

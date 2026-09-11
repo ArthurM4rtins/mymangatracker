@@ -40,8 +40,15 @@ Toda consulta carrega `userId`, e existe teste que falha se alguém escrever uma
 | ORM | Prisma 7 com driver adapter (`@prisma/adapter-pg`) |
 | Banco | PostgreSQL 16 — Neon em produção, Docker Compose no dev |
 | Sessão | cookie httpOnly + JWT via `jose`, senha com `scrypt` do Node |
-| Catálogo | AniList GraphQL — público, sem chave |
+| Catálogo | Kitsu como fonte principal; AniList como fallback; cache local se ambos falharem |
 | Testes | Vitest |
+
+O catálogo consulta o Kitsu primeiro, recorre ao AniList em caso de falha e usa o
+cache local se os dois falharem. Uma busca vazia do Kitsu encerra normalmente.
+Obras com links antigos do AniList usam o mapeamento do Kitsu; sem esse mapeamento,
+o AniList ainda pode resolvê-las. Os identificadores e metadados já salvos são
+preservados quando uma fonte retorna dados parciais. Perfis de autores e
+recomendações de similares continuam usando a integração específica do AniList.
 
 ## Arquitetura em camadas
 

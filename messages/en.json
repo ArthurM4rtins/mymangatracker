@@ -43,8 +43,8 @@
     },
     "dados": {
       "titulo": "Data",
-      "anilist": "Catalogue and covers from AniList.",
-      "kitsu": "Kitsu as a backup source when AniList does not respond."
+      "anilist": "AniList as a supplementary and backup source.",
+      "kitsu": "Kitsu as the primary source for the catalogue and covers."
     },
     "direitos": "© {ano} Folunio",
     "fonte": {
@@ -207,7 +207,7 @@
       }
     },
     "erros": {
-      "indisponivel": "AniList didn't respond just now. Try again in a moment.",
+      "indisponivel": "The catalogue is unavailable right now. Try again in a moment.",
       "muitosPedidos": "Too many searches from here. Wait a moment and try again.",
       "doCache": "Results limited to the series that have already been through here."
     },
@@ -322,7 +322,8 @@
       },
       "dependencia": {
         "database": "database",
-        "anilist": "AniList catalog"
+        "anilist": "AniList catalog",
+        "kitsu": "Kitsu catalog"
       },
       "estado": {
         "ok": "responding",
@@ -420,7 +421,7 @@
         "placeholder": "Search for a series to add…",
         "buscando": "Searching…",
         "semResultado": "Nothing found for \"{termo}\".",
-        "indisponivel": "AniList did not respond. Try again in a moment.",
+        "indisponivel": "The catalogue is unavailable right now. Try again in a moment.",
         "muitosPedidos": "Too many searches from here. Wait a moment and try again.",
         "adicionar": "+ add",
         "jaNaLista": "✓ in the list",
@@ -466,7 +467,7 @@
     "meta": {
       "titulo": "Series"
     },
-    "indisponivel": "AniList didn't respond just now and this series isn't in our cache yet. Try again in a moment.",
+    "indisponivel": "This series could not be updated and is not in our cache yet. Try again in a moment.",
     "autoria": "by",
     "formatoDesconhecido": "Series",
     "curiosidades": "Trivia",

@@ -43,8 +43,8 @@
     },
     "dados": {
       "titulo": "Dados",
-      "anilist": "Catálogo e capas do AniList.",
-      "kitsu": "Kitsu como fonte reserva quando o AniList não responde."
+      "anilist": "AniList como fonte de apoio e reserva.",
+      "kitsu": "Kitsu como fonte principal do catálogo e das capas."
     },
     "direitos": "© {ano} Folunio",
     "fonte": {
@@ -207,7 +207,7 @@
       }
     },
     "erros": {
-      "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes.",
+      "indisponivel": "O catálogo está indisponível agora. Tente de novo em instantes.",
       "muitosPedidos": "Buscas demais a partir daqui. Espere um momento e tente de novo.",
       "doCache": "Resultados limitados às obras que já passaram por aqui."
     },
@@ -322,7 +322,8 @@
       },
       "dependencia": {
         "database": "banco de dados",
-        "anilist": "catálogo AniList"
+        "anilist": "catálogo AniList",
+        "kitsu": "catálogo Kitsu"
       },
       "estado": {
         "ok": "respondendo",
@@ -420,7 +421,7 @@
         "placeholder": "Buscar obra para adicionar…",
         "buscando": "Buscando…",
         "semResultado": "Nada encontrado para \"{termo}\".",
-        "indisponivel": "O AniList não respondeu agora. Tente de novo em instantes.",
+        "indisponivel": "O catálogo está indisponível agora. Tente de novo em instantes.",
         "muitosPedidos": "Buscas demais a partir daqui. Espere um momento e tente de novo.",
         "adicionar": "+ adicionar",
         "jaNaLista": "✓ na lista",
@@ -466,7 +467,7 @@
     "meta": {
       "titulo": "Obra"
     },
-    "indisponivel": "O AniList não respondeu agora e esta obra ainda não está no nosso cache. Tente de novo em instantes.",
+    "indisponivel": "Não foi possível atualizar esta obra e ela ainda não está no nosso cache. Tente de novo em instantes.",
     "autoria": "por",
     "formatoDesconhecido": "Obra",
     "curiosidades": "Curiosidades",

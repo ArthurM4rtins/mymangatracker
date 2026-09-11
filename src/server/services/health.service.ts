@@ -23,6 +23,7 @@ export type DependenciasDoHealth = {
    * fica para quem está autenticado.
    */
   anilist?: Sonda;
+  kitsu?: Sonda;
   /** Só configuração: `ok` ou `not_configured`, nunca mede nada. */
   sessionSecret: Sonda;
   relogio?: () => Date;
@@ -46,10 +47,12 @@ export async function verificarSaude(
   const timeoutMs = deps.timeoutMs ?? TIMEOUT_PADRAO_MS;
 
   const anilist = deps.anilist;
+  const kitsu = deps.kitsu;
 
   // Em paralelo: uma sonda lenta não pode somar o tempo da outra.
   const dependencies = await Promise.all([
     medir("database", deps.database, timeoutMs),
+    ...(kitsu === undefined ? [] : [medir("kitsu", kitsu, timeoutMs)]),
     ...(anilist === undefined ? [] : [medir("anilist", anilist, timeoutMs)]),
     medir("session_secret", deps.sessionSecret, timeoutMs),
   ]);

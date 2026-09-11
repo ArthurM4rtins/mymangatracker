@@ -1,5 +1,4 @@
-// `Media` é cache do AniList, endereçado por `anilistId`. Upsert: a linha nova
-// nasce, a existente é regravada com `syncedAt` novo — nunca duplica.
+// `Media` guarda os metadados das fontes e seus identificadores externos.
 import type { AutorDaObra, MediaDoAniList } from "@/server/domain/anilist-media";
 import { referenciaDaObra } from "@/server/domain/anilist-media";
 import { referenciaDeMedia, type ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
@@ -203,7 +202,26 @@ export function salvarMediaDoAniList(
       ? { anilistId: referencia.id }
       : { kitsuId: referencia.id },
     create: { ...identidade, ...dados },
-    update: { ...identidade, ...dados },
+    // Uma fonte pode não conhecer campos ou ids que a outra já forneceu.
+    // `undefined` preserva o valor salvo; arrays vazios explícitos o atualizam.
+    update: {
+      anilistId: obra.anilistId,
+      kitsuId: obra.kitsuId,
+      type: obra.type,
+      titleRomaji: obra.titleRomaji,
+      countryOfOrigin: obra.countryOfOrigin,
+      titleEnglish: obra.titleEnglish,
+      titleNative: obra.titleNative,
+      coverImageUrl: obra.coverImageUrl,
+      bannerImageUrl: obra.bannerImageUrl,
+      description: obra.description,
+      chapters: obra.chapters,
+      startYear: obra.startYear,
+      genres: obra.genres,
+      averageScore: obra.averageScore,
+      authors: obra.autores,
+      syncedAt: sincronizadoEm,
+    },
     select: { id: true, syncedAt: true },
   });
 }

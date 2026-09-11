@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { getPrisma } from "@/server/repositories/prisma";
 import {
   buscarMediaPorReferencia,
+  buscarMediaCompletaPorReferencia,
   salvarMediaDoAniList,
 } from "@/server/repositories/media.repository";
 import { adicionarOuAtualizarEntrada } from "@/server/repositories/shelf.repository";
@@ -22,6 +23,25 @@ beforeEach(limparBanco);
 
 describe("salvarMediaDoAniList", function ()
 {
+  it("alternar fornecedores preserva campos ausentes e os dois identificadores", async function ()
+  {
+    const autores = [{ anilistStaffId: 1, nome: "Makoto Yukimura", papel: "Story & Art" }];
+    const original = await salvarMediaDoAniList({
+      ...OBRA, kitsuId: 43, genres: ["Adventure"], autores, bannerImageUrl: "https://banner",
+    }, new Date());
+    const atualizado = await salvarMediaDoAniList({
+      kitsuId: 43, type: "MANGA", titleRomaji: "Vinland Saga", chapters: 225,
+    }, new Date());
+    expect(atualizado.id).toBe(original.id);
+    await expect(buscarMediaCompletaPorReferencia({ fonte: "kitsu", id: 43 })).resolves.toMatchObject({
+      anilistId: OBRA.anilistId, kitsuId: 43, chapters: 225,
+      genres: ["Adventure"], autores, bannerImageUrl: "https://banner",
+    });
+    await salvarMediaDoAniList({ ...OBRA, chapters: 226 }, new Date());
+    await expect(buscarMediaCompletaPorReferencia({ fonte: "anilist", id: OBRA.anilistId }))
+      .resolves.toMatchObject({ kitsuId: 43, chapters: 226, autores });
+  });
+
   it("gravar duas vezes o mesmo anilistId mantém UMA linha, com syncedAt novo", async function ()
   {
     const primeira = new Date("2026-08-30T10:00:00Z");

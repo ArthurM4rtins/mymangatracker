@@ -43,8 +43,8 @@
     },
     "dados": {
       "titulo": "Données",
-      "anilist": "Catalogue et couvertures d'AniList.",
-      "kitsu": "Kitsu comme source de secours quand AniList ne répond pas."
+      "anilist": "AniList comme source complémentaire et de secours.",
+      "kitsu": "Kitsu comme source principale du catalogue et des couvertures."
     },
     "direitos": "© {ano} Folunio",
     "fonte": {
@@ -207,7 +207,7 @@
       }
     },
     "erros": {
-      "indisponivel": "AniList n’a pas répondu. Réessaie dans un instant.",
+      "indisponivel": "Le catalogue est indisponible pour le moment. Réessaie dans un instant.",
       "muitosPedidos": "Trop de recherches depuis ici. Patiente un instant et réessaie.",
       "doCache": "Résultats limités aux œuvres déjà passées par ici."
     },
@@ -322,7 +322,8 @@
       },
       "dependencia": {
         "database": "base de données",
-        "anilist": "catalogue AniList"
+        "anilist": "catalogue AniList",
+        "kitsu": "catalogue Kitsu"
       },
       "estado": {
         "ok": "en ligne",
@@ -420,7 +421,7 @@
         "placeholder": "Chercher une œuvre à ajouter…",
         "buscando": "Recherche…",
         "semResultado": "Rien trouvé pour « {termo} ».",
-        "indisponivel": "AniList n'a pas répondu. Réessaie dans un instant.",
+        "indisponivel": "Le catalogue est indisponible pour le moment. Réessaie dans un instant.",
         "muitosPedidos": "Trop de recherches depuis ici. Attends un moment et réessaie.",
         "adicionar": "+ ajouter",
         "jaNaLista": "✓ dans la liste",
@@ -466,7 +467,7 @@
     "meta": {
       "titulo": "Œuvre"
     },
-    "indisponivel": "AniList n’a pas répondu cette fois et cette œuvre n’est pas encore dans notre cache. Réessaie dans quelques instants.",
+    "indisponivel": "Cette œuvre ne peut pas être actualisée et ne figure pas encore dans notre cache. Réessaie dans un instant.",
     "autoria": "par",
     "formatoDesconhecido": "Œuvre",
     "curiosidades": "Anecdotes",

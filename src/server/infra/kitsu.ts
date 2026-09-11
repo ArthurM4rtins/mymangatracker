@@ -1,9 +1,8 @@
 /**
- * O Kitsu, tapa-buraco enquanto o AniList está fora (issue #219).
+ * O Kitsu é a fonte principal do catálogo e dos metadados das obras.
  *
  * Entra **sob demanda**: responde à busca que a pessoa fez, e só isso. Não
- * espelha catálogo — o acervo que queremos é o do AniList (#215), e a
- * documentação do Kitsu fala em uso justo, recomendando guardar o que se exibe.
+ * espelha catálogo. O AniList entra como fallback no serviço que consulta fontes.
  *
  * O `include=mappings` traz o `anilistId` no MESMO pedido, sem ida extra. É o
  * que permite a obra gravada aqui ser exatamente a linha que o AniList vai
@@ -27,6 +26,13 @@ const IDENTIFICACAO = "Folunio/1.0 (+https://mymangatracker.vercel.app)";
 
 /** Vinte é o teto do Kitsu: 40 responde 400 "Limit exceeds maximum page size". */
 const POR_PAGINA = 20;
+
+/** Sonda pequena, lembrada pelo health para não consultar a cada render. */
+export async function pingKitsu(): Promise<"ok">
+{
+  await pedir("?page%5Blimit%5D=1&fields%5Bmanga%5D=canonicalTitle");
+  return "ok";
+}
 
 type Resposta = {
   data?: Array<{
@@ -108,8 +114,7 @@ function montar(corpo: Resposta): MediaDoAniList[]
 
     const obra = traduzirDoKitsu(entrada);
 
-    // Obra sem `anilistId` é descartada no domínio: linha órfã que o espelho do
-    // AniList nunca reconheceria.
+    // Registros inválidos são descartados. O id do Kitsu basta para a identidade.
     if (obra !== null)
     {
       obras.push(obra);
@@ -123,9 +128,8 @@ function montar(corpo: Resposta): MediaDoAniList[]
  * A fatia da FONTE que cada página nossa cobre — 60 obras do Kitsu, três
  * pedidos de 20.
  *
- * A conta é da fonte, não do que entregamos: o domínio descarta o que não cabe
- * no nosso modelo (`oneshot`, `oel`, obra sem mapeamento para o AniList), então
- * uma fatia de 60 costuma virar ~50 na tela. Paginar pelo que sobrou abriria
+ * A conta é da fonte, não do que entregamos: o domínio descarta registros
+ * inválidos e a busca pode repetir obras. Paginar pelo que sobrou abriria
  * buraco ou repetiria obra entre uma página e a seguinte (#228).
  */
 const OBRAS_DA_FONTE_POR_PAGINA = 60;

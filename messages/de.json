@@ -43,8 +43,8 @@
     },
     "dados": {
       "titulo": "Daten",
-      "anilist": "Katalog und Cover von AniList.",
-      "kitsu": "Kitsu als Ersatzquelle, wenn AniList nicht antwortet."
+      "anilist": "AniList als ergänzende Quelle und Ersatzquelle.",
+      "kitsu": "Kitsu als Hauptquelle für Katalog und Cover."
     },
     "direitos": "© {ano} Folunio",
     "fonte": {
@@ -207,7 +207,7 @@
       }
     },
     "erros": {
-      "indisponivel": "AniList hat gerade nicht geantwortet. Versuch es gleich noch mal.",
+      "indisponivel": "Der Katalog ist gerade nicht verfügbar. Versuch es gleich noch einmal.",
       "muitosPedidos": "Zu viele Suchanfragen von hier aus. Warte einen Moment und versuche es erneut.",
       "doCache": "Ergebnisse auf die Werke beschränkt, die schon hier waren."
     },
@@ -322,7 +322,8 @@
       },
       "dependencia": {
         "database": "Datenbank",
-        "anilist": "AniList-Katalog"
+        "anilist": "AniList-Katalog",
+        "kitsu": "Kitsu-Katalog"
       },
       "estado": {
         "ok": "antwortet",
@@ -420,7 +421,7 @@
         "placeholder": "Werk zum Hinzufügen suchen…",
         "buscando": "Suche…",
         "semResultado": "Nichts gefunden für „{termo}“.",
-        "indisponivel": "AniList hat nicht geantwortet. Versuche es gleich noch einmal.",
+        "indisponivel": "Der Katalog ist gerade nicht verfügbar. Versuch es gleich noch einmal.",
         "muitosPedidos": "Zu viele Suchanfragen von hier. Warte einen Moment und versuche es erneut.",
         "adicionar": "+ hinzufügen",
         "jaNaLista": "✓ in der Liste",
@@ -466,7 +467,7 @@
     "meta": {
       "titulo": "Werk"
     },
-    "indisponivel": "AniList hat gerade nicht geantwortet und dieses Werk ist noch nicht in unserem Cache. Versuch es gleich noch mal.",
+    "indisponivel": "Dieses Werk konnte nicht aktualisiert werden und ist noch nicht in unserem Cache. Versuch es gleich noch einmal.",
     "autoria": "von",
     "formatoDesconhecido": "Werk",
     "curiosidades": "Wissenswertes",

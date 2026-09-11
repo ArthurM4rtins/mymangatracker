@@ -1,36 +1,31 @@
 /**
- * Buscar uma obra na fonte dela, seja qual for (#254).
- *
- * Existe porque a mesma escada estava escrita três vezes — estante, lista e
- * página da obra —, cada uma sabendo que "o AniList é o primário e o Kitsu é o
- * degrau de baixo". Com a obra podendo nascer no Kitsu, a escada ficou com dois
- * caminhos e duplicá-la de novo era pedir para um deles ficar para trás.
- *
- * A escada, por referência:
- *
- * - `anilist` → AniList; se ele cair, Kitsu pelo mapeamento (#219).
- * - `kitsu` → Kitsu direto pelo id dele. Não há degrau de baixo: o AniList não
- *   conhece essa obra, e é justamente por isso que ela é chamada pelo Kitsu.
- *
- * Levanta quando a fonte falha, para quem chama distinguir "obra não existe" de
- * "não deu para perguntar" — a diferença entre descartar e pedir para tentar
- * depois.
+ * Consulta compartilhada por obra, estante e listas: Kitsu primeiro.
+ * Referências antigas do AniList são resolvidas pelo mapeamento do Kitsu;
+ * falha ou ausência desse mapeamento permite recorrer ao AniList.
+ * Links Kitsu só têm fallback quando já conhecemos o id correspondente.
  */
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import type { FonteDaObra, ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
 import { buscarMediaPorId } from "@/server/infra/anilist";
 import { buscarNoKitsuPorAnilistId, buscarNoKitsuPorId } from "@/server/infra/kitsu";
+import { buscarMediaCompletaPorReferencia } from "@/server/repositories/media.repository";
 
 export type DependenciasDaFonte = {
   noAniList: (anilistId: number) => Promise<MediaDoAniList | null>;
   noKitsuPorAniList: (anilistId: number) => Promise<MediaDoAniList | null>;
   noKitsuPorId: (kitsuId: number) => Promise<MediaDoAniList | null>;
+  anilistIdDoKitsu?: (kitsuId: number) => Promise<number | null>;
 };
 
 export const FONTES_DE_PRODUCAO: DependenciasDaFonte = {
   noAniList: buscarMediaPorId,
   noKitsuPorAniList: buscarNoKitsuPorAnilistId,
   noKitsuPorId: buscarNoKitsuPorId,
+  anilistIdDoKitsu: async function (kitsuId)
+  {
+    const cache = await buscarMediaCompletaPorReferencia({ fonte: "kitsu", id: kitsuId });
+    return cache?.anilistId ?? null;
+  },
 };
 
 export type ResultadoDaFonte =
@@ -57,8 +52,40 @@ export async function buscarObraNaFonte(
     }
     catch
     {
-      return { estado: "indisponivel" };
+      try
+      {
+        const anilistId = await deps.anilistIdDoKitsu?.(referencia.id);
+        if (anilistId === undefined || anilistId === null)
+        {
+          return { estado: "indisponivel" };
+        }
+        const obra = await deps.noAniList(anilistId);
+        return {
+          estado: "ok",
+          obra: obra === null ? null : { ...obra, kitsuId: referencia.id },
+          respondeu: "anilist",
+        };
+      }
+      catch
+      {
+        return { estado: "indisponivel" };
+      }
     }
+  }
+
+  let kitsuRespondeu = false;
+  try
+  {
+    const obra = await deps.noKitsuPorAniList(referencia.id);
+    kitsuRespondeu = true;
+    if (obra !== null)
+    {
+      return { estado: "ok", obra, respondeu: "kitsu" };
+    }
+  }
+  catch
+  {
+    // O Kitsu falhou. O id da referência ainda permite consultar o AniList.
   }
 
   try
@@ -67,14 +94,9 @@ export async function buscarObraNaFonte(
   }
   catch
   {
-    // O AniList caiu. Desce um degrau (#219), pelo mapeamento.
-    try
-    {
-      return { estado: "ok", obra: await deps.noKitsuPorAniList(referencia.id), respondeu: "kitsu" };
-    }
-    catch
-    {
-      return { estado: "indisponivel" };
-    }
+    // Ausência de mapeamento não prova que a obra do AniList deixou de existir.
+    return kitsuRespondeu
+      ? { estado: "ok", obra: null, respondeu: "kitsu" }
+      : { estado: "indisponivel" };
   }
 }

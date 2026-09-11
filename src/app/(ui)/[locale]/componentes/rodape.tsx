@@ -69,8 +69,8 @@ export async function Rodape({
 
           {/* O crédito das fontes, que é o motivo de peso deste rodapé existir. */}
           <Coluna titulo={t("dados.titulo")}>
-            <li className="max-w-[16rem] leading-relaxed">{t("dados.anilist")}</li>
             <li className="max-w-[16rem] leading-relaxed">{t("dados.kitsu")}</li>
+            <li className="max-w-[16rem] leading-relaxed">{t("dados.anilist")}</li>
             {/* De qual fonte esta vindo AGORA. So para quem esta logado: a #148
                 decidiu nao publicar estado de dependencia para anonimo. */}
             {logado && <FonteDosDados />}

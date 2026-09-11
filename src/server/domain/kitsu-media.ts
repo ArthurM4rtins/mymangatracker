@@ -1,15 +1,9 @@
 /**
  * Traduz a resposta do Kitsu para o nosso `MediaDoAniList` (issue #219).
  *
- * O Kitsu é **tapa-buraco**, não segunda fonte: entra só quando o AniList está
- * fora, e some do caminho quando ele volta. O acervo que queremos espelhar é o
- * do AniList (#215).
- *
- * A regra que sustenta tudo isso é a identidade: o Kitsu entrega o `anilistId`
- * de cada obra no mapeamento, e **obra sem esse id não entra**. Sem ele, a linha
- * seria órfã — o espelho do AniList nunca a reconheceria, e ela ficaria para
- * sempre com o dado pior. Medido em 09/09/2026: 79 de 80 obras trazem o id, em
- * quatro faixas do acervo.
+ * O Kitsu é a fonte principal. Quando fornece mapeamento para o AniList,
+ * guardamos os dois ids para preservar links existentes e permitir fallback.
+ * Obras sem mapeamento continuam identificadas pelo próprio id do Kitsu.
  *
  * Módulo de domínio: puro, sem import do projeto, sem rede. Mesma regra do
  * `anilist-media.ts`: formato que não cabe no nosso modelo faz a obra ser
@@ -84,7 +78,7 @@ export function traduzirDoKitsu(obra: ObraDoKitsu): MediaDoAniList | null
   const atributos = obra.dados.attributes;
   const formato = TIPO_POR_SUBTIPO[String(atributos.subtype)];
 
-  // `oneshot`, `doujin` e `oel` não existem no nosso modelo. Descarta.
+  // Subtipo desconhecido não pode ser representado no modelo.
   if (formato === undefined)
   {
     return null;

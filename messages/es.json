@@ -43,8 +43,8 @@
     },
     "dados": {
       "titulo": "Datos",
-      "anilist": "Catálogo y portadas de AniList.",
-      "kitsu": "Kitsu como fuente de reserva cuando AniList no responde."
+      "anilist": "AniList como fuente de apoyo y de reserva.",
+      "kitsu": "Kitsu como fuente principal del catálogo y las portadas."
     },
     "direitos": "© {ano} Folunio",
     "fonte": {
@@ -207,7 +207,7 @@
       }
     },
     "erros": {
-      "indisponivel": "AniList no respondió. Inténtalo de nuevo en unos instantes.",
+      "indisponivel": "El catálogo no está disponible ahora. Inténtalo de nuevo en unos instantes.",
       "muitosPedidos": "Demasiadas búsquedas desde aquí. Espera un momento e inténtalo de nuevo.",
       "doCache": "Resultados limitados a las obras que ya pasaron por aquí."
     },
@@ -322,7 +322,8 @@
       },
       "dependencia": {
         "database": "base de datos",
-        "anilist": "catálogo AniList"
+        "anilist": "catálogo AniList",
+        "kitsu": "catálogo Kitsu"
       },
       "estado": {
         "ok": "respondiendo",
@@ -420,7 +421,7 @@
         "placeholder": "Buscar obra para añadir…",
         "buscando": "Buscando…",
         "semResultado": "No se encontró nada para \"{termo}\".",
-        "indisponivel": "AniList no respondió ahora. Inténtalo de nuevo en unos instantes.",
+        "indisponivel": "El catálogo no está disponible ahora. Inténtalo de nuevo en unos instantes.",
         "muitosPedidos": "Demasiadas búsquedas desde aquí. Espera un momento y vuelve a intentarlo.",
         "adicionar": "+ añadir",
         "jaNaLista": "✓ en la lista",
@@ -466,7 +467,7 @@
     "meta": {
       "titulo": "Obra"
     },
-    "indisponivel": "AniList no respondió esta vez y esta obra todavía no está en nuestra caché. Inténtalo de nuevo en unos instantes.",
+    "indisponivel": "No se pudo actualizar esta obra y todavía no está en nuestra caché. Inténtalo de nuevo en unos instantes.",
     "autoria": "por",
     "formatoDesconhecido": "Obra",
     "curiosidades": "Curiosidades",
