@@ -25,6 +25,7 @@ import { EditarProgresso } from "../../estante/editar-progresso";
 import { SeletorStatus } from "../../estante/seletor-status";
 import { idiomaDoSegmento } from "@/i18n/routing";
 import { caminhoDaObra, interpretarReferencia } from "@/server/domain/referencia-da-obra";
+import { caminhoDoAutor } from "@/server/domain/referencia-de-autor";
 
 // Sessão + AniList: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -174,11 +175,12 @@ export default async function PaginaDaObra({ params }: Props)
                 {t("autoria")}{" "}
                 {obra.autores.map(function (autor, indice)
                 {
+                  const caminho = caminhoDoAutor(autor);
                   return (
                     <span key={autor.anilistStaffId ? `anilist:${autor.anilistStaffId}` : `kitsu:${autor.kitsuPersonId}`}>
                       {indice > 0 && ", "}
-                      {autor.anilistStaffId ? <Link
-                        href={`/autor/${autor.anilistStaffId}`}
+                      {caminho ? <Link
+                        href={caminho}
                         className="text-texto underline decoration-dotted underline-offset-4 hover:text-acento"
                       >
                         {autor.nome}

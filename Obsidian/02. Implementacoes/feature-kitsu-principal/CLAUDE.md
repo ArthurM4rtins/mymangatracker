@@ -44,3 +44,23 @@ Ambiente local: `migrate dev` apontou divergências anteriores nas migrations
 `20260901171659_review_social` e `20260901173013_lists`. Sem reset ou alteração
 dessas migrations; a coluna nova foi aplicada pelo script de migrations do projeto
 com o `.env` local (localhost/mymangatracker), após validação no banco de teste.
+
+## Perfis de autores e revisão das telas
+
+- Autorizado pelo usuário completar autores do Kitsu e demais lacunas nas telas.
+- `/autor/kitsu/:id` usa `people/:id?include=staff.media`: nome, imagem,
+  biografia e mangás/novels vinculados por autoria. Exclui animes e assistentes;
+  inclui criadores originais. Consulta sob demanda, sem nova tabela ou migration.
+- URLs antigas `/autor/:id` continuam AniList. Não existe mapeamento verificado
+  entre pessoas: falha de uma fonte não consulta o mesmo número na outra.
+- Cache separado por fonte, cinco minutos e até 200 IDs. A ficha da obra prefere
+  o link de autor Kitsu quando esse identificador existe.
+- Busca para adicionar obras às listas agora deduplica e monta links pela
+  identidade com fonte, preservando obras que não possuem ID AniList.
+- Health da home reconhece Kitsu. Similares continuam AniList; relações Kitsu
+  permanecem na seção própria. Mensagens adaptadas nos cinco idiomas.
+- Validação: 779 testes aprovados, TypeScript e build aprovados; lint sem erros
+  (dois avisos anteriores de imports não usados em `lista.service.ts`). Perfil
+  real de Miura HTTP 200 nas cinco línguas, nove obras, links válidos e layout
+  sem overflow no celular. URLs inválidas retornam 404. A imagem de Miura é
+  branca no próprio arquivo fornecido pelo Kitsu, confirmado fora da página.

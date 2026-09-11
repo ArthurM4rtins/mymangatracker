@@ -170,7 +170,7 @@
       "titulo": "Autor"
     },
     "erros": {
-      "indisponivel": "AniList hat gerade nicht geantwortet. Versuch es gleich noch einmal."
+      "indisponivel": "Dieser Autor konnte nicht geladen werden. Versuch es gleich noch einmal."
     },
     "bio": {
       "verMais": "Mehr anzeigen",
@@ -178,7 +178,7 @@
     },
     "obras": {
       "titulo": "Werke",
-      "vazia": "Auf AniList sind keine Werke vom Typ Manga oder Roman eingetragen."
+      "vazia": "Für diesen Autor wurden keine Manga- oder Romanwerke gefunden."
     }
   },
   "catalogo": {

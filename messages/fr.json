@@ -170,7 +170,7 @@
       "titulo": "Auteur"
     },
     "erros": {
-      "indisponivel": "AniList ne répond pas pour le moment. Réessaie dans un instant."
+      "indisponivel": "Impossible de charger cet auteur. Réessaie dans un instant."
     },
     "bio": {
       "verMais": "Voir plus",
@@ -178,7 +178,7 @@
     },
     "obras": {
       "titulo": "Œuvres",
-      "vazia": "Aucune œuvre de manga ou de roman enregistrée sur AniList."
+      "vazia": "Aucun manga ou roman trouvé pour cet auteur."
     }
   },
   "catalogo": {

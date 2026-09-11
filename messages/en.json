@@ -170,7 +170,7 @@
       "titulo": "Author"
     },
     "erros": {
-      "indisponivel": "AniList didn't respond just now. Try again in a moment."
+      "indisponivel": "This author could not be loaded. Try again in a moment."
     },
     "bio": {
       "verMais": "Show more",
@@ -178,7 +178,7 @@
     },
     "obras": {
       "titulo": "Series",
-      "vazia": "No manga or novel series listed on AniList."
+      "vazia": "No manga or novel works found for this author."
     }
   },
   "catalogo": {

@@ -47,8 +47,11 @@ O catálogo consulta o Kitsu primeiro, recorre ao AniList em caso de falha e usa
 cache local se os dois falharem. Uma busca vazia do Kitsu encerra normalmente.
 Obras com links antigos do AniList usam o mapeamento do Kitsu; sem esse mapeamento,
 o AniList ainda pode resolvê-las. Os identificadores e metadados já salvos são
-preservados quando uma fonte retorna dados parciais. Perfis de autores e
-recomendações de similares continuam usando a integração específica do AniList.
+preservados quando uma fonte retorna dados parciais. Perfis de autores do Kitsu
+incluem foto, biografia e obras de autoria; links antigos de autores continuam
+consultando o AniList, pois os IDs de pessoas não são intercambiáveis.
+Recomendações de similares continuam específicas do AniList; as relações entre
+obras do Kitsu aparecem em uma seção própria.
 
 ## Arquitetura em camadas
 
