@@ -62,9 +62,21 @@ export async function generateMetadata({
 }
 
 // Aplica o tema salvo antes do primeiro paint, senão a página pisca na cor do sistema.
+//
+// A chave mudou de nome no rebranding (#268). Quem escolheu tema antes da troca
+// tem o valor só na chave antiga: lê de lá uma vez, regrava na nova e apaga a
+// velha. Sem isso todo mundo que já tinha tema voltaria para o padrão do sistema.
 const SCRIPT_TEMA = `(function () {
   try {
-    var tema = localStorage.getItem("kidoku-tema");
+    var tema = localStorage.getItem("folunio-tema");
+    if (tema === null) {
+      var antigo = localStorage.getItem("kidoku-tema");
+      if (antigo !== null) {
+        localStorage.setItem("folunio-tema", antigo);
+        localStorage.removeItem("kidoku-tema");
+        tema = antigo;
+      }
+    }
     if (tema === "sumi" || tema === "noturno" || tema === "matcha") {
       document.documentElement.dataset.theme = tema;
     }
