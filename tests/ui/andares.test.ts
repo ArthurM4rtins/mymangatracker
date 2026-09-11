@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   emAndaresDosGrupos,
   emAndaresPelaLargura,
+  andaresVisiveisDoCatalogo,
   LARGURA_ABERTA,
   larguraDaLombada,
   larguraDaVitrine,
@@ -24,6 +25,35 @@ function ocupado(ids: string[])
     return soma + (indice === 0 ? LARGURA_ABERTA : larguraDaLombada(id) + VAO);
   }, 0);
 }
+
+describe("andares visíveis do catálogo paginado", () => {
+  const ids = Array.from({ length: 12 }, (_, i) => `a:${i + 1}`);
+  const largura = 2 * RECUO_DO_TRILHO + ocupado(ids.slice(0, 5));
+  const agrupar = (chaves: string[]) => emAndaresDosGrupos([{ id: "catalogo", titulo: "Catálogo", itens: obras(chaves) }], largura);
+
+  it("reserva a sobra do lote sem apagar obras nem alterar a ordem", () => {
+    const andares = agrupar(ids);
+    expect(andaresVisiveisDoCatalogo(andares, largura, true).map(a => a.itens.length)).toEqual([5, 5]);
+    expect(andares.flatMap(a => a.itens.map(o => o.id))).toEqual(ids);
+  });
+
+  it("reapresenta a sobra junto às próximas obras e libera tudo no fim da busca", () => {
+    const comMais = agrupar([...ids, "a:13", "a:14", "a:15", "a:16"]);
+    const visiveis = andaresVisiveisDoCatalogo(comMais, largura, true).flatMap(a => a.itens.map(o => o.id));
+    expect(visiveis).toContain("a:11");
+    expect(visiveis).toContain("a:12");
+    expect(new Set(visiveis).size).toBe(visiveis.length);
+    expect(andaresVisiveisDoCatalogo(agrupar(ids), largura, false).flatMap(a => a.itens.map(o => o.id))).toEqual(ids);
+  });
+
+  it("mantém o último andar quando está cheio, e nunca esvazia uma busca pequena", () => {
+    const cheios = agrupar(ids.slice(0, 10));
+    expect(andaresVisiveisDoCatalogo(cheios, largura, true)).toEqual(cheios);
+    const poucos = agrupar(ids.slice(0, 2));
+    expect(andaresVisiveisDoCatalogo(poucos, largura, true)).toEqual(poucos);
+    expect(andaresVisiveisDoCatalogo(agrupar(ids), 0, true)).toEqual(agrupar(ids));
+  });
+});
 
 describe("emAndaresPelaLargura", function ()
 {

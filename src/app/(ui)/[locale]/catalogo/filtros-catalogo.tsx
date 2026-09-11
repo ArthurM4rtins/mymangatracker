@@ -31,6 +31,8 @@ export function FiltrosCatalogo()
   const f = useTranslations("ficha");
   const [avancadosAbertos, setAvancadosAbertos] = useState(false);
   const painelId = useId();
+  const curtasId = useId();
+  const leiturasCurtas = params.get("curtas") === "1";
   const temAvancadosAtivos = Boolean(params.get("publicacao") || params.get("tema") || params.get("decada") || params.get("curtas"));
 
   function mudar(chave: string, valor: string)
@@ -106,20 +108,28 @@ export function FiltrosCatalogo()
         )}
       </div>
       <div id={painelId} hidden={!avancadosAbertos} className="rounded-lg border border-borda bg-superficie p-4">
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-          <Seletor rotulo={f("publicacao")} valor={params.get("curtas") === "1" ? "finished" : params.get("publicacao") ?? ""}
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Seletor empilhado rotulo={f("publicacao")} valor={leiturasCurtas ? "finished" : params.get("publicacao") ?? ""}
             opcoes={(["current", "finished"] as const).map(status => ({ valor: status, rotulo: f(`status.${status}`) }))}
             aoMudar={valor => mudar("publicacao", valor)} />
-          <Seletor rotulo={f("temas")} valor={params.get("tema") ?? ""}
+          <Seletor empilhado rotulo={f("temas")} valor={params.get("tema") ?? ""}
             opcoes={TEMAS.map(tema => ({ valor: tema, rotulo: f(`temasNomes.${tema}`) }))}
             aoMudar={valor => mudar("tema", valor)} />
-          <Seletor rotulo={t("filtros.decada")} valor={params.get("decada") ?? ""}
+          <Seletor empilhado rotulo={t("filtros.decada")} valor={params.get("decada") ?? ""}
             opcoes={DECADAS.map(d => ({ valor: String(d), rotulo: f("decada", { n: String(d) }) }))}
             aoMudar={valor => mudar("decada", valor)} />
-          <label className="flex cursor-pointer items-center gap-2 text-xs text-texto-suave">
-            <input type="checkbox" checked={params.get("curtas") === "1"} onChange={evento => mudar("curtas", evento.target.checked ? "1" : "")} />
-            <span>{f("curtas")} <span className="block text-xs">{f("curtasDescricao")}</span></span>
-          </label>
+          <button type="button" role="switch" aria-checked={leiturasCurtas}
+            aria-labelledby={curtasId} aria-describedby={`${curtasId}-descricao`}
+            onClick={() => mudar("curtas", leiturasCurtas ? "" : "1")}
+            className={`flex w-full items-center justify-between gap-4 rounded-lg border p-3 text-left transition-colors hover:border-acento focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acento sm:col-span-3 ${leiturasCurtas ? "border-acento/50 bg-acento/5" : "border-borda bg-fundo/50"}`}>
+            <span className="flex flex-col gap-1">
+              <span id={curtasId} className="text-sm font-medium text-texto">{f("curtas")}</span>
+              <span id={`${curtasId}-descricao`} className="text-xs text-texto-suave">{f("curtasDescricao")}</span>
+            </span>
+            <span aria-hidden="true" className={`flex h-6 w-10 shrink-0 items-center rounded-full p-0.5 transition-colors ${leiturasCurtas ? "bg-acento" : "bg-borda"}`}>
+              <span className={`h-5 w-5 rounded-full bg-white shadow-sm transition-transform motion-reduce:transition-none ${leiturasCurtas ? "translate-x-4" : ""}`} />
+            </span>
+          </button>
         </div>
       </div>
     </div>
@@ -131,19 +141,21 @@ function Seletor({
   valor,
   opcoes,
   semVazio = false,
+  empilhado = false,
   aoMudar,
 }: {
   rotulo: string;
   valor: string;
   opcoes: ReadonlyArray<{ valor: string; rotulo: string }>;
   semVazio?: boolean;
+  empilhado?: boolean;
   aoMudar: (valor: string) => void;
 })
 {
   const t = useTranslations("catalogo");
 
   return (
-    <label className="flex items-center gap-1.5 text-xs text-texto-suave">
+    <label className={`flex gap-1.5 text-xs text-texto-suave ${empilhado ? "min-w-0 flex-col" : "items-center"}`}>
       {rotulo}
       <select
         value={valor}

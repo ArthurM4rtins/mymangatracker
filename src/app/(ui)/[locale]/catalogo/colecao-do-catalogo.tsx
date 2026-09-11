@@ -4,6 +4,8 @@
  * A coleção do catálogo com "ver mais": a primeira página vem renderizada pelo
  * servidor, as seguintes chegam pela API quando a pessoa pede, e a prateleira
  * enche cada andar com o que cabe na largura.
+ * A sobra do último andar continua em `obras`: a visualização a reserva para
+ * completar a próxima página e a exibe inteira quando não há mais resultados.
  *
  * Botão, não rolagem automática, de propósito: cada página é uma ida ao AniList
  * (ou ao Kitsu) pela cota compartilhada, e rolagem infinita dispara isso sem a
@@ -125,7 +127,7 @@ export function ColecaoDoCatalogo({ inicial, temMaisInicial, consulta, tituloDoG
 
   return (
     <section className="flex flex-col gap-4">
-      <ColecaoVisual itens={itens} titulo={tituloDoGrupo} andarSimples />
+      <ColecaoVisual itens={itens} titulo={tituloDoGrupo} andarSimples temMaisItens={temMais} />
 
       {/* O "ver mais" mora no fim do último andar: é onde a pessoa está quando
           acabou de ver o que tinha. */}

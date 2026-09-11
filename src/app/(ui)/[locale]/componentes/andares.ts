@@ -17,6 +17,7 @@ export const VAO = 4;
  * levar uma obra a menos.
  */
 export const VITRINE_MINIMA = 120;
+const LOMBADA_MINIMA = 46;
 
 /**
  * Um número estável a partir da chave da obra (#254). A chave virou texto
@@ -39,7 +40,7 @@ export function numeroDaChave(chave: string): number
 /** Lombada de 46, 51 ou 56 px, decidida pela chave — livros diferentes, lombadas diferentes. */
 export function larguraDaLombada(id: string): number
 {
-  return 46 + (numeroDaChave(id) % 3) * 5;
+  return LOMBADA_MINIMA + (numeroDaChave(id) % 3) * 5;
 }
 
 /**
@@ -123,6 +124,26 @@ export type AndarDaEstante<T> = {
   /** Primeiro andar do grupo: é ele que mostra o nome na tela. */
   abreOGrupo: boolean;
 };
+
+/**
+ * A página da API não acompanha a largura da tela. Enquanto há outra página,
+ * a sobra fica no array original para completar o próximo carregamento.
+ * Ao chegar ao fim, ou numa busca de um único andar, todos os itens aparecem.
+ */
+export function andaresVisiveisDoCatalogo<T extends { itens: readonly { id: string }[] }>(
+  andares: readonly T[],
+  larguraDoTrilho: number,
+  temMais: boolean,
+): readonly T[]
+{
+  if (!temMais || larguraDoTrilho <= 0 || andares.length <= 1) return andares;
+  const ultimo = andares[andares.length - 1];
+  const ocupado = LARGURA_ABERTA + ultimo.itens.slice(1).reduce(
+    (soma, obra) => soma + larguraDaLombada(obra.id) + VAO, 0,
+  );
+  const cabeOutro = ocupado + LOMBADA_MINIMA + VAO <= larguraDoTrilho - 2 * RECUO_DO_TRILHO;
+  return cabeOutro ? andares.slice(0, -1) : andares;
+}
 
 /**
  * Quebra grupos de nome próprio (a estante por status, o laboratório) em
