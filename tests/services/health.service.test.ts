@@ -87,7 +87,7 @@ describe("verificarSaude", () =>
     const relatorio = await verificarSaude({
       database: naoConfigurado,
       anilist: ok,
-      
+
       sessionSecret: ok,
       relogio,
     });
@@ -101,7 +101,7 @@ describe("verificarSaude", () =>
     const relatorio = await verificarSaude({
       database: naoConfigurado,
       anilist: ok,
-      
+
       sessionSecret: ok,
       relogio,
     });
@@ -114,7 +114,7 @@ describe("verificarSaude", () =>
     const relatorio = await verificarSaude({
       database: async function () { throw new Error("connection refused"); },
       anilist: ok,
-      
+
       sessionSecret: ok,
       relogio,
     });
@@ -131,7 +131,7 @@ describe("verificarSaude", () =>
     const relatorio = await verificarSaude({
       database: async function () { throw new Error(`falha ao conectar em ${segredo}`); },
       anilist: ok,
-      
+
       sessionSecret: ok,
       relogio,
     });
@@ -149,7 +149,7 @@ describe("verificarSaude", () =>
     const relatorio = await verificarSaude({
       database: demora(400),
       anilist: ok,
-      
+
       sessionSecret: ok,
       relogio,
       timeoutMs: 20,
