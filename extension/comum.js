@@ -1,17 +1,17 @@
 // O que popup e service worker compartilham. Sem bundler: o popup carrega por
-// <script>, o service worker por importScripts. Tudo fica no objeto KIDOKU.
+// <script>, o service worker por importScripts. Tudo fica no objeto FOLUNIO.
 //
 // Regra da extensão (desenho no vault): ZERO regra de negócio aqui. Quem
 // decide se o progresso avança é o servidor. Este arquivo só extrai, pareia e
 // autentica.
-globalThis.KIDOKU = (function ()
+globalThis.FOLUNIO = (function ()
 {
   // Onde o app mora. Ordem = preferência: produção primeiro, dev depois. A
   // sessão é procurada nos dois e o primeiro que tiver cookie ganha, então em
   // desenvolvimento basta estar logado no localhost.
   const AMBIENTES = ["https://mymangatracker.vercel.app", "http://localhost:3000"];
 
-  const COOKIE_DE_SESSAO = "kidoku_sessao";
+  const COOKIE_DE_SESSAO = "folunio_sessao";
 
   // A MESMA regex de src/server/domain/titulo-de-capitulo.ts, reescrita aqui
   // porque a extensão não importa do app. Se uma mudar, a outra muda junto.
