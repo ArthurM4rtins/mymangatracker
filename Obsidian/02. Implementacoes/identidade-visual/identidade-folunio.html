@@ -184,6 +184,17 @@
   .pop-contexto { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: #9a9bb0; }
   .pop-contexto b { color: #ece9e2; font-weight: 400; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+
+  /* ---- os quatro estados da faixa ---- */
+  .estados { display: flex; flex-direction: column; gap: 1px; background: var(--borda); border: 1px solid var(--borda); border-radius: 4px; overflow: hidden; }
+  .estado-linha { background: var(--fundo); padding: 12px 16px; display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 6px 20px; align-items: center; }
+  .estado-faixa { background: #12141f; border: 1px solid #2b2f45; border-radius: 6px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; font: 11px/1.35 system-ui, sans-serif; color: #9a9bb0; }
+  .estado-faixa b { color: #ece9e2; font-weight: 600; }
+  .estado-porque { font-size: 0.84rem; color: var(--texto-suave); }
+  .estado-porque em { color: var(--texto); font-style: normal; font-weight: 600; }
+  .badge--vazio { background: transparent; border: 1px dashed #4a4f6b; color: #6c7089; }
+  @media (max-width: 700px) { .estado-linha { grid-template-columns: 1fr; } }
+
   footer.rodape { border-top: 1px solid var(--borda); padding-top: 18px; font-size: 0.8rem; color: var(--texto-suave); display: flex; flex-direction: column; gap: 6px; }
 </style>
 
@@ -515,6 +526,54 @@
       </figure>
 
     </div>
+
+
+    <div class="sub-cabeca">
+      <p class="rotulo">A faixa de estado · os quatro</p>
+      <h3 style="font-size:1.15rem">O popup passa a ensinar o ícone</h3>
+    </div>
+    <p>
+      Mesmo glifo e mesma cor do badge que o Chrome carimba no ícone. Quem lê a faixa uma vez
+      entende o ícone para sempre — hoje a única explicação do ● e do ✓ está na tela de tutorial,
+      que nem foi publicada.
+    </p>
+
+    <div class="estados">
+      <div class="estado-linha">
+        <div class="estado-faixa">
+          <i class="badge badge--linha" style="background:#f0a842;color:#1a1200">●</i>
+          <span>obra pareada — o ícone acende nesta página</span>
+        </div>
+        <span class="estado-porque"><em>Pareada.</em> O par existe e é desta conta. É o que o badge ● já diz na barra, agora com legenda.</span>
+      </div>
+      <div class="estado-linha">
+        <div class="estado-faixa">
+          <i class="badge badge--linha" style="background:#3c9d5d;color:#fff">✓</i>
+          <span><b>registrado</b> — cap. 3, sozinho</span>
+        </div>
+        <span class="estado-porque"><em>Registrado.</em> O automático acabou de gravar nesta aba, nesta página. Vem de <code>chrome.storage.session</code>, no <code>autoResultado</code> por aba e por URL.</span>
+      </div>
+      <div class="estado-linha">
+        <div class="estado-faixa">
+          <i class="badge badge--linha" style="background:#d6402b;color:#fff">!</i>
+          <span>o automático não conseguiu — <b>registre à mão</b></span>
+        </div>
+        <span class="estado-porque"><em>Falhou.</em> Mesma fonte do anterior. Aqui a faixa faz o que o badge não consegue: dizer <b>o que fazer agora</b>.</span>
+      </div>
+      <div class="estado-linha">
+        <div class="estado-faixa">
+          <i class="badge badge--linha badge--vazio">●</i>
+          <span>esta página ainda não está pareada — <b>registrar aqui pareia</b></span>
+        </div>
+        <span class="estado-porque"><em>Sem par — e é o estado que mais paga.</em> Hoje página não pareada não tem badge nenhum, então ninguém descobre que pareamento existe. Esta linha é a única que ensina que o registro de agora faz o próximo capítulo já vir pronto.</span>
+      </div>
+    </div>
+
+    <p class="aviso">
+      <b>O que isso custa:</b> ● e o estado sem par saem do que o popup já sabe. <b>✓ e ! são código
+      novo</b> — o popup passa a ler o <code>autoResultado</code> que o <code>background.js</code>
+      grava. É leitura pequena, mas não é só CSS.
+    </p>
 
     <div class="sub-cabeca">
       <p class="rotulo">Detalhe a detalhe</p>
