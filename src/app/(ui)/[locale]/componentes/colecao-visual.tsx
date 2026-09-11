@@ -45,7 +45,7 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
   itens: ItemDaColecao[];
   grupos?: GrupoDaColecao[];
   titulo: string;
-  /** A prateleira é o que o Kidoku tem de próprio: ela abre por padrão (#241). */
+  /** A prateleira é o que o Folunio tem de próprio: ela abre por padrão (#241). */
   inicial?: "grade" | "prateleira";
   classeGrade?: string;
    /**

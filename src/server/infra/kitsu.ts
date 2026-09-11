@@ -20,10 +20,10 @@ const TIMEOUT_MS = 8000;
 /**
  * O Kitsu recusa cliente sem identificação — descoberto apanhando: a primeira
  * bateria de testes levou 403 em TUDO por causa do agente padrão do cliente
- * HTTP. Identificamos o Kidoku de verdade; fingir ser navegador seria a saída
+ * HTTP. Identificamos o Folunio de verdade; fingir ser navegador seria a saída
  * errada.
  */
-const IDENTIFICACAO = "Kidoku/1.0 (+https://mymangatracker.vercel.app)";
+const IDENTIFICACAO = "Folunio/1.0 (+https://mymangatracker.vercel.app)";
 
 /** Vinte é o teto do Kitsu: 40 responde 400 "Limit exceeds maximum page size". */
 const POR_PAGINA = 20;

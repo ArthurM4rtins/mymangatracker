@@ -252,7 +252,7 @@ describe("obraParaPagina", function ()
     expect(resultado.reviews[0].username).toBe("leitor");
   });
 
-  it("a nota do Kidoku vem resumida das contagens por valor (issue #48)", async function ()
+  it("a nota do Folunio vem resumida das contagens por valor (issue #48)", async function ()
   {
     const { deps, contarNotas } = fakeDeps({ noCache: NO_CACHE });
 

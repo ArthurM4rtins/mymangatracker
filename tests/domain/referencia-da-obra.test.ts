@@ -13,7 +13,7 @@ import {
  * O que motivou: buscando "The Beginning After The End" em 10/09/2026, o Kitsu
  * devolve três registros e NENHUM tem mapeamento para o AniList. Como toda obra
  * era identificada por `anilistId`, os três eram descartados e a obra não
- * existia no Kidoku. Medido no mesmo dia, some 75% do resultado de "omniscient
+ * existia no Folunio. Medido no mesmo dia, some 75% do resultado de "omniscient
  * reader" e 40% do de "tower of god" — justamente o manhwa coreano.
  */
 describe("interpretarReferencia", function ()

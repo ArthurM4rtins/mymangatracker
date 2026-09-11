@@ -65,7 +65,7 @@ describe("traduzirDoKitsu", function ()
   });
 
   // Era "sem anilistId, NAO vira obra". Deixou de valer em #254: o mapeamento
-  // nao e mais a unica identidade aceita, e exigi-lo apagava do Kidoku toda
+  // nao e mais a unica identidade aceita, e exigi-lo apagava do Folunio toda
   // obra que o AniList nao conhece. O que a obra nao pode e ficar SEM nenhuma
   // identidade -- isso e testado logo acima, pelo id do Kitsu vazio.
   it("mapeamento invalido nao impede a obra de existir pelo Kitsu", function ()
