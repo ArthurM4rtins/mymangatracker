@@ -661,5 +661,76 @@
     "erros": {
       "geral": "couldn't do it just now. Try again in a moment."
     }
+  },
+  "ficha": {
+    "titulo": "Publication details",
+    "publicacao": "Publication",
+    "volumes": "Volumes",
+    "inicio": "Publication started",
+    "fim": "Publication ended",
+    "aliases": "Alternative titles",
+    "temas": "Themes",
+    "relacionadas": "Related works",
+    "curtas": "Short reads",
+    "curtasDescricao": "Finished, 1 to 30 chapters",
+    "generosTitulo": "Genres",
+    "decada": "{n}s",
+    "storyArt": "Story and art",
+    "story": "Story",
+    "art": "Art",
+    "oneshot": "One-shot",
+    "doujin": "Doujinshi",
+    "oel": "Original comic",
+    "generos": {
+      "Action": "Action",
+      "Adventure": "Adventure",
+      "Comedy": "Comedy",
+      "Drama": "Drama",
+      "Fantasy": "Fantasy",
+      "Horror": "Horror",
+      "Mahou Shoujo": "Mahou Shoujo",
+      "Mecha": "Mecha",
+      "Music": "Music",
+      "Mystery": "Mystery",
+      "Psychological": "Psychological",
+      "Romance": "Romance",
+      "Sci-Fi": "Sci-Fi",
+      "Slice of Life": "Slice of Life",
+      "Sports": "Sports",
+      "Supernatural": "Supernatural",
+      "Thriller": "Thriller"
+    },
+    "temasNomes": {
+      "military": "Military",
+      "demon": "Demons",
+      "dark-fantasy": "Dark fantasy",
+      "revenge": "Revenge",
+      "dystopia": "Dystopia",
+      "swordplay": "Swordplay"
+    },
+    "status": {
+      "current": "Publishing",
+      "finished": "Finished",
+      "upcoming": "Coming soon",
+      "unreleased": "Unreleased",
+      "tba": "To be announced",
+      "hiatus": "On hiatus",
+      "cancelled": "Cancelled"
+    },
+    "relacoes": {
+      "sequel": "Sequel",
+      "prequel": "Prequel",
+      "alternative_setting": "Alternative setting",
+      "alternative_version": "Alternative version",
+      "side_story": "Side story",
+      "parent_story": "Main story",
+      "summary": "Summary",
+      "full_story": "Full story",
+      "spinoff": "Spin-off",
+      "adaptation": "Adaptation",
+      "character": "Shared characters",
+      "other": "Other relation"
+    },
+    "capitulos": "{n, plural, one {# chapter} other {# chapters}}"
   }
 }

@@ -65,6 +65,9 @@ export default async function Catalogo({ searchParams }: Props)
   if (filtro.genero !== undefined) consulta.set("genero", filtro.genero);
   if (filtro.decada !== undefined) consulta.set("decada", String(filtro.decada));
   if (filtro.ordem !== "popular") consulta.set("ordem", filtro.ordem);
+  if (filtro.publicacao) consulta.set("publicacao", filtro.publicacao);
+  if (filtro.tema) consulta.set("tema", filtro.tema);
+  if (filtro.curtas) consulta.set("curtas", "1");
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">

@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 
 import { DECADAS, GENEROS } from "@/server/domain/catalogo-filtros";
+import { TEMAS } from "@/server/domain/detalhes-da-obra";
 import { useRouter } from "@/i18n/navigation";
 
 // `valor` vai cru para a URL; o rótulo sai de `comum.formato`, que já tem esses nomes.
@@ -26,10 +27,14 @@ export function FiltrosCatalogo()
   const params = useSearchParams();
   const t = useTranslations("catalogo");
   const c = useTranslations("comum");
+  const f = useTranslations("ficha");
 
   function mudar(chave: string, valor: string)
   {
     const novos = new URLSearchParams(params.toString());
+    novos.delete("pagina");
+    if (chave === "publicacao" && valor !== "finished") novos.delete("curtas");
+    if (chave === "curtas" && valor === "1") novos.set("publicacao", "finished");
 
     if (valor === "")
     {
@@ -58,7 +63,7 @@ export function FiltrosCatalogo()
       <Seletor
         rotulo={t("filtros.genero")}
         valor={params.get("genero") ?? ""}
-        opcoes={GENEROS.map(function (g) { return { valor: g, rotulo: g }; })}
+        opcoes={GENEROS.map(function (g) { return { valor: g, rotulo: f(`generos.${g}`) }; })}
         aoMudar={function (valor) { mudar("genero", valor); }}
       />
       <Seletor
@@ -66,7 +71,7 @@ export function FiltrosCatalogo()
         valor={params.get("decada") ?? ""}
         opcoes={DECADAS.map(function (d)
         {
-          return { valor: String(d), rotulo: `${d}s` };
+          return { valor: String(d), rotulo: f("decada", { n: String(d) }) };
         })}
         aoMudar={function (valor) { mudar("decada", valor); }}
       />
@@ -80,7 +85,17 @@ export function FiltrosCatalogo()
         semVazio
         aoMudar={function (valor) { mudar("ordem", valor === "popular" ? "" : valor); }}
       />
-      {(params.get("tipo") || params.get("genero") || params.get("decada") || params.get("ordem")) && (
+      <Seletor rotulo={f("publicacao")} valor={params.get("curtas") === "1" ? "finished" : params.get("publicacao") ?? ""}
+        opcoes={(["current", "finished"] as const).map(status => ({ valor: status, rotulo: f(`status.${status}`) }))}
+        aoMudar={valor => mudar("publicacao", valor)} />
+      <Seletor rotulo={f("temas")} valor={params.get("tema") ?? ""}
+        opcoes={TEMAS.map(tema => ({ valor: tema, rotulo: f(`temasNomes.${tema}`) }))}
+        aoMudar={valor => mudar("tema", valor)} />
+      <label className="flex items-center gap-2 rounded-md border border-borda px-2 py-1.5 text-xs text-texto-suave">
+        <input type="checkbox" checked={params.get("curtas") === "1"} onChange={evento => mudar("curtas", evento.target.checked ? "1" : "")} />
+        <span>{f("curtas")} <span className="block text-xs">{f("curtasDescricao")}</span></span>
+      </label>
+      {(params.get("tipo") || params.get("genero") || params.get("decada") || params.get("ordem") || params.get("publicacao") || params.get("tema") || params.get("curtas")) && (
         <button
           type="button"
           onClick={function ()

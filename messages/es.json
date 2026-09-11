@@ -661,5 +661,76 @@
     "erros": {
       "geral": "no se pudo ahora. Inténtalo de nuevo en un momento."
     }
+  },
+  "ficha": {
+    "titulo": "Ficha de la obra",
+    "publicacao": "Publicación",
+    "volumes": "Volúmenes",
+    "inicio": "Inicio de publicación",
+    "fim": "Fin de publicación",
+    "aliases": "Otros títulos",
+    "temas": "Temas",
+    "relacionadas": "Obras relacionadas",
+    "curtas": "Lecturas cortas",
+    "curtasDescricao": "Finalizadas, de 1 a 30 capítulos",
+    "generosTitulo": "Géneros",
+    "decada": "Década de {n}",
+    "storyArt": "Guion y dibujo",
+    "story": "Guion",
+    "art": "Dibujo",
+    "oneshot": "Historia autoconclusiva",
+    "doujin": "Dōjinshi",
+    "oel": "Cómic original",
+    "generos": {
+      "Action": "Acción",
+      "Adventure": "Aventura",
+      "Comedy": "Comedia",
+      "Drama": "Drama",
+      "Fantasy": "Fantasía",
+      "Horror": "Terror",
+      "Mahou Shoujo": "Chicas mágicas",
+      "Mecha": "Mecha",
+      "Music": "Música",
+      "Mystery": "Misterio",
+      "Psychological": "Psicológico",
+      "Romance": "Romance",
+      "Sci-Fi": "Ciencia ficción",
+      "Slice of Life": "Vida cotidiana",
+      "Sports": "Deportes",
+      "Supernatural": "Sobrenatural",
+      "Thriller": "Suspense"
+    },
+    "temasNomes": {
+      "military": "Militar",
+      "demon": "Demonios",
+      "dark-fantasy": "Fantasía oscura",
+      "revenge": "Venganza",
+      "dystopia": "Distopía",
+      "swordplay": "Esgrima"
+    },
+    "status": {
+      "current": "En publicación",
+      "finished": "Finalizada",
+      "upcoming": "Próximamente",
+      "unreleased": "Sin publicar",
+      "tba": "Por anunciar",
+      "hiatus": "En pausa",
+      "cancelled": "Cancelada"
+    },
+    "relacoes": {
+      "sequel": "Secuela",
+      "prequel": "Precuela",
+      "alternative_setting": "Ambientación alternativa",
+      "alternative_version": "Versión alternativa",
+      "side_story": "Historia paralela",
+      "parent_story": "Historia principal",
+      "summary": "Resumen",
+      "full_story": "Historia completa",
+      "spinoff": "Obra derivada",
+      "adaptation": "Adaptación",
+      "character": "Personajes compartidos",
+      "other": "Otra relación"
+    },
+    "capitulos": "{n, plural, one {# capítulo} many {# capítulos} other {# capítulos}}"
   }
 }

@@ -13,6 +13,7 @@ import { interpretarDescricao } from "@/server/domain/descricao";
 import { AdicionarALista } from "./adicionar-a-lista";
 import { AvaliacaoDaObra } from "./avaliacao-da-obra";
 import { NotaFolunio } from "./nota-folunio";
+import { FichaEditorial, GenerosDaObra, ObrasRelacionadas } from "./ficha-editorial";
 import { ReviewSocial } from "./review-social";
 import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "../../catalogo/botao-estante";
@@ -23,7 +24,7 @@ import { ContinuarLeitura } from "../../estante/continuar-leitura";
 import { EditarProgresso } from "../../estante/editar-progresso";
 import { SeletorStatus } from "../../estante/seletor-status";
 import { idiomaDoSegmento } from "@/i18n/routing";
-import { caminhoDaObra, chaveDaObra, interpretarReferencia } from "@/server/domain/referencia-da-obra";
+import { caminhoDaObra, interpretarReferencia } from "@/server/domain/referencia-da-obra";
 
 // Sessão + AniList: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -82,6 +83,7 @@ export default async function PaginaDaObra({ params }: Props)
   const resultado = await carregarObra(alvo, userId);
   const t = await getTranslations("obra");
   const c = await getTranslations("comum");
+  const f = await getTranslations("ficha");
 
   if (resultado.estado === "nao_encontrada")
   {
@@ -173,14 +175,15 @@ export default async function PaginaDaObra({ params }: Props)
                 {obra.autores.map(function (autor, indice)
                 {
                   return (
-                    <span key={autor.anilistStaffId}>
+                    <span key={autor.anilistStaffId ? `anilist:${autor.anilistStaffId}` : `kitsu:${autor.kitsuPersonId}`}>
                       {indice > 0 && ", "}
-                      <Link
+                      {autor.anilistStaffId ? <Link
                         href={`/autor/${autor.anilistStaffId}`}
                         className="text-texto underline decoration-dotted underline-offset-4 hover:text-acento"
                       >
                         {autor.nome}
-                      </Link>
+                      </Link> : <span className="text-texto">{autor.nome}</span>}
+                      {/story|art|author/i.test(autor.papel) && <span className="text-xs">{" "}·{" "}{/story/i.test(autor.papel) && /art/i.test(autor.papel) ? f("storyArt") : /story|author/i.test(autor.papel) ? f("story") : f("art")}</span>}
                     </span>
                   );
                 })}
@@ -189,25 +192,16 @@ export default async function PaginaDaObra({ params }: Props)
 
             <p className="flex flex-wrap items-center gap-1.5 text-xs text-texto-suave">
               <span className="rounded-full border border-borda px-2 py-0.5">
-                {chaveDoFormato === undefined
+                {obra.details?.subtype === "oneshot" ? f("oneshot") : obra.details?.subtype === "doujin" ? f("doujin") : obra.details?.subtype === "oel" ? f("oel") : obra.details?.subtype === "manga" ? c("formato.JP") : chaveDoFormato === undefined
                   ? t("formatoDesconhecido")
                   : c(chaveDoFormato)}
               </span>
-              {obra.genres.map(function (genero)
-              {
-                return (
-                  <span key={genero} className="rounded-full border border-borda px-2 py-0.5">
-                    {genero}
-                  </span>
-                );
-              })}
-              {/* Sem plural de propósito: a tela sempre disse "capítulos", inclusive
-                  no one-shot. `{n}` cru também não agrupa milhar, como era antes. */}
+              <GenerosDaObra generos={obra.genres} />
               {/* Zero capítulos não existe: é linha cacheada de quando
                   `chapterCount` nulo do Kitsu virava 0 (#254). */}
               {obra.chapters !== null && obra.chapters > 0 && (
                 <span className="tabular-nums">
-                  {t("contagem.capitulos", { n: obra.chapters })}
+                  {f("capitulos", { n: obra.chapters })}
                 </span>
               )}
             </p>
@@ -277,7 +271,9 @@ export default async function PaginaDaObra({ params }: Props)
           </section>
         )}
 
+        <FichaEditorial detalhes={obra.details} />
         <PainelDoUsuario chave={obra.chave} minha={minha} logado={userId !== null} />
+        <ObrasRelacionadas detalhes={obra.details} />
 
         <section className="flex flex-col gap-4">
           <h2 className="text-sm font-medium uppercase tracking-wide text-texto-suave">

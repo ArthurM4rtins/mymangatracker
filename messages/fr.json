@@ -661,5 +661,76 @@
     "erros": {
       "geral": "impossible pour le moment. Réessaie dans un instant."
     }
+  },
+  "ficha": {
+    "titulo": "Fiche de l’œuvre",
+    "publicacao": "Publication",
+    "volumes": "Volumes",
+    "inicio": "Début de publication",
+    "fim": "Fin de publication",
+    "aliases": "Autres titres",
+    "temas": "Thèmes",
+    "relacionadas": "Œuvres liées",
+    "curtas": "Lectures courtes",
+    "curtasDescricao": "Terminées, de 1 à 30 chapitres",
+    "generosTitulo": "Genres",
+    "decada": "Années {n}",
+    "storyArt": "Scénario et dessin",
+    "story": "Scénario",
+    "art": "Dessin",
+    "oneshot": "Récit complet",
+    "doujin": "Dōjinshi",
+    "oel": "Bande dessinée originale",
+    "generos": {
+      "Action": "Action",
+      "Adventure": "Aventure",
+      "Comedy": "Comédie",
+      "Drama": "Drame",
+      "Fantasy": "Fantasy",
+      "Horror": "Horreur",
+      "Mahou Shoujo": "Filles magiques",
+      "Mecha": "Mecha",
+      "Music": "Musique",
+      "Mystery": "Mystère",
+      "Psychological": "Psychologique",
+      "Romance": "Romance",
+      "Sci-Fi": "Science-fiction",
+      "Slice of Life": "Tranche de vie",
+      "Sports": "Sport",
+      "Supernatural": "Surnaturel",
+      "Thriller": "Thriller"
+    },
+    "temasNomes": {
+      "military": "Militaire",
+      "demon": "Démons",
+      "dark-fantasy": "Fantasy sombre",
+      "revenge": "Vengeance",
+      "dystopia": "Dystopie",
+      "swordplay": "Escrime"
+    },
+    "status": {
+      "current": "En cours de publication",
+      "finished": "Terminée",
+      "upcoming": "À paraître",
+      "unreleased": "Non publiée",
+      "tba": "À annoncer",
+      "hiatus": "En pause",
+      "cancelled": "Annulée"
+    },
+    "relacoes": {
+      "sequel": "Suite",
+      "prequel": "Préquelle",
+      "alternative_setting": "Cadre alternatif",
+      "alternative_version": "Version alternative",
+      "side_story": "Histoire parallèle",
+      "parent_story": "Histoire principale",
+      "summary": "Résumé",
+      "full_story": "Histoire complète",
+      "spinoff": "Œuvre dérivée",
+      "adaptation": "Adaptation",
+      "character": "Personnages communs",
+      "other": "Autre lien"
+    },
+    "capitulos": "{n, plural, one {# chapitre} many {# chapitres} other {# chapitres}}"
   }
 }

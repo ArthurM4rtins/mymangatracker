@@ -661,5 +661,76 @@
     "erros": {
       "geral": "não foi possível agora. Tente de novo em instantes."
     }
+  },
+  "ficha": {
+    "titulo": "Ficha da obra",
+    "publicacao": "Publicação",
+    "volumes": "Volumes",
+    "inicio": "Início da publicação",
+    "fim": "Fim da publicação",
+    "aliases": "Outros nomes",
+    "temas": "Temas",
+    "relacionadas": "Obras relacionadas",
+    "curtas": "Leituras curtas",
+    "curtasDescricao": "Concluídas, de 1 a 30 capítulos",
+    "generosTitulo": "Gêneros",
+    "decada": "Década de {n}",
+    "storyArt": "Roteiro e arte",
+    "story": "Roteiro",
+    "art": "Arte",
+    "oneshot": "One-shot",
+    "doujin": "Doujinshi",
+    "oel": "Quadrinho original",
+    "generos": {
+      "Action": "Ação",
+      "Adventure": "Aventura",
+      "Comedy": "Comédia",
+      "Drama": "Drama",
+      "Fantasy": "Fantasia",
+      "Horror": "Terror",
+      "Mahou Shoujo": "Garotas mágicas",
+      "Mecha": "Mecha",
+      "Music": "Música",
+      "Mystery": "Mistério",
+      "Psychological": "Psicológico",
+      "Romance": "Romance",
+      "Sci-Fi": "Ficção científica",
+      "Slice of Life": "Cotidiano",
+      "Sports": "Esportes",
+      "Supernatural": "Sobrenatural",
+      "Thriller": "Suspense"
+    },
+    "temasNomes": {
+      "military": "Militar",
+      "demon": "Demônios",
+      "dark-fantasy": "Fantasia sombria",
+      "revenge": "Vingança",
+      "dystopia": "Distopia",
+      "swordplay": "Esgrima"
+    },
+    "status": {
+      "current": "Em publicação",
+      "finished": "Concluída",
+      "upcoming": "Em breve",
+      "unreleased": "Não lançada",
+      "tba": "A anunciar",
+      "hiatus": "Em hiato",
+      "cancelled": "Cancelada"
+    },
+    "relacoes": {
+      "sequel": "Continuação",
+      "prequel": "Prequela",
+      "alternative_setting": "Ambientação alternativa",
+      "alternative_version": "Versão alternativa",
+      "side_story": "História paralela",
+      "parent_story": "História principal",
+      "summary": "Resumo",
+      "full_story": "História completa",
+      "spinoff": "Obra derivada",
+      "adaptation": "Adaptação",
+      "character": "Personagens em comum",
+      "other": "Outra relação"
+    },
+    "capitulos": "{n, plural, one {# capítulo} many {# capítulos} other {# capítulos}}"
   }
 }
