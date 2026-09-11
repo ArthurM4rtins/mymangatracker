@@ -42,15 +42,32 @@ const MANIFEST = JSON.parse(fonte("manifest.json")) as {
   action: { default_title: string };
 };
 
-/** Os nomes que o código pede ao `chrome.i18n`, e os que o HTML marca. */
+/**
+ * Os nomes que o código pede ao `chrome.i18n`, e os que o HTML marca.
+ *
+ * A regex casa o SUFIXO `I18N.texto(`, não o objeto global inteiro. A versão
+ * anterior procurava `KIDOKU_I18N`, e quando o global virou `FOLUNIO_I18N` no
+ * rebranding ela parou de casar com nada — o teste seguiu verde conferindo
+ * ZERO chaves. Portão que não acha nada passa; por isso o guarda abaixo.
+ */
 function nomesUsados(): string[] {
   const codigo = fonte("popup.js") + fonte("i18n.js");
   const html = fonte("popup.html");
   const nomes = new Set<string>();
+  let doCodigo = 0;
 
-  for (const achado of codigo.matchAll(/KIDOKU_I18N\.texto\(\s*"([a-zA-Z]+)"/g)) {
+  for (const achado of codigo.matchAll(/I18N\.texto\(\s*"([a-zA-Z]+)"/g)) {
     nomes.add(achado[1]);
+    doCodigo += 1;
   }
+
+  if (doCodigo === 0) {
+    throw new Error(
+      "nenhuma chamada `I18N.texto(\"...\")` casou em popup.js/i18n.js — "
+      + "a regex envelheceu e este teste estava conferindo nada",
+    );
+  }
+
   for (const achado of html.matchAll(/data-i18n(?:-placeholder)?="([a-zA-Z]+)"/g)) {
     nomes.add(achado[1]);
   }
