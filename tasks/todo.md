@@ -1177,10 +1177,54 @@ voltar, e a pendencia de tamanho do banco continua de pe.
 - **#215** — AniList fora, sem previsao. Nada a fazer alem de esperar e monitorar.
 - **#176** (recuperacao de senha) e **#16** (curadoria narrativa), os dois no backlog.
 
-### Proxima sessao
+### Proxima sessao — 11/09: REBRANDING
 
-O usuario quer continuar em **design de telas e botoes** — pedido dele ao encerrar
-em 09/09. Nada especificado ainda; esperar ele apontar as telas.
+Decidido pelo usuario em 10/09, ao encerrar: a proxima sessao e o **rebranding do
+produto**. Logo novo e varredura total de onde estiver escrito "Kidoku".
+
+**Ler antes de mexer em qualquer coisa:**
+`Obsidian/05. Divulgacao/rebrand-folunio.md` — tem o roteiro, as armadilhas medidas
+e o custo. Nao redescobrir o que ja esta anotado la.
+
+Resumo do que esta decidido e do que nao esta:
+
+- **Candidato: Folunio** = Folha + Universo (definicao do usuario). Nome **ainda nao
+  fechado** — fechar isso e o passo 0 da sessao.
+- Motivo da troca: existe **outro Kidoku na mesma categoria** (`kidoku.net`, app de
+  registro de leitura). Isso torna **falsa** a premissa registrada em
+  `Obsidian/02. Implementacoes/identidade-visual/CLAUDE.md` de 31/08, que dizia que
+  nenhum tracker de leitura usava o nome. Corrigir la durante o rebrand.
+- O **既読** do logo morre com o nome: e o kanji de "lido". O double-check pode ficar.
+- Nome aparece em **29 arquivos** de `src/`, `extension/` e `messages/`.
+- Quatro armadilhas que find-and-replace cego nao pega: `kidoku-tema` esta em DOIS
+  lugares (`seletor-tema.tsx:18` e o script anti-flash em `layout.tsx:67` — errar um
+  quebra em silencio); `kidoku_sessao` esta no servidor E na extensao (`sessao.ts:13`,
+  `extension/comum.js:14`, mesmo commit ou a extensao perde a sessao, e trocar
+  desloga todo mundo); `eslint.config.mjs` tem "Kidoku" e "既読" na allowlist do
+  `react/jsx-no-literals`; `messages/*.json` nos 5 idiomas.
+- Renomear tambem o arquivo `nota-kidoku.tsx` e os `_locales` da extensao.
+- **Sequencia:** rebrand ANTES de publicar a extensao na Chrome Web Store (pendencia
+  no `extension/README.md`) e ANTES de abrir conta em rede social. Nome de listagem
+  de loja e dificil de mudar depois.
+- **Nao existe issue ainda** — abrir depois de fechar o nome.
+
+Travado por isso: a fase 1 do plano de divulgacao
+(`Obsidian/05. Divulgacao/redes-sociais/CLAUDE.md`) nao comeca antes do nome fechar.
+
+**PR #266 esta em DRAFT de proposito, esperando este rebrand.** Decisao do usuario
+em 10/09: nao mergear o plano de divulgacao antes do nome, porque ele esta escrito
+inteiro como Kidoku e precisaria ser reescrito no dia seguinte.
+
+Ordem: fechar o nome -> rebranding -> corrigir o plano -> tirar do draft -> mergear.
+O que precisa mudar la esta listado no comentario do proprio #266: decisao 1, a
+estrategia de handle, a pendencia de dominio, a pendencia 3 (trocar a mencao nao
+verificada ao Kenmei pelo achado real do `kidoku.net`) e a fase 1.
+
+Os outros dois PRs desta leva nao dependem do nome e podem mergear antes: **#265**
+(desenho do PWA, ver #264) e **#267** (este handoff e o doc do rebrand).
+
+O pedido anterior de **design de telas e botoes** (09/09) continua na fila, atras do
+rebranding.
 
 ### Como provar cada coisa
 
