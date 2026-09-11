@@ -479,6 +479,22 @@
     <circle cx="108" cy="60" r="22" fill="none" stroke="currentColor" stroke-width="16"/>
   </symbol>
 
+  <!-- Folha em órbita: a ideia do usuário. Folha CHEIA e de pé, para o bico sair
+       por cima do anel; folha de contorno dentro do anel lê como olho. -->
+  <clipPath id="clip-orbita-frente">
+    <rect x="0" y="50" width="100" height="60" transform="rotate(-10 50 50)"/>
+  </clipPath>
+  <symbol id="icone-folha-orbita" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="50" rx="45" ry="12" fill="none" stroke="currentColor" stroke-width="8" transform="rotate(-10 50 50)"/>
+    <g transform="rotate(-42 50 50) translate(-24.8,-4.1) scale(0.68)">
+      <path d="M134,32 C104,30 84,48 84,63 C84,79 97,88 112,84 C126,80 136,58 134,32 Z"
+            fill="currentColor" stroke="currentColor" stroke-width="16" stroke-linejoin="round"/>
+    </g>
+    <g clip-path="url(#clip-orbita-frente)">
+      <ellipse cx="50" cy="50" rx="45" ry="12" fill="none" stroke="currentColor" stroke-width="8" transform="rotate(-10 50 50)"/>
+    </g>
+  </symbol>
+
   <!-- Ícones candidatos da extensão -->
   <symbol id="icone-folha" viewBox="72 18 76 82">
     <path d="M134,32 C104,30 84,48 84,63 C84,79 97,88 112,84 C126,80 136,58 134,32 Z"
@@ -868,8 +884,34 @@
 
       <article class="prato">
         <header>
-          <h3>1 · Folha</h3>
+          <h3>1 · Folha em órbita</h3>
           <span class="selo selo--ok">Recomendado</span>
+        </header>
+        <div class="palco" style="background:#12141f">
+          <svg viewBox="0 0 100 100" style="width:112px;color:#f0a842"><use href="#icone-folha-orbita"/></svg>
+        </div>
+        <div class="icones-linha">
+          <div class="icone"><div class="quadro-ext" style="width:64px;height:64px"><svg viewBox="0 0 100 100"><use href="#icone-folha-orbita"/></svg></div><span>128</span></div>
+          <div class="icone"><div class="quadro-ext" style="width:48px;height:48px"><svg viewBox="0 0 100 100"><use href="#icone-folha-orbita"/></svg></div><span>48</span></div>
+          <div class="icone"><div class="quadro-ext" style="width:32px;height:32px"><svg viewBox="0 0 100 100"><use href="#icone-folha-orbita"/></svg></div><span>32</span></div>
+          <div class="icone"><div class="quadro-ext" style="width:16px;height:16px"><svg viewBox="0 0 100 100"><use href="#icone-folha-orbita"/></svg></div><span>16</span></div>
+        </div>
+        <div class="teste-badge">
+          <div class="icone"><div class="quadro-ext p16"><svg viewBox="0 0 100 100"><use href="#icone-folha-orbita"/></svg><i class="badge" style="background:#f0a842;color:#1a1200">●</i></div><span>16 + ●</span></div>
+          <div class="icone"><div class="quadro-ext p16"><svg viewBox="0 0 100 100"><use href="#icone-folha-orbita"/></svg><i class="badge" style="background:#3c9d5d;color:#fff">✓</i></div><span>16 + ✓</span></div>
+          <div class="icone"><div class="quadro-ext p16"><svg viewBox="0 0 100 100"><use href="#icone-folha-orbita"/></svg><i class="badge" style="background:#d6402b;color:#fff">!</i></div><span>16 + !</span></div>
+        </div>
+        <div class="corpo">
+          <p><b>Sua ideia, e ela ganhou das minhas:</b> diz o nome inteiro num desenho só — folha <em>e</em> universo — em vez de escolher uma metade. E nenhum visto no meio, então o badge fica livre.</p>
+          <p><b>Duas correções que a tela cobrou.</b> A folha teve de virar <b>cheia</b>: de contorno, o miolo dela dentro do anel vira uma íris e o ícone inteiro lê como <b>olho</b>. E teve de ficar <b>de pé</b>: deitada no mesmo ângulo do anel, as duas formas se fundem numa lente só.</p>
+          <p><b>O anel é mais achatado que o do wordmark</b> (ry 12 contra 13,5) e o bico da folha passa por cima dele — é esse pedaço saindo do topo que faz o desenho ler como folha, e não como planeta qualquer.</p>
+        </div>
+      </article>
+
+      <article class="prato">
+        <header>
+          <h3>2 · Folha sozinha</h3>
+          <span class="selo selo--alt">Alternativa</span>
         </header>
         <div class="palco" style="background:#12141f">
           <svg viewBox="72 18 76 82" style="width:100px;color:#f0a842"><use href="#icone-folha"/></svg>
@@ -893,7 +935,7 @@
 
       <article class="prato">
         <header>
-          <h3>2 · Planeta</h3>
+          <h3>3 · Planeta</h3>
           <span class="selo selo--alt">Alternativa</span>
         </header>
         <div class="palco" style="background:#12141f">
@@ -918,7 +960,7 @@
 
       <article class="prato">
         <header>
-          <h3>3 · F monolinha</h3>
+          <h3>4 · F monolinha</h3>
           <span class="selo selo--risco">Eu evitaria</span>
         </header>
         <div class="palco" style="background:#12141f">
@@ -944,10 +986,11 @@
     </div>
 
     <p class="aviso">
-      <b>Recomendação:</b> <b>folha</b>, em âmbar sobre o índigo do produto, cor fixa nos quatro
+      <b>Recomendação: folha em órbita</b>, âmbar sobre o índigo do produto, cor fixa nos quatro
       tamanhos. Cor fixa porque o ícone vive na barra do navegador, que tem a própria cor de fundo e
-      não sabe nada dos nossos três temas — e um ícone que muda de cor conforme o tema do site
+      não sabe nada dos nossos três temas — um ícone que muda de cor conforme o tema do site
       deixaria de ser reconhecível justamente onde reconhecimento é tudo.
+      <b>As direções 2, 3 e 4 ficam registradas como o caminho até aqui</b>, não como opções vivas.
     </p>
   </section>
 
@@ -1148,8 +1191,8 @@
       </li>
       <li>
         <div>
-          <div class="pergunta">Ícone da extensão: folha, planeta ou F?</div>
-          <div class="rec"><b>Recomendo a folha</b>, âmbar sobre índigo, cor fixa nos quatro tamanhos. É a única das três que aguenta o badge por cima sem perder a forma — e o F seria indistinguível do placeholder que o Chrome já desenha.</div>
+          <div class="pergunta">Ícone da extensão: confirma a folha em órbita?</div>
+          <div class="rec"><b>Recomendo sim.</b> É a única das quatro que diz folha e universo ao mesmo tempo, aguenta o badge por cima e não repete o visto. Falta só o seu ok para virar issue e PNG.</div>
         </div>
       </li>
       <li>
