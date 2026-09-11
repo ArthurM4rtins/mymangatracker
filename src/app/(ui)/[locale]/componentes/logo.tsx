@@ -2,16 +2,22 @@ import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
 
-// Marca do Kidoku: o double-check do "visualizado" (primeiro visto no acento do
+// Marca do Folunio: o double-check do "visualizado" (primeiro visto no acento do
 // tema, segundo na cor do texto), o nome desenhado no mesmo traço monolinha do
-// check, e 既読 — "já lido" — no acento.
+// check, e 葉宙 no acento — 葉 folha, 宙 o espaço aberto, os dois sentidos que
+// formam o nome.
 //
-// Variante D com peso 16, escolhida no estudo de 02/09/2026:
-// Obsidian/02. Implementacoes/identidade-visual/estudo-fonte-nome-logo.html
+// O símbolo é o mesmo de 02/09/2026; a palavra foi redesenhada no rebranding de
+// 11/09 mantendo a métrica do estudo:
+// Obsidian/02. Implementacoes/identidade-visual/identidade-folunio.html
 //
 // Métrica do desenho, numa caixa de 100 de altura: ascendente em y=8, altura-x
-// em y=36, base em y=84. As barrigas do d, do o e do u são traço, não
-// preenchimento — o anel passa da base de propósito, como no estudo.
+// em y=36, base em y=84, entreletra de 12 entre bordas de traço. As barrigas do
+// o e do u são traço, não preenchimento.
+//
+// O wordmark de assinatura — com folha no primeiro o e planeta no último — vive
+// só nas peças grandes (OG, loja, abertura). Aqui, em 20px de altura, o anel do
+// planeta teria 1,8px e viraria sujeira dentro da letra.
 export async function Logo() {
   const t = await getTranslations("componentes");
 
@@ -45,7 +51,7 @@ export async function Logo() {
       </svg>
 
       <svg
-        viewBox="-6 0 374 100"
+        viewBox="-6 0 420 100"
         aria-hidden="true"
         className="h-5 w-auto shrink-0 overflow-visible"
       >
@@ -56,34 +62,33 @@ export async function Logo() {
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          {/* k */}
-          <line x1="8" y1="8" x2="8" y2="84" />
-          <line x1="12" y1="58" x2="46" y2="36" />
-          <line x1="22" y1="54" x2="50" y2="84" />
-          {/* i */}
-          <line x1="74" y1="36" x2="74" y2="84" />
-          {/* d */}
-          <circle cx="122" cy="60" r="22" />
-          <line x1="144" y1="8" x2="144" y2="84" />
+          {/* f */}
+          <path d="M34,84 V26 A18,18 0 0 1 52,8" />
+          <line x1="12" y1="36" x2="58" y2="36" />
           {/* o */}
-          <circle cx="192" cy="60" r="22" />
-          {/* k */}
-          <line x1="240" y1="8" x2="240" y2="84" />
-          <line x1="244" y1="58" x2="278" y2="36" />
-          <line x1="254" y1="54" x2="282" y2="84" />
+          <circle cx="108" cy="60" r="22" />
+          {/* l */}
+          <line x1="158" y1="8" x2="158" y2="84" />
           {/* u */}
-          <path d="M306,36 V64 A20,20 0 0 0 346,64 V36" />
-          <line x1="346" y1="36" x2="346" y2="84" />
+          <path d="M186,36 V64 A20,20 0 0 0 226,64 V36" />
+          <line x1="226" y1="36" x2="226" y2="84" />
+          {/* n */}
+          <line x1="254" y1="84" x2="254" y2="36" />
+          <path d="M254,58 A22,22 0 0 1 298,58 V84" />
+          {/* i */}
+          <line x1="326" y1="36" x2="326" y2="84" />
+          {/* o */}
+          <circle cx="376" cy="60" r="22" />
         </g>
-        {/* pingo do i, único traço cheio */}
-        <circle cx="74" cy="20" r="7" fill="currentColor" />
+        {/* pingo do i, único traço cheio — leva o acento que era do kanji */}
+        <circle cx="326" cy="19" r="7.5" fill="var(--acento)" />
       </svg>
 
       <span
         aria-hidden="true"
         className="font-marca text-acento mb-[0.08em] self-end text-[0.55rem] font-bold tracking-[0.05em]"
       >
-        既読
+        葉宙
       </span>
     </Link>
   );

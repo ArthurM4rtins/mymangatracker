@@ -369,7 +369,7 @@ async function Apresentacao()
 
   return (
     <section className="flex flex-col gap-5">
-      <h1 className="font-marca text-4xl font-bold tracking-tight">Kidoku</h1>
+      <h1 className="font-marca text-4xl font-bold tracking-tight">Folunio</h1>
       <p className="max-w-xl text-lg text-texto-suave">
         {t("apresentacao.descricao")}
       </p>
