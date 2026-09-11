@@ -8,6 +8,7 @@ import { referenciaDaObra } from "@/server/domain/anilist-media";
  * serve o cache que houver, mesmo velho, e só é indisponível sem cache nenhum.
  */
 import { cacheEstaFresco } from "@/server/domain/media-cache";
+import { mesclarDetalhes, type DetalhesDaObra } from "@/server/domain/detalhes-da-obra";
 import {
   resumirNotas,
   type ContagemDeNota,
@@ -53,6 +54,7 @@ export type ObraDaPagina = {
   genres: string[];
   averageScore: number | null;
   autores: AutorDaObra[];
+  details?: DetalhesDaObra | null;
 };
 
 /** O card de similar — o mínimo para capa + link. */
@@ -168,7 +170,7 @@ export async function obraParaPagina(
   // Se o AniList cair aqui, não pagar outro timeout em série nos similares (#65, item 3).
   let fonteFora = false;
 
-  if (cache === null || !cacheEstaFresco(cache.syncedAt, agora))
+  if (cache === null || cache.details === null || !cacheEstaFresco(cache.syncedAt, agora))
   {
     const resposta = await deps.buscarNaFonte(referencia);
 
@@ -204,21 +206,22 @@ export async function obraParaPagina(
 
       cache = {
         id: salvo.id,
-        anilistId: daFonte.anilistId ?? null,
-        kitsuId: daFonte.kitsuId ?? null,
+        anilistId: daFonte.anilistId ?? cache?.anilistId ?? null,
+        kitsuId: daFonte.kitsuId ?? cache?.kitsuId ?? null,
         type: daFonte.type,
-        countryOfOrigin: daFonte.countryOfOrigin ?? null,
+        countryOfOrigin: daFonte.countryOfOrigin ?? cache?.countryOfOrigin ?? null,
         titleRomaji: daFonte.titleRomaji,
-        titleEnglish: daFonte.titleEnglish ?? null,
-        titleNative: daFonte.titleNative ?? null,
-        coverImageUrl: daFonte.coverImageUrl ?? null,
-        bannerImageUrl: daFonte.bannerImageUrl ?? null,
-        description: daFonte.description ?? null,
-        chapters: daFonte.chapters ?? null,
-        startYear: daFonte.startYear ?? null,
-        genres: daFonte.genres ?? [],
-        averageScore: daFonte.averageScore ?? null,
-        autores: daFonte.autores ?? [],
+        titleEnglish: daFonte.titleEnglish ?? cache?.titleEnglish ?? null,
+        titleNative: daFonte.titleNative ?? cache?.titleNative ?? null,
+        coverImageUrl: daFonte.coverImageUrl ?? cache?.coverImageUrl ?? null,
+        bannerImageUrl: daFonte.bannerImageUrl ?? cache?.bannerImageUrl ?? null,
+        description: daFonte.description ?? cache?.description ?? null,
+        chapters: daFonte.chapters ?? cache?.chapters ?? null,
+        startYear: daFonte.startYear ?? cache?.startYear ?? null,
+        genres: daFonte.genres ?? cache?.genres ?? [],
+        averageScore: daFonte.averageScore ?? cache?.averageScore ?? null,
+        autores: daFonte.autores ?? cache?.autores ?? [],
+        details: mesclarDetalhes(cache?.details, daFonte.details),
         syncedAt: salvo.syncedAt,
       };
     }
@@ -272,6 +275,7 @@ export async function obraParaPagina(
     genres: cache.genres,
     averageScore: cache.averageScore,
     autores: cache.autores,
+    ...(cache.details === undefined ? {} : { details: cache.details }),
   };
 
   return {

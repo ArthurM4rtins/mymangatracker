@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Bio do autor com "ver mais" (issue #69). Sem JS o texto fica clampado em
+ * Bio do autor das fontes do catálogo. Sem JS o texto fica clampado em
  * seis linhas, como antes; com JS, o botão só aparece quando o clamp de fato
  * cortou alguma coisa — bio curta não ganha botão à toa.
  */

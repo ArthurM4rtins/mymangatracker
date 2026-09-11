@@ -6,6 +6,7 @@ import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useRef, useSt
 
 import {
   emAndaresDosGrupos,
+  andaresVisiveisDoCatalogo,
   LARGURA_ABERTA,
   larguraDaLombada,
   numeroDaChave,
@@ -41,7 +42,7 @@ const ESPERA_DO_TOQUE_MS = 400;
 /** A partir de quantos pixels o gesto do mouse deixa de ser clique e vira arraste. */
 const ARRASTE_MINIMO = 6;
 
-export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", classeGrade = "grid gap-4 sm:grid-cols-2", andarSimples = false, maximoPorAndar, aoReordenar }: {
+export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", classeGrade = "grid gap-4 sm:grid-cols-2", andarSimples = false, maximoPorAndar, temMaisItens = false, aoReordenar }: {
   itens: ItemDaColecao[];
   grupos?: GrupoDaColecao[];
   titulo: string;
@@ -61,6 +62,8 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
   andarSimples?: boolean;
   /** Teto de obras por andar no modo simples, se a tela quiser um (a home usa 9). */
   maximoPorAndar?: number;
+  /** Catálogo paginado: reserva a sobra do último andar até a próxima página. */
+  temMaisItens?: boolean;
   /**
    * Quando existe, arrastar um livro reordena a coleção (#242): `destino` é o
    * índice que a obra passa a ocupar na ordem final. Só a lista de quem é dono
@@ -111,6 +114,9 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
       abreOGrupo: comNomeProprio && andar.abreOGrupo,
     }))
     : paraFatiar;
+  const andaresVisiveis = andarSimples
+    ? andaresVisiveisDoCatalogo(andares, larguraDoTrilho, temMaisItens)
+    : andares;
 
   // As medidas que o empacotamento usa são as mesmas que o CSS desenha.
   const medidas = {
@@ -143,7 +149,7 @@ export function ColecaoVisual({ itens, grupos, titulo, inicial = "prateleira", c
           <div ref={estante} className={estilos.prateleiras} data-simples={andarSimples || undefined}
             data-arrastando={arraste.arrastando || undefined} {...arraste.gestos}>
             <p className={estilos.dica}>{aoReordenar ? t("dicaOrdenavel") : t("dica")}</p>
-            {andares.filter((grupo) => grupo.itens.length > 0).map((grupo, indice) => (
+            {andaresVisiveis.filter((grupo) => grupo.itens.length > 0).map((grupo, indice) => (
               <Prateleira key={grupo.id} grupo={grupo} numero={indice + 1} aoAbrir={setSelecionado}
                 simples={andarSimples} selecionado={selecionado} arrastado={arraste.arrastado}
                 deslize={arraste.deslize} vitrineCongelada={arraste.vitrineCongelada} />

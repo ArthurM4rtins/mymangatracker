@@ -11,8 +11,6 @@ import {
 } from "@/server/domain/rodizio-de-autoria";
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
-import { buscarMediaPorId } from "@/server/infra/anilist";
-import { buscarNoKitsuPorAnilistId } from "@/server/infra/kitsu";
 import { limitarItemDeLista, limitarLista, limitarOrdem } from "./limite.service";
 import {
   buscarMediaPorReferencia,

@@ -8,48 +8,50 @@ import { autorParaPaginaDoSistema } from "@/server/services/autor.service";
 import { BioDoAutor } from "./bio-do-autor";
 import { ColecaoVisual } from "../../componentes/colecao-visual";
 import { CartaoObra } from "../../componentes/cartao-obra";
+import { interpretarReferenciaDeAutor, type ReferenciaDeAutor } from "@/server/domain/referencia-de-autor";
 
-// AniList ao vivo: nada pré-renderizável.
+// Perfil externo ao vivo: nada pré-renderizável.
 export const dynamic = "force-dynamic";
 
 // generateMetadata e a página no mesmo request: sem memoizar eram dois POSTs
 // ao AniList por visita, sem cache nenhum no caminho do autor (#65, item 6).
-const carregarAutor = cache(autorParaPaginaDoSistema);
+const carregarAutor = cache((fonte: ReferenciaDeAutor["fonte"], id: number) => autorParaPaginaDoSistema({ fonte, id }));
 
 type Props = {
-  params: Promise<{ staffId: string }>;
+  params: Promise<{ referencia: string[] }>;
 };
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/autor/[staffId]">)
+}: PageProps<"/[locale]/autor/[...referencia]">)
 {
-  const { locale, staffId } = await params;
+  const { locale, referencia } = await params;
   const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "autor" });
-  const id = Number(staffId);
+  const alvo = interpretarReferenciaDeAutor(referencia);
 
-  if (!Number.isInteger(id) || id <= 0)
+  if (alvo === null)
   {
-    return { title: t("meta.titulo"), alternates: alternativasDeIdioma(`/autor/${staffId}`) };
+    return { title: t("meta.titulo") };
   }
 
-  const resultado = await carregarAutor(id);
+  const resultado = await carregarAutor(alvo.fonte, alvo.id);
 
   return {
     title: resultado.estado === "ok" ? resultado.autor.nome : t("meta.titulo"),
+    alternates: alternativasDeIdioma(`/autor/${referencia.join("/")}`),
   };
 }
 
 export default async function PaginaDoAutor({ params }: Props)
 {
-  const id = Number((await params).staffId);
+  const alvo = interpretarReferenciaDeAutor((await params).referencia);
 
-  if (!Number.isInteger(id) || id <= 0)
+  if (alvo === null)
   {
     notFound();
   }
 
-  const resultado = await carregarAutor(id);
+  const resultado = await carregarAutor(alvo.fonte, alvo.id);
   const t = await getTranslations("autor");
 
   if (resultado.estado === "nao_encontrado")

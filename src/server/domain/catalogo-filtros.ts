@@ -4,6 +4,8 @@
  * repasse cru para a API de terceiro.
  */
 
+import { TEMAS } from "./detalhes-da-obra";
+
 export type TipoDeObra = "manga" | "manhwa" | "manhua" | "novel";
 export type OrdemDoCatalogo = "popular" | "nota" | "alta" | "recente";
 
@@ -12,6 +14,9 @@ export type FiltroDoCatalogo = {
   tipo?: TipoDeObra;
   genero?: string;
   decada?: number;
+  publicacao?: "current" | "finished";
+  tema?: typeof TEMAS[number];
+  curtas?: true;
   ordem: OrdemDoCatalogo;
 };
 
@@ -97,6 +102,14 @@ export function interpretarFiltros(
     filtro.decada = decada;
   }
 
+  const tema = TEMAS.find(t => t === primeiro(params.tema));
+  if (tema) filtro.tema = tema;
+  const publicacao = primeiro(params.publicacao);
+  if (publicacao === "current" || publicacao === "finished") filtro.publicacao = publicacao;
+  if (primeiro(params.curtas) === "1") {
+    filtro.curtas = true;
+    filtro.publicacao = "finished";
+  }
   return filtro;
 }
 
@@ -105,6 +118,9 @@ export function temFiltroAtivo(filtro: FiltroDoCatalogo): boolean
 {
   return (
     filtro.tipo !== undefined ||
+    filtro.publicacao !== undefined ||
+    filtro.tema !== undefined ||
+    filtro.curtas === true ||
     filtro.genero !== undefined ||
     filtro.decada !== undefined ||
     filtro.ordem !== "popular"

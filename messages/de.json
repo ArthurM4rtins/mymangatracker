@@ -43,8 +43,8 @@
     },
     "dados": {
       "titulo": "Daten",
-      "anilist": "Katalog und Cover von AniList.",
-      "kitsu": "Kitsu als Ersatzquelle, wenn AniList nicht antwortet."
+      "anilist": "AniList als ergänzende Quelle und Ersatzquelle.",
+      "kitsu": "Kitsu als Hauptquelle für Katalog und Cover."
     },
     "direitos": "© {ano} Folunio",
     "fonte": {
@@ -170,7 +170,7 @@
       "titulo": "Autor"
     },
     "erros": {
-      "indisponivel": "AniList hat gerade nicht geantwortet. Versuch es gleich noch einmal."
+      "indisponivel": "Dieser Autor konnte nicht geladen werden. Versuch es gleich noch einmal."
     },
     "bio": {
       "verMais": "Mehr anzeigen",
@@ -178,7 +178,7 @@
     },
     "obras": {
       "titulo": "Werke",
-      "vazia": "Auf AniList sind keine Werke vom Typ Manga oder Roman eingetragen."
+      "vazia": "Für diesen Autor wurden keine Manga- oder Romanwerke gefunden."
     }
   },
   "catalogo": {
@@ -204,10 +204,12 @@
         "nota": "Beste Bewertung",
         "alta": "Im Trend",
         "recente": "Neueste"
-      }
+      },
+      "avancados": "Erweiterte Filter",
+      "avancadosAtivos": "Aktiv"
     },
     "erros": {
-      "indisponivel": "AniList hat gerade nicht geantwortet. Versuch es gleich noch mal.",
+      "indisponivel": "Der Katalog ist gerade nicht verfügbar. Versuch es gleich noch einmal.",
       "muitosPedidos": "Zu viele Suchanfragen von hier aus. Warte einen Moment und versuche es erneut.",
       "doCache": "Ergebnisse auf die Werke beschränkt, die schon hier waren."
     },
@@ -322,7 +324,8 @@
       },
       "dependencia": {
         "database": "Datenbank",
-        "anilist": "AniList-Katalog"
+        "anilist": "AniList-Katalog",
+        "kitsu": "Kitsu-Katalog"
       },
       "estado": {
         "ok": "antwortet",
@@ -420,7 +423,7 @@
         "placeholder": "Werk zum Hinzufügen suchen…",
         "buscando": "Suche…",
         "semResultado": "Nichts gefunden für „{termo}“.",
-        "indisponivel": "AniList hat nicht geantwortet. Versuche es gleich noch einmal.",
+        "indisponivel": "Der Katalog ist gerade nicht verfügbar. Versuch es gleich noch einmal.",
         "muitosPedidos": "Zu viele Suchanfragen von hier. Warte einen Moment und versuche es erneut.",
         "adicionar": "+ hinzufügen",
         "jaNaLista": "✓ in der Liste",
@@ -466,7 +469,7 @@
     "meta": {
       "titulo": "Werk"
     },
-    "indisponivel": "AniList hat gerade nicht geantwortet und dieses Werk ist noch nicht in unserem Cache. Versuch es gleich noch mal.",
+    "indisponivel": "Dieses Werk konnte nicht aktualisiert werden und ist noch nicht in unserem Cache. Versuch es gleich noch einmal.",
     "autoria": "von",
     "formatoDesconhecido": "Werk",
     "curiosidades": "Wissenswertes",
@@ -660,5 +663,76 @@
     "erros": {
       "geral": "hat gerade nicht geklappt. Versuch es gleich noch mal."
     }
+  },
+  "ficha": {
+    "titulo": "Werkdetails",
+    "publicacao": "Veröffentlichung",
+    "volumes": "Bände",
+    "inicio": "Veröffentlichungsbeginn",
+    "fim": "Veröffentlichungsende",
+    "aliases": "Alternative Titel",
+    "temas": "Themen",
+    "relacionadas": "Verwandte Werke",
+    "curtas": "Kurze Lektüre",
+    "curtasDescricao": "Abgeschlossen, 1 bis 30 Kapitel",
+    "generosTitulo": "Genres",
+    "decada": "{n}er-Jahre",
+    "storyArt": "Geschichte und Zeichnungen",
+    "story": "Geschichte",
+    "art": "Zeichnungen",
+    "oneshot": "Einzelgeschichte",
+    "doujin": "Dōjinshi",
+    "oel": "Originalcomic",
+    "generos": {
+      "Action": "Action",
+      "Adventure": "Abenteuer",
+      "Comedy": "Komödie",
+      "Drama": "Drama",
+      "Fantasy": "Fantasy",
+      "Horror": "Horror",
+      "Mahou Shoujo": "Magische Mädchen",
+      "Mecha": "Mecha",
+      "Music": "Musik",
+      "Mystery": "Mystery",
+      "Psychological": "Psychologisch",
+      "Romance": "Romantik",
+      "Sci-Fi": "Science-Fiction",
+      "Slice of Life": "Alltag",
+      "Sports": "Sport",
+      "Supernatural": "Übernatürlich",
+      "Thriller": "Thriller"
+    },
+    "temasNomes": {
+      "military": "Militär",
+      "demon": "Dämonen",
+      "dark-fantasy": "Düstere Fantasy",
+      "revenge": "Rache",
+      "dystopia": "Dystopie",
+      "swordplay": "Schwertkampf"
+    },
+    "status": {
+      "current": "Laufend",
+      "finished": "Abgeschlossen",
+      "upcoming": "Demnächst",
+      "unreleased": "Unveröffentlicht",
+      "tba": "Noch anzukündigen",
+      "hiatus": "Pausiert",
+      "cancelled": "Abgebrochen"
+    },
+    "relacoes": {
+      "sequel": "Fortsetzung",
+      "prequel": "Vorgeschichte",
+      "alternative_setting": "Alternatives Szenario",
+      "alternative_version": "Alternative Version",
+      "side_story": "Nebengeschichte",
+      "parent_story": "Hauptgeschichte",
+      "summary": "Zusammenfassung",
+      "full_story": "Vollständige Geschichte",
+      "spinoff": "Ableger",
+      "adaptation": "Adaption",
+      "character": "Gemeinsame Figuren",
+      "other": "Andere Verbindung"
+    },
+    "capitulos": "{n, plural, one {# Kapitel} other {# Kapitel}}"
   }
 }

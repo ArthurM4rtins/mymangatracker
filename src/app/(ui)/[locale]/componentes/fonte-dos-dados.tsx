@@ -37,17 +37,21 @@ export function FonteDosDados()
       {
         const resposta = await fetch("/api/v1/health");
         const corpo = await resposta.json();
+        const kitsu = (corpo.dependencies ?? []).find(function (dependencia: { name?: string })
+        {
+          return dependencia.name === "kitsu";
+        });
         const anilist = (corpo.dependencies ?? []).find(function (dependencia: { name?: string })
         {
           return dependencia.name === "anilist";
         });
 
-        if (!vivo || anilist === undefined)
+        if (!vivo)
         {
           return;
         }
 
-        setFonte(anilist.status === "ok" ? "anilist" : "kitsu");
+        setFonte(kitsu?.status === "ok" ? "kitsu" : anilist?.status === "ok" ? "anilist" : "desconhecida");
       }
       catch
       {
@@ -71,7 +75,7 @@ export function FonteDosDados()
       <span
         aria-hidden
         className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-          fonte === "anilist" ? "bg-acento" : "bg-texto-suave"
+          fonte === "kitsu" ? "bg-acento" : "bg-texto-suave"
         }`}
       />
       {t("agora", { fonte: fonte === "anilist" ? "AniList" : "Kitsu" })}

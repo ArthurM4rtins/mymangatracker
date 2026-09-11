@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { MediaCompleta } from "@/server/repositories/media.repository";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { obraParaPagina } from "@/server/services/obra.service";
-import type { ResultadoDaFonte } from "@/server/services/obra-externa.service";
+import { buscarObraNaFonte, type ResultadoDaFonte } from "@/server/services/obra-externa.service";
 import type { ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
 
 // As regras da issue #35: cache fresco não gasta cota; velho rebusca e
@@ -84,40 +84,16 @@ function fakeDeps(cenario: {
     }
     return cenario.noKitsu === undefined ? null : cenario.noKitsu;
   });
-  // A escada de fontes virou um servico so (#254). Aqui ela e reproduzida
-  // chamando as mesmas duas pontas, para as asercoes continuarem falando de
-  // quem foi consultado; a escada de verdade tem os testes dela.
+  // Usa a política real de fontes com I/O falso, sem duplicar sua implementação.
   const buscarNaFonte = vi.fn(async function (
     referencia: ReferenciaDaObra,
   ): Promise<ResultadoDaFonte>
   {
-    if (referencia.fonte === "kitsu")
-    {
-      try
-      {
-        return { estado: "ok", obra: await buscarNoKitsu(), respondeu: "kitsu" };
-      }
-      catch
-      {
-        return { estado: "indisponivel" };
-      }
-    }
-
-    try
-    {
-      return { estado: "ok", obra: await buscarNoAniList(), respondeu: "anilist" };
-    }
-    catch
-    {
-      try
-      {
-        return { estado: "ok", obra: await buscarNoKitsu(), respondeu: "kitsu" };
-      }
-      catch
-      {
-        return { estado: "indisponivel" };
-      }
-    }
+    return buscarObraNaFonte(referencia, {
+      noAniList: buscarNoAniList,
+      noKitsuPorAniList: buscarNoKitsu,
+      noKitsuPorId: buscarNoKitsu,
+    });
   });
   const salvarMedia = vi.fn(async function ()
   {
@@ -233,6 +209,32 @@ function fakeDeps(cenario: {
 
 describe("obraParaPagina", function ()
 {
+  it("enriquece cache antigo ainda fresco uma vez, sem perder dados", async () => {
+    const { deps, buscarNaFonte } = fakeDeps({ noCache: { ...NO_CACHE, details: null } });
+    const details = { version: 1 as const, aliases: [], categories: [], related: [], status: "finished" as const };
+    buscarNaFonte.mockResolvedValue({ estado: "ok", respondeu: "kitsu", obra: { ...DO_KITSU, details } });
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps);
+    expect(buscarNaFonte).toHaveBeenCalledOnce();
+    expect(resultado).toMatchObject({ estado: "ok", obra: { details, bannerImageUrl: NO_CACHE.bannerImageUrl } });
+  });
+
+  it("atualização parcial do Kitsu preserva metadados e identidade já salvos", async function ()
+  {
+    const { deps } = fakeDeps({ noCache: { ...NO_CACHE, kitsuId: 1, syncedAt: VELHO } });
+    deps.buscarNaFonte.mockResolvedValue({
+      estado: "ok", respondeu: "kitsu",
+      obra: { kitsuId: 1, type: "MANGA", titleRomaji: "Vagabond atualizado", chapters: 328 },
+    });
+    const resultado = await obraParaPagina({ fonte: "kitsu", id: 1 }, null, deps);
+    expect(resultado).toMatchObject({
+      estado: "ok",
+      obra: {
+        chave: "anilist:30656", titleRomaji: "Vagabond atualizado", chapters: 328,
+        autores: NO_CACHE.autores, genres: NO_CACHE.genres, bannerImageUrl: NO_CACHE.bannerImageUrl,
+      },
+    });
+  });
+
   it("cache fresco não gasta cota do AniList", async function ()
   {
     const { deps, buscarNoAniList } = fakeDeps({ noCache: NO_CACHE });
@@ -365,14 +367,15 @@ describe("obraParaPagina", function ()
     expect(salvarMedia).toHaveBeenCalled();
   });
 
-  it("AniList de pé nunca chama o Kitsu", async function ()
+  it("Kitsu atende a página mesmo com AniList disponível", async function ()
   {
-    const { deps, buscarNoKitsu } = fakeDeps({ noCache: null });
+    const { deps, buscarNoKitsu, buscarNoAniList } = fakeDeps({ noCache: null, noKitsu: DO_ANILIST });
 
     const resultado = await obraParaPagina({ fonte: "anilist", id: 30013 }, null, deps);
 
     expect(resultado.estado).toBe("ok");
-    expect(buscarNoKitsu).not.toHaveBeenCalled();
+    expect(buscarNoKitsu).toHaveBeenCalled();
+    expect(buscarNoAniList).not.toHaveBeenCalled();
   });
 
   it("AniList fora e Kitsu sem a obra: não encontrada", async function ()

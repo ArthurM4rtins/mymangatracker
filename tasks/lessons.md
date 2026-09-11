@@ -3,6 +3,29 @@
 Padrão que voltou a morder, e a regra que evita repetir. Ler no início de sessão antes de mexer
 em área que já apareceu aqui.
 
+## Testes de navegação também consomem o limite do catálogo
+
+- Ao testar filtros e paginação repetidamente no mesmo localhost, as visitas
+  acumularam no limitador persistido e bloquearam a busca manual do usuário.
+- Antes de atribuir o aviso ao Kitsu ou AniList, identificar quem o produz e
+  conferir a contagem local. Testes de navegador usam os limites reais do app.
+- Em desenvolvimento, usar uma janela curta com teto ativo; testar que a regra
+  de produção permanece igual. Não apagar contadores nem desativar o limitador.
+
+## Foto externa defeituosa: comparar original e miniaturas
+
+- A primeira análise da foto branca de Miura verificou apenas `image.medium`
+  e concluiu de forma ampla que a foto da fonte estava branca.
+- A comparação com `image.original` mostrou fotos normais de Miura, Urasawa e
+  Inoue. Antes de atribuir o defeito à foto inteira, verificar as variantes.
+
+## Identidade com fonte também precisa ser convertida nos links da estante
+
+- A estante interpolava `anilist:85486` diretamente no caminho, gerando uma
+  URL que a rota da obra não aceita. Capa e título repetiam o mesmo erro.
+- Converter chaves de DTO com `referenciaDaChave` e `caminhoDaObra` em todas
+  as entradas de navegação, incluindo o detalhe aberto pela prateleira.
+
 ---
 
 ## Rede que "não tem internet" mas tem — DNS só com AAAA

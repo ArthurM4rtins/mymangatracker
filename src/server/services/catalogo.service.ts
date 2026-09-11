@@ -26,9 +26,9 @@ export type ResultadoBusca =
   | { estado: "vazio"; termo: string }
   | { estado: "indisponivel"; termo: string }
   | { estado: "muitos_pedidos"; termo: string }
-  /** O AniList está fora e o banco tinha o que mostrar (#165). */
+  /** As duas fontes falharam e o banco tinha o que mostrar. */
   | { estado: "cache"; termo: string; obras: MediaDoAniList[]; temMais: boolean }
-  /** O AniList está fora e o Kitsu respondeu no lugar dele (#219). */
+  /** Resposta da fonte principal, o Kitsu. */
   | { estado: "kitsu"; termo: string; obras: MediaDoAniList[]; temMais: boolean };
 
 /**
@@ -43,16 +43,14 @@ export type DependenciasDoCatalogo = {
   filtrado: (filtro: FiltroDoCatalogo, pagina: number) => Promise<MediaDoAniList[]>;
   limitar: (ip: string) => Promise<Veredito>;
   /** As obras já cacheadas que casam com o termo. Só entra no fallback (#165). */
-  doCache: (termo: string, pagina: number) => Promise<MediaDoAniList[]>;
-  /** O tapa-buraco enquanto o AniList está fora (#219). Nunca com ele de pé. */
+  doCache: (termo: string, pagina: number, filtro?: FiltroDoCatalogo) => Promise<MediaDoAniList[]>;
+  /** Fonte principal para vitrine, filtros e paginação. */
   noKitsu: (filtro: FiltroDoCatalogo, pagina: number) => Promise<PaginaDaFonte>;
 };
 
 /**
- * O que uma fonte paginada devolve. `temMais` é resposta DELA, não contagem do
- * que sobrou: o Kitsu entrega obras que o nosso domínio descarta (`oneshot`,
- * `oel`, obra sem mapeamento para o AniList), então uma página curta não
- * significa acervo no fim — significa que descartamos bastante (#228).
+ * `temMais` vem da fonte: registros inválidos podem ser descartados pelo
+ * domínio, então uma página curta não significa necessariamente o fim.
  */
 export type PaginaDaFonte = {
   obras: MediaDoAniList[];
@@ -130,9 +128,7 @@ const primeiraPaginaDaVitrine = lembrarPorTempo(
 );
 
 /**
- * A vitrine do Kitsu também é lembrada: com o AniList fora, é ela que a home
- * bate em todo render, e cada página são três pedidos ao Kitsu. Guardar o que
- * se exibe por uma janela curta é o que a documentação deles pede.
+ * A vitrine principal é lembrada: cada página pode fazer três pedidos ao Kitsu.
  */
 const VITRINE_SEM_FILTRO: FiltroDoCatalogo = { termo: "", ordem: "popular" };
 
@@ -176,6 +172,47 @@ export async function buscarNoCatalogo(
   pagina = 1,
 ): Promise<ResultadoBusca>
 {
+  const vitrine = filtro.termo === "" && !temFiltroAtivo(filtro);
+
+  // O limite vale antes de qualquer fonte. Falha aqui não abre um caminho
+  // alternativo para consultar terceiros sem passar pelo controle.
+  if (!vitrine && ip !== undefined)
+  {
+    try
+    {
+      const limite = await deps.limitar(ip);
+      if (limite.bloqueado)
+      {
+        return { estado: "muitos_pedidos", termo: filtro.termo };
+      }
+    }
+    catch
+    {
+      return { estado: "indisponivel", termo: filtro.termo };
+    }
+  }
+
+  try
+  {
+    const daFonte = await deps.noKitsu(filtro, pagina);
+    return daFonte.obras.length === 0 && !daFonte.temMais
+      ? { estado: "vazio", termo: filtro.termo }
+      : { estado: "kitsu", termo: filtro.termo, obras: daFonte.obras, temMais: daFonte.temMais };
+  }
+  catch
+  {
+    // Só falha aciona o AniList. Resultado vazio e fim da paginação são válidos.
+    return semOKitsu(filtro, deps, pagina);
+  }
+}
+
+/** Kitsu falhou: AniList, depois cache local, por último indisponível. */
+async function semOKitsu(
+  filtro: FiltroDoCatalogo,
+  deps: DependenciasDoCatalogo,
+  pagina: number,
+): Promise<ResultadoBusca>
+{
   try
   {
     if (filtro.termo === "" && !temFiltroAtivo(filtro))
@@ -187,18 +224,6 @@ export async function buscarNoCatalogo(
         : { estado: "destaques", termo: "", obras, temMais: paginaCheia(obras) };
     }
 
-    // Só a busca filtrada tem teto, e só quando quem chama sabe o IP. A vitrine
-    // fica de fora porque é lembrada: repetir não custa ida ao AniList.
-    if (ip !== undefined)
-    {
-      const limite = await deps.limitar(ip);
-
-      if (limite.bloqueado)
-      {
-        return { estado: "muitos_pedidos", termo: filtro.termo };
-      }
-    }
-
     const obras = await deps.filtrado(filtro, pagina);
 
     return obras.length === 0
@@ -207,30 +232,12 @@ export async function buscarNoCatalogo(
   }
   catch
   {
-    // O motivo fica no log da plataforma. A tela não mostra texto de erro de
-    // terceiro, que pode conter URL interna ou detalhe de infraestrutura.
-    //
-    // Antes de desistir, o banco (#165): o resto do sistema já degrada com o
-    // cache, e o catálogo era o único caminho que o ignorava de propósito — a
-    // decisão fazia sentido quando o risco era o Postgres cair, e inverteu de
-    // efeito quando quem caiu foi o terceiro. Cache-first NÃO: só no fallback,
-    // senão a busca vira um índice das poucas obras que alguém já abriu.
-    return await semOAniList(filtro, deps, pagina);
+    return doCacheLocal(filtro, deps, pagina);
   }
 }
 
-/**
- * A escada de quando o AniList falha (#219).
- *
- * 1. **Kitsu**, que tem catálogo de verdade e entrega o `anilistId` junto — o
- *    que a pessoa achar aqui é a mesma linha que o AniList vai atualizar depois.
- * 2. **Cache local**, que só tem o que alguém já visitou.
- * 3. **Indisponível**, a verdade quando não há nada a mostrar.
- *
- * Nesta ordem porque o Kitsu cobre o acervo e o cache cobre um punhado de obras.
- * E nada disso roda com o AniList de pé: é fallback, não segunda fonte ao vivo.
- */
-async function semOAniList(
+/** O acervo local cobre apenas obras já visitadas, por isso vem por último. */
+async function doCacheLocal(
   filtro: FiltroDoCatalogo,
   deps: DependenciasDoCatalogo,
   pagina: number,
@@ -238,23 +245,9 @@ async function semOAniList(
 {
   try
   {
-    // O filtro INTEIRO, não só o termo (#252): antes tipo, gênero, década e
-    // ordenação sumiam em silêncio sempre que o AniList estava fora.
-    const daFonte = await deps.noKitsu(filtro, pagina);
-
-    if (daFonte.obras.length > 0)
-    {
-      return { estado: "kitsu", termo: filtro.termo, obras: daFonte.obras, temMais: daFonte.temMais };
-    }
-  }
-  catch
-  {
-    // O tapa-buraco também caiu. Segue para o cache.
-  }
-
-  try
-  {
-    const obras = await deps.doCache(filtro.termo, pagina);
+    const obras = temFiltroAtivo(filtro)
+      ? await deps.doCache(filtro.termo, pagina, filtro)
+      : await deps.doCache(filtro.termo, pagina);
 
     // Banco vazio não vira tela de "cache vazio": segue sendo indisponível, que
     // é a verdade — não temos o que mostrar porque o terceiro está fora.

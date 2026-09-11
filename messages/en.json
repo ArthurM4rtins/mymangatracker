@@ -43,8 +43,8 @@
     },
     "dados": {
       "titulo": "Data",
-      "anilist": "Catalogue and covers from AniList.",
-      "kitsu": "Kitsu as a backup source when AniList does not respond."
+      "anilist": "AniList as a supplementary and backup source.",
+      "kitsu": "Kitsu as the primary source for the catalogue and covers."
     },
     "direitos": "© {ano} Folunio",
     "fonte": {
@@ -170,7 +170,7 @@
       "titulo": "Author"
     },
     "erros": {
-      "indisponivel": "AniList didn't respond just now. Try again in a moment."
+      "indisponivel": "This author could not be loaded. Try again in a moment."
     },
     "bio": {
       "verMais": "Show more",
@@ -178,7 +178,7 @@
     },
     "obras": {
       "titulo": "Series",
-      "vazia": "No manga or novel series listed on AniList."
+      "vazia": "No manga or novel works found for this author."
     }
   },
   "catalogo": {
@@ -204,10 +204,12 @@
         "nota": "Top rated",
         "alta": "Trending",
         "recente": "Newest"
-      }
+      },
+      "avancados": "Advanced filters",
+      "avancadosAtivos": "Active"
     },
     "erros": {
-      "indisponivel": "AniList didn't respond just now. Try again in a moment.",
+      "indisponivel": "The catalogue is unavailable right now. Try again in a moment.",
       "muitosPedidos": "Too many searches from here. Wait a moment and try again.",
       "doCache": "Results limited to the series that have already been through here."
     },
@@ -322,7 +324,8 @@
       },
       "dependencia": {
         "database": "database",
-        "anilist": "AniList catalog"
+        "anilist": "AniList catalog",
+        "kitsu": "Kitsu catalog"
       },
       "estado": {
         "ok": "responding",
@@ -420,7 +423,7 @@
         "placeholder": "Search for a series to add…",
         "buscando": "Searching…",
         "semResultado": "Nothing found for \"{termo}\".",
-        "indisponivel": "AniList did not respond. Try again in a moment.",
+        "indisponivel": "The catalogue is unavailable right now. Try again in a moment.",
         "muitosPedidos": "Too many searches from here. Wait a moment and try again.",
         "adicionar": "+ add",
         "jaNaLista": "✓ in the list",
@@ -466,7 +469,7 @@
     "meta": {
       "titulo": "Series"
     },
-    "indisponivel": "AniList didn't respond just now and this series isn't in our cache yet. Try again in a moment.",
+    "indisponivel": "This series could not be updated and is not in our cache yet. Try again in a moment.",
     "autoria": "by",
     "formatoDesconhecido": "Series",
     "curiosidades": "Trivia",
@@ -660,5 +663,76 @@
     "erros": {
       "geral": "couldn't do it just now. Try again in a moment."
     }
+  },
+  "ficha": {
+    "titulo": "Publication details",
+    "publicacao": "Publication",
+    "volumes": "Volumes",
+    "inicio": "Publication started",
+    "fim": "Publication ended",
+    "aliases": "Alternative titles",
+    "temas": "Themes",
+    "relacionadas": "Related works",
+    "curtas": "Short reads",
+    "curtasDescricao": "Finished, 1 to 30 chapters",
+    "generosTitulo": "Genres",
+    "decada": "{n}s",
+    "storyArt": "Story and art",
+    "story": "Story",
+    "art": "Art",
+    "oneshot": "One-shot",
+    "doujin": "Doujinshi",
+    "oel": "Original comic",
+    "generos": {
+      "Action": "Action",
+      "Adventure": "Adventure",
+      "Comedy": "Comedy",
+      "Drama": "Drama",
+      "Fantasy": "Fantasy",
+      "Horror": "Horror",
+      "Mahou Shoujo": "Mahou Shoujo",
+      "Mecha": "Mecha",
+      "Music": "Music",
+      "Mystery": "Mystery",
+      "Psychological": "Psychological",
+      "Romance": "Romance",
+      "Sci-Fi": "Sci-Fi",
+      "Slice of Life": "Slice of Life",
+      "Sports": "Sports",
+      "Supernatural": "Supernatural",
+      "Thriller": "Thriller"
+    },
+    "temasNomes": {
+      "military": "Military",
+      "demon": "Demons",
+      "dark-fantasy": "Dark fantasy",
+      "revenge": "Revenge",
+      "dystopia": "Dystopia",
+      "swordplay": "Swordplay"
+    },
+    "status": {
+      "current": "Publishing",
+      "finished": "Finished",
+      "upcoming": "Coming soon",
+      "unreleased": "Unreleased",
+      "tba": "To be announced",
+      "hiatus": "On hiatus",
+      "cancelled": "Cancelled"
+    },
+    "relacoes": {
+      "sequel": "Sequel",
+      "prequel": "Prequel",
+      "alternative_setting": "Alternative setting",
+      "alternative_version": "Alternative version",
+      "side_story": "Side story",
+      "parent_story": "Main story",
+      "summary": "Summary",
+      "full_story": "Full story",
+      "spinoff": "Spin-off",
+      "adaptation": "Adaptation",
+      "character": "Shared characters",
+      "other": "Other relation"
+    },
+    "capitulos": "{n, plural, one {# chapter} other {# chapters}}"
   }
 }

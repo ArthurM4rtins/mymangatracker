@@ -39,7 +39,7 @@ const LIMITE_POPULARES = 36;
 const MAXIMO_POR_ANDAR = 9;
 
 /** As dependências que têm rótulo traduzido; o health check pode listar outras. */
-const DEPENDENCIAS_COM_ROTULO = ["database", "anilist"] as const;
+const DEPENDENCIAS_COM_ROTULO = ["database", "anilist", "kitsu"] as const;
 
 function temRotulo(nome: string): nome is (typeof DEPENDENCIAS_COM_ROTULO)[number]
 {

@@ -15,6 +15,7 @@ import { ResetarLeitura } from "./resetar-leitura";
 import { EditarProgresso } from "./editar-progresso";
 import { SeletorStatus } from "./seletor-status";
 import { ColecaoVisual } from "../componentes/colecao-visual";
+import { caminhoDaObra, referenciaDaChave } from "@/server/domain/referencia-da-obra";
 
 // Estante é da sessão e do banco: nada aqui é pré-renderizável.
 export const dynamic = "force-dynamic";
@@ -152,6 +153,8 @@ async function Entrada({ entrada }: { entrada: EntradaDaEstante })
   const t = await getTranslations("estante");
   const c = await getTranslations("comum");
   const { obra } = entrada;
+  const referencia = referenciaDaChave(obra.chave);
+  const caminho = referencia === null ? "/catalogo" : caminhoDaObra(referencia);
   const pais = PAISES.find(function (valor) { return valor === obra.countryOfOrigin; });
   // País fora do mapa segue sem selo; obra que não declara país cai no genérico.
   const rotulo = pais === undefined
@@ -160,7 +163,7 @@ async function Entrada({ entrada }: { entrada: EntradaDaEstante })
 
   return (
     <li className="flex gap-4 rounded-lg border border-borda bg-superficie p-4">
-      <Link href={`/obra/${obra.chave}`} className="shrink-0">
+      <Link href={caminho} className="shrink-0">
         {obra.coverImageUrl ? (
           <Image
             src={obra.coverImageUrl}
@@ -182,7 +185,7 @@ async function Entrada({ entrada }: { entrada: EntradaDaEstante })
 
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <h2 className="font-medium leading-snug">
-          <Link href={`/obra/${obra.chave}`} className="hover:text-acento">
+          <Link href={caminho} className="hover:text-acento">
             {obra.titleEnglish ?? obra.titleRomaji}
           </Link>
         </h2>

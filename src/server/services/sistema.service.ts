@@ -10,6 +10,7 @@
  */
 import { lembrarPorTempo } from "@/server/domain/memoria-curta";
 import { pingAniList } from "@/server/infra/anilist";
+import { pingKitsu } from "@/server/infra/kitsu";
 import { sessaoConfigurada } from "@/server/infra/config";
 import { pingBanco } from "@/server/repositories/health.repository";
 import { verificarSaude, type RelatorioSaude } from "./health.service";
@@ -34,6 +35,13 @@ const pingAniListLembrado = lembrarPorTempo(
   JANELA_DE_FALHA_MS,
 );
 
+const pingKitsuLembrado = lembrarPorTempo(
+  pingKitsu,
+  JANELA_DO_ANILIST_MS,
+  undefined,
+  JANELA_DE_FALHA_MS,
+);
+
 async function sondaDoSegredo(): Promise<"ok" | "not_configured">
 {
   return sessaoConfigurada() ? "ok" : "not_configured";
@@ -51,6 +59,7 @@ export async function verificarSaudeDoSistema(
 {
   return verificarSaude({
     database: pingBanco,
+    kitsu: opcoes.completo === true ? pingKitsuLembrado : undefined,
     anilist: opcoes.completo === true ? pingAniListLembrado : undefined,
     sessionSecret: sondaDoSegredo,
   });

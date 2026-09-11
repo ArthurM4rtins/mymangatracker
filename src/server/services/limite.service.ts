@@ -14,7 +14,7 @@
  * entrando na dele. O balde por conta nunca é zerado pelo sucesso.
  */
 import { interpretarIdentificador } from "@/server/domain/identificador-de-login";
-import { hopsConfiaveis, pepperDoLimite } from "@/server/infra/config";
+import { emDesenvolvimento, hopsConfiaveis, pepperDoLimite } from "@/server/infra/config";
 import {
   avaliarLimite,
   chaveDeTentativa,
@@ -181,6 +181,9 @@ const EXCLUSOES_POR_USUARIO: RegraDeLimite = { maximo: 10, janelaMs: 60 * 60_000
 // o `?q=` de quem pede. O teto e por IP e folgado: rede compartilhada cai num
 // balde so, e dev local sem `x-forwarded-for` cai todo em "desconhecido".
 const BUSCAS_POR_IP: RegraDeLimite = { maximo: 120, janelaMs: 60 * 60_000 };
+// Em next dev, testes de filtros, paginação e HMR compartilham o mesmo IP.
+// Uma janela curta permite novas rodadas sem retirar a proteção contra rajadas.
+const BUSCAS_POR_IP_EM_DEV: RegraDeLimite = { maximo: 120, janelaMs: 5 * 60_000 };
 
 const DEPS_DE_PRODUCAO: DependenciasDeLimite = {
   contar: contarTentativas,
@@ -313,10 +316,11 @@ export function limitarRelato(pedido: { userId: string }): Promise<Veredito>
 /** A composição de produção. Antes de buscar no catálogo, sem sessão. */
 export function limitarBuscaDoCatalogo(pedido: { ip: string }): Promise<Veredito>
 {
+  const regra = emDesenvolvimento() ? BUSCAS_POR_IP_EM_DEV : BUSCAS_POR_IP;
   return verificarERegistrar(
     {
       escopo: "catalogo",
-      chaves: [{ chave: chaveDeTentativa([pedido.ip], pepperDoLimite()), regra: BUSCAS_POR_IP }],
+      chaves: [{ chave: chaveDeTentativa([pedido.ip], pepperDoLimite()), regra }],
     },
     DEPS_DE_PRODUCAO,
   );

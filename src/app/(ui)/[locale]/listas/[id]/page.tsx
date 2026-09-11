@@ -18,8 +18,8 @@ import { ItensOrdenaveis } from "./itens-ordenaveis";
 import { idiomaDoSegmento } from "@/i18n/routing";
 import { ColecaoVisual } from "../../componentes/colecao-visual";
 import { CartaoObra } from "../../componentes/cartao-obra";
-import { chaveDaObra } from "@/server/domain/referencia-da-obra";
-import { referenciaDaObra } from "@/server/domain/anilist-media";
+import { caminhoDaObra, chaveDaObra } from "@/server/domain/referencia-da-obra";
+import { referenciaDaObra, semRepetidas } from "@/server/domain/anilist-media";
 
 export const dynamic = "force-dynamic";
 
@@ -199,9 +199,8 @@ async function ResultadosDaBusca({
     );
   }
 
-  // A fonte pode repetir uma obra na mesma página (visto no Kitsu com o AniList
-  // fora, 10/09/2026): a chave da linha é o anilistId, então dedupe aqui.
-  const obras = [...new Map(busca.obras.map(function (obra) { return [obra.anilistId, obra]; })).values()];
+  // A identidade inclui a fonte: duas obras sem AniList continuam distintas.
+  const obras = semRepetidas(busca.obras);
 
   return (
     <ul className="flex max-h-96 flex-col divide-y divide-borda overflow-y-auto rounded-md border border-borda bg-superficie">
@@ -224,7 +223,7 @@ async function ResultadosDaBusca({
               <span aria-hidden className="h-12 w-8 shrink-0 rounded-sm bg-fundo" />
             )}
             <Link
-              href={`/obra/${obra.anilistId}`}
+              href={caminhoDaObra(referenciaDaObra(obra))}
               className="min-w-0 flex-1 truncate text-sm hover:text-acento"
             >
               {titulo}

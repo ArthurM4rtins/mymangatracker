@@ -1,30 +1,37 @@
 /**
- * Caso de uso: a página do autor (issue #43). Leitura ao vivo do AniList,
- * como os similares — sem cache no banco: o AniList responde melhor do que
- * uma tabela nossa responderia, e autor não é dado do usuário.
+ * Perfil de autor pela fonte da sua identidade. IDs de pessoas não têm o
+ * mesmo mapeamento que IDs de obras; nunca reutilizar o número entre fontes.
  */
 import type { AutorDoAniList } from "@/server/domain/anilist-media";
 import { buscarAutor } from "@/server/infra/anilist";
+import { buscarAutorNoKitsu } from "@/server/infra/kitsu";
+import type { AutorDoKitsu } from "@/server/domain/kitsu-autor";
+import type { ReferenciaDeAutor } from "@/server/domain/referencia-de-autor";
 import { lembrarPorChave } from "@/server/domain/memoria-curta";
 
 export type ResultadoDoAutor =
-  | { estado: "ok"; autor: AutorDoAniList }
+  | { estado: "ok"; autor: AutorDoAniList | AutorDoKitsu }
   | { estado: "nao_encontrado" }
   | { estado: "indisponivel" };
 
 export type DependenciasDoAutor = {
   buscarAutor: (staffId: number) => Promise<AutorDoAniList | null>;
+  buscarNoKitsu?: (personId: number) => Promise<AutorDoKitsu | null>;
 };
 
 /** Nunca levanta — página pública degrada, não estoura. */
 export async function autorParaPagina(
-  staffId: number,
+  staffId: number | ReferenciaDeAutor,
   deps: DependenciasDoAutor,
 ): Promise<ResultadoDoAutor>
 {
   try
   {
-    const autor = await deps.buscarAutor(staffId);
+    const referencia = typeof staffId === "number" ? { fonte: "anilist" as const, id: staffId } : staffId;
+    if (!Number.isSafeInteger(referencia.id) || referencia.id <= 0) return { estado: "nao_encontrado" };
+    const buscar = referencia.fonte === "kitsu" ? deps.buscarNoKitsu : deps.buscarAutor;
+    if (!buscar) return { estado: "indisponivel" };
+    const autor = await buscar(referencia.id);
 
     return autor === null
       ? { estado: "nao_encontrado" }
@@ -47,11 +54,12 @@ const MAXIMO_DE_IDS = 200;
 // No escopo do módulo, não dentro da composição: recriado a cada chamada, o
 // memo não lembraria nada.
 const autorLembrado = lembrarPorChave(buscarAutor, JANELA_MS, MAXIMO_DE_IDS);
+const autorKitsuLembrado = lembrarPorChave(buscarAutorNoKitsu, JANELA_MS, MAXIMO_DE_IDS);
 
 /** A composição de produção. */
 export function autorParaPaginaDoSistema(
-  staffId: number,
+  staffId: number | ReferenciaDeAutor,
 ): Promise<ResultadoDoAutor>
 {
-  return autorParaPagina(staffId, { buscarAutor: autorLembrado });
+  return autorParaPagina(staffId, { buscarAutor: autorLembrado, buscarNoKitsu: autorKitsuLembrado });
 }

@@ -17,6 +17,7 @@ import type {
   OrdemDoCatalogo,
 } from "@/server/domain/catalogo-filtros";
 import { anilistEndpoint } from "./config";
+import { TAG_ANILIST } from "@/server/domain/detalhes-da-obra";
 
 const TIMEOUT_MS = 5000;
 const LIMITE_PADRAO = 20;
@@ -30,10 +31,14 @@ const CAMPOS_DE_MEDIA = `
       format
       countryOfOrigin
       chapters
+      volumes
+      status
+      synonyms
       description(asHtml: false)
       coverImage { large }
       bannerImage
-      startDate { year }
+      startDate { year month day }
+      endDate { year month day }
       genres
       averageScore
       staff(perPage: 6, sort: RELEVANCE) {
@@ -147,6 +152,11 @@ export async function buscarFiltrado(
   {
     args.push(`genre_in: ${JSON.stringify([filtro.genero])}`);
   }
+  if (filtro.publicacao || filtro.curtas) {
+    args.push(`status: ${filtro.curtas || filtro.publicacao === "finished" ? "FINISHED" : "RELEASING"}`);
+  }
+  if (filtro.curtas) args.push("chapters_greater: 0", "chapters_lesser: 31");
+  if (filtro.tema) args.push(`tag_in: ${JSON.stringify([TAG_ANILIST[filtro.tema]])}`);
 
   if (filtro.tipo === "novel")
   {

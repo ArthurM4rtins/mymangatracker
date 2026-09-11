@@ -12,8 +12,6 @@ import { capituloValido } from "@/server/domain/progresso";
 import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import { limitarEntrada } from "./limite.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
-import { buscarMediaPorId } from "@/server/infra/anilist";
-import { buscarNoKitsuPorAnilistId } from "@/server/infra/kitsu";
 import {
   buscarMediaPorReferencia,
   salvarMediaDoAniList,

@@ -1,15 +1,9 @@
 /**
  * Traduz a resposta do Kitsu para o nosso `MediaDoAniList` (issue #219).
  *
- * O Kitsu é **tapa-buraco**, não segunda fonte: entra só quando o AniList está
- * fora, e some do caminho quando ele volta. O acervo que queremos espelhar é o
- * do AniList (#215).
- *
- * A regra que sustenta tudo isso é a identidade: o Kitsu entrega o `anilistId`
- * de cada obra no mapeamento, e **obra sem esse id não entra**. Sem ele, a linha
- * seria órfã — o espelho do AniList nunca a reconheceria, e ela ficaria para
- * sempre com o dado pior. Medido em 09/09/2026: 79 de 80 obras trazem o id, em
- * quatro faixas do acervo.
+ * O Kitsu é a fonte principal. Quando fornece mapeamento para o AniList,
+ * guardamos os dois ids para preservar links existentes e permitir fallback.
+ * Obras sem mapeamento continuam identificadas pelo próprio id do Kitsu.
  *
  * Módulo de domínio: puro, sem import do projeto, sem rede. Mesma regra do
  * `anilist-media.ts`: formato que não cabe no nosso modelo faz a obra ser
@@ -17,14 +11,27 @@
  * depois vira dado errado no banco.
  */
 import type { MediaDoAniList, PaisDeOrigem, TipoMedia } from "./anilist-media";
+import { ehPapelDeAutoria } from "./anilist-media";
+import { GENEROS } from "./catalogo-filtros";
+import { dataDePublicacao, RELACOES, STATUS_PUBLICACAO, type DetalhesDaObra, type ObraRelacionada } from "./detalhes-da-obra";
+
+export type RecursoKitsu = {
+  id?: unknown;
+  type?: unknown;
+  attributes?: Record<string, unknown>;
+  relationships?: Record<string, { data?: { id?: unknown; type?: unknown } | Array<{ id?: unknown; type?: unknown }> | null }>;
+};
 
 export type ObraDoKitsu = {
   dados: {
     id: string;
     attributes: Record<string, unknown>;
+    relationships?: RecursoKitsu["relationships"];
   };
   /** O `externalId` do mapeamento `anilist/manga`. `null` quando não há. */
   anilistId: string | null;
+  incluidos?: RecursoKitsu[];
+  completo?: boolean;
 };
 
 /**
@@ -84,7 +91,7 @@ export function traduzirDoKitsu(obra: ObraDoKitsu): MediaDoAniList | null
   const atributos = obra.dados.attributes;
   const formato = TIPO_POR_SUBTIPO[String(atributos.subtype)];
 
-  // `oneshot`, `doujin` e `oel` não existem no nosso modelo. Descarta.
+  // Subtipo desconhecido não pode ser representado no modelo.
   if (formato === undefined)
   {
     return null;
@@ -106,12 +113,49 @@ export function traduzirDoKitsu(obra: ObraDoKitsu): MediaDoAniList | null
   const urlDaCapa = texto(capa.medium) ?? texto(capa.small) ?? texto(capa.large) ?? texto(capa.original);
   const inicio = texto(atributos.startDate);
   const nota = inteiro(atributos.averageRating);
+  const banner = (atributos.coverImage ?? {}) as Record<string, unknown>;
+  const bannerImageUrl = texto(banner.large_webp) ?? texto(banner.large) ?? texto(banner.original);
+  const ligados = relacionamentosDaObra(obra);
+  const categories = ligados(obra.dados, "categories").flatMap(r => typeof r.attributes?.slug === "string" ? [r.attributes.slug] : []);
+  const genres = GENEROS.filter(g => categories.includes(g.toLowerCase().replace(/\s+/g, "-")));
+  const autores = [...ligados(obra.dados, "staff"), ...ligados(obra.dados, "mangaStaff")].flatMap(staff => {
+    const papel = texto(staff.attributes?.role);
+    const pessoa = ligados(staff, "person")[0];
+    const nome = texto(pessoa?.attributes?.name);
+    const id = inteiro(pessoa?.id);
+    return papel && ehPapelDeAutoria(papel) && nome && id && id > 0
+      ? [{ kitsuPersonId: id, nome, papel }] : [];
+  }).filter((a, i, lista) => lista.findIndex(b => b.kitsuPersonId === a.kitsuPersonId) === i);
+  const related: ObraRelacionada[] = ligados(obra.dados, "mediaRelationships").flatMap(rel => {
+    const destino = ligados(rel, "destination")[0];
+    if (destino?.type !== "manga" || String(destino.id) === String(kitsuId)) return [];
+    const media = traduzirDoKitsu({ dados: { id: String(destino.id), attributes: destino.attributes ?? {} }, anilistId: null });
+    if (!media) return [];
+    const role = rel.attributes?.role;
+    const relacao = RELACOES.find(r => r === role) ?? "other";
+    return [{ chave: `kitsu:${media.kitsuId}`, titulo: media.titleEnglish ?? media.titleRomaji, capa: media.coverImageUrl ?? null, tipo: media.type, relacao }];
+  }).filter((r, i, lista) => lista.findIndex(b => b.chave === r.chave) === i).slice(0, 12);
+  const volumes = inteiro(atributos.volumeCount);
+  const status = STATUS_PUBLICACAO.find(s => s === atributos.status);
+  const aliases = [...new Set([...Object.values(titulos), ...(Array.isArray(atributos.abbreviatedTitles) ? atributos.abbreviatedTitles : [])].flatMap(t => texto(t) ? [texto(t)!] : []))].filter(t => t !== titleRomaji).slice(0, 30);
+  const details: DetalhesDaObra | undefined = obra.completo ? {
+    version: 1, aliases, categories, related,
+    ...(status ? { status } : {}),
+    ...(volumes && volumes > 0 ? { volumes } : {}),
+    ...(dataDePublicacao(atributos.startDate) ? { startDate: dataDePublicacao(atributos.startDate) } : {}),
+    ...(dataDePublicacao(atributos.endDate) ? { endDate: dataDePublicacao(atributos.endDate) } : {}),
+    subtype: String(atributos.subtype),
+  } : undefined;
 
   return {
     ...(anilistId === undefined || anilistId <= 0 ? {} : { anilistId }),
     kitsuId,
     type: formato.type,
     titleRomaji,
+    ...(bannerImageUrl ? { bannerImageUrl } : {}),
+    ...(genres.length ? { genres: [...genres] } : {}),
+    ...(autores.length ? { autores } : {}),
+    ...(details ? { details } : {}),
     ...(formato.pais === undefined ? {} : { countryOfOrigin: formato.pais }),
     ...(texto(titulos.en) === undefined ? {} : { titleEnglish: texto(titulos.en) }),
     ...(texto(titulos.ja_jp) === undefined ? {} : { titleNative: texto(titulos.ja_jp) }),
@@ -122,5 +166,17 @@ export function traduzirDoKitsu(obra: ObraDoKitsu): MediaDoAniList | null
       : { chapters: inteiro(atributos.chapterCount) }),
     ...(inicio === undefined ? {} : { startYear: inteiro(inicio.slice(0, 4)) }),
     ...(nota === undefined ? {} : { averageScore: nota }),
+  };
+}
+
+function relacionamentosDaObra(obra: ObraDoKitsu)
+{
+  const indice = new Map((obra.incluidos ?? []).map(r => [`${r.type}:${r.id}`, r]));
+  return function ligados(recurso: RecursoKitsu, nome: string): RecursoKitsu[] {
+    const dados = recurso.relationships?.[nome]?.data;
+    return (Array.isArray(dados) ? dados : dados ? [dados] : []).flatMap(ref => {
+      const item = indice.get(`${ref.type}:${ref.id}`);
+      return item ? [item] : [];
+    });
   };
 }
