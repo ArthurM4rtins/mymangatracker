@@ -204,7 +204,9 @@
         "nota": "Mejor valoración",
         "alta": "En tendencia",
         "recente": "Más recientes"
-      }
+      },
+      "avancados": "Filtros avanzados",
+      "avancadosAtivos": "Activos"
     },
     "erros": {
       "indisponivel": "El catálogo no está disponible ahora. Inténtalo de nuevo en unos instantes.",

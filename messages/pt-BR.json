@@ -204,7 +204,9 @@
         "nota": "Melhor nota",
         "alta": "Em alta",
         "recente": "Mais recentes"
-      }
+      },
+      "avancados": "Filtros avançados",
+      "avancadosAtivos": "Ativos"
     },
     "erros": {
       "indisponivel": "O catálogo está indisponível agora. Tente de novo em instantes.",

@@ -204,7 +204,9 @@
         "nota": "Beste Bewertung",
         "alta": "Im Trend",
         "recente": "Neueste"
-      }
+      },
+      "avancados": "Erweiterte Filter",
+      "avancadosAtivos": "Aktiv"
     },
     "erros": {
       "indisponivel": "Der Katalog ist gerade nicht verfügbar. Versuch es gleich noch einmal.",

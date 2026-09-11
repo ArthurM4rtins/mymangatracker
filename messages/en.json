@@ -204,7 +204,9 @@
         "nota": "Top rated",
         "alta": "Trending",
         "recente": "Newest"
-      }
+      },
+      "avancados": "Advanced filters",
+      "avancadosAtivos": "Active"
     },
     "erros": {
       "indisponivel": "The catalogue is unavailable right now. Try again in a moment.",
