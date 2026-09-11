@@ -217,6 +217,21 @@ input:focus { outline: none; border-color: var(--acento); }
   border-color: var(--acento);
 }
 
+/*
+ * Sem as setinhas do navegador. Nao e so estetica: o campo aceita decimal
+ * (existe capitulo 57.5), entao o `step` e 0.01 — e a setinha sobe de 8 para
+ * 8.01, que nao e capitulo nenhum. O controle oferecia uma interacao que quase
+ * sempre da errado, num campo que a pessoa preenche digitando.
+ *
+ * O `step` fica, porque e ele que faz o 57.5 passar na validacao.
+ */
+#capitulo::-webkit-outer-spin-button,
+#capitulo::-webkit-inner-spin-button {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 #capitulo:placeholder-shown {
   border-style: dashed;
   border-color: var(--borda);
