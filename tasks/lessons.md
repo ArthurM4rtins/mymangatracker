@@ -268,6 +268,56 @@ no fim; resolver mantendo os dois lados em ordem cronologica.
 
 ---
 
+## Merge unico nao fecha os PRs do meio da pilha como merged
+
+**03/09/2026.** Vinte PRs empilhados (#19 -> #60), cada um com base na branch de baixo. Mergeamos
+so a ponta na `main` e eu disse que o GitHub fecharia os vinte sozinho, porque todos os heads
+viravam alcancaveis. Fechou **dois**: o #19 (base `main`) e o #60 (a ponta, retargetada para
+`main`). Os dezoito do meio continuaram abertos.
+
+O GitHub so fecha um PR como merged quando o head dele chega na **propria base** daquele PR — e
+retargetar depois nao resolve: `gh pr edit N --base main` responde
+`GraphQL: There are no new commits between base branch 'main' and head branch '<head>'`.
+
+**Regra:** merge unico de pilha fecha so o de baixo e a ponta. Os intermediarios se fecham a mao
+(`gh pr close N --comment ...`), apontando o commit de merge, e ficam como **closed**, nao merged.
+Conferir antes com `git rev-list --count origin/main..origin/<head>` = 0 para provar que o
+trabalho entrou.
+
+---
+
+## Doc de modulo envelhece; o lessons.md e o registro cronologico
+
+**03/09/2026.** Reportei o seletor de tema como regressao: o
+`Obsidian/02. Implementacoes/identidade-visual/CLAUDE.md` diz que ele "virou controle segmentado
+com texto" (decisao de 31/08) e a tela mostra tres bolinhas. Estava errado — o `lessons.md` tinha
+a nuance de 01/09: as bolinhas voltaram **por pedido explicito do usuario**, como swatch funcional
+de duas metades. O codigo seguia a decisao mais recente; o documento e que parou no dia anterior.
+
+**Regra:** antes de chamar qualquer coisa de regressao, ler a secao inteira do `lessons.md`
+correspondente, **incluindo as nuances datadas depois**. Documento de modulo descreve a intencao
+de quando foi escrito; o `lessons.md` guarda a ordem em que o usuario mudou de ideia. Divergencia
+entre os dois nao e bug de codigo: e doc desatualizado, e vira issue de documentacao.
+
+---
+
+## Caminho longo no Windows quebra o vitest com erro que parece de codigo
+
+**03/09/2026.** Worktree criada dentro do scratchpad da sessao (caminho base de ~130 chars). O
+`pnpm test` morreu no startup com
+`TypeError [ERR_PACKAGE_IMPORT_NOT_DEFINED]: Package import specifier "#module-evaluator" is not
+defined`, apontando um chunk do vitest — parece defeito de dependencia ou de versao. Nao era: o
+`package.json` do vitest tem o campo `imports` correto e o arquivo existe. O caminho ate ele tinha
+**292 chars**; o resolver do Node trata o `package.json` que nao consegue ler como inexistente,
+sobe na arvore, nao acha `imports` e lanca esse erro. `LongPathsEnabled=1` no registro **nao**
+evitou.
+
+**Regra:** erro de resolucao de modulo que nao faz sentido, em worktree dentro do scratchpad,
+testar antes num caminho curto (`C:\<nome>`) e so depois investigar o codigo. Para rodar suite,
+build ou `next start` de uma branch, criar a worktree na raiz do disco.
+
+---
+
 ## Merge so com o check verde — condicionar, nao encadear (05/09)
 
 **O que aconteceu:** num mesmo comando encadeei `gh pr checks --watch` e
@@ -554,6 +604,11 @@ mesmo commit. A #162 investigou por semanas e parou em duas hipoteses erradas:
 "e a migration rodando contra banco invalido" (caiu quando o #205 fez o script
 pular fora de producao, e o preview seguinte continuou vermelho) e "e variavel de
 ambiente faltando no Preview".
+
+Junto vai a regra que veio do PR #68, da sessao de 03/09: o check "Vercel" que aparece no PR e o
+deploy de **Preview**, e nao se extrapola dele o resultado de producao. Para falar de producao,
+olhar o deployment de Production — `gh api repos/<owner>/<repo>/deployments --jq '[.[] | select(.environment=="Production")][0]'` e o `/statuses` dele. Quando os dois
+divergem, a diferenca esta no ambiente, nao no codigo.
 
 Nao era nenhuma das duas. O log do deployment dizia, na etapa **Provisioning
 Integrations**, antes de instalar qualquer dependencia:

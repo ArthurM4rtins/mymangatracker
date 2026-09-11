@@ -9,9 +9,13 @@ Definir a marca do site: nome, logo, paleta de cores e tipografia, e aplicar no 
 - **Nome do site: Folunio** (Folha + Universo). Decidido em 11/09/2026, no rebranding (#268).
   - Motivo: o nome anterior colidia dentro da própria categoria. O significado agora é
     construído, não literal — a marca precisa ensinar a palavra, e isso é custo de divulgação.
-  - `folunio.com` e `folunio.app` sem registro e `@folunio` livre no X, verificados em
-    10/09/2026 por volta de 20h11. Retrato daquele horário, não garantia — reconferir antes
-    de registrar.
+  - `folunio.com`, `.net`, `.org`, `.app` e `.com.br` sem registro, reconferidos em 11/09/2026
+    com controle positivo em cada endpoint. Retrato do horario, nao garantia.
+  - **Errata de 11/09:** a versao anterior desta linha dizia `@folunio` livre no X. E falso — o
+    endpoint de disponibilidade do proprio cadastro do X recusa o nome. Nao e palavra proibida:
+    o mesmo codigo volta para `github`, `manga` e `leitura`, entao e o balde de "indisponivel
+    sem dizer por que". `@folunioapp`, `@usefolunio` e `@getfolunio` voltam disponiveis. Quem
+    for reservar handle le `../../05. Divulgacao/redes-sociais/CLAUDE.md`, secao Handles.
 - **Nome anterior: Kidoku** (既読, "lido"), decidido em 31/08/2026 e trocado em 11/09.
   - A decisão de 31/08 registrava aqui que **nenhum tracker de leitura usava o nome**. Isso
     era **falso**: a pesquisa de 10/09 achou `kidoku.net` / `Rasukarusan/kidoku`, app de

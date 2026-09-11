@@ -3,6 +3,10 @@
 Escrito em 27/08/2026, sessão interrompida pela rede da escola (ver **Bloqueio**).
 Ler este arquivo inteiro antes de tocar em qualquer coisa.
 
+**A sessao mais recente esta no FIM do arquivo**, em "Sessao 11/09 — rebranding para
+Folunio". O produto se chamava Kidoku ate 11/09/2026: toda mencao a esse nome antes
+daquela secao e historico, nao pendencia.
+
 ## Onde paramos
 
 Repo criado em `C:\Users\arthu\source\repos\mymangatracker`, com `git init` (branch `main`),
@@ -1177,7 +1181,15 @@ voltar, e a pendencia de tamanho do banco continua de pe.
 - **#215** — AniList fora, sem previsao. Nada a fazer alem de esperar e monitorar.
 - **#176** (recuperacao de senha) e **#16** (curadoria narrativa), os dois no backlog.
 
-### Proxima sessao — 11/09: REBRANDING
+### Proxima sessao — 11/09: REBRANDING  ·  **EXECUTADO, NAO SEGUIR**
+
+> **Este bloco e historico.** Foi escrito em 10/09 e o rebranding aconteceu em
+> 11/09. O que esta abaixo descreve o estado ANTES: diz que o nome nao esta
+> fechado, que nao existe issue e que o PR #266 esta segurado em draft — as tres
+> coisas deixaram de valer. O nome fechou (**Folunio**), a #268 foi aberta e
+> fechada, e o #266 foi mergeado.
+>
+> O que aconteceu de verdade esta em **"Sessao 11/09"**, no fim deste arquivo.
 
 Decidido pelo usuario em 10/09, ao encerrar: a proxima sessao e o **rebranding do
 produto**. Logo novo e varredura total de onde estiver escrito "Kidoku".
@@ -1239,3 +1251,144 @@ desenvolvimento). Aba do Chrome minimizada mente: congela transicao CSS, nao cas
 
 My Hero Academia entrou na estante da conta de desenvolvimento como **Planejado**,
 ao provar o #227 de ponta a ponta. Da para tirar pela propria tela da obra.
+
+## Sessao 11/09 — rebranding para Folunio, icone e janela da extensao, limpeza
+
+### O que mandou na sessao
+
+**O nome fechou: Folunio.** O passo 0 do roteiro foi cumprido, o rebranding inteiro
+entrou e esta em producao. O que a sessao anterior deixou escrito abaixo, em
+"Proxima sessao — 11/09", virou historico: **nao seguir aquelas instrucoes, elas
+descrevem um estado que nao existe mais.**
+
+### Fechado
+
+- **#268 — rebranding completo.** Simbolo intacto (o double-check nao mudou), **葉宙**
+  no lugar do 既読 (葉 folha, 宙 espaco aberto), e o wordmark `folunio` redesenhado na
+  monolinha, com **folha no primeiro o e planeta no ultimo**. As quatro armadilhas
+  foram todas pegas. A allowlist do `eslint.config.mjs` chegou a reprovar um
+  `<h1>Kidoku</h1>` esquecido em `page.tsx` — o portao cobrou o que existia.
+- **#271 — icone proprio da extensao.** A extensao **nunca teve icone**: o manifest
+  nao declarava `icons` nem `action.default_icon`, e o que aparecia na barra era o
+  placeholder do Chrome com a inicial. Entrou a **folha em orbita**, origem em
+  `extension/icones/folha-orbita.svg` e PNG em 16/32/48/128.
+- **#272 — a janela de 320px.** Marca virou desenho, rotulo NESTA ABA no titulo da
+  aba, lista de obras virou listbox de verdade, campo de capitulo cresceu, filtro
+  destaca o trecho casado, e entrou a **faixa de estado** com quatro estados.
+- **#247 — politica de quebra de linha.** `.gitattributes` com `* text=auto eol=lf`
+  mais renormalizacao. Eram 141 arquivos em CRLF quando a issue foi aberta; sobraram
+  22. Hoje `git ls-files --eol` na main nao devolve nenhum `i/crlf` nem `i/mixed`.
+- **#277 — `.editorconfig`**, descrevendo o que o repo ja fazia (zero tabs, recuo 2,
+  LF, newline final), mais a limpeza dos 2 unicos arquivos com espaco no fim.
+- **#279 — o portao de i18n da extensao estava verde conferindo ZERO chaves.**
+- **#281, #282, #283** — os tres PRs de documentacao que estavam parados (#68, #266,
+  #265) foram mergeados, cada um com issue propria.
+- **#16, #215, #238** — fechadas **por decisao, nao por resolucao**. Ler os
+  comentarios de fechamento: eles carregam a evidencia e o motivo.
+
+### O que esta no ar, provado
+
+A main esta em `37e4c1e` e a producao roda **exatamente esse commit** (deployment de
+Production com `state=success`). Nos **cinco** idiomas: HTTP 200, `<title>Folunio</title>`,
+17 "Folunio", 4 "葉宙", **zero "Kidoku"** fora da chave legada `kidoku-tema`, zero 既読.
+`/api/v1/health` em 200.
+
+### Decisoes que valem lembrar, com o motivo
+
+- **O cookie de sessao renomeado deslogou todo mundo**, de proposito: `kidoku_sessao`
+  virou `folunio_sessao` e **nao tem fallback**. Com a base nova custa quase nada;
+  depois de tracao custaria muito mais. O tema, esse **migra** o valor antigo no
+  script anti-flash, entao ninguem perdeu a escolha.
+- **O icone nao e o double-check, e isso nao e estetica.** O Chrome carimba o badge
+  por cima do nosso icone, e o badge de "registrado" ja e um visto verde
+  (`background.js:44`). Marca com visto mais badge com visto seriam duas afirmacoes
+  do mesmo tipo em 16px.
+- **A folha do icone e CHEIA e fica DE PE.** De contorno, o miolo dela dentro do anel
+  vira iris e o icone le como **olho**; deitada no angulo do anel, as duas formas
+  viram uma lente so. As duas restricoes vieram da tela, nao do papel.
+- **O endereco do ambiente no popup so aparece fora de producao.** O aviso existe
+  porque o build e unico e tenta producao antes do localhost (#148, item 9), mas em
+  producao ele dizia sempre a mesma coisa. A regra ficou mais simples de ler: **se
+  tem endereco no topo, a leitura NAO esta indo para o site de verdade.**
+- **As setinhas do campo de capitulo sairam.** O campo aceita decimal (existe capitulo
+  57.5), entao o `step` e 0.01 — e a setinha subia de 8 para **8.01**.
+- **As capturas do tutorial sao assim de proposito:** chave do automatico DESLIGADA
+  (e o padrao de quem acabou de instalar), estante um capitulo ATRAS da aba (empatadas,
+  quem le pensa "ja esta la"), faixa no `●` e nao no `✓`, e **nenhum nome de site de
+  scan em lugar nenhum**.
+
+### Aberto — quatro issues
+
+- **#264** PWA com Share Target · **#261** tela de tutorial da extensao
+- **#249** Sobre, Termos e Privacidade · **#176** recuperacao de senha
+
+### Divida que ESTA sessao criou ou deixou passar
+
+Ler antes de dizer que o rebranding acabou. **O passo 3 do roteiro (documentacao)
+esta 2 de 5:**
+
+- `README.md` — **0 "Folunio", 5 "MyMangaTracker"**. E descreve stack defasada: diz
+  que o catalogo e AniList e que a infra e "anilist, config", quando ja existem
+  `infra/kitsu.ts`, `infra/github.ts` e Kitsu em uso.
+- `Obsidian/05. Divulgacao/redes-sociais/CLAUDE.md` — mergeado com **16 "Kidoku"**,
+  incluindo a decisao 1 ("Nome e Kidoku") e a estrategia de handle `@kidokuapp`.
+  A ordem que o handoff anterior prescrevia era corrigir ANTES de mergear; foi pulada.
+- `Obsidian/02. Implementacoes/feature-pwa-compartilhar/CLAUDE.md` — entrou com
+  **8 "Kidoku"**, e e ele que vai definir o `name` do `manifest.ts` da #264.
+- Tres HTML de identidade na main ainda com a marca morta: `identidade-aplicada.html`,
+  `estudo-fonte-nome-logo.html`, `propostas.html` — e o `identidade-visual/CLAUDE.md`
+  ainda os lista como referencia viva.
+- `identidade-visual/CLAUDE.md` mantem "Implementacao (feita, ainda nao commitada)" e
+  "pnpm test 43/43". Esta duas semanas e centenas de testes atrasado.
+- `messages/revisao/{de,es,fr}.md` citam `nota-kidoku.tsx`, arquivo que virou
+  `nota-folunio.tsx`, e discutem valores de string que ja mudaram.
+
+**O portao de i18n da extensao ficou MENOS furado, nao consertado.** 14 das 43 chaves
+seguem fora do alcance da regex: as 9 de erro (alcancadas pelo mapa `FRASE_DO_ERRO`,
+cujos valores nunca sao conferidos), mais `ocultarLink` e as quatro `estado*` criadas
+nesta mesma sessao, que entraram como ternario. A lista manual de escape em
+`tests/i18n/extensao.test.ts` e de 07/09 e nunca foi estendida.
+
+### Producao: buracos medidos hoje
+
+`robots.txt`, `sitemap.xml`, `manifest` e `opengraph-image` — **os quatro respondem
+404**. Nenhuma tag `og:` ou `twitter:` em idioma nenhum. O favicon e comprovadamente
+o do scaffold: blob de 25.931 bytes nascido no commit "Esqueleto do Next.js" de 27/08,
+e a producao serve exatamente esses bytes. Nada disso tem issue.
+
+### Branches — so tres, e uma delas nao e nossa
+
+- `main`
+- `desenvExtensao` — 16 commits a frente, **11 atras**. A tela de tutorial esta pronta
+  com as capturas novas, mas **nao esta pronta para mergear so trocando a string da
+  loja**: `tests/extensao/pares.test.ts` ficou com o `describe("deveParear")`
+  **duplicado** (a main ja tinha desde a #263), e o `CLAUDE.md` da tarefa e o
+  `extension/README.md` ainda falam do icone como pendencia. O conflito com a main e
+  so em `tasks/lessons.md`, e e trivial.
+- `docs/contatos-provedores` — do Arthur, **sem PR**, com os rascunhos de e-mail aos
+  provedores. Nao mergeada e nao apagada de proposito.
+
+Alem dessas, `feature/kitsu-principal` existe **so local**, com trabalho de outra
+sessao: Kitsu como fonte principal e AniList como reserva.
+
+### Arquivo solto que ninguem versionou
+
+`Obsidian/02. Implementacoes/identidade-visual/folunio/` — kit de identidade inteiro
+(README, index.html, `gerar-kit.mjs`, PNG e um zip de 530 KB), gerado por outra sessao,
+**em branch nenhuma**. Se a arvore de trabalho for limpa, some.
+
+### Ferramental que a sessao destravou
+
+O repo nao tinha exportador de imagem. Os PNG do icone sairam do **`sharp` que ja vem
+na arvore do Next**, e o comando ficou registrado no `extension/README.md`. O favicon
+do site e a imagem de OG podem sair pelo mesmo caminho.
+
+### Proxima sessao — escolher entre estas
+
+1. **Fechar a divida do rebranding** — README, os dois docs com Kidoku, os tres HTML
+   de identidade, e o `identidade-visual/CLAUDE.md` desatualizado.
+2. **Atualizar o plano de divulgacao** para o pos-rebranding (pedido do usuario) e
+   abrir issue para os quatro achados tecnicos: OG, analytics, favicon, README.
+3. **Preparar a extensao para a loja** — deduplicar o teste, limpar a documentacao
+   velha e mergear a `desenvExtensao` quando houver link.
+4. **#264 PWA**, cujo desenho ja esta na main e precisa da correcao de marca antes.
