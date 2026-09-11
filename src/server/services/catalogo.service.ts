@@ -43,7 +43,7 @@ export type DependenciasDoCatalogo = {
   filtrado: (filtro: FiltroDoCatalogo, pagina: number) => Promise<MediaDoAniList[]>;
   limitar: (ip: string) => Promise<Veredito>;
   /** As obras já cacheadas que casam com o termo. Só entra no fallback (#165). */
-  doCache: (termo: string, pagina: number) => Promise<MediaDoAniList[]>;
+  doCache: (termo: string, pagina: number, filtro?: FiltroDoCatalogo) => Promise<MediaDoAniList[]>;
   /** Fonte principal para vitrine, filtros e paginação. */
   noKitsu: (filtro: FiltroDoCatalogo, pagina: number) => Promise<PaginaDaFonte>;
 };
@@ -245,7 +245,9 @@ async function doCacheLocal(
 {
   try
   {
-    const obras = await deps.doCache(filtro.termo, pagina);
+    const obras = temFiltroAtivo(filtro)
+      ? await deps.doCache(filtro.termo, pagina, filtro)
+      : await deps.doCache(filtro.termo, pagina);
 
     // Banco vazio não vira tela de "cache vazio": segue sendo indisponível, que
     // é a verdade — não temos o que mostrar porque o terceiro está fora.

@@ -3,6 +3,8 @@ import type { AutorDaObra, MediaDoAniList } from "@/server/domain/anilist-media"
 import { referenciaDaObra } from "@/server/domain/anilist-media";
 import { referenciaDeMedia, type ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
 import { getPrisma } from "./prisma";
+import { detalhesDoJson, mesclarDetalhes, type DetalhesDaObra } from "@/server/domain/detalhes-da-obra";
+import type { FiltroDoCatalogo } from "@/server/domain/catalogo-filtros";
 
 export type MediaEmCache = {
   id: string;
@@ -25,20 +27,34 @@ const OBRAS_DO_FALLBACK = 36;
  * A busca é por prefixo/trecho, sem acento nem stemming: é fallback, não motor
  * de busca.
  */
-export async function buscarMediasEmCache(termo: string, pagina = 1): Promise<MediaDoAniList[]>
+export async function buscarMediasEmCache(termo: string, pagina = 1, filtro?: FiltroDoCatalogo): Promise<MediaDoAniList[]>
 {
   const limpo = termo.trim();
 
   const linhas = await getPrisma().media.findMany({
-    where: limpo === ""
-      ? undefined
-      : {
+    where: {
+      AND: [
+        ...(filtro?.publicacao ? [{ details: { path: ["status"], equals: filtro.publicacao } }] : []),
+        ...(filtro?.tema ? [{ details: { path: ["categories"], array_contains: [filtro.tema] } }] : []),
+        ...(filtro?.tipo === "manga" ? [{ OR: [
+          { countryOfOrigin: "JP" as const },
+          { details: { path: ["subtype"], equals: "manga" } },
+        ] }] : []),
+      ],
+      ...(filtro?.curtas ? { chapters: { gte: 1, lte: 30 } } : {}),
+      ...(filtro?.genero ? { genres: { has: filtro.genero } } : {}),
+      ...(filtro?.tipo ? { type: filtro.tipo === "novel" ? "NOVEL" : "MANGA" } : {}),
+      ...(filtro?.tipo === "manhwa" ? { countryOfOrigin: "KR" as const } : {}),
+      ...(filtro?.tipo === "manhua" ? { countryOfOrigin: "CN" as const } : {}),
+      ...(filtro?.decada ? { startYear: { gte: filtro.decada, lt: filtro.decada + 10 } } : {}),
+      ...(limpo === "" ? {} : {
           OR: [
             { titleRomaji: { contains: limpo, mode: "insensitive" } },
             { titleEnglish: { contains: limpo, mode: "insensitive" } },
             { titleNative: { contains: limpo, mode: "insensitive" } },
           ],
-        },
+        }),
+    },
     orderBy: [{ syncedAt: "desc" }, { id: "desc" }],
     skip: (Math.max(1, pagina) - 1) * OBRAS_DO_FALLBACK,
     take: OBRAS_DO_FALLBACK,
@@ -108,6 +124,7 @@ export type MediaCompleta = {
   genres: string[];
   averageScore: number | null;
   autores: AutorDaObra[];
+  details?: DetalhesDaObra | null;
   syncedAt: Date;
 };
 
@@ -148,6 +165,7 @@ export async function buscarMediaCompletaPorReferencia(
       genres: true,
       averageScore: true,
       authors: true,
+      details: true,
       syncedAt: true,
     },
   });
@@ -157,19 +175,23 @@ export async function buscarMediaCompletaPorReferencia(
     return null;
   }
 
-  const { authors, ...resto } = linha;
+  const { authors, details, ...resto } = linha;
 
   // A busca foi pela chave unica da fonte pedida, entao o id daquela fonte
   // nao e nulo nesta linha -- e o `findUnique` que garante, nao suposicao
   // nossa. O id da OUTRA fonte pode faltar, e por isso os dois sao anulaveis.
-  return { ...resto, autores: autoresDoJson(authors) };
+  return { ...resto, autores: autoresDoJson(authors), details: detalhesDoJson(details) };
 }
 
-export function salvarMediaDoAniList(
+export async function salvarMediaDoAniList(
   obra: MediaDoAniList,
   sincronizadoEm: Date,
 ): Promise<MediaEmCache>
 {
+  const referencia = referenciaDaObra(obra);
+  const where = referencia.fonte === "anilist" ? { anilistId: referencia.id } : { kitsuId: referencia.id };
+  const anterior = obra.details ? await getPrisma().media.findUnique({ where, select: { details: true } }) : null;
+  const details = mesclarDetalhes(detalhesDoJson(anterior?.details), obra.details);
   const dados = {
     type: obra.type,
     countryOfOrigin: obra.countryOfOrigin ?? null,
@@ -184,6 +206,7 @@ export function salvarMediaDoAniList(
     genres: obra.genres ?? [],
     averageScore: obra.averageScore ?? null,
     authors: obra.autores ?? [],
+    details,
     syncedAt: sincronizadoEm,
   };
 
@@ -195,7 +218,6 @@ export function salvarMediaDoAniList(
   // A chave do upsert é a referência canônica: com os dois nomes, casa pelo
   // AniList e grava o Kitsu na MESMA linha. Sem isso, a obra que já existia
   // pelo AniList viraria uma segunda linha assim que o Kitsu a devolvesse.
-  const referencia = referenciaDaObra(obra);
 
   return getPrisma().media.upsert({
     where: referencia.fonte === "anilist"
@@ -220,6 +242,7 @@ export function salvarMediaDoAniList(
       genres: obra.genres,
       averageScore: obra.averageScore,
       authors: obra.autores,
+      details,
       syncedAt: sincronizadoEm,
     },
     select: { id: true, syncedAt: true },
@@ -241,13 +264,14 @@ function autoresDoJson(valor: unknown): AutorDaObra[]
     if (
       typeof item === "object" &&
       item !== null &&
-      typeof (item as AutorDaObra).anilistStaffId === "number" &&
+      (typeof (item as AutorDaObra).anilistStaffId === "number" || typeof (item as AutorDaObra).kitsuPersonId === "number") &&
       typeof (item as AutorDaObra).nome === "string" &&
       typeof (item as AutorDaObra).papel === "string"
     )
     {
       autores.push({
-        anilistStaffId: (item as AutorDaObra).anilistStaffId,
+        ...((item as AutorDaObra).anilistStaffId === undefined ? {} : { anilistStaffId: (item as AutorDaObra).anilistStaffId }),
+        ...((item as AutorDaObra).kitsuPersonId === undefined ? {} : { kitsuPersonId: (item as AutorDaObra).kitsuPersonId }),
         nome: (item as AutorDaObra).nome,
         papel: (item as AutorDaObra).papel,
       });

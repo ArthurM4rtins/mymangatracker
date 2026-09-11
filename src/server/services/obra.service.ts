@@ -8,6 +8,7 @@ import { referenciaDaObra } from "@/server/domain/anilist-media";
  * serve o cache que houver, mesmo velho, e só é indisponível sem cache nenhum.
  */
 import { cacheEstaFresco } from "@/server/domain/media-cache";
+import { mesclarDetalhes, type DetalhesDaObra } from "@/server/domain/detalhes-da-obra";
 import {
   resumirNotas,
   type ContagemDeNota,
@@ -53,6 +54,7 @@ export type ObraDaPagina = {
   genres: string[];
   averageScore: number | null;
   autores: AutorDaObra[];
+  details?: DetalhesDaObra | null;
 };
 
 /** O card de similar — o mínimo para capa + link. */
@@ -168,7 +170,7 @@ export async function obraParaPagina(
   // Se o AniList cair aqui, não pagar outro timeout em série nos similares (#65, item 3).
   let fonteFora = false;
 
-  if (cache === null || !cacheEstaFresco(cache.syncedAt, agora))
+  if (cache === null || cache.details === null || !cacheEstaFresco(cache.syncedAt, agora))
   {
     const resposta = await deps.buscarNaFonte(referencia);
 
@@ -219,6 +221,7 @@ export async function obraParaPagina(
         genres: daFonte.genres ?? cache?.genres ?? [],
         averageScore: daFonte.averageScore ?? cache?.averageScore ?? null,
         autores: daFonte.autores ?? cache?.autores ?? [],
+        details: mesclarDetalhes(cache?.details, daFonte.details),
         syncedAt: salvo.syncedAt,
       };
     }
@@ -272,6 +275,7 @@ export async function obraParaPagina(
     genres: cache.genres,
     averageScore: cache.averageScore,
     autores: cache.autores,
+    ...(cache.details === undefined ? {} : { details: cache.details }),
   };
 
   return {

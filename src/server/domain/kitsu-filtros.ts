@@ -31,6 +31,8 @@ export type ConsultaDoKitsu = {
   categoria?: string;
   /** A faixa de anos, no formato que o Kitsu espera: `2010..2019`. */
   anos?: string;
+  status?: string;
+  capitulos?: string;
   ordem: string;
 };
 
@@ -64,9 +66,11 @@ export function consultaDoKitsu(filtro: FiltroDoCatalogo): ConsultaDoKitsu
   return {
     ...(termo === "" ? {} : { texto: termo }),
     ...(filtro.tipo === undefined ? {} : { subtipo: filtro.tipo }),
-    ...(filtro.genero === undefined
+    ...(filtro.genero === undefined && filtro.tema === undefined
       ? {}
-      : { categoria: identificadorDoGenero(filtro.genero) }),
+      : { categoria: [filtro.genero ? identificadorDoGenero(filtro.genero) : undefined, filtro.tema].filter(Boolean).join(",") }),
+    ...(filtro.publicacao ? { status: filtro.publicacao } : {}),
+    ...(filtro.curtas ? { status: "finished", capitulos: "1..30" } : {}),
     ...(filtro.decada === undefined
       ? {}
       : { anos: `${filtro.decada}..${filtro.decada + ANOS_DA_DECADA}` }),

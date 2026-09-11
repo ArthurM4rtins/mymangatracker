@@ -27,6 +27,7 @@ describe("mapearMedia", () =>
   it("mapeia o registro real do AniList", () =>
   {
     expect(mapearMedia(LOOKISM)).toEqual({
+      details: { version: 1, status: "current", aliases: [], categories: [], related: [] },
       anilistId: 86848,
       type: "MANGA",
       countryOfOrigin: "KR",

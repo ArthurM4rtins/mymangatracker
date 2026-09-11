@@ -209,6 +209,15 @@ function fakeDeps(cenario: {
 
 describe("obraParaPagina", function ()
 {
+  it("enriquece cache antigo ainda fresco uma vez, sem perder dados", async () => {
+    const { deps, buscarNaFonte } = fakeDeps({ noCache: { ...NO_CACHE, details: null } });
+    const details = { version: 1 as const, aliases: [], categories: [], related: [], status: "finished" as const };
+    buscarNaFonte.mockResolvedValue({ estado: "ok", respondeu: "kitsu", obra: { ...DO_KITSU, details } });
+    const resultado = await obraParaPagina({ fonte: "anilist", id: 30656 }, null, deps);
+    expect(buscarNaFonte).toHaveBeenCalledOnce();
+    expect(resultado).toMatchObject({ estado: "ok", obra: { details, bannerImageUrl: NO_CACHE.bannerImageUrl } });
+  });
+
   it("atualização parcial do Kitsu preserva metadados e identidade já salvos", async function ()
   {
     const { deps } = fakeDeps({ noCache: { ...NO_CACHE, kitsuId: 1, syncedAt: VELHO } });

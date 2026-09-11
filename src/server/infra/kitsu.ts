@@ -8,7 +8,7 @@
  * que permite a obra gravada aqui ser exatamente a linha que o AniList vai
  * atualizar depois.
  */
-import { traduzirDoKitsu, type ObraDoKitsu } from "@/server/domain/kitsu-media";
+import { traduzirDoKitsu, type ObraDoKitsu, type RecursoKitsu } from "@/server/domain/kitsu-media";
 import { semRepetidas, type MediaDoAniList } from "@/server/domain/anilist-media";
 import { consultaDoKitsu } from "@/server/domain/kitsu-filtros";
 import type { FiltroDoCatalogo } from "@/server/domain/catalogo-filtros";
@@ -26,6 +26,7 @@ const IDENTIFICACAO = "Folunio/1.0 (+https://mymangatracker.vercel.app)";
 
 /** Vinte é o teto do Kitsu: 40 responde 400 "Limit exceeds maximum page size". */
 const POR_PAGINA = 20;
+const INCLUIR_DETALHES = "mappings,categories,staff.person,mangaStaff.person,mediaRelationships.destination";
 
 /** Sonda pequena, lembrada pelo health para não consultar a cada render. */
 export async function pingKitsu(): Promise<"ok">
@@ -35,12 +36,8 @@ export async function pingKitsu(): Promise<"ok">
 }
 
 type Resposta = {
-  data?: Array<{
-    id?: unknown;
-    attributes?: unknown;
-    relationships?: { mappings?: { data?: Array<{ id?: unknown }> } };
-  }>;
-  included?: Array<{ id?: unknown; type?: unknown; attributes?: unknown }>;
+  data?: RecursoKitsu[];
+  included?: RecursoKitsu[];
 };
 
 function pedir(caminho: string): Promise<Resposta>
@@ -68,7 +65,7 @@ async function pedirEm(base: string, caminho: string): Promise<Resposta>
 }
 
 /** Junta cada obra ao `anilistId` que veio no mesmo pedido, e traduz. */
-function montar(corpo: Resposta): MediaDoAniList[]
+function montar(corpo: Resposta, completo = false): MediaDoAniList[]
 {
   const mapeamentos = new Map<string, { site: unknown; id: unknown }>();
 
@@ -91,7 +88,7 @@ function montar(corpo: Resposta): MediaDoAniList[]
     const referencias = linha.relationships?.mappings?.data ?? [];
     let anilistId: string | null = null;
 
-    for (const referencia of referencias)
+    for (const referencia of Array.isArray(referencias) ? referencias : [])
     {
       const mapeamento = typeof referencia.id === "string"
         ? mapeamentos.get(referencia.id)
@@ -108,8 +105,11 @@ function montar(corpo: Resposta): MediaDoAniList[]
       dados: {
         id: String(linha.id ?? ""),
         attributes: (linha.attributes ?? {}) as Record<string, unknown>,
+        relationships: linha.relationships,
       },
       anilistId,
+      incluidos: corpo.included,
+      completo,
     };
 
     const obra = traduzirDoKitsu(entrada);
@@ -166,6 +166,8 @@ function paramsDoFiltro(filtro: FiltroDoCatalogo): string
     partes.push(`filter%5Byear%5D=${encodeURIComponent(consulta.anos)}`);
   }
 
+  if (consulta.status) partes.push(`filter%5Bstatus%5D=${encodeURIComponent(consulta.status)}`);
+  if (consulta.capitulos) partes.push(`filter%5BchapterCount%5D=${encodeURIComponent(consulta.capitulos)}`);
   return partes.join("&");
 }
 
@@ -223,30 +225,9 @@ export async function buscarNoKitsu(
  */
 export async function buscarNoKitsuPorId(kitsuId: number): Promise<MediaDoAniList | null>
 {
-  const corpo = await pedirEm(`${BASE}/${kitsuId}`, "?include=mappings");
-  const linha = (corpo as { data?: { id?: unknown; attributes?: unknown } }).data;
-
-  if (linha === undefined)
-  {
-    return null;
-  }
-
-  const mapeamento = (corpo.included ?? []).find(function (incluido)
-  {
-    const atributos = (incluido.attributes ?? {}) as Record<string, unknown>;
-
-    return incluido.type === "mappings" && atributos.externalSite === "anilist/manga";
-  });
-
-  const externo = ((mapeamento?.attributes ?? {}) as Record<string, unknown>).externalId;
-
-  return traduzirDoKitsu({
-    dados: {
-      id: String(linha.id ?? ""),
-      attributes: (linha.attributes ?? {}) as Record<string, unknown>,
-    },
-    anilistId: typeof externo === "string" ? externo : null,
-  });
+  const corpo = await pedirEm(`${BASE}/${kitsuId}`, `?include=${INCLUIR_DETALHES}`);
+  const linha = (corpo as unknown as { data?: RecursoKitsu }).data;
+  return linha ? montar({ data: [linha], included: corpo.included }, true)[0] ?? null : null;
 }
 
 /**
@@ -268,22 +249,14 @@ export async function buscarNoKitsuPorAnilistId(
     + `&page%5Blimit%5D=1&include=item`,
   );
 
-  const obra = (corpo.included ?? []).find(function (incluido)
-  {
-    return incluido.type === "manga";
-  });
-
-  if (obra === undefined)
-  {
-    return null;
-  }
-
-  // O id vem do próprio filtro: foi por ele que chegamos aqui.
-  return traduzirDoKitsu({
-    dados: {
-      id: String(obra.id ?? ""),
-      attributes: (obra.attributes ?? {}) as Record<string, unknown>,
-    },
-    anilistId: String(anilistId),
-  });
+  const item = corpo.data?.[0]?.relationships?.item?.data;
+  if (!item || Array.isArray(item) || item.type !== "manga") return null;
+  const obra = corpo.included?.find(r => r.type === item.type && r.id === item.id);
+  if (!obra) return null;
+  // O relacionamento polimórfico item não aceita includes aninhados (400).
+  // A ficha completa precisa ser consultada pelo ID que o mapeamento forneceu.
+  const kitsuId = Number(obra.id);
+  if (!Number.isSafeInteger(kitsuId) || kitsuId <= 0) return null;
+  const completa = await buscarNoKitsuPorId(kitsuId);
+  return completa ? { ...completa, anilistId } : null;
 }

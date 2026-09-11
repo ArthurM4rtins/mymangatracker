@@ -1,0 +1,46 @@
+# Ficha editorial do Kitsu
+
+Branch: `feature/kitsu-principal`. Alteração autorizada pelo usuário em 11/09/2026.
+
+## Escopo
+
+- Importar banner, gêneros, autoria, status, volumes, datas, nomes alternativos,
+  categorias e relações ao abrir uma obra. Importação sob demanda, sem espelhamento.
+- Mostrar dados editoriais separados da leitura pessoal. Autores com somente ID
+  Kitsu não apontam para a rota de autor do AniList.
+- Catálogo com filtros de publicação, seis temas traduzidos e leituras curtas
+  (concluídas com 1 a 30 capítulos). Preservar filtros na paginação e no fallback.
+- Todas as novas mensagens em pt-BR, en, es, fr e de. Títulos e sinopses continuam
+  sendo dados da fonte, sem tradução automática.
+
+## Decisões
+
+- Coluna aditiva `Media.details` em JSON versionado. Cache anterior é enriquecido
+  na próxima abertura mesmo dentro do TTL. Respostas parciais preservam os campos
+  e relações que já conhecemos; não inferir contagens, datas ou autoria.
+- Resolver recursos incluídos pelo par tipo/id e pelo vínculo da obra, evitando
+  associar mapeamentos ou categorias de outra obra ao registro principal.
+- Relações limitadas a 12 mangás/novels; animes ficam fora das rotas de leitura.
+- Importar categorias recebidas, mas expor como filtros apenas o vocabulário
+  validado e traduzido. Outros temas podem entrar numa ampliação posterior.
+- Status do Kitsu não significa calendário confiável de próximos capítulos.
+
+## Validação
+
+Testes de domínio, serviço, i18n, persistência no banco exclusivo de teste,
+TypeScript, lint e build isolado da pasta usada pelo servidor de desenvolvimento.
+Migration de produção não é aplicada nesta tarefa.
+
+Resultados: suíte geral com 766 testes aprovada, mais dois testes da integração
+Kitsu; 112 testes de banco aprovados; build de produção aprovado. As cinco páginas
+de detalhes e o catálogo responderam HTTP 200 na prévia isolada. Consulta real de
+Berserk validou tanto o ID Kitsu quanto o mapeamento AniList.
+
+Achados da API: autoria atual em `staff.person`, mantendo também o caminho legado
+`mangaStaff.person`; `/mappings` rejeita includes aninhados no item polimórfico,
+então a ficha é buscada numa segunda chamada pelo ID Kitsu encontrado.
+
+Ambiente local: `migrate dev` apontou divergências anteriores nas migrations
+`20260901171659_review_social` e `20260901173013_lists`. Sem reset ou alteração
+dessas migrations; a coluna nova foi aplicada pelo script de migrations do projeto
+com o `.env` local (localhost/mymangatracker), após validação no banco de teste.

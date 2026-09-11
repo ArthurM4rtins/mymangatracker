@@ -1,4 +1,5 @@
 import { chaveDaObra, type ReferenciaDaObra } from "./referencia-da-obra";
+import { dataDePublicacao, type DetalhesDaObra, type StatusPublicacao } from "./detalhes-da-obra";
 /**
  * Traducao da resposta do AniList para o formato do nosso `Media`.
  *
@@ -15,7 +16,8 @@ export type TipoMedia = "MANGA" | "NOVEL";
 export type PaisDeOrigem = "JP" | "KR" | "CN";
 
 export type AutorDaObra = {
-  anilistStaffId: number;
+  anilistStaffId?: number;
+  kitsuPersonId?: number;
   nome: string;
   papel: string;
 };
@@ -50,6 +52,7 @@ export type MediaDoAniList = IdentidadeDaObra & {
   genres?: string[];
   averageScore?: number;
   autores?: AutorDaObra[];
+  details?: DetalhesDaObra;
 };
 
 /**
@@ -102,6 +105,23 @@ export function mapearMedia(bruto: unknown): MediaDoAniList | null
   }
 
   const media: MediaDoAniList = { anilistId, type, titleRomaji };
+  if ("status" in bruto) {
+    const status = ({ RELEASING: "current", FINISHED: "finished", NOT_YET_RELEASED: "upcoming", HIATUS: "hiatus", CANCELLED: "cancelled" } as Record<string, StatusPublicacao>)[String(bruto.status)];
+    const data = (valor: unknown) => {
+      if (!ehObjeto(valor) || !valor.year || !valor.month || !valor.day) return undefined;
+      return dataDePublicacao(`${valor.year}-${String(valor.month).padStart(2, "0")}-${String(valor.day).padStart(2, "0")}`);
+    };
+    const startDate = data(bruto.startDate);
+    const endDate = data(bruto.endDate);
+    media.details = {
+      version: 1,
+      aliases: Array.isArray(bruto.synonyms) ? bruto.synonyms.filter((s): s is string => typeof s === "string" && s.trim() !== "") : [],
+      categories: [], related: [],
+      ...(status ? { status } : {}),
+      ...(typeof bruto.volumes === "number" && bruto.volumes > 0 ? { volumes: bruto.volumes } : {}),
+      ...(startDate ? { startDate } : {}), ...(endDate ? { endDate } : {}),
+    };
+  }
 
   const pais = bruto.countryOfOrigin;
 
