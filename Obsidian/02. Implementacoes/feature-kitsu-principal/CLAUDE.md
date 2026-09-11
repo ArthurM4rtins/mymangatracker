@@ -62,8 +62,9 @@ com o `.env` local (localhost/mymangatracker), após validação no banco de tes
 - Validação: 779 testes aprovados, TypeScript e build aprovados; lint sem erros
   (dois avisos anteriores de imports não usados em `lista.service.ts`). Perfil
   real de Miura HTTP 200 nas cinco línguas, nove obras, links válidos e layout
-  sem overflow no celular. URLs inválidas retornam 404. A imagem de Miura é
-  branca no próprio arquivo fornecido pelo Kitsu, confirmado fora da página.
+  sem overflow no celular. URLs inválidas retornam 404. Comparação posterior
+  confirmou que as miniaturas de Miura, Urasawa e Inoue vêm brancas/estouradas,
+  mas os originais estão normais. A importação agora prefere `image.original`.
 
 ## Limite durante testes locais
 

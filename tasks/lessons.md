@@ -12,6 +12,13 @@ em área que já apareceu aqui.
 - Em desenvolvimento, usar uma janela curta com teto ativo; testar que a regra
   de produção permanece igual. Não apagar contadores nem desativar o limitador.
 
+## Foto externa defeituosa: comparar original e miniaturas
+
+- A primeira análise da foto branca de Miura verificou apenas `image.medium`
+  e concluiu de forma ampla que a foto da fonte estava branca.
+- A comparação com `image.original` mostrou fotos normais de Miura, Urasawa e
+  Inoue. Antes de atribuir o defeito à foto inteira, verificar as variantes.
+
 ---
 
 ## Rede que "não tem internet" mas tem — DNS só com AAAA

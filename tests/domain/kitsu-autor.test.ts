@@ -28,6 +28,14 @@ describe("perfil de autor do Kitsu", () => {
     expect(autor).not.toHaveProperty("staffId");
   });
 
+  it("prefere a foto original às miniaturas que o Kitsu pode fornecer com cores estouradas", () => {
+    const original = "https://media.kitsu.app/people/images/1677/original.jpg";
+    const perfil = { ...resposta.data, attributes: { ...resposta.data.attributes, image: { ...resposta.data.attributes.image, original } } };
+    expect(mapearAutorDoKitsu({ data: perfil })?.imagemUrl).toBe(original);
+    perfil.attributes.image.original = " ";
+    expect(mapearAutorDoKitsu({ data: perfil })?.imagemUrl).toBe(resposta.data.attributes.image.medium);
+  });
+
   it("aceita perfil sem foto, biografia ou obras, mas recusa identidade inválida", () => {
     expect(mapearAutorDoKitsu({ data: { type: "people", id: "1", attributes: { name: "Autora" } } })).toMatchObject({ imagemUrl: null, descricao: null, obras: [] });
     expect(mapearAutorDoKitsu({ data: { type: "people", id: "-1", attributes: { name: "Autora" } } })).toBeNull();

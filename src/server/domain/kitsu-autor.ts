@@ -54,7 +54,8 @@ export function mapearAutorDoKitsu(corpo: RespostaDoAutorKitsu): AutorDoKitsu | 
   obras.sort((a, b) => b.popularidade - a.popularidade);
   return {
     kitsuPersonId: id, nome, nomeNativo: null,
-    imagemUrl: texto(imagem?.medium) ?? texto(imagem?.large) ?? texto(imagem?.original),
+    // As miniaturas de alguns autores vêm estouradas; o original preserva a foto.
+    imagemUrl: texto(imagem?.original) ?? texto(imagem?.medium) ?? texto(imagem?.large),
     descricao: descricao ? limparBiografia(descricao) || null : null,
     obras: obras.map(obra => obra.dados),
   };
