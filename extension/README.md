@@ -37,6 +37,8 @@ tudo em `src/` pertença a uma) e não entra no build da Vercel.
 | Pareamento | host + slug da URL (ou host + nome do título, quando a URL é opaca) → `entradaId`, em `chrome.storage.local`. Pré-seleciona a obra no próximo capítulo. |
 | Badge | O service worker observa as abas e acende `●` quando a página é de obra pareada. Observar sempre, gravar só no clique. |
 | Registro | `POST /api/v1/leitura` com `entradaId`, `capitulo` e a URL real da aba. Quem decide se o progresso avança é o servidor. |
+| Faixa de estado | Uma linha no pé do popup com o MESMO glifo e a MESMA cor do badge do ícone: `●` pareada, `✓` registrado sozinho, `!` falhou, e contorno vazio quando a página ainda não está pareada. É o único lugar dentro da extensão que explica o ícone. |
+| Lista de obras | `role="listbox"` de verdade, com setas, Home/End e `aria-selected` — não é `div` fingindo de `select`. A escolhida se marca por trilho à esquerda; o trecho casado com o filtro sai no acento. |
 
 ## Idioma
 

@@ -72,7 +72,7 @@
     "message": "Werk am Tab-Titel erkannt — bitte prüfen"
   },
   "obraNoCapitulo": {
-    "message": " — bei Kap. $capitulo$",
+    "message": "bei Kap. $capitulo$",
     "placeholders": {
       "capitulo": {
         "content": "$1"
@@ -124,5 +124,26 @@
   },
   "erroFalhaInterna": {
     "message": "Folunio konnte gerade nicht eintragen"
+  },
+  "nestaAba": {
+    "message": "In diesem Tab"
+  },
+  "obraPareadaMarca": {
+    "message": "verknüpft"
+  },
+  "filtroSemResultado": {
+    "message": "keine Serie in deinem Regal passt zum Filter"
+  },
+  "estadoPareada": {
+    "message": "Serie verknüpft — das Symbol leuchtet auf dieser Seite"
+  },
+  "estadoSemPar": {
+    "message": "diese Seite ist noch nicht verknüpft — hier eintragen verknüpft sie"
+  },
+  "estadoRegistrado": {
+    "message": "von hier aus eingetragen, von allein"
+  },
+  "estadoFalhou": {
+    "message": "automatisch hat es nicht geklappt — trag es von Hand ein"
   }
 }

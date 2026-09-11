@@ -72,7 +72,7 @@
     "message": "obra reconhecida pelo título da aba — confira"
   },
   "obraNoCapitulo": {
-    "message": " — no cap. $capitulo$",
+    "message": "no cap. $capitulo$",
     "placeholders": {
       "capitulo": {
         "content": "$1"
@@ -124,5 +124,26 @@
   },
   "erroFalhaInterna": {
     "message": "o Folunio não conseguiu registrar agora"
+  },
+  "nestaAba": {
+    "message": "Nesta aba"
+  },
+  "obraPareadaMarca": {
+    "message": "pareada"
+  },
+  "filtroSemResultado": {
+    "message": "nenhuma obra da estante casa com o filtro"
+  },
+  "estadoPareada": {
+    "message": "obra pareada — o ícone acende nesta página"
+  },
+  "estadoSemPar": {
+    "message": "esta página ainda não está pareada — registrar aqui pareia"
+  },
+  "estadoRegistrado": {
+    "message": "registrado por aqui, sozinho"
+  },
+  "estadoFalhou": {
+    "message": "o automático não conseguiu — registre à mão"
   }
 }
