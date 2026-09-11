@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!--
+    Ícone da extensão do Folunio (#271): a folha no meio e o anel do planeta em
+    volta — as duas metades do nome num desenho só.
+
+    Nenhum visto aqui, de propósito: o Chrome carimba o badge por cima deste
+    ícone, e o badge de "registrado" já é um ✓ verde (background.js:44). Marca
+    com visto mais badge com visto seriam duas afirmações do mesmo tipo em 16px.
+
+    Duas restrições que vieram da tela, não do papel:
+      - a folha é CHEIA. De contorno, o miolo dela dentro do anel vira íris e o
+        ícone inteiro lê como olho.
+      - a folha fica DE PÉ. Deitada no mesmo ângulo do anel, as duas formas se
+        fundem numa lente só.
+    O anel é mais achatado que o do wordmark do site para o bico da folha passar
+    por cima dele — é esse pedaço saindo do topo que faz ler folha, e não planeta.
+
+    Cor fixa: o ícone vive na barra do navegador, que tem fundo próprio e não
+    sabe nada dos três temas do site.
+
+    Este SVG é a origem. Os PNG que o manifest carrega saem daqui.
+  -->
+  <defs>
+    <clipPath id="anel-frente">
+      <rect x="0" y="50" width="100" height="60" transform="rotate(-10 50 50)"/>
+    </clipPath>
+  </defs>
+
+  <rect width="128" height="128" rx="28" fill="#12141f"/>
+
+  <g transform="translate(20,20) scale(0.88)">
+    <!-- anel, volta de trás -->
+    <ellipse cx="50" cy="50" rx="42" ry="11" fill="none" stroke="#f0a842" stroke-width="8"
+             transform="rotate(-10 50 50)"/>
+
+    <!-- folha cheia, de pé; engole a volta de trás -->
+    <g transform="rotate(-42 50 50) translate(-40.2,-4.38) scale(0.82)">
+      <path d="M134,32 C104,30 84,48 84,63 C84,79 97,88 112,84 C126,80 136,58 134,32 Z"
+            fill="#f0a842" stroke="#f0a842" stroke-width="16" stroke-linejoin="round"/>
+    </g>
+
+    <!-- anel de novo, recortado na metade de baixo: a volta que passa na frente -->
+    <g clip-path="url(#anel-frente)">
+      <ellipse cx="50" cy="50" rx="42" ry="11" fill="none" stroke="#f0a842" stroke-width="8"
+               transform="rotate(-10 50 50)"/>
+    </g>
+  </g>
+</svg>

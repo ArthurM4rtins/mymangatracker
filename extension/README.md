@@ -3,6 +3,19 @@
 Registra na estante o capítulo que você está lendo, sem sair da aba. Issue #52/#91;
 desenho em `Obsidian/02. Implementacoes/feature-extensao-navegador/CLAUDE.md`.
 
+O ícone é a **folha em órbita** (#271): a folha no meio, o anel do planeta em volta — as duas
+metades do nome num desenho só. Não é o double-check de propósito: o Chrome carimba o badge por
+cima do ícone, e o badge de "registrado" já é um ✓ verde, então marca com visto mais badge com
+visto seriam duas afirmações do mesmo tipo em 16 px.
+
+A origem é `icones/folha-orbita.svg`. Os PNG que o manifest carrega saem dele — o repo não tem
+exportador próprio; foram gerados com o `sharp` que já vem na árvore do Next:
+
+```js
+sharp(fs.readFileSync("extension/icones/folha-orbita.svg"), { density: 900 })
+  .resize(n, n).png({ compressionLevel: 9 }).toFile(`extension/icones/icone-${n}.png`)
+```
+
 Sem bundler, sem TypeScript: HTML, CSS e JS puros, para carregar descompactada.
 Fica fora de `src/` porque não é camada do app (o lint de camadas cobra que
 tudo em `src/` pertença a uma) e não entra no build da Vercel.
