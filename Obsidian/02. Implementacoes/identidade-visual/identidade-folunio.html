@@ -1,0 +1,893 @@
+<title>Identidade Folunio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Instrument+Sans:ital,wght@0,400..700;1,400..600&display=swap">
+
+<style>
+  /* Paleta: os próprios temas do produto (globals.css).
+     claro = sumi (papel/tinta/carimbo) · escuro = noturno (índigo/âmbar) */
+  :root {
+    --fundo: #faf7f2;
+    --papel: #faf7f2;
+    --superficie: #ffffff;
+    --texto: #1c1a17;
+    --texto-suave: #5c574e;
+    --borda: #ddd7cc;
+    --acento: #d6402b;
+    --acento-fraco: #f6e3de;
+    --marca: "Zen Kaku Gothic New", "Hiragino Sans", system-ui, sans-serif;
+    --ui: "Instrument Sans", system-ui, -apple-system, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fundo: #12141f;
+      --papel: #12141f;
+      --superficie: #1d2133;
+      --texto: #e8e4f0;
+      --texto-suave: #8a93bb;
+      --borda: #2a2f47;
+      --acento: #f0a842;
+      --acento-fraco: #2e2a23;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --fundo: #12141f;
+    --papel: #12141f;
+    --superficie: #1d2133;
+    --texto: #e8e4f0;
+    --texto-suave: #8a93bb;
+    --borda: #2a2f47;
+    --acento: #f0a842;
+    --acento-fraco: #2e2a23;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: var(--ui);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .pagina {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 56px 28px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  /* ---- tipografia ---- */
+  h1, h2, h3 { font-family: var(--marca); text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2.2rem, 6vw, 3.3rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1.05; }
+  h2 { font-size: 1.45rem; font-weight: 700; letter-spacing: -0.01em; }
+  h3 { font-size: 1rem; font-weight: 700; }
+  p { margin: 0; max-width: 66ch; }
+  a { color: var(--acento); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--acento); outline-offset: 3px; border-radius: 3px; }
+  code, .mono {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.82em;
+    background: var(--acento-fraco);
+    padding: 0.1em 0.34em;
+    border-radius: 3px;
+  }
+
+  .rotulo {
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--texto-suave);
+  }
+
+  /* ---- abertura ---- */
+  .abertura { display: flex; flex-direction: column; gap: 18px; }
+  .abertura .deck { font-size: 1.12rem; color: var(--texto-suave); max-width: 60ch; }
+  .abertura .deck strong { color: var(--texto); font-weight: 600; }
+
+  .fatos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1px;
+    background: var(--borda);
+    border: 1px solid var(--borda);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .fato { background: var(--fundo); padding: 14px 16px; display: flex; flex-direction: column; gap: 3px; }
+  .fato b { font-family: var(--marca); font-size: 1.5rem; font-weight: 900; line-height: 1; }
+  .fato span { font-size: 0.8rem; color: var(--texto-suave); line-height: 1.35; }
+
+  /* ---- seções ---- */
+  section { display: flex; flex-direction: column; gap: 20px; }
+  .cabeca-secao { display: flex; flex-direction: column; gap: 6px; border-top: 2px solid var(--texto); padding-top: 12px; }
+
+  /* ---- inventário ---- */
+  .inventario { display: flex; flex-direction: column; gap: 1px; background: var(--borda); border: 1px solid var(--borda); border-radius: 4px; overflow: hidden; }
+  .linha { background: var(--fundo); padding: 12px 16px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.45fr); gap: 4px 20px; align-items: baseline; }
+  .linha .onde { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.78rem; color: var(--texto); word-break: break-word; }
+  .linha .oque { font-size: 0.86rem; color: var(--texto-suave); }
+  .linha .oque em { color: var(--texto); font-style: normal; font-weight: 600; }
+  @media (max-width: 620px) { .linha { grid-template-columns: 1fr; } }
+
+  /* ---- decidido / descartado ---- */
+  .decidido {
+    display: grid;
+    grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
+    gap: 0;
+    border: 1px solid var(--borda);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--superficie);
+  }
+  .decidido .palco-fechado {
+    background: var(--fundo);
+    border-right: 1px solid var(--borda);
+    display: grid;
+    place-items: center;
+    padding: 36px 24px;
+  }
+  .decidido .palco-fechado svg { width: 100%; max-width: 150px; height: auto; overflow: visible; color: var(--texto); }
+  .decidido .lado { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .decidido .lado p { font-size: 0.88rem; color: var(--texto-suave); }
+  .decidido .lado p b { color: var(--texto); font-weight: 600; }
+  @media (max-width: 620px) { .decidido { grid-template-columns: 1fr; } .decidido .palco-fechado { border-right: 0; border-bottom: 1px solid var(--borda); } }
+
+  .selo {
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 2px;
+    white-space: nowrap;
+    align-self: flex-start;
+  }
+  .selo--ok { background: var(--acento); color: var(--papel); }
+  .selo--alt { background: var(--acento-fraco); color: var(--acento); }
+  .selo--risco { background: transparent; color: var(--texto-suave); border: 1px solid var(--borda); }
+
+  .descartados { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; padding: 16px 18px; border: 1px dashed var(--borda); border-radius: 4px; }
+  .descartado { display: flex; flex-direction: column; gap: 8px; max-width: 260px; opacity: 0.62; }
+  .descartado svg { width: 84px; height: auto; overflow: visible; color: var(--texto); }
+  .descartado span { font-size: 0.78rem; color: var(--texto-suave); }
+  .descartado span b { color: var(--texto); font-weight: 600; }
+
+  /* ---- chips dos 3 temas do produto ---- */
+  .temas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--borda); }
+  .tema { padding: 16px 10px 10px; display: flex; flex-direction: column; align-items: center; gap: 9px; }
+  .tema .nome { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.62; }
+  .t-sumi { background: #faf7f2; color: #1c1a17; --acento: #d6402b; --papel: #faf7f2; }
+  .t-noturno { background: #12141f; color: #e8e4f0; --acento: #f0a842; --papel: #12141f; }
+  .t-matcha { background: #343a2f; color: #e9e7da; --acento: #a3c585; --papel: #343a2f; }
+
+  /* trava de marca em tamanho real de cabeçalho */
+  .trava { display: flex; align-items: center; gap: 7px; min-height: 30px; }
+  .trava .simbolo { width: 24px; height: auto; overflow: visible; flex-shrink: 0; }
+  .trava .letras { height: 20px; width: auto; overflow: visible; flex-shrink: 0; }
+  .trava .kanji { font-family: var(--marca); font-weight: 700; font-size: 0.55rem; letter-spacing: 0.05em; color: var(--acento); align-self: flex-end; margin-bottom: 1px; white-space: nowrap; }
+
+  /* ---- teste de tamanho pequeno ---- */
+  /* onde o disco do planeta é preenchido, --papel tem de ser a cor real do fundo atrás dele */
+  .miudos { display: flex; align-items: flex-end; gap: 20px; padding: 14px 18px; border: 1px solid var(--borda); border-radius: 4px; flex-wrap: wrap; background: var(--superficie); --papel: var(--superficie); }
+  .miudo { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .miudo svg { height: auto; color: var(--texto); overflow: visible; }
+  .miudo span { font-size: 0.6rem; color: var(--texto-suave); }
+  .miudos .nota-miudo { font-size: 0.82rem; color: var(--texto-suave); max-width: 34ch; margin-left: auto; }
+  .miudos .nota-miudo b { color: var(--texto); font-weight: 600; }
+
+  /* ---- wordmark ---- */
+  .wordmark-palco {
+    border: 1px solid var(--borda);
+    border-radius: 4px;
+    background: var(--superficie);
+    --papel: var(--superficie);
+    padding: 40px 28px;
+    display: grid;
+    place-items: center;
+  }
+  .wordmark-palco svg { width: 100%; max-width: 580px; height: auto; overflow: visible; color: var(--texto); }
+  .variantes { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1px; background: var(--borda); border: 1px solid var(--borda); border-radius: 4px; overflow: hidden; }
+  .variante { background: var(--fundo); padding: 18px 16px; display: flex; flex-direction: column; gap: 12px; }
+  .variante .nota { font-size: 0.8rem; color: var(--texto-suave); }
+  .variante .nota b { color: var(--texto); font-weight: 600; }
+  .antiga .trava { opacity: 0.42; }
+
+  .metrica {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    font-size: 0.78rem;
+    color: var(--texto-suave);
+    font-variant-numeric: tabular-nums;
+  }
+  .metrica b { color: var(--texto); font-weight: 600; }
+
+  /* ---- detalhe ampliado das letras ---- */
+  .letras-lupa { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; }
+  .lupa { border: 1px solid var(--borda); border-radius: 4px; overflow: hidden; background: var(--superficie); display: flex; flex-direction: column; }
+  .lupa .vitrine { background: var(--fundo); padding: 26px; display: grid; place-items: center; border-bottom: 1px solid var(--borda); }
+  .lupa .vitrine svg { width: 118px; height: auto; overflow: visible; color: var(--texto); }
+  .lupa .texto { padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+  .lupa h3 { font-size: 0.95rem; }
+  .lupa p { font-size: 0.84rem; color: var(--texto-suave); }
+  .lupa p b { color: var(--texto); font-weight: 600; }
+
+  /* ---- kanji ---- */
+  .kanjis { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .opcao-kanji { border: 1px solid var(--borda); border-radius: 4px; overflow: hidden; background: var(--superficie); display: flex; flex-direction: column; }
+  .opcao-kanji > header { padding: 14px 16px 12px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .glifo-grande {
+    font-family: var(--marca);
+    font-weight: 900;
+    font-size: clamp(2.6rem, 8vw, 3.6rem);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    color: var(--acento);
+    padding: 22px 16px;
+    text-align: center;
+    background: var(--fundo);
+    border-top: 1px solid var(--borda);
+    border-bottom: 1px solid var(--borda);
+  }
+  .glifo-grande rt { font-size: 0.3em; font-weight: 700; color: var(--texto-suave); }
+  .opcao-kanji .corpo { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 9px; }
+  .opcao-kanji .corpo p { font-size: 0.85rem; color: var(--texto-suave); }
+  .opcao-kanji .corpo p b { color: var(--texto); font-weight: 600; }
+
+  /* ---- ícones da extensão ---- */
+  .icones { display: flex; align-items: flex-end; gap: 26px; flex-wrap: wrap; padding: 24px; border: 1px solid var(--borda); border-radius: 4px; background: var(--superficie); }
+  .icone { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .quadro { display: grid; place-items: center; background: var(--acento); color: #ffffff; border-radius: 22%; --papel: var(--acento); }
+  .quadro svg { width: 66%; height: auto; overflow: visible; --acento: rgba(255,255,255,0.55); }
+  .icone span { font-size: 0.62rem; color: var(--texto-suave); font-variant-numeric: tabular-nums; }
+
+  /* ---- paleta ---- */
+  .paletas { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+  .paleta { border: 1px solid var(--borda); border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; }
+  .paleta .topo { padding: 20px 16px; display: flex; flex-direction: column; gap: 12px; }
+  .paleta .topo .nome { font-family: var(--marca); font-weight: 700; font-size: 0.95rem; }
+  .paleta .topo .frase { font-size: 0.78rem; opacity: 0.7; }
+  .faixa { display: flex; height: 26px; }
+  .faixa i { flex: 1; }
+  .paleta .pe { padding: 12px 16px; font-size: 0.8rem; color: var(--texto-suave); background: var(--fundo); border-top: 1px solid var(--borda); }
+  .paleta .pe b { color: var(--texto); font-weight: 600; }
+  .hexes { display: flex; gap: 10px; flex-wrap: wrap; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.7rem; opacity: 0.75; }
+
+  /* ---- decisões ---- */
+  .decisoes { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; counter-reset: d; }
+  .decisoes li {
+    counter-increment: d;
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--borda);
+  }
+  .decisoes li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .decisoes li::before {
+    content: counter(d);
+    font-family: var(--marca);
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--acento);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.35;
+  }
+  .decisoes .pergunta { font-weight: 600; }
+  .decisoes .rec { font-size: 0.86rem; color: var(--texto-suave); margin-top: 4px; }
+  .decisoes .rec b { color: var(--texto); font-weight: 600; }
+  .decisoes .fechada .pergunta { color: var(--texto-suave); text-decoration: line-through; text-decoration-thickness: 1px; }
+
+  .aviso {
+    border-left: 3px solid var(--acento);
+    padding: 2px 0 2px 16px;
+    font-size: 0.9rem;
+    color: var(--texto-suave);
+  }
+  .aviso b { color: var(--texto); font-weight: 600; }
+
+  footer.rodape { border-top: 1px solid var(--borda); padding-top: 18px; font-size: 0.8rem; color: var(--texto-suave); display: flex; flex-direction: column; gap: 6px; }
+</style>
+
+<!-- ============ sprite: todas as marcas desenhadas uma vez ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Símbolo: o double-check como está no ar. Decidido em 11/09. -->
+  <symbol id="m1" viewBox="0 0 76 36">
+    <polyline points="4,18 18,32 46,4" fill="none" stroke="var(--acento)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <polyline points="30,18 44,32 72,4" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <!-- Descartado: a lâmina de folha no braço longo -->
+  <symbol id="m2" viewBox="0 0 76 36">
+    <g fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="4,18 18,32 46,4" stroke="var(--acento)"/>
+      <polyline points="30,18 44,32 72,4" stroke="currentColor"/>
+      <path d="M44,32 C44,18 52,6 72,4" stroke="currentColor"/>
+    </g>
+  </symbol>
+
+  <!-- Descartado: órbita com a ✦ do produto -->
+  <symbol id="m3" viewBox="-6 -10 96 56">
+    <ellipse cx="40" cy="18" rx="44" ry="18" fill="none" stroke="var(--acento)" stroke-width="3" transform="rotate(-14 40 18)"/>
+    <g transform="translate(11,5) scale(0.74)" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="4,18 18,32 46,4" stroke="currentColor"/>
+      <polyline points="30,18 44,32 72,4" stroke="currentColor"/>
+    </g>
+    <path d="M0,-7 Q1.4,-1.4 7,0 Q1.4,1.4 0,7 Q-1.4,1.4 -7,0 Q-1.4,-1.4 0,-7 Z" fill="var(--acento)" transform="translate(81,7)"/>
+  </symbol>
+
+  <!-- Marca reduzida: monograma f-check, para 16/32 px -->
+  <symbol id="m4" viewBox="0 0 72 72">
+    <g fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M32,64 V28 A14,14 0 0 1 60,20" stroke="currentColor"/>
+      <polyline points="8,40 20,52 50,22" stroke="var(--acento)"/>
+    </g>
+  </symbol>
+
+  <!-- Wordmark folunio, monolinha no traço do check.
+       Caixa de 100 de altura: ascendente y=8, altura-x y=36, base y=84, traço 16. -->
+  <symbol id="w-folunio" viewBox="-10 -10 428 120">
+    <g fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M34,84 V26 A18,18 0 0 1 52,8"/>
+      <line x1="12" y1="36" x2="58" y2="36"/>
+      <circle cx="108" cy="60" r="22"/>
+      <line x1="158" y1="8" x2="158" y2="84"/>
+      <path d="M186,36 V64 A20,20 0 0 0 226,64 V36"/>
+      <line x1="226" y1="36" x2="226" y2="84"/>
+      <line x1="254" y1="84" x2="254" y2="36"/>
+      <path d="M254,58 A22,22 0 0 1 298,58 V84"/>
+      <line x1="326" y1="36" x2="326" y2="84"/>
+      <circle cx="376" cy="60" r="22"/>
+    </g>
+    <circle cx="326" cy="19" r="7.5" fill="var(--acento)"/>
+  </symbol>
+
+  <!-- Wordmark com a brincadeira: 1º o = folha, último o = planeta.
+       A folha e o anel pedem 30 un. a mais de largura. -->
+  <!-- metade de baixo do anel, no eixo maior da elipse: é o que passa NA FRENTE -->
+  <clipPath id="clip-anel-frente">
+    <rect x="338" y="60" width="100" height="46" transform="rotate(-20 388 60)"/>
+  </clipPath>
+
+  <symbol id="w-folunio-jogo" viewBox="-10 -14 462 128">
+    <!-- anel inteiro, desenhado antes de tudo: esta é a volta que passa ATRÁS -->
+    <ellipse cx="388" cy="60" rx="36" ry="13.5" fill="none" stroke="var(--acento)" stroke-width="9" transform="rotate(-20 388 60)"/>
+    <g fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+      <!-- f -->
+      <path d="M34,84 V26 A18,18 0 0 1 52,8"/>
+      <line x1="12" y1="36" x2="58" y2="36"/>
+      <!-- o de folha: anel redondo, bico no alto à direita -->
+      <path d="M132,36 C110,30 86,46 86,61 C86,76 98,85 111,82 C128,78 138,54 132,36 Z"/>
+      <!-- l -->
+      <line x1="158" y1="8" x2="158" y2="84"/>
+      <!-- u -->
+      <path d="M186,36 V64 A20,20 0 0 0 226,64 V36"/>
+      <line x1="226" y1="36" x2="226" y2="84"/>
+      <!-- n -->
+      <line x1="254" y1="84" x2="254" y2="36"/>
+      <path d="M254,58 A22,22 0 0 1 298,58 V84"/>
+      <!-- i -->
+      <line x1="326" y1="36" x2="326" y2="84"/>
+    </g>
+    <!-- o de planeta: disco cheio de papel, engole a volta de trás do anel -->
+    <circle cx="388" cy="60" r="22" fill="var(--papel)" stroke="currentColor" stroke-width="16"/>
+    <!-- e o anel volta por cima, só na metade de baixo: passa NA FRENTE do disco -->
+    <g clip-path="url(#clip-anel-frente)">
+      <ellipse cx="388" cy="60" rx="36" ry="13.5" fill="none" stroke="var(--acento)" stroke-width="9" transform="rotate(-20 388 60)"/>
+    </g>
+    <circle cx="326" cy="19" r="7.5" fill="var(--acento)"/>
+  </symbol>
+
+  <!-- lupas: as duas letras isoladas -->
+  <symbol id="lupa-folha" viewBox="70 12 80 84">
+    <path d="M132,36 C110,30 86,46 86,61 C86,76 98,85 111,82 C128,78 138,54 132,36 Z"
+          fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="lupa-planeta" viewBox="344 12 88 84">
+    <ellipse cx="388" cy="60" rx="36" ry="13.5" fill="none" stroke="var(--acento)" stroke-width="9" transform="rotate(-20 388 60)"/>
+    <circle cx="388" cy="60" r="22" fill="var(--papel)" stroke="currentColor" stroke-width="16"/>
+    <g clip-path="url(#clip-anel-frente)">
+      <ellipse cx="388" cy="60" rx="36" ry="13.5" fill="none" stroke="var(--acento)" stroke-width="9" transform="rotate(-20 388 60)"/>
+    </g>
+  </symbol>
+
+  <!-- versão anterior: o anel só por trás, para comparar -->
+  <symbol id="lupa-planeta-atras" viewBox="344 12 88 84">
+    <ellipse cx="388" cy="60" rx="36" ry="13.5" fill="none" stroke="var(--acento)" stroke-width="9" transform="rotate(-20 388 60)"/>
+    <circle cx="388" cy="60" r="22" fill="var(--papel)" stroke="currentColor" stroke-width="16"/>
+  </symbol>
+  <symbol id="lupa-o" viewBox="70 12 80 84">
+    <circle cx="108" cy="60" r="22" fill="none" stroke="currentColor" stroke-width="16"/>
+  </symbol>
+
+  <!-- Wordmark kidoku, o que está no ar hoje, para comparar -->
+  <symbol id="w-kidoku" viewBox="-10 -10 390 120">
+    <g fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="8" y1="8" x2="8" y2="84"/>
+      <line x1="12" y1="58" x2="46" y2="36"/>
+      <line x1="22" y1="54" x2="50" y2="84"/>
+      <line x1="74" y1="36" x2="74" y2="84"/>
+      <circle cx="122" cy="60" r="22"/>
+      <line x1="144" y1="8" x2="144" y2="84"/>
+      <circle cx="192" cy="60" r="22"/>
+      <line x1="240" y1="8" x2="240" y2="84"/>
+      <line x1="244" y1="58" x2="278" y2="36"/>
+      <line x1="254" y1="54" x2="282" y2="84"/>
+      <path d="M306,36 V64 A20,20 0 0 0 346,64 V36"/>
+      <line x1="346" y1="36" x2="346" y2="84"/>
+    </g>
+    <circle cx="74" cy="20" r="7" fill="currentColor"/>
+  </symbol>
+</svg>
+
+<div class="pagina">
+
+  <!-- ================= abertura ================= -->
+  <header class="abertura">
+    <p class="rotulo">Rebrand · passo 1 do roteiro · 11/09/2026 · 2ª volta</p>
+    <h1>Identidade Folunio</h1>
+    <p class="deck">
+      <strong>Símbolo fechado:</strong> o double-check fica como está, sem curva nova. O que esta volta
+      resolve: qual <strong>par de kanji</strong> entra no lugar do 既読 dizendo folha e universo, e a
+      sua ideia de <strong>brincar com os dois O</strong> da palavra — folha no primeiro, planeta no
+      último. Desenhei, testei em 20&nbsp;px, e tenho uma ressalva de tamanho.
+    </p>
+
+    <div class="fatos">
+      <div class="fato"><b>葉宙</b><span>o par que eu levaria: 2 glifos, mesmo espaço que o 既読 já ocupa</span></div>
+      <div class="fato"><b>3</b><span>telas com 既読 — e só 2 delas são marca; a terceira é status de leitura</span></div>
+      <div class="fato"><b>3×</b><span>quantas vezes o anel do planeta é desenhado para dar a volta completa: atrás, engolido, e na frente</span></div>
+      <div class="fato"><b>0</b><span>ícones declarados no <code>manifest.json</code> — o &ldquo;K&rdquo; é fallback do Chrome</span></div>
+    </div>
+  </header>
+
+  <!-- ================= símbolo fechado ================= -->
+  <section>
+    <div class="cabeca-secao">
+      <p class="rotulo">Símbolo · decidido</p>
+      <h2>O double-check não muda</h2>
+    </div>
+
+    <div class="decidido">
+      <div class="palco-fechado"><svg viewBox="0 0 76 36"><use href="#m1"/></svg></div>
+      <div class="lado">
+        <span class="selo selo--ok">Fechado por você</span>
+        <p>
+          Dois vistos sobrepostos, o primeiro no acento do tema, o segundo na cor do texto. Traço 7
+          numa caixa de 76×36. <b>Nada muda em <code>logo.tsx</code> no símbolo</b> — muda o wordmark
+          ao lado e o glifo depois dele.
+        </p>
+        <p>
+          Com isso, o peso de dizer &ldquo;folha e universo&rdquo; cai todo sobre a palavra e o par de
+          kanji. É por isso que as duas seções seguintes ficaram mais importantes do que eram na
+          primeira volta.
+        </p>
+      </div>
+    </div>
+
+    <div class="descartados">
+      <div class="descartado">
+        <svg viewBox="0 0 76 36"><use href="#m2"/></svg>
+        <span><b>Descartado — lâmina no braço.</b> A curva fechando a folha no visto longo. Você preferiu o visto limpo.</span>
+      </div>
+      <div class="descartado">
+        <svg viewBox="-6 -10 96 56"><use href="#m3"/></svg>
+        <span><b>Descartado — órbita com ✦.</b> A linha fina morria em 16&nbsp;px e a ✦ já é o símbolo de nota (<code>estrelas.tsx:13</code>).</span>
+      </div>
+      <div class="descartado" style="opacity:1">
+        <svg viewBox="0 0 72 72" style="width:52px"><use href="#m4"/></svg>
+        <span><b>De pé — monograma f-check.</b> Não é candidato a cabeçalho: é a marca reduzida para 16/32&nbsp;px, onde o visto deitado entope. Segue em decisão.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= kanji ================= -->
+  <section>
+    <div class="cabeca-secao">
+      <p class="rotulo">O par de kanji</p>
+      <h2>既読 sai, 葉 e 宙 entram</h2>
+    </div>
+    <p>
+      Dá para fazer, e a construção fica coerente com o nome: <em>Folunio</em> é um composto
+      inventado a partir de folha e universo, e o par de kanji faz o mesmo movimento com os mesmos
+      dois sentidos. <b>Folha é 葉.</b> Universo é <b>宇宙</b> — duas sílabas, dois glifos. A decisão é
+      quanto do 宇宙 cabe ao lado da palavra.
+    </p>
+    <p class="aviso">
+      <b>Honestidade sobre o custo:</b> 既読 era palavra real, lida como &ldquo;lido&rdquo; por
+      qualquer japonês. Qualquer par aqui é <b>composto inventado</b> — não existe no dicionário.
+      Isso não é defeito se a gente souber: o nome também é inventado. O que muda é que o glifo
+      deixa de ser tradução e passa a ser assinatura.
+    </p>
+
+    <div class="kanjis">
+
+      <div class="opcao-kanji">
+        <header>
+          <h3>葉宙</h3>
+          <span class="selo selo--ok">Recomendado</span>
+        </header>
+        <div class="glifo-grande">葉宙</div>
+        <div class="temas">
+          <div class="tema t-sumi">
+            <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宙</span></div>
+            <span class="nome">sumi</span>
+          </div>
+          <div class="tema t-noturno">
+            <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宙</span></div>
+            <span class="nome">noturno</span>
+          </div>
+          <div class="tema t-matcha">
+            <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宙</span></div>
+            <span class="nome">matcha</span>
+          </div>
+        </div>
+        <div class="corpo">
+          <p><b>葉</b> folha · <b>宙</b> o espaço, o firmamento — é o segundo glifo de 宇宙, e sozinho já carrega céu aberto.</p>
+          <p><b>Por que este:</b> são <b>dois glifos, exatamente o espaço que o 既読 ocupa hoje</b> no cabeçalho, no rodapé e na allowlist do ESLint. Nenhum ajuste de layout, nenhuma linha de CSS.</p>
+          <p><b>Achado de graça:</b> 宙 aparece em 宙に浮く, &ldquo;flutuar no ar&rdquo;. Lido assim, 葉宙 é <b>folha suspensa no espaço</b> — que é a imagem do produto melhor do que a gente planejou.</p>
+        </div>
+      </div>
+
+      <div class="opcao-kanji">
+        <header>
+          <h3>葉宇宙</h3>
+          <span class="selo selo--alt">Mais literal</span>
+        </header>
+        <div class="glifo-grande">葉宇宙</div>
+        <div class="temas">
+          <div class="tema t-sumi">
+            <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宇宙</span></div>
+            <span class="nome">sumi</span>
+          </div>
+          <div class="tema t-noturno">
+            <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宇宙</span></div>
+            <span class="nome">noturno</span>
+          </div>
+          <div class="tema t-matcha">
+            <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宇宙</span></div>
+            <span class="nome">matcha</span>
+          </div>
+        </div>
+        <div class="corpo">
+          <p><b>葉</b> folha + <b>宇宙</b> universo, sem corte. O sentido não depende de interpretação.</p>
+          <p><b>Custa:</b> 3 glifos. <b>50% mais largo</b> que o slot de hoje — repare nos chips acima, ele empurra a trava e, em tela estreita, briga com o seletor de tema no cabeçalho.</p>
+          <p><b>E lê como duas palavras coladas</b>, não como composto. Menos assinatura, mais legenda.</p>
+        </div>
+      </div>
+
+      <div class="opcao-kanji">
+        <header>
+          <h3>葉宇</h3>
+          <span class="selo selo--risco">Mais fraco</span>
+        </header>
+        <div class="glifo-grande">葉宇</div>
+        <div class="temas">
+          <div class="tema t-sumi">
+            <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宇</span></div>
+            <span class="nome">sumi</span>
+          </div>
+          <div class="tema t-noturno">
+            <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宇</span></div>
+            <span class="nome">noturno</span>
+          </div>
+          <div class="tema t-matcha">
+            <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宇</span></div>
+            <span class="nome">matcha</span>
+          </div>
+        </div>
+        <div class="corpo">
+          <p><b>葉</b> folha + <b>宇</b> o primeiro glifo de 宇宙. Mesmos dois glifos de tamanho que o 葉宙.</p>
+          <p><b>Custa:</b> 宇 sozinho puxa mais para <b>beiral, telhado, abrigo</b> do que para universo. A ideia de espaço depende de o leitor completar o 宙 de cabeça.</p>
+          <p>Fica no documento como registro. Entre os dois de 2 glifos, 葉宙 ganha por leitura própria.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="inventario">
+      <div class="linha">
+        <span class="onde">cabeçalho · logo.tsx:86</span>
+        <span class="oque"><em>既読 → 葉宙.</em> Mesma classe, mesmo corpo de 0.55rem, mesmo acento. Troca de string.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">rodapé · rodape.tsx:39</span>
+        <span class="oque"><em>既読 → 葉宙.</em> Acompanha o cabeçalho.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">lombada · colecao-visual.tsx:615</span>
+        <span class="oque"><em>Aqui 葉宙 não serve.</em> O glifo da lombada não é marca, é <em>status</em>: diz que a obra foi lida. Trocar por 葉宙 escreve a marca onde deveria estar uma informação. Entra o <b>double-check miúdo no acento</b> — ou <code>読</code> sozinho, se você quiser manter kanji ali.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">eslint.config.mjs:248</span>
+        <span class="oque">Allowlist passa de <code>"Kidoku", "✦", "既読"</code> para <code>"Folunio", "✦", "葉宙"</code>. Esquecer aqui é o portão deixando de cobrar o que existe.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= brincadeira nas letras ================= -->
+  <section>
+    <div class="cabeca-secao">
+      <p class="rotulo">Sua ideia · desenhada</p>
+      <h2>Folha no primeiro O, planeta no último</h2>
+    </div>
+    <p>
+      Funciona — e funciona melhor do que eu esperava, por um motivo que não era óbvio:
+      <b>a palavra tem exatamente dois O, e eles estão nas duas pontas</b>. Primeiro e último. Então a
+      leitura sai na ordem do nome: folha abre, universo fecha. Não é enfeite distribuído, é estrutura
+      da palavra. O anel agora <b>dá a volta inteira</b>, atrás em cima e na frente embaixo, como
+      Saturno de verdade.
+    </p>
+
+    <div class="wordmark-palco">
+      <svg viewBox="-10 -14 462 128"><use href="#w-folunio-jogo"/></svg>
+    </div>
+
+    <div class="metrica">
+      <span><b>ascendente</b> y=8</span>
+      <span><b>altura-x</b> y=36</span>
+      <span><b>base</b> y=84</span>
+      <span><b>traço</b> 16</span>
+      <span><b>anel do planeta</b> rx=36, ry=13,5, −20°, traço 9</span>
+      <span><b>largura</b> 440 un.</span>
+      <span><b>sem a brincadeira</b> 410 un.</span>
+    </div>
+
+    <div class="letras-lupa">
+      <div class="lupa">
+        <div class="vitrine"><svg viewBox="70 12 80 84"><use href="#lupa-folha"/></svg></div>
+        <div class="texto">
+          <h3>O de folha</h3>
+          <p>O anel <b>continua redondo</b> — a barriga é a mesma do <em>o</em>. A folha vem de <b>um bico só</b>, no alto à direita, onde o traço fecha em ângulo em vez de curva.</p>
+          <p><b>Por que não tem nervura:</b> um traço cruzando o miolo viraria <b>ø</b>, que é letra de outro alfabeto. O bico resolve sem tocar o contraforma.</p>
+        </div>
+      </div>
+      <div class="lupa">
+        <div class="vitrine"><svg viewBox="344 12 88 84"><use href="#lupa-planeta"/></svg></div>
+        <div class="texto">
+          <h3>O de planeta — anel completo</h3>
+          <p>O <em>o</em> fica <b>um círculo perfeito</b>, intocado. O anel é elíptico, inclinado −20°, traço 9 contra 16 da letra.</p>
+          <p><b>Como dá a volta:</b> o anel é desenhado <b>três vezes</b>. Inteiro primeiro — essa é a volta de trás. O disco entra por cima, preenchido com a cor do fundo, e engole a parte de trás que cruzaria o miolo. Aí o anel <b>volta por cima, recortado só na metade de baixo</b>: é a volta que passa na frente.</p>
+          <p><b>Por que funciona sem virar ø:</b> o recorte é feito no <b>eixo maior da própria elipse</b>, não numa linha horizontal — então a frente entra por baixo à esquerda e sai por cima à direita, no ângulo do anel. E ela é <b>do acento</b>, contra uma letra na cor do texto: cor diferente lê como outro objeto atravessando, não como traço da letra.</p>
+        </div>
+      </div>
+      <div class="lupa">
+        <div class="vitrine"><svg viewBox="344 12 88 84"><use href="#lupa-planeta-atras"/></svg></div>
+        <div class="texto">
+          <h3>Só por trás, para comparar</h3>
+          <p>A versão da volta passada. O anel encosta nos dois lados e <b>some</b> — o planeta parece estar na frente de um arco cortado, não dentro de um anel.</p>
+          <p>Ao lado da outra fica claro o que a passagem na frente compra: <b>profundidade</b>. Essa aqui é plana.</p>
+        </div>
+      </div>
+      <div class="lupa">
+        <div class="vitrine"><svg viewBox="70 12 80 84"><use href="#lupa-o"/></svg></div>
+        <div class="texto">
+          <h3>O normal, para comparar</h3>
+          <p>Círculo r=22, traço 16. É o <em>o</em> que está no ar hoje no <em>kidoku</em>.</p>
+          <p>A distância entre este e os de cima é toda a aposta: <b>quanto a letra pode deformar antes de deixar de ser letra.</b></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="miudos">
+      <div class="miudo"><svg viewBox="-10 -14 462 128" style="height:20px;width:auto"><use href="#w-folunio-jogo"/></svg><span>20 px — cabeçalho</span></div>
+      <div class="miudo"><svg viewBox="-10 -14 462 128" style="height:13px;width:auto"><use href="#w-folunio-jogo"/></svg><span>13 px</span></div>
+      <p class="nota-miudo"><b>A ressalva, agora maior.</b> Em 20&nbsp;px o anel tem 1,8&nbsp;px de traço e o bico da folha, menos de 1. E a volta da frente cruza o miolo do <em>o</em> num vão de ~2,5&nbsp;px: nesse tamanho ela não lê como anel, <b>lê como sujeira dentro da letra</b>. A passagem na frente é justamente o detalhe que mais pede tamanho.</p>
+    </div>
+
+    <p class="aviso">
+      <b>Recomendação:</b> adotar a brincadeira como <b>wordmark de assinatura</b> — abertura do site,
+      listagem da Chrome Web Store, imagem de OG, avatar, camiseta — e manter o wordmark de letras
+      normais no <b>cabeçalho de 20&nbsp;px e na extensão</b>. Não é desistir da ideia: é o mesmo que
+      a gente já faz com o símbolo, que tem uma versão cheia e uma reduzida. Com o anel passando na
+      frente essa separação deixou de ser preferência e virou necessidade — <b>é o detalhe que mais
+      ganha em tamanho grande e o primeiro que apodrece em tamanho pequeno.</b> Se você quiser um
+      wordmark único mesmo assim, o meio-termo é manter a brincadeira em todo lugar e usar
+      <b>só a volta de trás</b> abaixo de ~40&nbsp;px.
+    </p>
+
+    <div class="variantes">
+      <div class="variante">
+        <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宙</span></div>
+        <p class="nota"><b>Trava de cabeçalho.</b> Visto + letras normais + 葉宙. É o que vive em <code>logo.tsx</code> e no rodapé, nos 20&nbsp;px reais.</p>
+      </div>
+      <div class="variante">
+        <div class="trava"><svg class="letras" viewBox="-10 -14 462 128" style="height:26px"><use href="#w-folunio-jogo"/></svg></div>
+        <p class="nota"><b>Assinatura.</b> A brincadeira sozinha, sem símbolo e <b>sem kanji</b> — as próprias letras já dizem folha e universo; o glifo repetiria o recado.</p>
+      </div>
+      <div class="variante antiga">
+        <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 390 120"><use href="#w-kidoku"/></svg><span class="kanji">既読</span></div>
+        <p class="nota"><b>Hoje, para comparar.</b> O que está em produção neste momento — variante D do estudo de 02/09.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= extensão ================= -->
+  <section>
+    <div class="cabeca-secao">
+      <p class="rotulo">Extensão</p>
+      <h2>O ícone que não existe ainda</h2>
+    </div>
+    <p>
+      O <code>manifest.json</code> não declara <code>icons</code> nem
+      <code>action.default_icon</code>. O &ldquo;K&rdquo; na barra do Chrome é placeholder gerado do
+      nome — não é ícone a trocar, é ícone a criar. E a extensão <b>ainda não foi publicada</b> na
+      loja, então esta é a hora barata.
+    </p>
+
+    <div class="icones">
+      <div class="icone">
+        <div class="quadro" style="width:128px;height:128px"><svg viewBox="0 0 76 36"><use href="#m1"/></svg></div>
+        <span>128 — loja</span>
+      </div>
+      <div class="icone">
+        <div class="quadro" style="width:48px;height:48px;border-radius:24%"><svg viewBox="0 0 76 36"><use href="#m1"/></svg></div>
+        <span>48</span>
+      </div>
+      <div class="icone">
+        <div class="quadro" style="width:32px;height:32px;border-radius:26%"><svg viewBox="0 0 72 72" style="width:74%"><use href="#m4"/></svg></div>
+        <span>32</span>
+      </div>
+      <div class="icone">
+        <div class="quadro" style="width:16px;height:16px;border-radius:28%"><svg viewBox="0 0 72 72" style="width:80%"><use href="#m4"/></svg></div>
+        <span>16</span>
+      </div>
+    </div>
+
+    <div class="inventario">
+      <div class="linha">
+        <span class="onde">128 e 48</span>
+        <span class="oque">Double-check sobre quadrado no acento. Tem espaço para a marca deitada.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">32 e 16</span>
+        <span class="oque">Monograma f-check. O visto deitado em 16&nbsp;px entope; o monograma é quadrado e aproveita a caixa toda.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">popup.html:10</span>
+        <span class="oque">A <code>&lt;span class="marca"&gt;kidoku&lt;/span&gt;</code> é texto puro. Decisão: virar texto <code>folunio</code> ou receber o SVG do wordmark, como no site.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">buraco no ferramental</span>
+        <span class="oque"><em>O repo não tem exportador de imagem.</em> Manifest de extensão exige PNG. Os SVG daqui precisam virar PNG em 16/32/48/128 — e o mesmo vale para o <code>favicon.ico</code>, ainda do scaffold, e para a imagem de OG que o plano de divulgação (#266) cobra. <b>É aí que a assinatura com a folha e o planeta estreia.</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= paleta ================= -->
+  <section>
+    <div class="cabeca-secao">
+      <p class="rotulo">Temas</p>
+      <h2>A paleta sobrevive ao nome</h2>
+    </div>
+    <p>
+      Os três temas não dependem da palavra &ldquo;Kidoku&rdquo; — dependem de atmosfera de leitura, e
+      isso não mudou. Um deles melhorou de sentido: <em>matcha</em> é verde, e o nome novo começa em
+      folha.
+    </p>
+
+    <div class="paletas">
+      <div class="paleta">
+        <div class="topo" style="background:#faf7f2;color:#1c1a17;--acento:#d6402b;--papel:#faf7f2">
+          <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宙</span></div>
+          <div>
+            <div class="nome">sumi</div>
+            <div class="frase">papel, tinta, carimbo</div>
+          </div>
+          <div class="hexes"><span>#faf7f2</span><span>#1c1a17</span><span>#d6402b</span></div>
+        </div>
+        <div class="faixa"><i style="background:#faf7f2"></i><i style="background:#ddd7cc"></i><i style="background:#5c574e"></i><i style="background:#1c1a17"></i><i style="background:#d6402b"></i></div>
+        <div class="pe">O vermelho nasceu de <b>hanko</b>, carimbo japonês. Com 葉宙 no lugar do 既読, a origem japonesa da paleta <b>continua tendo a quem se apoiar</b> — era o argumento mais fraco de tirar o kanji de vez.</div>
+      </div>
+
+      <div class="paleta">
+        <div class="topo" style="background:#12141f;color:#e8e4f0;--acento:#f0a842;--papel:#12141f">
+          <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宙</span></div>
+          <div>
+            <div class="nome">noturno</div>
+            <div class="frase">índigo e âmbar de luminária</div>
+          </div>
+          <div class="hexes"><span>#12141f</span><span>#e8e4f0</span><span>#f0a842</span></div>
+        </div>
+        <div class="faixa"><i style="background:#12141f"></i><i style="background:#1d2133"></i><i style="background:#2a2f47"></i><i style="background:#7a82a8"></i><i style="background:#f0a842"></i></div>
+        <div class="pe">Ler de madrugada é comportamento, não idioma. <b>Intocado</b> — e é o tema onde o planeta no último O fica mais em casa.</div>
+      </div>
+
+      <div class="paleta">
+        <div class="topo" style="background:#343a2f;color:#e9e7da;--acento:#a3c585;--papel:#343a2f">
+          <div class="trava"><svg class="simbolo" viewBox="0 0 76 36"><use href="#m1"/></svg><svg class="letras" viewBox="-10 -10 428 120"><use href="#w-folunio"/></svg><span class="kanji">葉宙</span></div>
+          <div>
+            <div class="nome">matcha</div>
+            <div class="frase">verde-oliva, meio-termo real</div>
+          </div>
+          <div class="hexes"><span>#343a2f</span><span>#e9e7da</span><span>#a3c585</span></div>
+        </div>
+        <div class="faixa"><i style="background:#343a2f"></i><i style="background:#40483a"></i><i style="background:#4d5646"></i><i style="background:#a8ad97"></i><i style="background:#a3c585"></i></div>
+        <div class="pe">O verde e a folha se encontram. É onde o <b>sumi</b> deixa de ser o tema que mais explica a marca.</div>
+      </div>
+    </div>
+
+    <p class="aviso">
+      <b>Recomendação:</b> manter as três cores e as três chaves <code>sumi</code>,
+      <code>noturno</code>, <code>matcha</code> — e com o kanji de volta o argumento fica mais firme,
+      porque os nomes japoneses dos temas param de ser o único resto do Kidoku.
+      <b>Se quiser renomear, é agora:</b> a chave <code>kidoku-tema</code> já vai mudar e o tema de
+      quem escolheu já reseta neste commit. Depois, reseta de novo.
+    </p>
+  </section>
+
+  <!-- ================= decisões ================= -->
+  <section>
+    <div class="cabeca-secao">
+      <p class="rotulo">Onde estamos · nesta ordem</p>
+      <h2>O que travo antes de tocar em código</h2>
+    </div>
+    <ol class="decisoes">
+      <li class="fechada">
+        <div>
+          <div class="pergunta">Símbolo do cabeçalho</div>
+          <div class="rec"><b>Fechado:</b> double-check como está, sem a lâmina de folha.</div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="pergunta">Par de kanji: 葉宙, 葉宇宙 ou 葉宇?</div>
+          <div class="rec"><b>Recomendo 葉宙.</b> Dois glifos, o mesmo espaço que o 既読 já tem, e a leitura solta de 宙 como &ldquo;no ar&rdquo; entrega folha suspensa no espaço sem a gente pedir.</div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="pergunta">A brincadeira das letras entra onde?</div>
+          <div class="rec"><b>Recomendo dois níveis:</b> assinatura (OG, loja, abertura, avatar) com folha e planeta; cabeçalho de 20&nbsp;px e extensão com letras normais. Se você preferir um wordmark único em todo lugar, dá — aceitando o anel de 1,8&nbsp;px no cabeçalho.</div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="pergunta">Selo da lombada: double-check miúdo ou <code>読</code> sozinho?</div>
+          <div class="rec"><b>Recomendo o double-check.</b> Ali o glifo é status de leitura, não marca — e 読 sozinho reabre a porta de confundir marca com estado.</div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="pergunta">Entra a marca reduzida (monograma f-check) para 16/32&nbsp;px?</div>
+          <div class="rec"><b>Recomendo sim.</b> Sem ela, favicon e ícone da extensão ficam com o visto deitado num quadrado de 16&nbsp;px.</div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="pergunta">Chaves dos temas: manter <code>sumi</code>/<code>noturno</code>/<code>matcha</code>?</div>
+          <div class="rec"><b>Recomendo manter.</b> A janela barata para renomear é este commit.</div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="pergunta">PNGs (favicon, ícones da extensão, OG) nesta sessão ou issue separada?</div>
+          <div class="rec"><b>Recomendo issue separada.</b> O repo não tem exportador; resolver dentro do commit de identidade mistura desenho com ferramental.</div>
+        </div>
+      </li>
+    </ol>
+
+    <p class="aviso">
+      Fechado isso, a varredura segue o roteiro do PR #267 — e as <b>quatro armadilhas</b> continuam
+      valendo: <code>kidoku-tema</code> em dois lugares, <code>kidoku_sessao</code> no servidor e na
+      extensão no mesmo commit, a allowlist do <code>eslint.config.mjs</code> e os 5 catálogos de
+      <code>messages/</code>.
+    </p>
+  </section>
+
+  <footer class="rodape">
+    <div>Proposta de identidade para o rebrand de 11/09/2026 · passo 1 do roteiro em <code>Obsidian/05. Divulgacao/rebrand-folunio.md</code></div>
+    <div>Marcas desenhadas em SVG nesta página, no traço e na métrica de <code>src/app/(ui)/[locale]/componentes/logo.tsx</code> · tipografia do produto: Zen Kaku Gothic New + Instrument Sans</div>
+    <div>Nada aqui está implementado. Nenhum arquivo de aplicação mudou.</div>
+  </footer>
+
+</div>
