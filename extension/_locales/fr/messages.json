@@ -1,12 +1,12 @@
 {
   "nome": {
-    "message": "Kidoku"
+    "message": "Folunio"
   },
   "descricao": {
-    "message": "Enregistre dans ta bibliothèque Kidoku le chapitre que tu es en train de lire, sans quitter l’onglet."
+    "message": "Enregistre dans ta bibliothèque Folunio le chapitre que tu es en train de lire, sans quitter l’onglet."
   },
   "acaoTitulo": {
-    "message": "Kidoku — enregistrer la lecture"
+    "message": "Folunio — enregistrer la lecture"
   },
   "abrirSite": {
     "message": "ouvrir le site"
@@ -39,13 +39,13 @@
     "message": "uniquement les œuvres déjà associées, après 20 s sur la page du chapitre"
   },
   "semSessao": {
-    "message": "Connecte-toi à Kidoku pour enregistrer ta lecture."
+    "message": "Connecte-toi à Folunio pour enregistrer ta lecture."
   },
   "entrar": {
     "message": "Se connecter"
   },
   "semResposta": {
-    "message": "Kidoku n’a pas répondu — réessaie"
+    "message": "Folunio n’a pas répondu — réessaie"
   },
   "estanteNaoCarregou": {
     "message": "impossible de charger ta bibliothèque — réessaie"
@@ -123,6 +123,6 @@
     "message": "trop d’enregistrements en peu de temps — attends un moment"
   },
   "erroFalhaInterna": {
-    "message": "Kidoku n’a pas pu enregistrer"
+    "message": "Folunio n’a pas pu enregistrer"
   }
 }
