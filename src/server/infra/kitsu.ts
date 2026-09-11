@@ -143,6 +143,14 @@ function montar(corpo: Resposta, completo = false): MediaDoAniList[]
  */
 const OBRAS_DA_FONTE_POR_PAGINA = 60;
 
+/**
+ * Teto de pedidos por página. Três lotes fechariam a fatia se a fonte nunca
+ * repetisse; os dois a mais cobrem a repetição sem deixar um termo muito
+ * repetido pedir para sempre. Com o tempo limite de cada pedido, o pior caso
+ * continua dentro do que a tela aguenta.
+ */
+const LOTES_NO_MAXIMO = 5;
+
 /** Uma página do Kitsu: o que passou no domínio, e se a fonte ainda tem mais. */
 export type PaginaDoKitsu = {
   obras: MediaDoAniList[];
@@ -186,9 +194,14 @@ function paramsDoFiltro(filtro: FiltroDoCatalogo): string
  * por termo e não é conhecível de fora, então não se tenta adivinhar o passo
  * certo — junta-se a fatia e tira-se a repetida no fim.
  *
- * `temMais` continua vindo da FONTE, pelo lote cheio, e não da contagem do que
- * sobrou: a página cobre uma fatia fixa da fonte, e contar o que restou depois
- * do descarte pararia a paginação cedo demais (a lição de 09/09).
+ * A fatia se enche com o que a fonte tem de DISTINTO (#290), não com um número
+ * fixo de lotes. Contar o lote bruto prometia página que não existe — "berserk"
+ * devolvia 40 obras com `temMais: true` e a seguinte vinha vazia. Contar só o
+ * que sobrou, sem buscar mais, pararia a paginação cedo demais, que foi a lição
+ * da #228. Pedir lote extra enquanto a fonte trouxer obra nova serve aos dois.
+ *
+ * O teto de lotes existe porque termo muito repetido nunca fecharia a fatia: aí
+ * a resposta é honesta e diz que acabou.
  *
  * Recebe o FILTRO inteiro, não só o termo (#252): tipo, gênero, década e
  * ordenação sumiam em silêncio enquanto o AniList estava fora.
@@ -201,11 +214,10 @@ export async function buscarNoKitsu(
   const inicio = (Math.max(1, pagina) - 1) * OBRAS_DA_FONTE_POR_PAGINA;
   const params = paramsDoFiltro(filtro);
   const obras: MediaDoAniList[] = [];
-  let temMais = false;
 
-  for (let lido = 0; lido < OBRAS_DA_FONTE_POR_PAGINA; lido += POR_PAGINA)
+  for (let lote = 0; lote < LOTES_NO_MAXIMO; lote += 1)
   {
-    const offset = inicio + lido;
+    const offset = inicio + lote * POR_PAGINA;
     const caminho =
       `?page%5Blimit%5D=${POR_PAGINA}&page%5Boffset%5D=${offset}&include=mappings&${params}`;
 
@@ -219,12 +231,17 @@ export async function buscarNoKitsu(
       return { obras: semRepetidas(obras), temMais: false };
     }
 
-    // Lote cheio: a fonte tinha pelo menos até aqui. Se for o último da fatia,
-    // é a nossa pista de que a página seguinte tem o que mostrar.
-    temMais = true;
+    if (semRepetidas(obras).length >= OBRAS_DA_FONTE_POR_PAGINA)
+    {
+      // A fatia fechou com obra distinta, e o lote veio cheio: há o que mostrar
+      // adiante. Este é o único caminho que promete página seguinte.
+      return { obras: semRepetidas(obras).slice(0, OBRAS_DA_FONTE_POR_PAGINA), temMais: true };
+    }
   }
 
-  return { obras: semRepetidas(obras), temMais };
+  // Gastou os lotes sem fechar a fatia: a fonte tem pouca coisa distinta para
+  // este filtro. Prometer mais seria repetir o defeito que a #290 relatou.
+  return { obras: semRepetidas(obras), temMais: false };
 }
 
 /**
