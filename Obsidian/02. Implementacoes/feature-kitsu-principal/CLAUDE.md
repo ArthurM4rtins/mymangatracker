@@ -64,3 +64,12 @@ com o `.env` local (localhost/mymangatracker), após validação no banco de tes
   real de Miura HTTP 200 nas cinco línguas, nove obras, links válidos e layout
   sem overflow no celular. URLs inválidas retornam 404. A imagem de Miura é
   branca no próprio arquivo fornecido pelo Kitsu, confirmado fora da página.
+
+## Limite durante testes locais
+
+O usuário encontrou o catálogo bloqueado no localhost após testes contínuos.
+O aviso vinha do limitador interno: 374 tentativas registradas na última hora,
+incluindo bloqueios, contra o teto de 120. Em `NODE_ENV=development`, a janela
+agora é de cinco minutos, ainda com teto de 120 por IP. Produção, preview e
+ambientes não identificados como desenvolvimento mantêm 120 por hora.
+Nenhum contador foi apagado e nenhuma regra de login ou escrita foi alterada.

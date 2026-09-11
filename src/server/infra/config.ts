@@ -7,6 +7,12 @@
 /** A API do AniList e publica e sem chave, entao o default e util de verdade. */
 const ANILIST_PADRAO = "https://graphql.anilist.co";
 
+/** Somente `next dev`; build, preview e produção preservam as regras do deploy. */
+export function emDesenvolvimento(): boolean
+{
+  return process.env.NODE_ENV === "development";
+}
+
 /**
  * Quantos proxies confiaveis anexam ao `x-forwarded-for` antes de o pedido
  * chegar ao app (#141). Um na Vercel. Fora de um inteiro positivo, vale 1.

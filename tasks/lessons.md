@@ -3,6 +3,15 @@
 Padrão que voltou a morder, e a regra que evita repetir. Ler no início de sessão antes de mexer
 em área que já apareceu aqui.
 
+## Testes de navegação também consomem o limite do catálogo
+
+- Ao testar filtros e paginação repetidamente no mesmo localhost, as visitas
+  acumularam no limitador persistido e bloquearam a busca manual do usuário.
+- Antes de atribuir o aviso ao Kitsu ou AniList, identificar quem o produz e
+  conferir a contagem local. Testes de navegador usam os limites reais do app.
+- Em desenvolvimento, usar uma janela curta com teto ativo; testar que a regra
+  de produção permanece igual. Não apagar contadores nem desativar o limitador.
+
 ---
 
 ## Rede que "não tem internet" mas tem — DNS só com AAAA
