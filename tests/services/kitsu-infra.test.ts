@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from "vitest";
-import { buscarAutorNoKitsu, buscarNoKitsuPorAnilistId, buscarNoKitsuPorId } from "@/server/infra/kitsu";
+import { buscarAutorNoKitsu, buscarNoKitsu, buscarNoKitsuPorAnilistId, buscarNoKitsuPorId } from "@/server/infra/kitsu";
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -36,4 +36,65 @@ it("segue o item do mapeamento AniList, sem confundir uma obra relacionada", asy
   vi.stubGlobal("fetch", fetchMock);
   expect(await buscarNoKitsuPorAnilistId(30002)).toMatchObject({ kitsuId: 8, anilistId: 30002, titleRomaji: "Berserk", details: { version: 1 } });
   expect(fetchMock.mock.calls[1][0]).toContain("/manga/8?include=");
+});
+
+/**
+ * O #240 ensinou que o Kitsu repete linha entre offsets: pedindo "berserk", os
+ * offsets 0 e 20 devolvem as mesmas vinte. A #228 ensinou o contrario — contar
+ * o que sobrou depois do descarte parava a paginacao cedo demais.
+ *
+ * O conserto tem que servir aos dois: a fatia se enche com o que a fonte tem de
+ * distinto, e `temMais` so promete o que existe. Producao em 11/09 mostrava o
+ * lado ruim do acordo antigo: "berserk" devolvia 40 obras com `temMais: true`, e
+ * a pagina seguinte vinha vazia.
+ */
+function loteDoKitsu(ids: number[])
+{
+  return Response.json({
+    data: ids.map((id) => ({
+      type: "manga",
+      id: String(id),
+      attributes: { subtype: "manga", canonicalTitle: `Obra ${id}` },
+    })),
+  });
+}
+
+const vinte = (inicio: number) => Array.from({ length: 20 }, (_, i) => inicio + i);
+
+it("nao promete pagina seguinte quando a fonte so repete o que ja veio", async () => {
+  // Tres lotes cheios, mas o segundo e o terceiro repetem o primeiro: e o
+  // "berserk" de producao. A fatia rende 20 distintas, nao 60.
+  const fetchMock = vi.fn<typeof fetch>(async () => loteDoKitsu(vinte(1)));
+  vi.stubGlobal("fetch", fetchMock);
+
+  const pagina = await buscarNoKitsu({ termo: "berserk", ordem: "popular" }, 1);
+
+  expect(pagina.obras).toHaveLength(20);
+  expect(pagina.temMais).toBe(false);
+});
+
+it("continua paginando quando a fonte tem obra distinta ate o fim da fatia", async () => {
+  // Lotes cheios e sem repeticao: a fatia fecha em 60 e ha o que mostrar adiante.
+  let chamada = 0;
+  const fetchMock = vi.fn<typeof fetch>(async () => loteDoKitsu(vinte(1 + 20 * chamada++)));
+  vi.stubGlobal("fetch", fetchMock);
+
+  const pagina = await buscarNoKitsu({ termo: "manga", ordem: "popular" }, 1);
+
+  expect(pagina.obras).toHaveLength(60);
+  expect(pagina.temMais).toBe(true);
+});
+
+it("preenche a fatia com lotes extras quando parte veio repetida", async () => {
+  // Os dois primeiros lotes se repetem; os seguintes trazem obra nova. A fatia
+  // tem que chegar em 60 em vez de parar em 40, que era o defeito relatado.
+  const lotes = [vinte(1), vinte(1), vinte(21), vinte(41), vinte(61)];
+  let chamada = 0;
+  const fetchMock = vi.fn<typeof fetch>(async () => loteDoKitsu(lotes[chamada++] ?? []));
+  vi.stubGlobal("fetch", fetchMock);
+
+  const pagina = await buscarNoKitsu({ termo: "berserk", ordem: "popular" }, 1);
+
+  expect(pagina.obras).toHaveLength(60);
+  expect(pagina.temMais).toBe(true);
 });
