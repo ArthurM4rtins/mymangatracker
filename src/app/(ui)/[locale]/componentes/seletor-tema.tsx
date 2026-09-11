@@ -15,7 +15,9 @@ const TEMAS = [
 
 type Tema = (typeof TEMAS)[number]["id"];
 
-const CHAVE = "kidoku-tema";
+// A chave antiga (`kidoku-tema`) é migrada uma vez pelo script anti-flash do
+// layout, antes do primeiro paint — quando este componente monta, só existe esta.
+const CHAVE = "folunio-tema";
 
 // A fonte de verdade do tema é o data-theme no <html> — aplicado antes do primeiro
 // paint pelo script inline do layout. Aqui só se observa e troca; nada de estado próprio.

@@ -1,7 +1,20 @@
-# Extensão Kidoku (Chrome, Manifest V3)
+# Extensão Folunio (Chrome, Manifest V3)
 
 Registra na estante o capítulo que você está lendo, sem sair da aba. Issue #52/#91;
 desenho em `Obsidian/02. Implementacoes/feature-extensao-navegador/CLAUDE.md`.
+
+O ícone é a **folha em órbita** (#271): a folha no meio, o anel do planeta em volta — as duas
+metades do nome num desenho só. Não é o double-check de propósito: o Chrome carimba o badge por
+cima do ícone, e o badge de "registrado" já é um ✓ verde, então marca com visto mais badge com
+visto seriam duas afirmações do mesmo tipo em 16 px.
+
+A origem é `icones/folha-orbita.svg`. Os PNG que o manifest carrega saem dele — o repo não tem
+exportador próprio; foram gerados com o `sharp` que já vem na árvore do Next:
+
+```js
+sharp(fs.readFileSync("extension/icones/folha-orbita.svg"), { density: 900 })
+  .resize(n, n).png({ compressionLevel: 9 }).toFile(`extension/icones/icone-${n}.png`)
+```
 
 Sem bundler, sem TypeScript: HTML, CSS e JS puros, para carregar descompactada.
 Fica fora de `src/` porque não é camada do app (o lint de camadas cobra que
@@ -10,7 +23,7 @@ tudo em `src/` pertença a uma) e não entra no build da Vercel.
 ## Carregar para testar
 
 1. `chrome://extensions` → ativar **Modo do desenvolvedor** → **Carregar sem compactação** → esta pasta.
-2. Entrar no Kidoku pelo site (produção ou `http://localhost:3000`). A extensão lê o cookie de
+2. Entrar no Folunio pelo site (produção ou `http://localhost:3000`). A extensão lê o cookie de
    sessão do domínio e manda o mesmo token em `Authorization: Bearer`.
 3. Abrir um capítulo em qualquer site de leitura e clicar no ícone.
 
@@ -18,12 +31,14 @@ tudo em `src/` pertença a uma) e não entra no build da Vercel.
 
 | Passo | Como |
 |---|---|
-| Sessão | `chrome.cookies.get` do `kidoku_sessao` em produção, depois em localhost. Sem cookie: link "Entrar". |
+| Sessão | `chrome.cookies.get` do `folunio_sessao` em produção, depois em localhost. Sem cookie: link "Entrar". |
 | Estante | `GET /api/v1/estante`, escondendo as concluídas. Filtro por nome. |
 | Capítulo | Regex sobre o `document.title` da aba (a mesma de `domain/titulo-de-capitulo.ts`). Não achou = campo vazio, nunca chute. |
 | Pareamento | host + slug da URL (ou host + nome do título, quando a URL é opaca) → `entradaId`, em `chrome.storage.local`. Pré-seleciona a obra no próximo capítulo. |
 | Badge | O service worker observa as abas e acende `●` quando a página é de obra pareada. Observar sempre, gravar só no clique. |
 | Registro | `POST /api/v1/leitura` com `entradaId`, `capitulo` e a URL real da aba. Quem decide se o progresso avança é o servidor. |
+| Faixa de estado | Uma linha no pé do popup com o MESMO glifo e a MESMA cor do badge do ícone: `●` pareada, `✓` registrado sozinho, `!` falhou, e contorno vazio quando a página ainda não está pareada. É o único lugar dentro da extensão que explica o ícone. |
+| Lista de obras | `role="listbox"` de verdade, com setas, Home/End e `aria-selected` — não é `div` fingindo de `select`. A escolhida se marca por trilho à esquerda; o trecho casado com o filtro sai no acento. |
 
 ## Idioma
 

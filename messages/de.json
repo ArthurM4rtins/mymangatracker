@@ -20,7 +20,7 @@
     "verObra": "Werkseite ansehen"
   },
   "meta": {
-    "titulo": "Kidoku",
+    "titulo": "Folunio",
     "descricao": "Dein Regal für Manga, Manhwa und Novel, mit automatischem und privatem Lesefortschritt."
   },
   "cabecalho": {
@@ -47,7 +47,7 @@
       "anilist": "Katalog und Cover von AniList.",
       "kitsu": "Kitsu als Ersatzquelle, wenn AniList nicht antwortet."
     },
-    "direitos": "© {ano} Kidoku",
+    "direitos": "© {ano} Folunio",
     "fonte": {
       "agora": "Kommt gerade von {fonte}"
     }
@@ -99,7 +99,7 @@
     "usuario_nao_encontrado": "Benutzer nicht gefunden",
     "ja_em_uso": "schon vergeben",
     "cadastro_nao_concluido": "die Registrierung konnte nicht abgeschlossen werden — prüfe die Angaben oder melde dich an, falls du schon ein Konto hast",
-    "origem_recusada": "die Anfrage kam nicht von Kidoku",
+    "origem_recusada": "die Anfrage kam nicht von Folunio",
     "conteudo_nao_json": "die Anfrage muss JSON sein",
     "nao_avanca": "dieses Kapitel liegt nicht über deinem Regal-Fortschritt — zum Zurückgehen nutze das Zurücksetzen",
     "sem_fonte": "richte zuerst die Lesequelle ein",
@@ -210,8 +210,7 @@
     "erros": {
       "indisponivel": "AniList hat gerade nicht geantwortet. Versuch es gleich noch mal.",
       "muitosPedidos": "Zu viele Suchanfragen von hier aus. Warte einen Moment und versuche es erneut.",
-      "doCache": "Ergebnisse auf die Werke beschränkt, die schon hier waren.",
-      "doKitsu": "Manche Titel erscheinen womöglich romanisiert."
+      "doCache": "Ergebnisse auf die Werke beschränkt, die schon hier waren."
     },
     "vazio": {
       "semTermo": "Der Katalog hat gerade nichts geliefert. Versuch es gleich noch mal.",
@@ -243,7 +242,7 @@
       "saindo": "Wird abgemeldet…"
     },
     "logo": {
-      "rotulo": "Kidoku — Startseite"
+      "rotulo": "Folunio — Startseite"
     },
     "carrossel": {
       "anterior": "Zurück",
@@ -588,7 +587,7 @@
       "spoiler": "enthält Spoiler"
     },
     "nota": {
-      "titulo": "Kidoku-Bewertung",
+      "titulo": "Folunio-Bewertung",
       "distribuicao": "Verteilung der Bewertungen"
     },
     "resenhas": {
@@ -623,7 +622,7 @@
   },
   "perfil": {
     "voce": "du",
-    "membroDesde": "auf Kidoku seit {mes}",
+    "membroDesde": "auf Folunio seit {mes}",
     "notaAria": "Bewertung {nota} von 5",
     "erros": {
       "semBanco": "Das Profil braucht die Datenbank, und die hat gerade nicht geantwortet."
@@ -701,7 +700,7 @@
       "titulo": "Übersetzungsfehler melden"
     },
     "titulo": "Ein Text stimmt nicht?",
-    "subtitulo": "Kidoku spricht fünf Sprachen, und nicht alle haben hier eine muttersprachliche Korrektur. Wenn etwas schief klingt, sag Bescheid.",
+    "subtitulo": "Folunio spricht fünf Sprachen, und nicht alle haben hier eine muttersprachliche Korrektur. Wenn etwas schief klingt, sag Bescheid.",
     "avisoPublico": "Was du schreibst, wird ein öffentliches Issue im Repository des Projekts — zusammen mit deinem Benutzernamen und dem Bildschirm, auf dem du warst. Schreib nichts Persönliches hinein.",
     "precisaEntrar": "Zum Melden bitte anmelden.",
     "entrar": "anmelden",

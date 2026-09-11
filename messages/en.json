@@ -20,7 +20,7 @@
     "verObra": "View series page"
   },
   "meta": {
-    "titulo": "Kidoku",
+    "titulo": "Folunio",
     "descricao": "Your shelf for manga, manhwa, and novels, with automatic, private reading progress."
   },
   "cabecalho": {
@@ -47,7 +47,7 @@
       "anilist": "Catalogue and covers from AniList.",
       "kitsu": "Kitsu as a backup source when AniList does not respond."
     },
-    "direitos": "© {ano} Kidoku",
+    "direitos": "© {ano} Folunio",
     "fonte": {
       "agora": "Currently served by {fonte}"
     }
@@ -99,7 +99,7 @@
     "usuario_nao_encontrado": "user not found",
     "ja_em_uso": "already taken",
     "cadastro_nao_concluido": "could not complete sign-up — check the details or, if you already have an account, log in",
-    "origem_recusada": "the request did not come from Kidoku",
+    "origem_recusada": "the request did not come from Folunio",
     "conteudo_nao_json": "the request must be JSON",
     "nao_avanca": "that chapter does not go past your shelf progress — to go back, use reset",
     "sem_fonte": "set up the reading source first",
@@ -210,8 +210,7 @@
     "erros": {
       "indisponivel": "AniList didn't respond just now. Try again in a moment.",
       "muitosPedidos": "Too many searches from here. Wait a moment and try again.",
-      "doCache": "Results limited to the series that have already been through here.",
-      "doKitsu": "Some titles may appear romanised."
+      "doCache": "Results limited to the series that have already been through here."
     },
     "vazio": {
       "semTermo": "The catalog didn't return anything just now. Try again in a moment.",
@@ -243,7 +242,7 @@
       "saindo": "Logging out…"
     },
     "logo": {
-      "rotulo": "Kidoku — home"
+      "rotulo": "Folunio — home"
     },
     "carrossel": {
       "anterior": "Previous",
@@ -588,7 +587,7 @@
       "spoiler": "contains spoiler"
     },
     "nota": {
-      "titulo": "Kidoku rating",
+      "titulo": "Folunio rating",
       "distribuicao": "Rating distribution"
     },
     "resenhas": {
@@ -623,7 +622,7 @@
   },
   "perfil": {
     "voce": "you",
-    "membroDesde": "on Kidoku since {mes}",
+    "membroDesde": "on Folunio since {mes}",
     "notaAria": "Rating {nota} out of 5",
     "erros": {
       "semBanco": "The profile needs the database, and it didn't respond just now."
@@ -701,7 +700,7 @@
       "titulo": "Report a translation issue"
     },
     "titulo": "Found wrong wording?",
-    "subtitulo": "Kidoku speaks five languages, and not all of them have a native reviewer here. If something reads wrong, tell us.",
+    "subtitulo": "Folunio speaks five languages, and not all of them have a native reviewer here. If something reads wrong, tell us.",
     "avisoPublico": "What you write becomes a public issue in the project repository, along with your username and the screen you were on. Don't write anything personal.",
     "precisaEntrar": "To report, sign in to your account.",
     "entrar": "sign in",

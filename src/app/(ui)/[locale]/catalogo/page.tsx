@@ -91,15 +91,6 @@ export default async function Catalogo({ searchParams }: Props)
         </p>
       )}
 
-      {/* Fala da OBRA, não da nossa infraestrutura (#251). Antes era uma caixa
-          com cara de erro anunciando que o AniList estava fora, para qualquer
-          visitante. O que a pessoa precisa saber é por que os títulos estão
-          diferentes; de qual fonte vieram é assunto de quem cuida do sistema, e
-          isso agora fica no rodapé, para quem está logado. */}
-      {resultado.estado === "kitsu" && (
-        <p className="text-xs text-texto-suave">{t("erros.doKitsu")}</p>
-      )}
-
       {resultado.estado === "cache" && (
         <p className="text-xs text-texto-suave">{t("erros.doCache")}</p>
       )}

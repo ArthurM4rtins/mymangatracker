@@ -1,12 +1,12 @@
 {
   "nome": {
-    "message": "Kidoku"
+    "message": "Folunio"
   },
   "descricao": {
-    "message": "Registra na sua estante do Kidoku o capítulo que você está lendo, sem sair da aba."
+    "message": "Registra na sua estante do Folunio o capítulo que você está lendo, sem sair da aba."
   },
   "acaoTitulo": {
-    "message": "Kidoku — registrar leitura"
+    "message": "Folunio — registrar leitura"
   },
   "abrirSite": {
     "message": "abrir o site"
@@ -39,13 +39,13 @@
     "message": "só obras já pareadas, depois de 20 s na página do capítulo"
   },
   "semSessao": {
-    "message": "Entre no Kidoku para registrar a leitura."
+    "message": "Entre no Folunio para registrar a leitura."
   },
   "entrar": {
     "message": "Entrar"
   },
   "semResposta": {
-    "message": "o Kidoku não respondeu agora — tente de novo"
+    "message": "o Folunio não respondeu agora — tente de novo"
   },
   "estanteNaoCarregou": {
     "message": "não deu para carregar a estante — tente de novo"
@@ -72,7 +72,7 @@
     "message": "obra reconhecida pelo título da aba — confira"
   },
   "obraNoCapitulo": {
-    "message": " — no cap. $capitulo$",
+    "message": "no cap. $capitulo$",
     "placeholders": {
       "capitulo": {
         "content": "$1"
@@ -123,6 +123,27 @@
     "message": "muitos registros em pouco tempo — aguarde"
   },
   "erroFalhaInterna": {
-    "message": "o Kidoku não conseguiu registrar agora"
+    "message": "o Folunio não conseguiu registrar agora"
+  },
+  "nestaAba": {
+    "message": "Nesta aba"
+  },
+  "obraPareadaMarca": {
+    "message": "pareada"
+  },
+  "filtroSemResultado": {
+    "message": "nenhuma obra da estante casa com o filtro"
+  },
+  "estadoPareada": {
+    "message": "obra pareada — o ícone acende nesta página"
+  },
+  "estadoSemPar": {
+    "message": "esta página ainda não está pareada — registrar aqui pareia"
+  },
+  "estadoRegistrado": {
+    "message": "registrado por aqui, sozinho"
+  },
+  "estadoFalhou": {
+    "message": "o automático não conseguiu — registre à mão"
   }
 }

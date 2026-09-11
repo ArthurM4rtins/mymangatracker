@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { montarRelato, TAMANHO_MAXIMO_DO_RELATO } from "@/server/domain/relato-de-traducao";
 
-// #158: o Kidoku fala cinco idiomas e ninguem do time le tres deles. Quem vai
+// #158: o Folunio fala cinco idiomas e ninguem do time le tres deles. Quem vai
 // notar o falso amigo e o usuario, e ele precisa de um caminho para contar.
 //
 // O texto do relato e ESCRITO POR ESTRANHO e vira issue publica no repositorio.

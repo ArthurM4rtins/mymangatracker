@@ -1,12 +1,12 @@
 {
   "nome": {
-    "message": "Kidoku"
+    "message": "Folunio"
   },
   "descricao": {
-    "message": "Logs the chapter you're reading to your Kidoku shelf, without leaving the tab."
+    "message": "Logs the chapter you're reading to your Folunio shelf, without leaving the tab."
   },
   "acaoTitulo": {
-    "message": "Kidoku — log reading"
+    "message": "Folunio — log reading"
   },
   "abrirSite": {
     "message": "open the site"
@@ -39,13 +39,13 @@
     "message": "only paired series, after 20 s on the chapter page"
   },
   "semSessao": {
-    "message": "Sign in to Kidoku to log your reading."
+    "message": "Sign in to Folunio to log your reading."
   },
   "entrar": {
     "message": "Sign in"
   },
   "semResposta": {
-    "message": "Kidoku didn't respond just now — try again"
+    "message": "Folunio didn't respond just now — try again"
   },
   "estanteNaoCarregou": {
     "message": "couldn't load your shelf — try again"
@@ -72,7 +72,7 @@
     "message": "series recognized from the tab title — double-check"
   },
   "obraNoCapitulo": {
-    "message": " — on ch. $capitulo$",
+    "message": "on ch. $capitulo$",
     "placeholders": {
       "capitulo": {
         "content": "$1"
@@ -123,6 +123,27 @@
     "message": "too many logs in a short time — wait a bit"
   },
   "erroFalhaInterna": {
-    "message": "Kidoku couldn't log that right now"
+    "message": "Folunio couldn't log that right now"
+  },
+  "nestaAba": {
+    "message": "In this tab"
+  },
+  "obraPareadaMarca": {
+    "message": "paired"
+  },
+  "filtroSemResultado": {
+    "message": "no series on your shelf matches the filter"
+  },
+  "estadoPareada": {
+    "message": "series paired — the icon lights up on this page"
+  },
+  "estadoSemPar": {
+    "message": "this page isn't paired yet — logging here pairs it"
+  },
+  "estadoRegistrado": {
+    "message": "logged from here, on its own"
+  },
+  "estadoFalhou": {
+    "message": "the automatic run didn't make it — log it by hand"
   }
 }

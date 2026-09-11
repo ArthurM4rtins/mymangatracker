@@ -3,7 +3,7 @@
  *
  * Era `anilistId` e só. O que o AniList não conhecia sumia: buscando "The
  * Beginning After The End" em 10/09/2026, o Kitsu devolve três registros e
- * NENHUM tem mapeamento para o AniList, então a obra não existia no Kidoku.
+ * NENHUM tem mapeamento para o AniList, então a obra não existia no Folunio.
  * Medido no mesmo dia, isso apagava 75% do resultado de "omniscient reader" e
  * 40% do de "tower of god" — justamente o manhwa coreano, que é metade do
  * público daqui.

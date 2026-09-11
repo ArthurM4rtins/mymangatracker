@@ -1,7 +1,7 @@
 /**
  * O relato de erro de tradução (issue #158), virando texto de issue do GitHub.
  *
- * O Kidoku fala cinco idiomas e ninguém do time lê três deles. A tradução passou
+ * O Folunio fala cinco idiomas e ninguém do time lê três deles. A tradução passou
  * por revisão adversarial, mas nenhuma revisão substitui falante nativo, e o
  * erro que sobra é o pior tipo: o que parece certo para quem escreveu. Quem vai
  * notar é o usuário — faltava o caminho para ele contar.
@@ -74,7 +74,7 @@ function idiomaSeguro(idioma: string): string
 /**
  * O texto da issue, ou `null` quando não há relato — texto vazio não vira issue.
  * O username entra como texto, não como menção: quem relata não precisa ser
- * notificado, e nem sempre o nome de usuário do Kidoku existe no GitHub.
+ * notificado, e nem sempre o nome de usuário do Folunio existe no GitHub.
  */
 export function montarRelato(pedido: PedidoDeRelato): RelatoPronto | null
 {

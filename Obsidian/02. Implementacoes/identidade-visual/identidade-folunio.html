@@ -1,0 +1,663 @@
+<title>Extensão Folunio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Instrument+Sans:ital,wght@0,400..700;1,400..600&display=swap">
+
+<style>
+  /* Paleta do documento: os temas do produto. claro = sumi · escuro = noturno.
+     A extensão em si é sempre noturno — as cores dela aparecem literais. */
+  :root {
+    --fundo: #faf7f2;
+    --superficie: #ffffff;
+    --texto: #1c1a17;
+    --texto-suave: #5c574e;
+    --borda: #ddd7cc;
+    --acento: #d6402b;
+    --acento-fraco: #f6e3de;
+    --marca: "Zen Kaku Gothic New", "Hiragino Sans", system-ui, sans-serif;
+    --ui: "Instrument Sans", system-ui, -apple-system, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fundo: #12141f;
+      --superficie: #1d2133;
+      --texto: #e8e4f0;
+      --texto-suave: #8a93bb;
+      --borda: #2a2f47;
+      --acento: #f0a842;
+      --acento-fraco: #2e2a23;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --fundo: #12141f;
+    --superficie: #1d2133;
+    --texto: #e8e4f0;
+    --texto-suave: #8a93bb;
+    --borda: #2a2f47;
+    --acento: #f0a842;
+    --acento-fraco: #2e2a23;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: var(--ui);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .pagina { max-width: 1000px; margin: 0 auto; padding: 56px 28px 96px; display: flex; flex-direction: column; gap: 60px; }
+
+  h1, h2, h3 { font-family: var(--marca); text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2.2rem, 6vw, 3.3rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1.05; }
+  h2 { font-size: 1.45rem; font-weight: 700; letter-spacing: -0.01em; }
+  h3 { font-size: 1rem; font-weight: 700; }
+  p { margin: 0; max-width: 66ch; }
+  code {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.82em; background: var(--acento-fraco); padding: 0.1em 0.34em; border-radius: 3px;
+  }
+  .rotulo { font-size: 0.66rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--texto-suave); }
+
+  .abertura { display: flex; flex-direction: column; gap: 18px; }
+  .abertura .deck { font-size: 1.12rem; color: var(--texto-suave); max-width: 62ch; }
+  .abertura .deck strong { color: var(--texto); font-weight: 600; }
+
+  .fatos { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1px; background: var(--borda); border: 1px solid var(--borda); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+  .fato { background: var(--fundo); padding: 14px 16px; display: flex; flex-direction: column; gap: 3px; }
+  .fato b { font-family: var(--marca); font-size: 1.5rem; font-weight: 900; line-height: 1; }
+  .fato span { font-size: 0.8rem; color: var(--texto-suave); line-height: 1.35; }
+
+  section { display: flex; flex-direction: column; gap: 20px; }
+  .cabeca-secao { display: flex; flex-direction: column; gap: 6px; border-top: 2px solid var(--texto); padding-top: 12px; }
+  .sub-cabeca { display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--borda); padding-top: 12px; margin-top: 8px; }
+
+  .inventario { display: flex; flex-direction: column; gap: 1px; background: var(--borda); border: 1px solid var(--borda); border-radius: 4px; overflow: hidden; }
+  .linha { background: var(--fundo); padding: 12px 16px; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr); gap: 4px 20px; align-items: baseline; }
+  .linha .onde { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.78rem; color: var(--texto); word-break: break-word; }
+  .linha .oque { font-size: 0.86rem; color: var(--texto-suave); }
+  .linha .oque em { color: var(--texto); font-style: normal; font-weight: 600; }
+  @media (max-width: 620px) { .linha { grid-template-columns: 1fr; } }
+
+  .selo { font-size: 0.64rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 7px; border-radius: 2px; white-space: nowrap; align-self: flex-start; }
+  .selo--ok { background: var(--acento); color: var(--fundo); }
+  .selo--alt { background: var(--acento-fraco); color: var(--acento); }
+  .selo--risco { background: transparent; color: var(--texto-suave); border: 1px solid var(--borda); }
+
+  .aviso { border-left: 3px solid var(--acento); padding: 2px 0 2px 16px; font-size: 0.9rem; color: var(--texto-suave); }
+  .aviso b { color: var(--texto); font-weight: 600; }
+
+  /* ---- badges ---- */
+  .badges { display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap; padding: 18px 20px; border: 1px solid var(--borda); border-radius: 4px; background: var(--superficie); }
+  .badge-demo { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+  .badge-demo > span { font-size: 0.68rem; color: var(--texto-suave); }
+  .icone-chrome { position: relative; width: 34px; height: 34px; border-radius: 6px; background: color-mix(in srgb, var(--texto-suave) 26%, transparent); display: grid; place-items: center; }
+  .icone-chrome::after { content: "F"; font: 700 15px/1 var(--ui); color: color-mix(in srgb, var(--texto) 65%, transparent); }
+  .badge { position: absolute; right: -3px; bottom: -3px; min-width: 17px; height: 14px; padding: 0 3px; border-radius: 3px; font-size: 10px; line-height: 14px; font-weight: 700; text-align: center; font-style: normal; }
+  .nota-badge { font-size: 0.86rem; color: var(--texto-suave); max-width: 42ch; margin-left: auto; }
+  .nota-badge b { color: var(--texto); font-weight: 600; }
+
+  /* ---- ícones ---- */
+  .pratos { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 20px; }
+  .prato { border: 1px solid var(--borda); border-radius: 4px; background: var(--superficie); display: flex; flex-direction: column; overflow: hidden; }
+  .prato > header { padding: 14px 16px 12px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .prato h3 { font-size: 0.98rem; }
+  .palco { padding: 28px 16px; display: grid; place-items: center; border-top: 1px solid var(--borda); border-bottom: 1px solid var(--borda); background: #12141f; }
+  .prato .corpo { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 9px; }
+  .prato .corpo p { font-size: 0.85rem; color: var(--texto-suave); }
+  .prato .corpo p b { color: var(--texto); font-weight: 600; }
+  .prato .corpo p em { color: var(--texto); font-style: normal; }
+
+  .icones-linha, .teste-badge { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; padding: 13px 16px; border-bottom: 1px solid var(--borda); }
+  .teste-badge { background: color-mix(in srgb, var(--acento) 8%, transparent); }
+  .icone { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+  .icone > span { font-size: 0.6rem; color: var(--texto-suave); font-variant-numeric: tabular-nums; }
+  .quadro-ext { display: grid; place-items: center; background: #12141f; border-radius: 22%; position: relative; }
+  .quadro-ext svg { width: 74%; height: auto; overflow: visible; color: #f0a842; }
+  .quadro-ext.p16 { width: 16px; height: 16px; border-radius: 26%; overflow: visible; }
+  .quadro-ext.p16 .badge { right: -4px; bottom: -4px; min-width: 12px; height: 10px; font-size: 8px; line-height: 10px; padding: 0 2px; }
+
+  /* ---- popups ---- */
+  .popups { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 24px; align-items: start; }
+  .popup-col { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .popup-col figcaption { display: flex; flex-direction: column; gap: 3px; }
+  .popup-col figcaption small { font-size: 0.78rem; color: var(--texto-suave); }
+
+  .pop {
+    width: 100%; max-width: 320px;
+    border: 1px solid #2b2f45; border-radius: 4px; overflow: hidden;
+    background: #12141f; color: #ece9e2;
+    font: 13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .pop-topo { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 12px; border-bottom: 1px solid #2b2f45; }
+  .pop-topo .txt-marca { font-weight: 700; letter-spacing: 0.02em; font-size: 14px; }
+  .pop-marca { height: 16px; width: auto; overflow: visible; color: #ece9e2; --acento: #f0a842; --fundo: #12141f; flex: none; }
+  .pop-amb { font-size: 10px; color: #9a9bb0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; text-align: right; }
+  .pop-sair { font-size: 10px; color: #9a9bb0; text-decoration: underline; flex: none; }
+  .pop-corpo { padding: 11px 12px 13px; display: flex; flex-direction: column; gap: 10px; }
+
+  .pop-rot { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: #9a9bb0; }
+  .pop-dica { font-size: 10px; color: #9a9bb0; }
+  .pop-dica.alerta { color: #f0a842; }
+  .pop-campo { display: flex; flex-direction: column; gap: 5px; }
+  .pop-input { border: 1px solid #2b2f45; background: #1a1d2c; border-radius: 6px; padding: 7px 9px; font-size: 12px; color: #9a9bb0; }
+  .pop-input.foco { border-color: #f0a842; }
+  .pop-select { border: 1px solid #2b2f45; background: #1a1d2c; border-radius: 6px; height: 118px; overflow: hidden; position: relative; padding: 4px 0; }
+  .pop-select .op { padding: 3px 9px; font-size: 13px; }
+  .pop-barra { position: absolute; top: 0; right: 0; width: 13px; height: 100%; background: #1f2334; border-left: 1px solid #2b2f45; display: flex; flex-direction: column; justify-content: space-between; align-items: center; font-size: 8px; color: #6c7089; padding: 2px 0; }
+  .pop-num-peq { border: 1px solid #2b2f45; background: #1a1d2c; border-radius: 6px; padding: 7px 9px; width: 120px; font-size: 13px; color: #9a9bb0; }
+  .pop-botao { background: #f0a842; color: #1a1200; font-weight: 600; text-align: center; border-radius: 6px; padding: 9px; font-size: 13px; }
+  .pop-chave { display: flex; align-items: flex-start; gap: 8px; }
+  .pop-switch { flex: none; width: 30px; height: 18px; border-radius: 9px; background: #f0a842; position: relative; }
+  .pop-switch::after { content: ""; position: absolute; top: 2px; right: 2px; width: 14px; height: 14px; border-radius: 50%; background: #1a1200; }
+  .pop-chave > span { display: flex; flex-direction: column; gap: 1px; font-size: 11px; }
+  .pop-chave b { font-weight: 400; font-size: 12px; color: #ece9e2; }
+  .pop-chave em { font-style: normal; color: #9a9bb0; }
+
+  /* proposta: lista de linhas */
+  .pop-lista { border: 1px solid #2b2f45; border-radius: 6px; overflow: hidden; }
+  .pop-item { padding: 7px 10px; display: flex; flex-direction: column; gap: 1px; border-left: 3px solid transparent; }
+  .pop-item + .pop-item { border-top: 1px solid #2b2f45; }
+  .pop-item--sel { border-left-color: #f0a842; background: #1a1d2c; }
+  .pop-tit { font-size: 13px; }
+  .pop-sub { font-size: 10px; color: #9a9bb0; }
+  .pop-sub mark { background: none; color: #f0a842; }
+
+  /* proposta: cartão do registro */
+  .pop-cartao { border: 1px solid #2b2f45; border-radius: 8px; background: #1a1d2c; padding: 11px 12px; display: flex; flex-direction: column; gap: 9px; }
+  .pop-cartao-topo { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .pop-obra { font-size: 14px; font-weight: 600; }
+  .pop-trocar { font-size: 10px; color: #f0a842; text-decoration: underline; flex: none; }
+  .pop-cap-linha { display: flex; align-items: center; gap: 10px; }
+  .pop-cap-caixa { border: 1px solid #f0a842; background: #12141f; border-radius: 6px; padding: 4px 14px; font-size: 26px; font-weight: 600; line-height: 1.15; font-variant-numeric: tabular-nums; min-width: 74px; text-align: center; }
+  .pop-cap-caixa.vazia { color: #6c7089; border-style: dashed; }
+  .pop-cap-lado { display: flex; flex-direction: column; gap: 2px; font-size: 10px; color: #9a9bb0; }
+  .pop-de-para { font-size: 11px; color: #9a9bb0; display: flex; align-items: center; gap: 6px; }
+  .pop-de-para b { color: #ece9e2; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pop-estado { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #9a9bb0; border-top: 1px solid #2b2f45; padding-top: 9px; }
+  .badge--linha { position: static; flex: none; }
+  .pop-contexto { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: #9a9bb0; }
+  .pop-contexto b { color: #ece9e2; font-weight: 400; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+
+  /* ---- os quatro estados da faixa ---- */
+  .estados { display: flex; flex-direction: column; gap: 1px; background: var(--borda); border: 1px solid var(--borda); border-radius: 4px; overflow: hidden; }
+  .estado-linha { background: var(--fundo); padding: 12px 16px; display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 6px 20px; align-items: center; }
+  .estado-faixa { background: #12141f; border: 1px solid #2b2f45; border-radius: 6px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; font: 11px/1.35 system-ui, sans-serif; color: #9a9bb0; }
+  .estado-faixa b { color: #ece9e2; font-weight: 600; }
+  .estado-porque { font-size: 0.84rem; color: var(--texto-suave); }
+  .estado-porque em { color: var(--texto); font-style: normal; font-weight: 600; }
+  .badge--vazio { background: transparent; border: 1px dashed #4a4f6b; color: #6c7089; }
+  @media (max-width: 700px) { .estado-linha { grid-template-columns: 1fr; } }
+
+  footer.rodape { border-top: 1px solid var(--borda); padding-top: 18px; font-size: 0.8rem; color: var(--texto-suave); display: flex; flex-direction: column; gap: 6px; }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Folha em órbita. Folha CHEIA e de pé: de contorno o miolo vira íris e o
+       ícone lê como olho; deitada no ângulo do anel, as duas formas viram lente. -->
+  <clipPath id="clip-orbita"><rect x="0" y="50" width="100" height="60" transform="rotate(-10 50 50)"/></clipPath>
+  <symbol id="ic-orbita" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="50" rx="45" ry="12" fill="none" stroke="currentColor" stroke-width="8" transform="rotate(-10 50 50)"/>
+    <g transform="rotate(-42 50 50) translate(-24.8,-4.1) scale(0.68)">
+      <path d="M134,32 C104,30 84,48 84,63 C84,79 97,88 112,84 C126,80 136,58 134,32 Z" fill="currentColor" stroke="currentColor" stroke-width="16" stroke-linejoin="round"/>
+    </g>
+    <g clip-path="url(#clip-orbita)">
+      <ellipse cx="50" cy="50" rx="45" ry="12" fill="none" stroke="currentColor" stroke-width="8" transform="rotate(-10 50 50)"/>
+    </g>
+  </symbol>
+
+  <symbol id="ic-folha" viewBox="72 18 76 82">
+    <path d="M134,32 C104,30 84,48 84,63 C84,79 97,88 112,84 C126,80 136,58 134,32 Z" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <clipPath id="clip-planeta"><rect x="338" y="60" width="100" height="46" transform="rotate(-20 388 60)"/></clipPath>
+  <symbol id="ic-planeta" viewBox="344 12 88 84">
+    <ellipse cx="388" cy="60" rx="36" ry="13.5" fill="none" stroke="currentColor" stroke-width="9" transform="rotate(-20 388 60)"/>
+    <circle cx="388" cy="60" r="22" fill="#12141f" stroke="currentColor" stroke-width="16"/>
+    <g clip-path="url(#clip-planeta)"><ellipse cx="388" cy="60" rx="36" ry="13.5" fill="none" stroke="currentColor" stroke-width="9" transform="rotate(-20 388 60)"/></g>
+  </symbol>
+
+  <symbol id="ic-f" viewBox="0 0 72 72">
+    <g fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30,62 V26 A15,15 0 0 1 58,17"/>
+      <line x1="12" y1="40" x2="46" y2="40"/>
+    </g>
+  </symbol>
+
+  <!-- wordmark do site, para o topo do popup -->
+  <clipPath id="clip-anel-w"><rect x="338" y="60" width="100" height="46" transform="rotate(-20 388 60)"/></clipPath>
+  <symbol id="w-folunio" viewBox="-6 0 440 100">
+    <ellipse cx="388" cy="60" rx="36" ry="13.5" fill="none" stroke="var(--acento)" stroke-width="9" transform="rotate(-20 388 60)"/>
+    <g fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M34,84 V26 A18,18 0 0 1 52,8"/>
+      <line x1="12" y1="36" x2="58" y2="36"/>
+      <path d="M134,32 C104,30 84,48 84,63 C84,79 97,88 112,84 C126,80 136,58 134,32 Z"/>
+      <line x1="158" y1="8" x2="158" y2="84"/>
+      <path d="M186,36 V64 A20,20 0 0 0 226,64 V36"/>
+      <line x1="226" y1="36" x2="226" y2="84"/>
+      <line x1="254" y1="84" x2="254" y2="36"/>
+      <path d="M254,58 A22,22 0 0 1 298,58 V84"/>
+      <line x1="326" y1="36" x2="326" y2="84"/>
+    </g>
+    <circle cx="388" cy="60" r="22" fill="var(--fundo)" stroke="currentColor" stroke-width="16"/>
+    <g clip-path="url(#clip-anel-w)"><ellipse cx="388" cy="60" rx="36" ry="13.5" fill="none" stroke="var(--acento)" stroke-width="9" transform="rotate(-20 388 60)"/></g>
+    <circle cx="326" cy="19" r="7.5" fill="var(--acento)"/>
+  </symbol>
+</svg>
+
+<div class="pagina">
+
+  <header class="abertura">
+    <p class="rotulo">11/09/2026 · o site já está no ar com a marca nova</p>
+    <h1>Extensão Folunio</h1>
+    <p class="deck">
+      O rebranding do site foi mergeado e está em produção. <strong>O que sobrou é a extensão</strong>,
+      e ela tem duas coisas em aberto: o <strong>ícone</strong>, que nunca existiu — o que aparece na
+      barra é placeholder do Chrome —, e a <strong>janela de 320&nbsp;px</strong>, que funciona bem e
+      parece um formulário de 2005.
+    </p>
+
+    <div class="fatos">
+      <div class="fato"><b>✓</b><span>o badge de &ldquo;registrado&rdquo; já é um visto verde — é com ele que o ícone brigaria</span></div>
+      <div class="fato"><b>F</b><span>o que o Chrome desenha hoje: a inicial do nome, não asset nosso</span></div>
+      <div class="fato"><b>320</b><span>a largura da janela, travada no tema noturno</span></div>
+      <div class="fato"><b>0</b><span>linhas de comportamento que as propostas mudam — só apresentação</span></div>
+    </div>
+  </header>
+
+  <!-- ================= ÍCONE ================= -->
+  <section>
+    <div class="cabeca-secao">
+      <p class="rotulo">Ícone</p>
+      <h2>Por que o double-check não pode ser o ícone</h2>
+    </div>
+    <p>
+      Sua desconfiança tem prova no código. O ícone da extensão <b>já carrega um símbolo</b>, e quem
+      desenha é o Chrome, por cima do nosso: o <em>badge</em>. E o badge de sucesso é literalmente um
+      visto.
+    </p>
+
+    <div class="inventario">
+      <div class="linha">
+        <span class="onde">background.js:44</span>
+        <span class="oque"><code>setBadgeText({ text: resultado.ok ? "✓" : "!" })</code> — <em>o visto verde é o badge de registrado.</em></span>
+      </div>
+      <div class="linha">
+        <span class="onde">background.js:57</span>
+        <span class="oque"><code>text: pareada ? "●" : ""</code> — a bolinha âmbar diz que a página é de obra pareada.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">background.js:11-13</span>
+        <span class="oque"><code>#f0a842</code> pareada · <code>#3c9d5d</code> registrado · <code>#d6402b</code> falhou.</span>
+      </div>
+    </div>
+
+    <div class="badges">
+      <div class="badge-demo"><div class="icone-chrome"><span class="badge" style="background:#f0a842;color:#1a1200">●</span></div><span>pareada</span></div>
+      <div class="badge-demo"><div class="icone-chrome"><span class="badge" style="background:#3c9d5d;color:#fff">✓</span></div><span>registrado</span></div>
+      <div class="badge-demo"><div class="icone-chrome"><span class="badge" style="background:#d6402b;color:#fff">!</span></div><span>falhou</span></div>
+      <p class="nota-badge">
+        É isto que você vê hoje: o <b>F</b> do Chrome com o badge por cima. Um ícone que fosse
+        <b>dois vistos</b>, com um <b>visto verde</b> carimbado em cima, seriam duas afirmações do
+        mesmo tipo na mesma caixa de 16&nbsp;px — e a que importa é a de cima.
+      </p>
+    </div>
+
+    <div class="sub-cabeca">
+      <p class="rotulo">4 direções · cada uma nos tamanhos do manifest e com o badge por cima</p>
+      <h3 style="font-size:1.15rem">O que entra no lugar</h3>
+    </div>
+
+    <div class="pratos">
+
+      <article class="prato">
+        <header><h3>1 · Folha em órbita</h3><span class="selo selo--ok">Recomendado</span></header>
+        <div class="palco"><svg viewBox="0 0 100 100" style="width:118px;color:#f0a842"><use href="#ic-orbita"/></svg></div>
+        <div class="icones-linha">
+          <div class="icone"><div class="quadro-ext" style="width:64px;height:64px"><svg viewBox="0 0 100 100"><use href="#ic-orbita"/></svg></div><span>128</span></div>
+          <div class="icone"><div class="quadro-ext" style="width:48px;height:48px"><svg viewBox="0 0 100 100"><use href="#ic-orbita"/></svg></div><span>48</span></div>
+          <div class="icone"><div class="quadro-ext" style="width:32px;height:32px"><svg viewBox="0 0 100 100"><use href="#ic-orbita"/></svg></div><span>32</span></div>
+          <div class="icone"><div class="quadro-ext" style="width:16px;height:16px"><svg viewBox="0 0 100 100"><use href="#ic-orbita"/></svg></div><span>16</span></div>
+        </div>
+        <div class="teste-badge">
+          <div class="icone"><div class="quadro-ext p16"><svg viewBox="0 0 100 100"><use href="#ic-orbita"/></svg><i class="badge" style="background:#f0a842;color:#1a1200">●</i></div><span>16 + ●</span></div>
+          <div class="icone"><div class="quadro-ext p16"><svg viewBox="0 0 100 100"><use href="#ic-orbita"/></svg><i class="badge" style="background:#3c9d5d;color:#fff">✓</i></div><span>16 + ✓</span></div>
+          <div class="icone"><div class="quadro-ext p16"><svg viewBox="0 0 100 100"><use href="#ic-orbita"/></svg><i class="badge" style="background:#d6402b;color:#fff">!</i></div><span>16 + !</span></div>
+        </div>
+        <div class="corpo">
+          <p><b>Sua ideia, e ela ganhou das minhas:</b> diz o nome inteiro num desenho só — folha <em>e</em> universo — em vez de escolher uma metade. Sem visto nenhum, então o badge fica livre.</p>
+          <p><b>Duas correções que só a tela cobrou.</b> A folha teve de virar <b>cheia</b>: de contorno, o miolo dela dentro do anel vira íris e o ícone inteiro lê como <b>olho</b>. E teve de ficar <b>de pé</b>: deitada no mesmo ângulo do anel, as duas formas se fundem numa lente só.</p>
+          <p>O anel ficou mais achatado que o do wordmark e o bico da folha passa por cima dele — <b>é esse pedaço saindo do topo que faz ler folha, e não planeta qualquer.</b></p>
+        </div>
+      </article>
+
+      <article class="prato">
+        <header><h3>2 · Folha sozinha</h3><span class="selo selo--alt">O caminho até aqui</span></header>
+        <div class="palco"><svg viewBox="72 18 76 82" style="width:88px;color:#f0a842"><use href="#ic-folha"/></svg></div>
+        <div class="icones-linha">
+          <div class="icone"><div class="quadro-ext" style="width:48px;height:48px"><svg viewBox="72 18 76 82"><use href="#ic-folha"/></svg></div><span>48</span></div>
+          <div class="icone"><div class="quadro-ext" style="width:32px;height:32px"><svg viewBox="72 18 76 82"><use href="#ic-folha"/></svg></div><span>32</span></div>
+          <div class="icone"><div class="quadro-ext p16"><svg viewBox="72 18 76 82"><use href="#ic-folha"/></svg><i class="badge" style="background:#3c9d5d;color:#fff">✓</i></div><span>16 + ✓</span></div>
+        </div>
+        <div class="corpo">
+          <p>O primeiro <em>o</em> do nome, sozinho. Forma cheia, aguenta bem o badge.</p>
+          <p><b>Perde para a órbita</b> porque conta metade do nome: folha sem universo.</p>
+        </div>
+      </article>
+
+      <article class="prato">
+        <header><h3>3 · Planeta</h3><span class="selo selo--risco">Descartado</span></header>
+        <div class="palco"><svg viewBox="344 12 88 84" style="width:112px;color:#f0a842"><use href="#ic-planeta"/></svg></div>
+        <div class="icones-linha">
+          <div class="icone"><div class="quadro-ext" style="width:48px;height:48px"><svg viewBox="344 12 88 84"><use href="#ic-planeta"/></svg></div><span>48</span></div>
+          <div class="icone"><div class="quadro-ext" style="width:32px;height:32px"><svg viewBox="344 12 88 84"><use href="#ic-planeta"/></svg></div><span>32</span></div>
+          <div class="icone"><div class="quadro-ext p16"><svg viewBox="344 12 88 84"><use href="#ic-planeta"/></svg><i class="badge" style="background:#3c9d5d;color:#fff">✓</i></div><span>16 + ✓</span></div>
+        </div>
+        <div class="corpo">
+          <p>O anel é traço fino e some em 16&nbsp;px, e ele sai <b>para os lados</b> — que é onde o badge entra.</p>
+          <p>A órbita resolveu isso com a folha cheia no meio: massa central, anel como moldura.</p>
+        </div>
+      </article>
+
+      <article class="prato">
+        <header><h3>4 · F monolinha</h3><span class="selo selo--risco">Descartado</span></header>
+        <div class="palco"><svg viewBox="0 0 72 72" style="width:78px;color:#f0a842"><use href="#ic-f"/></svg></div>
+        <div class="icones-linha">
+          <div class="icone"><div class="quadro-ext" style="width:48px;height:48px"><svg viewBox="0 0 72 72"><use href="#ic-f"/></svg></div><span>48</span></div>
+          <div class="icone"><div class="quadro-ext" style="width:32px;height:32px"><svg viewBox="0 0 72 72"><use href="#ic-f"/></svg></div><span>32</span></div>
+          <div class="icone"><div class="quadro-ext p16"><svg viewBox="0 0 72 72"><use href="#ic-f"/></svg><i class="badge" style="background:#3c9d5d;color:#fff">✓</i></div><span>16 + ✓</span></div>
+        </div>
+        <div class="corpo">
+          <p><b>O Chrome já desenha um F</b> na barra — é o placeholder da inicial. Um ícone que também é F fica indistinguível de <em>&ldquo;ainda não tem ícone&rdquo;</em> para quem olha de passagem.</p>
+        </div>
+      </article>
+
+    </div>
+
+    <p class="aviso">
+      <b>Recomendação: folha em órbita</b>, âmbar sobre o índigo, <b>cor fixa</b> nos quatro tamanhos.
+      Fixa porque o ícone vive na barra do navegador, que tem a própria cor e não sabe nada dos
+      nossos três temas — ícone que muda de cor perde reconhecimento justo onde reconhecimento é tudo.
+    </p>
+  </section>
+
+  <!-- ================= INTERFACE ================= -->
+  <section>
+    <div class="cabeca-secao">
+      <p class="rotulo">Interface</p>
+      <h2>A janela de 320 px</h2>
+    </div>
+    <p>
+      À esquerda, o que está no ar agora, redesenhado aqui a partir do seu print para as três caberem
+      lado a lado. <b>Nenhuma das propostas muda comportamento</b>: mesmos campos, mesma ordem de
+      decisão, mesma honestidade de mostrar a URL antes de gravar.
+    </p>
+
+    <div class="popups">
+
+      <figure class="popup-col">
+        <figcaption>
+          <span class="rotulo">Hoje</span>
+          <small>O que o seu print mostra</small>
+        </figcaption>
+        <div class="pop">
+          <div class="pop-topo">
+            <span class="txt-marca">folunio</span>
+            <span class="pop-amb">mymangatracker.vercel.app</span>
+            <span class="pop-sair">abrir o site</span>
+          </div>
+          <div class="pop-corpo">
+            <div class="pop-contexto"><b>Folunio</b><span class="pop-sair">ver link</span></div>
+            <div class="pop-campo">
+              <span class="pop-rot">Obra</span>
+              <div class="pop-input foco">filtrar pelo nome</div>
+              <div class="pop-select">
+                <div class="op">Shadow Slave — no cap. 3</div>
+                <div class="op">Berserk — no cap. 3</div>
+                <div class="op">Hunter x Hunter</div>
+                <div class="pop-barra"><span>▲</span><span>▼</span></div>
+              </div>
+            </div>
+            <div class="pop-campo">
+              <span class="pop-rot">Capítulo</span>
+              <div class="pop-num-peq">—</div>
+              <span class="pop-dica">não achei o capítulo no título da aba — digite</span>
+            </div>
+            <div class="pop-botao">Registrar leitura</div>
+            <label class="pop-chave">
+              <i class="pop-switch"></i>
+              <span><b>registrar automaticamente</b><em>só obras já pareadas, depois de 20 s na página do capítulo</em></span>
+            </label>
+          </div>
+        </div>
+      </figure>
+
+      <figure class="popup-col">
+        <figcaption>
+          <span class="rotulo">A · Refinamento</span>
+          <small>Mesma estrutura, hierarquia arrumada</small>
+        </figcaption>
+        <div class="pop">
+          <div class="pop-topo">
+            <svg class="pop-marca" viewBox="-6 0 440 100" aria-hidden="true"><use href="#w-folunio"/></svg>
+            <span class="pop-amb">mymangatracker.vercel.app</span>
+          </div>
+          <div class="pop-corpo">
+            <div class="pop-contexto">
+              <span class="pop-rot">Nesta aba</span>
+              <b>Folunio</b>
+              <span class="pop-sair">ver link</span>
+            </div>
+            <div class="pop-campo">
+              <span class="pop-rot">Obra</span>
+              <div class="pop-input foco">filtrar pelo nome</div>
+              <div class="pop-lista">
+                <div class="pop-item pop-item--sel"><span class="pop-tit">Shadow Slave</span><span class="pop-sub">no cap. 3 · <mark>pareada</mark></span></div>
+                <div class="pop-item"><span class="pop-tit">Berserk</span><span class="pop-sub">no cap. 3</span></div>
+                <div class="pop-item"><span class="pop-tit">Hunter x Hunter</span><span class="pop-sub">ainda não começou</span></div>
+              </div>
+            </div>
+            <div class="pop-campo">
+              <span class="pop-rot">Capítulo</span>
+              <div class="pop-cap-linha">
+                <div class="pop-cap-caixa vazia">—</div>
+                <span class="pop-cap-lado">não achei no título da aba<br>digite o capítulo</span>
+              </div>
+            </div>
+            <div class="pop-botao">Registrar leitura</div>
+            <div class="pop-estado">
+              <i class="badge badge--linha" style="background:#f0a842;color:#1a1200">●</i>
+              <span>obra pareada — o ícone acende nesta página</span>
+            </div>
+            <label class="pop-chave">
+              <i class="pop-switch"></i>
+              <span><b>Registrar automaticamente</b><em>só obra pareada, depois de 20 s</em></span>
+            </label>
+          </div>
+        </div>
+      </figure>
+
+      <figure class="popup-col">
+        <figcaption>
+          <span class="rotulo">B · Cartão do registro</span>
+          <small>A lista só aparece quando você troca a obra</small>
+        </figcaption>
+        <div class="pop">
+          <div class="pop-topo">
+            <svg class="pop-marca" viewBox="-6 0 440 100" aria-hidden="true"><use href="#w-folunio"/></svg>
+            <span class="pop-amb">mymangatracker.vercel.app</span>
+          </div>
+          <div class="pop-corpo">
+            <div class="pop-contexto">
+              <span class="pop-rot">Nesta aba</span>
+              <b>Folunio</b>
+              <span class="pop-sair">ver link</span>
+            </div>
+
+            <div class="pop-cartao">
+              <div class="pop-cartao-topo">
+                <span class="pop-obra">Shadow Slave</span>
+                <span class="pop-trocar">trocar</span>
+              </div>
+              <div class="pop-de-para">na estante: <b>cap. 3</b></div>
+              <div class="pop-cap-linha">
+                <div class="pop-cap-caixa vazia">—</div>
+                <span class="pop-cap-lado">capítulo a registrar<br>não achei no título — digite</span>
+              </div>
+            </div>
+
+            <div class="pop-botao">Registrar leitura</div>
+            <div class="pop-estado">
+              <i class="badge badge--linha" style="background:#f0a842;color:#1a1200">●</i>
+              <span>obra pareada — o ícone acende nesta página</span>
+            </div>
+            <label class="pop-chave">
+              <i class="pop-switch"></i>
+              <span><b>Registrar automaticamente</b><em>só obra pareada, depois de 20 s</em></span>
+            </label>
+          </div>
+        </div>
+      </figure>
+
+    </div>
+
+
+    <div class="sub-cabeca">
+      <p class="rotulo">A faixa de estado · os quatro</p>
+      <h3 style="font-size:1.15rem">O popup passa a ensinar o ícone</h3>
+    </div>
+    <p>
+      Mesmo glifo e mesma cor do badge que o Chrome carimba no ícone. Quem lê a faixa uma vez
+      entende o ícone para sempre — hoje a única explicação do ● e do ✓ está na tela de tutorial,
+      que nem foi publicada.
+    </p>
+
+    <div class="estados">
+      <div class="estado-linha">
+        <div class="estado-faixa">
+          <i class="badge badge--linha" style="background:#f0a842;color:#1a1200">●</i>
+          <span>obra pareada — o ícone acende nesta página</span>
+        </div>
+        <span class="estado-porque"><em>Pareada.</em> O par existe e é desta conta. É o que o badge ● já diz na barra, agora com legenda.</span>
+      </div>
+      <div class="estado-linha">
+        <div class="estado-faixa">
+          <i class="badge badge--linha" style="background:#3c9d5d;color:#fff">✓</i>
+          <span><b>registrado</b> — cap. 3, sozinho</span>
+        </div>
+        <span class="estado-porque"><em>Registrado.</em> O automático acabou de gravar nesta aba, nesta página. Vem de <code>chrome.storage.session</code>, no <code>autoResultado</code> por aba e por URL.</span>
+      </div>
+      <div class="estado-linha">
+        <div class="estado-faixa">
+          <i class="badge badge--linha" style="background:#d6402b;color:#fff">!</i>
+          <span>o automático não conseguiu — <b>registre à mão</b></span>
+        </div>
+        <span class="estado-porque"><em>Falhou.</em> Mesma fonte do anterior. Aqui a faixa faz o que o badge não consegue: dizer <b>o que fazer agora</b>.</span>
+      </div>
+      <div class="estado-linha">
+        <div class="estado-faixa">
+          <i class="badge badge--linha badge--vazio">●</i>
+          <span>esta página ainda não está pareada — <b>registrar aqui pareia</b></span>
+        </div>
+        <span class="estado-porque"><em>Sem par — e é o estado que mais paga.</em> Hoje página não pareada não tem badge nenhum, então ninguém descobre que pareamento existe. Esta linha é a única que ensina que o registro de agora faz o próximo capítulo já vir pronto.</span>
+      </div>
+    </div>
+
+    <p class="aviso">
+      <b>O que isso custa:</b> ● e o estado sem par saem do que o popup já sabe. <b>✓ e ! são código
+      novo</b> — o popup passa a ler o <code>autoResultado</code> que o <code>background.js</code>
+      grava. É leitura pequena, mas não é só CSS.
+    </p>
+
+    <div class="sub-cabeca">
+      <p class="rotulo">Detalhe a detalhe</p>
+      <h3 style="font-size:1.15rem">O que muda, e por quê</h3>
+    </div>
+
+    <div class="inventario">
+      <div class="linha">
+        <span class="onde">a marca</span>
+        <span class="oque"><em>Texto vira desenho.</em> Hoje <code>&lt;span class="marca"&gt;folunio&lt;/span&gt;</code> é negrito puro. Entra o wordmark em SVG, <b>com a folha e o planeta</b> — aqui não é 20&nbsp;px de cabeçalho, a marca aparece uma vez e tem espaço.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">o título da aba</span>
+        <span class="oque"><em>Hoje aparece solto</em> — no seu print está escrito só &ldquo;Folunio&rdquo;, sem dizer o que é. Ganha um rótulo <b>NESTA ABA</b>, porque é dali que sai o palpite de obra e de capítulo. Sem isso, quem lê não entende por que aquele texto está ali.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">a lista de obras</span>
+        <span class="oque"><em>É o maior elemento da janela e é um <code>&lt;select&gt;</code> cru</em>, com barra de rolagem do sistema. Vira lista de linhas: <b>título em cima, contexto embaixo</b> — hoje &ldquo;Shadow Slave — no cap. 3&rdquo; é uma frase só, e o travessão faz o olho ler o progresso como parte do nome. A escolhida se marca por <b>trilho âmbar à esquerda</b>, não por preenchimento cheio.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">o que a lista não diz</span>
+        <span class="oque">Hoje não dá para saber <b>qual obra está pareada com este site</b> — é o que acende o badge ●, e a informação não existe na janela. Entra como segunda linha da obra.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">o capítulo</span>
+        <span class="oque"><em>É o campo que mais importa e o menor da tela.</em> O <code>input</code> de 120&nbsp;px com setinhas vira uma caixa grande. Quando a extensão <b>não achou o capítulo</b> — o seu caso no print — a caixa nasce <b>tracejada e vazia</b>, com o motivo ao lado: o vazio vira um estado desenhado, não um traço solto.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">a faixa de estado</span>
+        <span class="oque"><em>Novidade, e é a que mais paga.</em> Uma linha repetindo o badge — mesmo glifo, mesma cor. Hoje ● e ✓ só são explicados na página de tutorial; assim o popup <b>ensina o ícone</b> a quem nunca vai ler tutorial.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">o filtro</span>
+        <span class="oque">Fica. Só ganha <b>destaque do trecho casado</b> no nome, em âmbar, para o olho achar o porquê daquela obra ter sobrado na lista.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">o que NÃO muda</span>
+        <span class="oque">A URL por extenso antes de gravar (#142), a altura travada em 3 linhas que rola, o aviso de ambiente e a chave do automático desligada por padrão. São decisões com motivo escrito — não se mexe em nenhuma por estética.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">o tema</span>
+        <span class="oque">O popup está travado no noturno (<code>popup.css:2</code>) enquanto o site tem três temas. Ele <b>não pode</b> ler o tema do site: exigiria script injetado na página, e a extensão promete não injetar. A saída honesta é seguir o <code>prefers-color-scheme</code> — o que significa desenhar e conferir a folha inteira em dois modos. <b>Issue própria.</b></span>
+      </div>
+    </div>
+
+    <p class="aviso">
+      <b>Entre A e B:</b> A é o mesmo fluxo com a hierarquia consertada, e não exige nenhuma decisão
+      nova. B aposta que <b>na maioria das vezes a obra já vem certa</b> — pareada ou casada pelo
+      título — e que mostrar a lista inteira toda vez é ruído; quando estiver errada, &ldquo;trocar&rdquo;
+      abre a lista de A. <b>Eu levaria a B</b>, porque põe no centro o campo que a pessoa mais confere,
+      que é o capítulo. Mas B muda o que se vê primeiro, então é escolha sua.
+    </p>
+  </section>
+
+  <!-- ================= decisões ================= -->
+  <section>
+    <div class="cabeca-secao">
+      <p class="rotulo">Preciso do seu ok</p>
+      <h2>O que trava antes de virar código</h2>
+    </div>
+    <div class="inventario">
+      <div class="linha">
+        <span class="onde">1 · ícone</span>
+        <span class="oque"><em>Confirma a folha em órbita?</em> Fechado isso, vira issue, PNG em 16/32/48/128 e entrada no <code>manifest.json</code>. <b>É o que trava a publicação na loja.</b></span>
+      </div>
+      <div class="linha">
+        <span class="onde">2 · interface</span>
+        <span class="oque"><em>A ou B?</em> Recomendo B. Vai para issue própria, depois do ícone — o ícone é urgente, o popup é melhoria.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">3 · tema claro</span>
+        <span class="oque">Terceira issue, se entrar. Mexe na folha inteira e precisa de conferência nos dois modos.</span>
+      </div>
+      <div class="linha">
+        <span class="onde">4 · os PNGs</span>
+        <span class="oque">O repo não tem exportador de imagem, e manifest de extensão exige PNG. Vale para o <code>favicon.ico</code>, ainda do scaffold, e para a imagem de OG que o plano de divulgação cobra.</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="rodape">
+    <div>Estudo da extensão · 11/09/2026 · o estudo de identidade do site, já aplicado, ficou em <code>identidade-aplicada.html</code> na mesma pasta</div>
+    <div>Ícones e wordmark desenhados em SVG nesta página · cores da extensão lidas de <code>extension/popup.css</code> e <code>extension/background.js</code></div>
+    <div>Nada aqui está implementado. Nenhum arquivo da extensão mudou.</div>
+  </footer>
+
+</div>

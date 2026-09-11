@@ -6,7 +6,7 @@ import { mesmaOrigem } from "@/app/api/v1/_shared/origem";
 // navegador da vitima dar POST no login e gravar o cookie do atacante. As duas
 // guardas sao de controller e puras sobre a Request: da para provar sem servidor.
 
-const NOSSA = "https://kidoku.test/api/v1/sessao";
+const NOSSA = "https://folunio.test/api/v1/sessao";
 
 function pedido(cabecalhos: Record<string, string>, corpo?: string): Request
 {
@@ -37,7 +37,7 @@ describe("mesmaOrigem", function ()
 
   it("sem sec-fetch-site, decide pelo origin: igual passa, diferente nao", function ()
   {
-    expect(mesmaOrigem(pedido({ origin: "https://kidoku.test" }))).toBe(true);
+    expect(mesmaOrigem(pedido({ origin: "https://folunio.test" }))).toBe(true);
     expect(mesmaOrigem(pedido({ origin: "https://evil.tld" }))).toBe(false);
   });
 
@@ -51,7 +51,7 @@ describe("mesmaOrigem", function ()
   it("sec-fetch-site ganha do origin quando os dois vem", function ()
   {
     // O navegador escreve os dois; o sec-fetch-site e o que nenhuma pagina forja.
-    expect(mesmaOrigem(pedido({ "sec-fetch-site": "cross-site", origin: "https://kidoku.test" }))).toBe(false);
+    expect(mesmaOrigem(pedido({ "sec-fetch-site": "cross-site", origin: "https://folunio.test" }))).toBe(false);
   });
 });
 

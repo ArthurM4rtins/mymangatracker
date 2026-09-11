@@ -599,3 +599,23 @@ o comportamento desenhado na Fase 1.
 - **Tentativa**: a obra passou a ser dita por chave textual, e renomeei o campo do corpo para `obra` nas rotas de estante, itens de lista e avaliações. `tsc`, `lint`, 766 testes de unidade, 110 de banco e o build passaram.
 - **Erro**: as seis chamadas do lado do cliente continuavam mandando `chave`. O Zod recusava com 400 antes de qualquer regra rodar, e a tela mostrava "não deu — tente de novo". Nada disso é typecheck: o corpo do `fetch` é um objeto solto, e o esquema do Zod vive do outro lado da rede. Só apareceu quando o usuário clicou.
 - **Regra**: nome de campo de corpo ou query é contrato entre dois lados que nenhum portão compara. Ao renomear um, `grep` pelo NOME ANTIGO em `src/app/(ui)` antes de dizer que acabou, e clicar no botão que usa a rota. Mesma família do [portoes-nao-leem-a-saida]: o que atravessa a rede não é lido por `tsc`.
+
+## Troca em massa com script reescreve o final de linha e incha o diff
+
+- **Tentativa**: na varredura do rebranding, troquei o nome do produto em 30+ arquivos com `python` lendo e gravando em modo texto, e depois com `sed -i`. Lint, `tsc` e os 769 testes passaram — nada acusou.
+- **Erro**: sete ocorrências em `messages/pt-BR.json` viraram um diff de **1328 linhas**. O `io.open(p, "w")` do Python converte `
+` para `
+` no Windows, e o `sed -i` do Git Bash faz o contrário em arquivo CRLF. O repo tem finais de linha **mistos** e nenhum `.gitattributes` (é a issue #247), então cada ferramenta normaliza para um lado diferente e reescreve o arquivo inteiro. Precisei desfazer e refazer seis commits.
+- **Regra**: edição em massa neste repo é byte a byte. Em Python, `io.open(p, encoding="utf-8", newline="")` na leitura **e** na gravação. Onde o bloco a trocar tem várias linhas, editar por linha (`readlines(newline="")`) e reusar o final da linha original, porque arquivo de final misto quebra qualquer normalização global. E conferir com `git diff --numstat` antes de commitar: **diff maior que a mudança é bug, mesmo com o portão verde** — nenhum portão lê final de linha, mesma família do [portoes-nao-leem-a-saida].
+
+## Commit que compila sozinho não é o mesmo que commit que passa no teste sozinho
+
+- **Tentativa**: separei o rebranding da extensão num commit próprio — `_locales`, popup, background e o global que `comum.js` publica (`KIDOKU` → `FOLUNIO`). O `tsc` passou, porque a extensão é JS puro fora de `src/`.
+- **Erro**: `tests/extensao/pares.test.ts` carrega `comum.js` e lê `globalThis.KIDOKU`. O commit ficou verde no typecheck e **vermelho na suíte**, e eu só descobri dois commits depois, ao varrer o que tinha sobrado.
+- **Regra**: quando o commit renomeia um símbolo que vive fora de `src/`, o `grep` do nome antigo tem que incluir `tests/` antes de fechar o commit — e a prova do commit atômico é `pnpm test`, não `tsc`. Typecheck não enxerga o que a suíte carrega por `importScripts`.
+
+## `git checkout -- .` apaga modificação não commitada, inclusive a de outra sessão
+
+- **Tentativa**: depois de renormalizar os finais de linha (#247), quis atualizar a cópia de trabalho. Apaguei os arquivos rastreados **limpos** num laço que pulava os modificados, e chamei `git checkout -- .` para o Git regravar tudo com a regra nova.
+- **Erro**: o laço protegeu o arquivo modificado do `rm`, mas o `git checkout -- .` reescreve a cópia de trabalho a partir do ÍNDICE para **todos** os caminhos — inclusive os que eu tinha acabado de poupar. Perdi nove linhas que outra sessão tinha escrito em `rebrand-folunio.md` e ainda não havia commitado. Só recuperei porque o `git diff` daquele arquivo já tinha passado por este chat; o Git não guarda cópia de mudança não commitada em lugar nenhum.
+- **Regra**: antes de qualquer comando que regrave a cópia de trabalho em massa (`checkout -- .`, `restore .`, `reset --hard`), rodar `git status --short` e **commitar ou guardar em stash o que estiver modificado** — próprio ou de terceiro. Quando houver trabalho de outra sessão na árvore, restringir o comando aos caminhos que interessam (`git checkout -- src tests`) em vez de `.`. Diferente de arquivo rastreado, mudança não commitada não tem reflog: errar aqui é perda definitiva.

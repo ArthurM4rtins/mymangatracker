@@ -10,7 +10,7 @@ import type { NextResponse } from "next/server";
 import { DURACAO_SESSAO_SEGUNDOS } from "@/server/infra/sessao";
 import { resolverSessaoNoSistema } from "@/server/services/sessao.service";
 
-export const COOKIE_DE_SESSAO = "kidoku_sessao";
+export const COOKIE_DE_SESSAO = "folunio_sessao";
 
 export function escreverSessaoNoCookie(
   resposta: NextResponse,

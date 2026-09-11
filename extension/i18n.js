@@ -6,7 +6,7 @@
 // popup marca o que traduzir com `data-i18n` e este arquivo preenche antes de
 // qualquer coisa aparecer.
 
-globalThis.KIDOKU_I18N = (function ()
+globalThis.FOLUNIO_I18N = (function ()
 {
   function texto(nome, argumentos)
   {

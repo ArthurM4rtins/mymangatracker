@@ -1,12 +1,12 @@
 {
   "nome": {
-    "message": "Kidoku"
+    "message": "Folunio"
   },
   "descricao": {
-    "message": "Enregistre dans ta bibliothèque Kidoku le chapitre que tu es en train de lire, sans quitter l’onglet."
+    "message": "Enregistre dans ta bibliothèque Folunio le chapitre que tu es en train de lire, sans quitter l’onglet."
   },
   "acaoTitulo": {
-    "message": "Kidoku — enregistrer la lecture"
+    "message": "Folunio — enregistrer la lecture"
   },
   "abrirSite": {
     "message": "ouvrir le site"
@@ -39,13 +39,13 @@
     "message": "uniquement les œuvres déjà associées, après 20 s sur la page du chapitre"
   },
   "semSessao": {
-    "message": "Connecte-toi à Kidoku pour enregistrer ta lecture."
+    "message": "Connecte-toi à Folunio pour enregistrer ta lecture."
   },
   "entrar": {
     "message": "Se connecter"
   },
   "semResposta": {
-    "message": "Kidoku n’a pas répondu — réessaie"
+    "message": "Folunio n’a pas répondu — réessaie"
   },
   "estanteNaoCarregou": {
     "message": "impossible de charger ta bibliothèque — réessaie"
@@ -72,7 +72,7 @@
     "message": "œuvre reconnue d’après le titre de l’onglet — vérifie"
   },
   "obraNoCapitulo": {
-    "message": " — au ch. $capitulo$",
+    "message": "au ch. $capitulo$",
     "placeholders": {
       "capitulo": {
         "content": "$1"
@@ -123,6 +123,27 @@
     "message": "trop d’enregistrements en peu de temps — attends un moment"
   },
   "erroFalhaInterna": {
-    "message": "Kidoku n’a pas pu enregistrer"
+    "message": "Folunio n’a pas pu enregistrer"
+  },
+  "nestaAba": {
+    "message": "Dans cet onglet"
+  },
+  "obraPareadaMarca": {
+    "message": "associée"
+  },
+  "filtroSemResultado": {
+    "message": "aucune œuvre de ta bibliothèque ne correspond au filtre"
+  },
+  "estadoPareada": {
+    "message": "œuvre associée — l’icône s’allume sur cette page"
+  },
+  "estadoSemPar": {
+    "message": "cette page n’est pas encore associée — enregistrer ici l’associe"
+  },
+  "estadoRegistrado": {
+    "message": "enregistré d’ici, tout seul"
+  },
+  "estadoFalhou": {
+    "message": "l’automatique n’a pas réussi — enregistre à la main"
   }
 }

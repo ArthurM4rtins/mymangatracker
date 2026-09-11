@@ -12,7 +12,7 @@ import {
 import { interpretarDescricao } from "@/server/domain/descricao";
 import { AdicionarALista } from "./adicionar-a-lista";
 import { AvaliacaoDaObra } from "./avaliacao-da-obra";
-import { NotaKidoku } from "./nota-kidoku";
+import { NotaFolunio } from "./nota-folunio";
 import { ReviewSocial } from "./review-social";
 import { usuarioDaSessao } from "../../../../api/v1/_shared/sessao";
 import { BotaoEstante } from "../../catalogo/botao-estante";
@@ -99,7 +99,7 @@ export default async function PaginaDaObra({ params }: Props)
     );
   }
 
-  const { obra, similares, minha, minhaAvaliacao, reviews, notaDoKidoku } = resultado;
+  const { obra, similares, minha, minhaAvaliacao, reviews, notaDoFolunio } = resultado;
   // O que a minha resenha já recebeu: apagar o texto leva isso junto (#112),
   // então a tela pede confirmação antes.
   const minhaReview = reviews.find(function (review) { return review.minha; });
@@ -219,7 +219,7 @@ export default async function PaginaDaObra({ params }: Props)
             )}
           </div>
 
-          {(userId !== null || notaDoKidoku !== null) && (
+          {(userId !== null || notaDoFolunio !== null) && (
             <div className="flex shrink-0 flex-col gap-4 sm:w-64">
               {userId !== null && (
                 <AvaliacaoDaObra
@@ -232,7 +232,7 @@ export default async function PaginaDaObra({ params }: Props)
                 />
               )}
               {/* A média fica embaixo de onde a pessoa avalia (issue #81). */}
-              {notaDoKidoku !== null && <NotaKidoku nota={notaDoKidoku} />}
+              {notaDoFolunio !== null && <NotaFolunio nota={notaDoFolunio} />}
             </div>
           )}
         </section>

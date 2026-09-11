@@ -1,5 +1,5 @@
 /**
- * A nota do Kidoku (issue #48): a média das notas dos NOSSOS usuários sobre
+ * A nota do Folunio (issue #48): a média das notas dos NOSSOS usuários sobre
  * uma obra. O banco entrega a contagem por valor; aqui vira média com uma
  * casa e histograma com as dez posições de 0,5 a 5,0 sempre presentes.
  * Sem nota nenhuma é `null` — obra sem avaliação não tem "média zero".
