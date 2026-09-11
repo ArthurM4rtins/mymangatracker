@@ -34,10 +34,19 @@ body {
   background: var(--fundo);
 }
 
+/*
+ * Enrola quando nao cabe. O wordmark desenhado e mais largo que o texto que ele
+ * substituiu, e em 320px o endereco do ambiente comecou a sair cortado —
+ * "mymangatracker.vercel.a...". Cortar ali e perder justamente o que a linha
+ * existe para dizer, e em alemao ou frances o "abrir o site" e mais longo
+ * ainda. Com `wrap`, o endereco cai para a propria linha quando falta espaco e
+ * fica inteiro; quando cabe, nada muda.
+ */
 .topo {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 4px 8px;
   padding: 9px 14px;
   border-bottom: 1px solid var(--borda);
 }
@@ -55,7 +64,7 @@ body {
 /* Discreto, mas legivel: e' a diferenca entre gravar leitura em producao e
    no localhost (#148, item 9). */
 .ambiente {
-  flex: 1;
+  flex: 1 0 auto;
   min-width: 0;
   text-align: right;
   font-size: 11px;
