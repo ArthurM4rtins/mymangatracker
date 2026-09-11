@@ -1,0 +1,664 @@
+{
+  "colecao": {
+    "visualizacao": "Affichage de la collection",
+    "grade": "Grille",
+    "prateleira": "Étagère",
+    "andar": "Étagère {n}",
+    "contagem": "{n, plural, one {# œuvre} other {# œuvres}}",
+    "dica": "Explorez les dos des livres. Utilisez les flèches ou faites glisser. Sélectionnez une œuvre pour voir ses détails.",
+    "dicaOrdenavel": "Fais glisser les livres pour changer l'ordre. Sur mobile, appuie longuement sur un livre puis fais-le glisser. Sélectionne une œuvre pour voir les détails.",
+    "anterior": "Reculer dans l’étagère {grupo}",
+    "proxima": "Avancer dans l’étagère {grupo}",
+    "abrir": "Voir les détails de {titulo}",
+    "detalhes": "Détails · {titulo}",
+    "fechar": "Fermer les détails",
+    "laboratorio": "Une nouvelle façon d’explorer",
+    "descricaoLaboratorio": "Un aperçu de votre bibliothèque. Explorez cette collection d’exemple et alternez entre les deux affichages.",
+    "avisoLaboratorio": "Collection de démonstration · votre bibliothèque reste inchangée",
+    "selecao": "À découvrir",
+    "favoritos": "Des histoires à garder",
+    "verObra": "Voir la page de l’œuvre"
+  },
+  "meta": {
+    "titulo": "Folunio",
+    "descricao": "Votre bibliothèque de manga, de manhwa et de novel, avec une progression de lecture automatique et privée."
+  },
+  "cabecalho": {
+    "navegacao": "Navigation",
+    "catalogo": "Catalogue",
+    "listas": "Listes",
+    "estante": "Bibliothèque",
+    "perfil": "Profil",
+    "entrar": "Se connecter",
+    "idioma": "Langue"
+  },
+  "rodape": {
+    "explorar": {
+      "titulo": "Explorer"
+    },
+    "conta": {
+      "titulo": "Ton compte",
+      "ajustes": "Paramètres du compte",
+      "cadastrar": "Créer un compte"
+    },
+    "dados": {
+      "titulo": "Données",
+      "anilist": "Catalogue et couvertures d'AniList.",
+      "kitsu": "Kitsu comme source de secours quand AniList ne répond pas."
+    },
+    "direitos": "© {ano} Folunio",
+    "fonte": {
+      "agora": "Actuellement servi par {fonte}"
+    }
+  },
+  "comum": {
+    "salvar": "Enregistrer",
+    "salvando": "Enregistrement…",
+    "cancelar": "Annuler",
+    "voltar": "Retour",
+    "status": {
+      "READING": "En cours",
+      "COMPLETED": "Terminé",
+      "PLANNED": "À lire",
+      "PAUSED": "En pause",
+      "DROPPED": "Abandonné"
+    },
+    "formato": {
+      "JP": "Manga",
+      "KR": "Manhwa",
+      "CN": "Manhua",
+      "NOVEL": "Novel"
+    }
+  },
+  "erros": {
+    "corpo_invalido": "corps invalide — JSON attendu",
+    "pedido_invalido": "requête invalide",
+    "anilist_id_invalido": "anilistId invalide",
+    "obra_invalida": "œuvre invalide",
+    "status_invalido": "statut invalide",
+    "comentario_invalido": "commentaire invalide",
+    "cursor_invalido": "indique antesDe avec l’id du commentaire",
+    "nome_invalido": "nom de 1 à 100 caractères",
+    "username_curto": "3 caractères minimum",
+    "username_longo": "30 caractères maximum",
+    "username_caracteres": "lettres, chiffres, point, tiret et tiret bas uniquement",
+    "email_invalido": "e-mail invalide",
+    "senha_curta": "8 caractères minimum",
+    "senha_longa": "72 caractères maximum",
+    "credenciais_invalidas": "e-mail, nom d’utilisateur ou mot de passe incorrect",
+    "sessao_necessaria": "connecte-toi pour continuer",
+    "obra_nao_encontrada": "œuvre introuvable",
+    "obra_fora_do_catalogo": "œuvre introuvable dans le catalogue",
+    "entrada_nao_encontrada": "entrée introuvable",
+    "lista_nao_encontrada": "liste introuvable",
+    "lista_ou_obra_nao_encontrada": "liste ou œuvre introuvable",
+    "resenha_nao_encontrada": "critique introuvable",
+    "comentario_nao_encontrado": "commentaire introuvable",
+    "avaliacao_nao_encontrada": "note introuvable",
+    "usuario_nao_encontrado": "utilisateur introuvable",
+    "ja_em_uso": "indisponible",
+    "cadastro_nao_concluido": "impossible de finaliser l’inscription — vérifie les informations ou, si tu as déjà un compte, connecte-toi",
+    "origem_recusada": "la requête ne vient pas de Folunio",
+    "conteudo_nao_json": "la requête doit être en JSON",
+    "nao_avanca": "ce chapitre ne dépasse pas la progression de ton étagère — pour revenir en arrière, utilise la réinitialisation",
+    "sem_fonte": "configure d’abord ta source de lecture",
+    "arquivo_grande_demais": "l’image dépasse 512 Ko",
+    "tipo_de_arquivo_invalido": "envoie une image JPEG, PNG ou WebP",
+    "capitulo_invalido": "chapitre invalide",
+    "lista_cheia": "la liste a atteint sa limite de 500 œuvres",
+    "avaliacao_invalida": "note invalide — donne une note de 0,5 à 5 par demi-étoile, ou une critique",
+    "url_invalida": "URL de lecture invalide",
+    "url_de_capitulo_invalida": "colle l’URL complète du chapitre 1, avec https://",
+    "template_invalido": "modèle invalide — refais la dérivation",
+    "ordem_invalida": "l’ordre doit contenir exactement les œuvres de la liste",
+    "comentario_tamanho_invalido": "commentaire vide ou trop long",
+    "proprio_perfil": "impossible sur ton propre profil",
+    "proprio_conteudo": "impossible sur ton propre contenu",
+    "relato_indisponivel": "le canal de signalement est indisponible. Réessaie dans un instant.",
+    "confirmacao_invalida": "le nom saisi ne correspond pas à ton compte.",
+    "idioma_invalido": "langue non disponible",
+    "limite_excedido": "trop de tentatives — attends avant de réessayer",
+    "falha_interna": "impossible pour le moment",
+    "catalogo_indisponivel": "catalogue indisponible pour le moment — réessaie"
+  },
+  "entrar": {
+    "meta": {
+      "titulo": "Se connecter"
+    },
+    "titulo": "Se connecter",
+    "subtitulo": "De retour à la lecture.",
+    "contaCriada": "Compte créé. Plus qu’à te connecter.",
+    "semConta": "Tu n’as pas encore de compte ? <link>Créer un compte</link>",
+    "campos": {
+      "identificador": "E-mail ou nom d’utilisateur",
+      "senha": "Mot de passe"
+    },
+    "acoes": {
+      "enviar": "Se connecter",
+      "enviando": "Connexion…"
+    },
+    "erros": {
+      "geral": "impossible de se connecter",
+      "conexao": "pas de connexion au serveur — réessaie",
+      "falhaInterna": "impossible de se connecter pour le moment"
+    }
+  },
+  "cadastrar": {
+    "meta": {
+      "titulo": "Créer un compte"
+    },
+    "titulo": "Créer un compte",
+    "subtitulo": "Bibliothèque, progression et critiques — ta lecture n’appartient qu’à toi.",
+    "jaTemConta": "Tu as déjà un compte ? <link>Se connecter</link>",
+    "campos": {
+      "username": "Nom d’utilisateur",
+      "email": "Adresse e-mail",
+      "senha": "Mot de passe"
+    },
+    "acoes": {
+      "enviar": "Créer un compte",
+      "enviando": "Création…"
+    },
+    "erros": {
+      "geral": "impossible de finaliser l’inscription",
+      "conexao": "pas de connexion au serveur — réessaie",
+      "falhaInterna": "impossible de finaliser l’inscription pour le moment"
+    }
+  },
+  "autor": {
+    "meta": {
+      "titulo": "Auteur"
+    },
+    "erros": {
+      "indisponivel": "AniList ne répond pas pour le moment. Réessaie dans un instant."
+    },
+    "bio": {
+      "verMais": "Voir plus",
+      "verMenos": "Voir moins"
+    },
+    "obras": {
+      "titulo": "Œuvres",
+      "vazia": "Aucune œuvre de manga ou de roman enregistrée sur AniList."
+    }
+  },
+  "catalogo": {
+    "meta": {
+      "titulo": "Catalogue"
+    },
+    "titulo": "Catalogue",
+    "subtitulo": "Recherche l’œuvre, ajoute-la à ta bibliothèque et ta lecture commence à compter.",
+    "busca": {
+      "rotulo": "Rechercher une œuvre",
+      "placeholder": "Lookism, Solo Leveling, Berserk…",
+      "buscando": "Recherche…"
+    },
+    "filtros": {
+      "tipo": "Type",
+      "genero": "Genre",
+      "decada": "Décennie",
+      "ordenar": "Trier",
+      "todos": "Tout",
+      "limpar": "effacer les filtres",
+      "ordens": {
+        "popular": "Populaires",
+        "nota": "Meilleures notes",
+        "alta": "Tendances",
+        "recente": "Plus récents"
+      }
+    },
+    "erros": {
+      "indisponivel": "AniList n’a pas répondu. Réessaie dans un instant.",
+      "muitosPedidos": "Trop de recherches depuis ici. Patiente un instant et réessaie.",
+      "doCache": "Résultats limités aux œuvres déjà passées par ici."
+    },
+    "vazio": {
+      "semTermo": "Le catalogue n’a rien renvoyé. Réessaie dans un instant.",
+      "semResultado": "Aucun résultat pour <forte>{termo}</forte>."
+    },
+    "destaques": "Populaires en ce moment",
+    "cartao": {
+      "formatoGenerico": "Œuvre",
+      "capitulos": "{n, plural, one {{n} chapitre} other {{n} chapitres}}"
+    },
+    "botaoEstante": {
+      "naEstante": "Dans ta bibliothèque",
+      "adicionar": "+ Bibliothèque",
+      "erro": "ça n’a pas marché — réessaie"
+    },
+    "mais": {
+      "verMais": "Voir plus d'œuvres",
+      "carregando": "Chargement…",
+      "fim": "Tu as atteint la fin de ce que nous avons ici.",
+      "erroMais": "Impossible d'en charger plus pour l'instant. Réessaie."
+    }
+  },
+  "componentes": {
+    "sair": "Se déconnecter",
+    "confirmarSaida": {
+      "titulo": "Se déconnecter",
+      "pergunta": "Tu devras te reconnecter pour continuer à suivre ta progression.",
+      "confirmar": "Se déconnecter",
+      "saindo": "Déconnexion…"
+    },
+    "logo": {
+      "rotulo": "Folunio — accueil"
+    },
+    "carrossel": {
+      "anterior": "Précédent",
+      "proximo": "Suivant"
+    },
+    "estrelas": {
+      "grupo": "Note de 0,5 à 5",
+      "nota": "{nota} sur 5",
+      "semNota": "sans note",
+      "limpar": "effacer"
+    },
+    "tema": {
+      "grupo": "Thème du site",
+      "escolher": "Thème {nome}",
+      "nomes": {
+        "sumi": "Sumi",
+        "noturno": "Noturno",
+        "matcha": "Matcha"
+      }
+    }
+  },
+  "estante": {
+    "meta": {
+      "titulo": "Bibliothèque"
+    },
+    "titulo": "Bibliothèque",
+    "descricao": "Tes œuvres, par statut. Ta progression de lecture ne regarde que toi.",
+    "vazia": "Rien par ici pour l’instant. <catalogo>Recherche dans le catalogue</catalogo> et ajoute ta première œuvre.",
+    "obra": "Œuvre",
+    "capitulos": "{capitulo} chapitres",
+    "seletorStatus": "Statut de l’œuvre",
+    "filtros": {
+      "rotulo": "Filtrer par statut",
+      "tudo": "Tout"
+    },
+    "progresso": {
+      "editar": "Modifier le chapitre",
+      "marcar": "marquer le chapitre",
+      "atual": "au ch. {capitulo}",
+      "prefixo": "au ch.",
+      "campo": "Chapitre en cours de lecture",
+      "salvar": "enregistrer",
+      "cancelar": "annuler"
+    },
+    "continuar": {
+      "continuar": "Reprendre la lecture ↗",
+      "capituloEm": "ch. {capitulo} sur {host}",
+      "semLeitura": "enregistre un chapitre avec l’extension pour reprendre d’ici"
+    },
+    "avaliacao": {
+      "nota": "Note {nota} sur 5",
+      "avaliar": "Noter",
+      "editar": "Modifier la note",
+      "spoilerOculto": "critique avec spoiler — afficher",
+      "resenha": "Écris ta critique (facultatif)",
+      "spoiler": "contient un spoiler",
+      "remover": "Supprimer"
+    },
+    "erros": {
+      "banco": "La bibliothèque dépend de la base de données, qui n’a pas répondu à l’instant. Réessaie dans un moment.",
+      "avaliacaoVazia": "mets une note ou écris ta critique",
+      "salvar": "impossible d’enregistrer — réessaie",
+      "remover": "impossible de supprimer — réessaie",
+      "derivar": "impossible de dériver — vérifie le lien",
+      "capituloInvalido": "chapitre invalide",
+      "acao": "ça n’a pas marché — réessaie",
+      "rede": "ça n’a pas marché à l’instant — réessaie",
+      "registrar": "impossible d’enregistrer pour le moment"
+    }
+  },
+  "home": {
+    "saude": {
+      "aviso": "{estado} — {dependencias}. Ce qui n’en dépend pas continue de fonctionner.",
+      "resumo": {
+        "ok": "tout est en ligne",
+        "degraded": "en ligne, configuration en attente",
+        "down": "une dépendance est hors service"
+      },
+      "dependencia": {
+        "database": "base de données",
+        "anilist": "catalogue AniList"
+      },
+      "estado": {
+        "ok": "en ligne",
+        "down": "inaccessible",
+        "not_configured": "à configurer"
+      }
+    },
+    "boasVindas": {
+      "titulo": "Bonne lecture, {username}.",
+      "continuarLendo": "Continuer la lecture",
+      "semFonte": "Aucune lecture en cours n’a de source configurée pour l’instant — marque une œuvre comme En cours et configure sa source dans ta <estante>bibliothèque</estante>, et le bouton pour continuer apparaîtra ici.",
+      "estanteVazia": "Ta bibliothèque est vide — <catalogo>recherche dans le catalogue</catalogo> et ajoute ta première œuvre."
+    },
+    "apresentacao": {
+      "descricao": "Enregistre tes lectures de manga, manhwa et roman. Progression automatique, historique privé, une bibliothèque bien à toi.",
+      "criarConta": "Créer un compte",
+      "entrar": "Se connecter"
+    },
+    "vitrine": {
+      "resenhas": {
+        "titulo": "Critiques",
+        "vazio": "Pas encore de critique par ici — la première apparaîtra dans cette vitrine."
+      },
+      "listas": {
+        "titulo": "Listes",
+        "vazio": "Pas encore de liste par ici — la première apparaîtra dans cette vitrine."
+      }
+    },
+    "populares": {
+      "titulo": "Populaires en ce moment",
+      "verMais": "voir plus →",
+      "indisponivel": "Le catalogue n’a pas répondu — réessaie dans un instant."
+    },
+    "atividade": {
+      "titulo": "Activité récente",
+      "vazia": "Pas encore de critique ni de liste par ici — la première apparaîtra dans cette section."
+    },
+    "resenha": {
+      "notaAria": "Note {nota} sur 5",
+      "spoiler": "Contient un spoiler — à lire sur la page de l’œuvre.",
+      "spoilerMostrar": "Contient un spoiler — afficher"
+    },
+    "feed": {
+      "resenhou": "a critiqué",
+      "criouLista": "a créé la liste"
+    },
+    "contagem": {
+      "obras": "{n, plural, one {œuvre} other {œuvres}}",
+      "curtidas": "{n, plural, other {j’aime}}",
+      "curtidasLeitorDeTela": "{n, plural, other {j’aime}}"
+    }
+  },
+  "listas": {
+    "erros": {
+      "semBanco": "Les listes dépendent de la base de données, qui n’a pas répondu à l’instant."
+    },
+    "campos": {
+      "nome": "Nom de la liste",
+      "descricao": "Description de la liste",
+      "descricaoOpcional": "Description (facultatif)"
+    },
+    "indice": {
+      "meta": {
+        "titulo": "Listes"
+      },
+      "titulo": "Listes",
+      "subtitulo": "Des collections faites par les lecteurs — des classiques aux plus farfelues.",
+      "convite": "<entrar>Connecte-toi</entrar> pour créer la tienne.",
+      "vazia": "Aucune liste pour l’instant — sois la première personne à en créer une.",
+      "ordenar": {
+        "rotulo": "Trier les listes",
+        "recentes": "Récentes",
+        "curtidas": "Les plus aimées"
+      },
+      "criar": {
+        "abrir": "Créer une liste",
+        "enviar": "Créer",
+        "enviando": "Création…",
+        "erros": {
+          "semNome": "donne un nom à la liste",
+          "falhou": "ça n’a pas marché — réessaie",
+          "rede": "ça n’a pas marché à l’instant — réessaie"
+        }
+      }
+    },
+    "detalhe": {
+      "meta": {
+        "titulo": "Liste"
+      },
+      "autoria": "par <autor>{username}</autor> · {n, plural, one {# œuvre} other {# œuvres}}",
+      "vazia": "Liste vide pour le moment.",
+      "vaziaPropria": "Liste vide — cherche une œuvre ci-dessus pour l'ajouter.",
+      "busca": {
+        "rotulo": "Chercher une œuvre à ajouter",
+        "placeholder": "Chercher une œuvre à ajouter…",
+        "buscando": "Recherche…",
+        "semResultado": "Rien trouvé pour « {termo} ».",
+        "indisponivel": "AniList n'a pas répondu. Réessaie dans un instant.",
+        "muitosPedidos": "Trop de recherches depuis ici. Attends un moment et réessaie.",
+        "adicionar": "+ ajouter",
+        "jaNaLista": "✓ dans la liste",
+        "erros": {
+          "cheia": "la liste a atteint sa limite d'œuvres",
+          "limite": "trop d'ajouts en peu de temps — patiente un peu",
+          "indisponivel": "le catalogue n'a pas répondu — réessaie",
+          "geral": "impossible d'ajouter — réessaie"
+        }
+      },
+      "remover": "retirer",
+      "rascunho": {
+        "salvar": "Enregistrer",
+        "salvando": "Enregistrement…",
+        "descartar": "Abandonner",
+        "pendentes": "{n, plural, one {# modification non enregistrée} other {# modifications non enregistrées}}",
+        "erro": "impossible d'enregistrer — réessaie",
+        "limite": "trop de modifications en peu de temps — patiente un peu"
+      },
+      "curtida": {
+        "curtir": "aimer la liste",
+        "descurtir": "retirer le j’aime de la liste"
+      },
+      "editar": {
+        "abrir": "Modifier",
+        "erro": "impossible d’enregistrer",
+        "sessao": "connecte-toi pour utiliser les listes",
+        "nomeInvalido": "de 1 à 100 caractères"
+      },
+      "apagar": {
+        "abrir": "Supprimer la liste",
+        "confirmacao": "supprimer définitivement ?",
+        "sim": "oui",
+        "nao": "non"
+      },
+      "ordenar": {
+        "antes": "Avancer {titulo} d’une position",
+        "depois": "Reculer {titulo} d’une position"
+      }
+    }
+  },
+  "obra": {
+    "meta": {
+      "titulo": "Œuvre"
+    },
+    "indisponivel": "AniList n’a pas répondu cette fois et cette œuvre n’est pas encore dans notre cache. Réessaie dans quelques instants.",
+    "autoria": "par",
+    "formatoDesconhecido": "Œuvre",
+    "curiosidades": "Anecdotes",
+    "similares": "Œuvres similaires",
+    "contagem": {
+      "capitulos": "{n, plural, one {{n} chapitre} other {{n} chapitres}}",
+      "aberturas": "{n, plural, one {{n} consultation} other {{n} consultations}}",
+      "avaliacoes": "{n, plural, one {{n} note} other {{n} notes}}",
+      "curtidas": "{n, plural, other {{n} j’aime}}",
+      "comentarios": "{n, plural, one {{n} commentaire} other {{n} commentaires}}"
+    },
+    "painel": {
+      "convite": "<entrar>Connecte-toi</entrar> pour l’ajouter à ta bibliothèque, la noter et enregistrer ta lecture.",
+      "adicionar": "Ajoute-la à ta bibliothèque pour la noter et enregistrer ta lecture."
+    },
+    "historico": {
+      "titulo": "Historique de lecture",
+      "maisRecentes": "les {n} plus récentes",
+      "capitulo": "ch. {n}",
+      "fonteRemovida": "source supprimée"
+    },
+    "reset": {
+      "botao": "Réinitialiser la lecture",
+      "titulo": "Réinitialiser la lecture de {titulo}",
+      "texto": "Cela supprime {n, plural, =0 {l’historique} =1 {1 ouverture} other {# ouvertures}} de cette œuvre et remet la progression à zéro.",
+      "hoje": "Actuellement : ch. {capitulo}.",
+      "depois": "Ensuite, indique le chapitre où tu en es.",
+      "confirmar": "Réinitialiser",
+      "resetando": "Réinitialisation…",
+      "erro": "Impossible de réinitialiser pour le moment. Réessaie."
+    },
+    "avaliacao": {
+      "titulo": "Ta note",
+      "resenhar": "Écrire une critique…",
+      "editarResenha": "Modifier la critique…"
+    },
+    "apagar": {
+      "confirmar": "Supprimer le texte de la critique supprime aussi {itens}. Continuer ?"
+    },
+    "modal": {
+      "rotulo": "Écrire une critique de {titulo}",
+      "fechar": "Fermer",
+      "placeholder": "Écris ta critique — elle est visible par les autres lecteurs",
+      "spoiler": "contient un spoiler"
+    },
+    "nota": {
+      "titulo": "Note Folunio",
+      "distribuicao": "Répartition des notes"
+    },
+    "resenhas": {
+      "titulo": "Critiques",
+      "vazio": "Pas encore de critique par ici — note l’œuvre avec quelques mots et la tienne apparaît pour tout le monde.",
+      "minha": "toi",
+      "nota": "Note {nota} sur 5",
+      "spoiler": "cette critique contient un spoiler — afficher",
+      "verConversa": "voir la conversation",
+      "comentar": "commenter",
+      "carregando": "chargement…",
+      "verAnteriores": "voir {n, plural, one {{n} commentaire précédent} other {{n} commentaires précédents}}",
+      "apagarComentario": "Supprimer le commentaire",
+      "apagar": "supprimer",
+      "placeholderComentario": "Écris un commentaire…",
+      "enviar": "envoyer",
+      "entreParaComentar": "Connecte-toi pour commenter."
+    },
+    "listas": {
+      "botao": "+ Liste",
+      "titulo": "Mes listes",
+      "carregando": "Chargement…",
+      "vazia": "Tu n'as pas encore créé de liste. <link>Créer la première</link>"
+    },
+    "erros": {
+      "salvar": "impossible d’enregistrer — réessaie",
+      "comentar": "impossible de commenter — réessaie",
+      "limite": "trop de commentaires en peu de temps — attends un peu",
+      "listas": "impossible de charger les listes",
+      "rede": "ça n’a pas marché — réessaie"
+    }
+  },
+  "perfil": {
+    "voce": "toi",
+    "membroDesde": "sur Folunio depuis {mes}",
+    "notaAria": "Note {nota} sur 5",
+    "erros": {
+      "semBanco": "Le profil dépend de la base de données, qui ne répond pas pour le moment."
+    },
+    "numeros": {
+      "avaliadas": "{n, plural, one {<forte>{valor}</forte> notée} other {<forte>{valor}</forte> notées}}",
+      "resenhas": "{n, plural, one {<forte>{valor}</forte> critique} other {<forte>{valor}</forte> critiques}}",
+      "listas": "{n, plural, one {<forte>{valor}</forte> liste} other {<forte>{valor}</forte> listes}}",
+      "curtidasDadas": "{n, plural, one {<forte>{valor}</forte> j’aime donné} other {<forte>{valor}</forte> j’aime donnés}}",
+      "seguindo": "{n, plural, one {<forte>{valor}</forte> abonnement} other {<forte>{valor}</forte> abonnements}}",
+      "seguidores": "{n, plural, one {<forte>{valor}</forte> abonné} other {<forte>{valor}</forte> abonnés}}",
+      "curtidasNoPerfil": "{n, plural, other {<forte>{valor}</forte> j’aime sur le profil}}"
+    },
+    "social": {
+      "seguir": "Suivre",
+      "seguindo": "Suivi",
+      "curtir": "Aimer le profil",
+      "descurtir": "Retirer le j’aime du profil"
+    },
+    "foto": {
+      "altPropria": "Ta photo de profil",
+      "altOutro": "Photo de {username}",
+      "trocar": "Changer de photo",
+      "trocarAria": "Changer la photo de profil",
+      "trocarCurto": "changer",
+      "remover": "supprimer",
+      "erros": {
+        "geral": "impossible pour le moment",
+        "leitura": "impossible de lire cette image",
+        "sessao": "connecte-toi pour changer de photo"
+      }
+    },
+    "estante": {
+      "titulo": "Ma bibliothèque",
+      "gerenciar": "gérer ma bibliothèque",
+      "abas": "Statut",
+      "vazia": "Rien dans « {status} ».",
+      "semCapitulo": "sans chapitre",
+      "capitulo": "ch. {n}"
+    },
+    "avaliadas": {
+      "titulo": "Notées",
+      "vaziaComFiltro": "Aucune œuvre avec ce filtre.",
+      "vaziaPropria": "Tu n’as encore rien noté. Note une œuvre et elle apparaît ici.",
+      "vaziaOutro": "{username} n’a encore noté aucune œuvre."
+    },
+    "filtros": {
+      "ordenar": "Trier",
+      "nota": "Note",
+      "todas": "Toutes",
+      "limpar": "effacer",
+      "ordens": {
+        "recentes": "Plus récentes",
+        "antigas": "Plus anciennes",
+        "maior_nota": "Note la plus élevée",
+        "menor_nota": "Note la plus basse"
+      }
+    },
+    "resenhas": {
+      "titulo": "Critiques récentes",
+      "vaziaPropria": "Tu n’as pas encore écrit de critique. Note une œuvre avec un texte et elle apparaît ici.",
+      "vaziaOutro": "{username} n’a pas encore écrit de critique.",
+      "spoiler": "Contient un spoiler — afficher",
+      "curtidas": "{n, plural, other {{valor} j’aime}}"
+    },
+    "listas": {
+      "titulo": "Listes",
+      "vaziaPropria": "Tu n’as pas encore créé de liste. <link>Créer la première</link>",
+      "vaziaOutro": "{username} n’a pas encore créé de liste.",
+      "obras": "{n, plural, one {{valor} œuvre} other {{valor} œuvres}}"
+    }
+  },
+  "relatar": {
+    "meta": {
+      "titulo": "Signaler une erreur de traduction"
+    },
+    "titulo": "Un texte mal traduit ?",
+    "subtitulo": "Folunio parle cinq langues, et toutes n'ont pas de relecteur natif ici. Si quelque chose sonne faux, dis-le-nous.",
+    "avisoPublico": "Ce que tu écris devient une issue publique dans le dépôt du projet, avec ton nom d'utilisateur et l'écran où tu étais. N'y écris rien de personnel.",
+    "precisaEntrar": "Pour signaler, connecte-toi à ton compte.",
+    "entrar": "se connecter",
+    "linkDoRodape": "Signaler une erreur de traduction",
+    "obrigado": "Bien reçu, merci. L'équipe le voit dans le dépôt.",
+    "enviar": "Envoyer le signalement",
+    "enviando": "Envoi…",
+    "campos": {
+      "texto": "Qu'est-ce qui ne va pas ?",
+      "sugestao": "Comment cela devrait-il être ? (facultatif)"
+    },
+    "erros": {
+      "geral": "impossible d'envoyer maintenant. Réessaie dans un instant."
+    }
+  },
+  "conta": {
+    "meta": {
+      "titulo": "Compte"
+    },
+    "titulo": "Ton compte",
+    "subtitulo": "Réglages qui valent pour tout le compte.",
+    "linkDoPerfil": "compte",
+    "apagar": {
+      "titulo": "Supprimer le compte",
+      "oQueSome": "Tout disparaît : étagère, progression de lecture, notes, critiques, listes, mentions j'aime et commentaires — y compris les commentaires que d'autres ont écrits sur tes critiques. Irréversible.",
+      "nomeLivre": "Ton nom d'utilisateur redevient libre immédiatement, et quelqu'un d'autre peut l'enregistrer.",
+      "rotulo": "Pour confirmer, saisis {username}",
+      "botao": "Supprimer mon compte",
+      "apagando": "Suppression…"
+    },
+    "erros": {
+      "geral": "impossible pour le moment. Réessaie dans un instant."
+    }
+  }
+}

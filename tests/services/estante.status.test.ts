@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  anilistIdsNaEstante,
+  chavesNaEstante,
   definirProgresso,
   listarEstante,
   mudarStatusDaEntrada,
@@ -12,9 +12,10 @@ import {
 // encontrada (não "proibida": não revelamos que existe).
 
 const OBRA = {
-  anilistId: 30013,
+  chave: "anilist:30013",
   titleRomaji: "Vinland Saga",
   titleEnglish: null,
+  titleNative: null,
   coverImageUrl: null,
   type: "MANGA" as const,
   countryOfOrigin: "JP",
@@ -31,19 +32,22 @@ const NO_REPOSITORIO = {
 
 const vazio = async function () { return []; };
 
-const FONTE_ATIVA = {
-  id: "f1",
+// Total de aberturas por obra, para a confirmacao do reset (#172).
+const contarAberturasPorObra = async function () { return [{ mediaId: "m1", total: 8 }]; };
+
+// O ultimo link vem da extensao, nunca de fonte configurada (#170).
+const MAIS_AVANCADA = {
   mediaId: "m1",
-  sourceHost: "mangalivre.blog",
-  urlTemplate: "/title/Vinland-Saga/chapter/{chapter}/1",
+  resolvedUrl: "https://mangafire.to/title/qnlvj-vagabond22/chapter/7180252",
+  chapter: "70",
 };
 
 describe("listarEstante", function ()
 {
-  it("compõe a entrada com fonte, avaliação e próximo capítulo, sem vazar mediaId", async function ()
+  it("compõe a entrada com a ultima leitura e a avaliação, sem vazar mediaId", async function ()
   {
     const listarEntradas = vi.fn(async function () { return [NO_REPOSITORIO]; });
-    const listarFontes = vi.fn(async function () { return [FONTE_ATIVA]; });
+    const listarLeiturasMaisAvancadas = vi.fn(async function () { return [MAIS_AVANCADA]; });
     const listarAvaliacoes = vi.fn(async function ()
     {
       return [
@@ -53,11 +57,11 @@ describe("listarEstante", function ()
 
     const entradas = await listarEstante(
       { userId: "u1", status: "READING" },
-      { listarEntradas, listarFontes, listarAvaliacoes },
+      { listarEntradas, listarLeiturasMaisAvancadas, listarAvaliacoes, contarAberturasPorObra },
     );
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", "READING");
-    expect(listarFontes).toHaveBeenCalledWith("u1");
+    expect(listarLeiturasMaisAvancadas).toHaveBeenCalledWith("u1");
     expect(listarAvaliacoes).toHaveBeenCalledWith("u1");
     expect(entradas).toEqual([
       {
@@ -65,56 +69,60 @@ describe("listarEstante", function ()
         status: "READING",
         progressChapter: "57.5",
         obra: OBRA,
-        fonte: { sourceHost: "mangalivre.blog", tipo: "template" },
-        proximoCapitulo: 58,
+        continuarEm: {
+          url: "https://mangafire.to/title/qnlvj-vagabond22/chapter/7180252",
+          host: "mangafire.to",
+          capitulo: "70",
+        },
         avaliacao: { rating: "4.5", review: "obra-prima", containsSpoilers: false },
+        totalDeAberturas: 8,
       } satisfies EntradaDaEstante,
     ]);
     expect(entradas[0]).not.toHaveProperty("mediaId");
   });
 
-  it("fonte de página da obra expõe a URL para a tela abrir direto", async function ()
+  it("o host sai da propria URL: e o que a tela mostra como 'lendo em'", async function ()
   {
     const listarEntradas = vi.fn(async function () { return [NO_REPOSITORIO]; });
-    const listarFontes = vi.fn(async function ()
+    const listarLeiturasMaisAvancadas = vi.fn(async function ()
     {
       return [
         {
-          id: "f2",
           mediaId: "m1",
-          sourceHost: "mangafire.to",
-          urlTemplate: "/title/4mx-vagabondd",
+          resolvedUrl: "https://mangadex.org/chapter/ff963efd-8ea1-44a3-90f6-bf743b1dbf59",
+          chapter: "94",
         },
       ];
     });
 
     const entradas = await listarEstante(
       { userId: "u1" },
-      { listarEntradas, listarFontes, listarAvaliacoes: vazio },
+      { listarEntradas, listarLeiturasMaisAvancadas, listarAvaliacoes: vazio, contarAberturasPorObra: vazio },
     );
 
-    expect(entradas[0].fonte).toEqual({
-      sourceHost: "mangafire.to",
-      tipo: "pagina",
-      urlDaObra: "https://mangafire.to/title/4mx-vagabondd",
+    expect(entradas[0].continuarEm).toEqual({
+      url: "https://mangadex.org/chapter/ff963efd-8ea1-44a3-90f6-bf743b1dbf59",
+      host: "mangadex.org",
+      capitulo: "94",
     });
   });
 
-  it("sem fonte nem avaliação, ambos são null e o próximo capítulo é 1", async function ()
+  it("sem abertura registrada nem avaliação, ambos são null", async function ()
   {
+    // Sem extensao ninguem registrou nada: a tela nao tem para onde continuar.
     const listarEntradas = vi.fn(async function ()
     {
       return [{ ...NO_REPOSITORIO, progressChapter: null }];
     });
-    const listarFontes = vi.fn(async function () { return []; });
+    const listarLeiturasMaisAvancadas = vi.fn(async function () { return []; });
 
     const entradas = await listarEstante(
       { userId: "u1" },
-      { listarEntradas, listarFontes, listarAvaliacoes: vazio },
+      { listarEntradas, listarLeiturasMaisAvancadas, listarAvaliacoes: vazio, contarAberturasPorObra: vazio },
     );
 
     expect(listarEntradas).toHaveBeenCalledWith("u1", undefined);
-    expect(entradas[0]).toMatchObject({ fonte: null, avaliacao: null, proximoCapitulo: 1 });
+    expect(entradas[0]).toMatchObject({ continuarEm: null, avaliacao: null, totalDeAberturas: 0 });
   });
 });
 
@@ -159,18 +167,31 @@ describe("definirProgresso", function ()
     expect(resultado).toEqual({ estado: "capitulo_invalido" });
     expect(atualizarProgresso).not.toHaveBeenCalled();
   });
+
+  it("capítulo com mais de duas casas é recusado — a coluna é Decimal(8,2)", async function ()
+  {
+    const atualizarProgresso = vi.fn(async function () { return { id: "e1" }; });
+
+    const resultado = await definirProgresso(
+      { userId: "u1", entradaId: "e1", capitulo: 12.345 },
+      { atualizarProgresso },
+    );
+
+    expect(resultado).toEqual({ estado: "capitulo_invalido" });
+    expect(atualizarProgresso).not.toHaveBeenCalled();
+  });
 });
 
-describe("anilistIdsNaEstante", function ()
+describe("chavesNaEstante", function ()
 {
   it("delega ao repositório com o userId — o catálogo marca o que já está na estante", async function ()
   {
-    const listarAnilistIds = vi.fn(async function () { return [30013, 30002]; });
+    const listarChaves = vi.fn(async function () { return ["anilist:30013", "anilist:30002"]; });
 
-    const ids = await anilistIdsNaEstante("u1", { listarAnilistIds });
+    const ids = await chavesNaEstante("u1", { listarChaves });
 
-    expect(listarAnilistIds).toHaveBeenCalledWith("u1");
-    expect(ids).toEqual([30013, 30002]);
+    expect(listarChaves).toHaveBeenCalledWith("u1");
+    expect(ids).toEqual(["anilist:30013", "anilist:30002"]);
   });
 });
 

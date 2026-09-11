@@ -2,11 +2,14 @@
 // esta é a única leitura do sistema sem userId no where, consciente e
 // restrita a Entry com review não nulo. De quem escreveu sai o username e
 // NADA além — e-mail nunca. Progresso e fonte seguem privados.
+import { Prisma } from "@/generated/prisma/client";
 import { getPrisma } from "./prisma";
 
 export type ComentarioDaReview = {
   id: string;
   username: string;
+  /** Versão da foto de quem escreveu (issue #87); `null` sem foto. */
+  avatarVersao: number | null;
   texto: string;
   criadoEm: Date;
   meu: boolean;
@@ -15,6 +18,7 @@ export type ComentarioDaReview = {
 export type ReviewPublica = {
   entryId: string;
   username: string;
+  avatarVersao: number | null;
   minha: boolean;
   rating: string | null;
   review: string;
@@ -22,43 +26,93 @@ export type ReviewPublica = {
   publicadaEm: Date;
   curtidas: number;
   curtiPorMim: boolean;
+  /** Os mais recentes, em ordem cronológica — no máximo `PAGINA_DE_COMENTARIOS`. */
   comentarios: ComentarioDaReview[];
+  totalDeComentarios: number;
 };
+
+/**
+ * Quantos comentários a página da obra carrega por resenha (#109). O resto sai
+ * por `listarComentariosAnteriores`. Sem isto, comentário em massa numa obra
+ * popular virava megabytes por render para todo visitante.
+ */
+export const PAGINA_DE_COMENTARIOS = 20;
+
+const ORDEM_DOS_COMENTARIOS: Prisma.ReviewCommentOrderByWithRelationInput[] = [
+  { createdAt: "desc" },
+  { id: "desc" },
+];
+
+const SELECT_DO_COMENTARIO = {
+  id: true,
+  userId: true,
+  texto: true,
+  createdAt: true,
+  user: { select: { username: true, avatarUpdatedAt: true } },
+} as const;
+
+type LinhaDeComentario = {
+  id: string;
+  userId: string;
+  texto: string;
+  createdAt: Date;
+  user: { username: string; avatarUpdatedAt: Date | null };
+};
+
+function comentarioParaDto(linha: LinhaDeComentario, userId: string | null): ComentarioDaReview
+{
+  return {
+    id: linha.id,
+    username: linha.user.username,
+    avatarVersao: linha.user.avatarUpdatedAt?.getTime() ?? null,
+    texto: linha.texto,
+    criadoEm: linha.createdAt,
+    meu: linha.userId === userId,
+  };
+}
 
 /**
  * As resenhas públicas da obra: mais curtidas primeiro, desempate recente.
  * `userId` (opcional) só marca "curti/meu" — não filtra nada.
  */
+/**
+ * As `limite` resenhas mais curtidas da obra (#135): antes vinham TODAS, e uma
+ * obra popular com muitas resenhas de 20 KB virava dezenas de MB por render
+ * anônimo. Primeira página; carregar mais é evolução.
+ */
 export async function listarReviewsDaObra(
   mediaId: string,
   userId: string | null,
+  limite: number,
 ): Promise<ReviewPublica[]>
 {
   const linhas = await getPrisma().entry.findMany({
     where: { mediaId, review: { not: null } },
-    orderBy: [{ likes: { _count: "desc" } }, { reviewedAt: "desc" }],
+    // Desempate pela data publica (#143), nao pelo historico da linha.
+    orderBy: [{ likes: { _count: "desc" } }, { publishedAt: "desc" }],
+    take: limite,
     select: {
       id: true,
       userId: true,
       rating: true,
       review: true,
       containsSpoilers: true,
-      reviewedAt: true,
-      user: { select: { username: true } },
-      _count: { select: { likes: true } },
+      publishedAt: true,
+      createdAt: true,
+      user: { select: { username: true, avatarUpdatedAt: true } },
+      _count: { select: { likes: true, comentarios: true } },
       likes:
         userId === null
           ? false
           : { where: { userId }, select: { id: true } },
+      // Os mais recentes primeiro para o `take`; a ordem cronológica volta no map.
+      // Desempate por id: createdAt tem milissegundo, e dois comentários no
+      // mesmo ms deixavam a ordem ao acaso (teste flaky no CI). O cuid é
+      // monotônico dentro do processo, então id desempata na ordem de inserção.
       comentarios: {
-        orderBy: { createdAt: "asc" },
-        select: {
-          id: true,
-          userId: true,
-          texto: true,
-          createdAt: true,
-          user: { select: { username: true } },
-        },
+        orderBy: ORDEM_DOS_COMENTARIOS,
+        take: PAGINA_DE_COMENTARIOS,
+        select: SELECT_DO_COMENTARIO,
       },
     },
   });
@@ -68,72 +122,143 @@ export async function listarReviewsDaObra(
     return {
       entryId: linha.id,
       username: linha.user.username,
+      avatarVersao: linha.user.avatarUpdatedAt?.getTime() ?? null,
       minha: linha.userId === userId,
       rating: linha.rating?.toString() ?? null,
       review: linha.review ?? "",
       containsSpoilers: linha.containsSpoilers,
-      publicadaEm: linha.reviewedAt,
+      publicadaEm: linha.publishedAt ?? linha.createdAt,
       curtidas: linha._count.likes,
       curtiPorMim: Array.isArray(linha.likes) && linha.likes.length > 0,
-      comentarios: linha.comentarios.map(function (comentario)
-      {
-        return {
-          id: comentario.id,
-          username: comentario.user.username,
-          texto: comentario.texto,
-          criadoEm: comentario.createdAt,
-          meu: comentario.userId === userId,
-        };
-      }),
+      comentarios: linha.comentarios
+        .map(function (comentario) { return comentarioParaDto(comentario, userId); })
+        .reverse(),
+      totalDeComentarios: linha._count.comentarios,
     };
   });
 }
 
 /**
+ * A página anterior da conversa: os `PAGINA_DE_COMENTARIOS` comentários
+ * imediatamente antes do comentário `antesDoId`, em ordem cronológica. Cursor
+ * por id, não por data: data tem milissegundo e empata. `userId` só marca
+ * "meu" — não filtra nada; comentário é público como a resenha.
+ */
+export async function listarComentariosAnteriores(
+  entryId: string,
+  antesDoId: string,
+  userId: string | null,
+): Promise<ComentarioDaReview[]>
+{
+  const linhas = await getPrisma().reviewComment.findMany({
+    where: { entryId },
+    orderBy: ORDEM_DOS_COMENTARIOS,
+    cursor: { id: antesDoId },
+    skip: 1,
+    take: PAGINA_DE_COMENTARIOS,
+    select: SELECT_DO_COMENTARIO,
+  });
+
+  return linhas
+    .map(function (linha) { return comentarioParaDto(linha, userId); })
+    .reverse();
+}
+
+/**
+ * De quem é a resenha, se ela existe E tem texto. A FK sozinha não responde
+ * isso: a linha sobrevive ao dono apagar a resenha e manter a nota, e o id dela
+ * já circulou no HTML da página da obra (#138). Sem esta checagem, curtida e
+ * comentário eram aceitos numa resenha que não existe e ressurgiam colados no
+ * texto novo do dono.
+ *
+ * O dono sai junto porque o serviço precisa dele para recusar auto-curtida
+ * (#148, item 4) — é a mesma consulta, não uma segunda ida ao banco.
+ *
+ * Não é atômico com a escrita que vem depois — os catches de P2002 e P2003
+ * continuam sendo o que fecha a corrida.
+ */
+export async function donoDaResenha(entryId: string): Promise<string | null>
+{
+  const alvo = await getPrisma().entry.findFirst({
+    where: { id: entryId, review: { not: null } },
+    select: { userId: true },
+  });
+
+  return alvo?.userId ?? null;
+}
+
+async function temResenha(entryId: string): Promise<boolean>
+{
+  return (await donoDaResenha(entryId)) !== null;
+}
+
+/**
  * Toggle da curtida. `null` quando a resenha não existe (FK estoura no
- * create). Devolve o estado final e o total.
+ * create) ou está sem texto (#138). Devolve o estado final e o total.
+ *
+ * Atômico (#65, item 5): tenta apagar; se não havia, cria. Dois cliques
+ * concorrentes não viram 404 — o segundo `create` bate no unique (P2002) e é
+ * lido como "já curtida". Qualquer outro erro sobe para a rota responder 500.
  */
 export async function alternarCurtida(
   entryId: string,
   userId: string,
 ): Promise<{ curtida: boolean; total: number } | null>
 {
+  if (!(await temResenha(entryId)))
+  {
+    return null;
+  }
+
   const prisma = getPrisma();
 
-  const existente = await prisma.reviewLike.findUnique({
-    where: { entryId_userId: { entryId, userId } },
-    select: { id: true },
-  });
+  const apagadas = await prisma.reviewLike.deleteMany({ where: { entryId, userId } });
+  let curtida = false;
 
-  try
+  if (apagadas.count === 0)
   {
-    if (existente === null)
+    try
     {
       await prisma.reviewLike.create({ data: { entryId, userId } });
     }
-    else
+    catch (erro)
     {
-      await prisma.reviewLike.delete({ where: { id: existente.id } });
+      if (eErroDoPrisma(erro, "P2003"))
+      {
+        // FK: resenha (ou usuário) não existe. Mesma resposta de inexistente.
+        return null;
+      }
+
+      if (!eErroDoPrisma(erro, "P2002"))
+      {
+        throw erro;
+      }
     }
-  }
-  catch
-  {
-    // FK: resenha (ou usuário) não existe. Mesma resposta de inexistente.
-    return null;
+
+    curtida = true;
   }
 
   const total = await prisma.reviewLike.count({ where: { entryId } });
 
-  return { curtida: existente === null, total };
+  return { curtida, total };
 }
 
-/** Comenta na resenha. `null` quando ela não existe (FK). */
+/**
+ * Comenta na resenha. `null` quando ela não existe (FK, P2003) ou está sem
+ * texto (#138); banco fora e afins sobem para a rota logar e responder 500
+ * (#65, item 6).
+ */
 export async function comentarNaReview(
   entryId: string,
   userId: string,
   texto: string,
 ): Promise<{ id: string } | null>
 {
+  if (!(await temResenha(entryId)))
+  {
+    return null;
+  }
+
   try
   {
     return await getPrisma().reviewComment.create({
@@ -141,10 +266,20 @@ export async function comentarNaReview(
       select: { id: true },
     });
   }
-  catch
+  catch (erro)
   {
-    return null;
+    if (eErroDoPrisma(erro, "P2003"))
+    {
+      return null;
+    }
+
+    throw erro;
   }
+}
+
+function eErroDoPrisma(erro: unknown, codigo: "P2002" | "P2003"): boolean
+{
+  return erro instanceof Prisma.PrismaClientKnownRequestError && erro.code === codigo;
 }
 
 /**

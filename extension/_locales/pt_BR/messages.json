@@ -1,0 +1,149 @@
+{
+  "nome": {
+    "message": "Folunio"
+  },
+  "descricao": {
+    "message": "Registra na sua estante do Folunio o capítulo que você está lendo, sem sair da aba."
+  },
+  "acaoTitulo": {
+    "message": "Folunio — registrar leitura"
+  },
+  "abrirSite": {
+    "message": "abrir o site"
+  },
+  "verLink": {
+    "message": "ver link"
+  },
+  "ocultarLink": {
+    "message": "ocultar link"
+  },
+  "carregando": {
+    "message": "carregando…"
+  },
+  "campoObra": {
+    "message": "Obra"
+  },
+  "filtroPlaceholder": {
+    "message": "filtrar pelo nome"
+  },
+  "campoCapitulo": {
+    "message": "Capítulo"
+  },
+  "registrar": {
+    "message": "Registrar leitura"
+  },
+  "autoRegistro": {
+    "message": "registrar automaticamente"
+  },
+  "autoRegistroAjuda": {
+    "message": "só obras já pareadas, depois de 20 s na página do capítulo"
+  },
+  "semSessao": {
+    "message": "Entre no Folunio para registrar a leitura."
+  },
+  "entrar": {
+    "message": "Entrar"
+  },
+  "semResposta": {
+    "message": "o Folunio não respondeu agora — tente de novo"
+  },
+  "estanteNaoCarregou": {
+    "message": "não deu para carregar a estante — tente de novo"
+  },
+  "estanteVazia": {
+    "message": "sua estante não tem obra em aberto — adicione uma no site."
+  },
+  "escolhaObra": {
+    "message": "escolha a obra"
+  },
+  "informeCapitulo": {
+    "message": "informe o capítulo"
+  },
+  "registrando": {
+    "message": "registrando…"
+  },
+  "capituloLido": {
+    "message": "lido do título da aba — confira"
+  },
+  "capituloNaoLido": {
+    "message": "não achei o capítulo no título da aba — digite"
+  },
+  "obraPeloTitulo": {
+    "message": "obra reconhecida pelo título da aba — confira"
+  },
+  "obraNoCapitulo": {
+    "message": "no cap. $capitulo$",
+    "placeholders": {
+      "capitulo": {
+        "content": "$1"
+      }
+    }
+  },
+  "registradoAlcancou": {
+    "message": "cap. $capitulo$ registrado — estante no $progresso$",
+    "placeholders": {
+      "capitulo": {
+        "content": "$1"
+      },
+      "progresso": {
+        "content": "$2"
+      }
+    }
+  },
+  "erroPadrao": {
+    "message": "não deu para registrar"
+  },
+  "erroCorpoInvalido": {
+    "message": "não deu para registrar"
+  },
+  "erroPedidoInvalido": {
+    "message": "não deu para registrar"
+  },
+  "erroEntradaNaoEncontrada": {
+    "message": "essa obra não está mais na sua estante"
+  },
+  "erroCapituloInvalido": {
+    "message": "capítulo inválido"
+  },
+  "erroUrlInvalida": {
+    "message": "esta página não serve como fonte de leitura"
+  },
+  "erroSemFonte": {
+    "message": "configure a fonte de leitura primeiro"
+  },
+  "erroNaoAvanca": {
+    "message": "sua estante já está no cap. $progresso$ — para voltar, use o reset no site",
+    "placeholders": {
+      "progresso": {
+        "content": "$1"
+      }
+    }
+  },
+  "erroLimiteExcedido": {
+    "message": "muitos registros em pouco tempo — aguarde"
+  },
+  "erroFalhaInterna": {
+    "message": "o Folunio não conseguiu registrar agora"
+  },
+  "nestaAba": {
+    "message": "Nesta aba"
+  },
+  "obraPareadaMarca": {
+    "message": "pareada"
+  },
+  "filtroSemResultado": {
+    "message": "nenhuma obra da estante casa com o filtro"
+  },
+  "estadoPareada": {
+    "message": "obra pareada — o ícone acende nesta página"
+  },
+  "estadoSemPar": {
+    "message": "esta página ainda não está pareada — registrar aqui pareia"
+  },
+  "estadoRegistrado": {
+    "message": "registrado por aqui, sozinho"
+  },
+  "estadoFalhou": {
+    "message": "o automático não conseguiu — registre à mão"
+  }
+}

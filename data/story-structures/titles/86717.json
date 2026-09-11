@@ -11,10 +11,15 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "wotakoi-wiki-volumes", "url": "https://wotakoi.fandom.com/wiki/List_of_Volumes", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "wotakoi-community-guide", "url": "https://www.reddit.com/r/Wotakoi/comments/nyg4v7/faq_and_guide_to_the_manga_and_anime/", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "arc taxonomy and numbering", "reason": "A obra alterna capitulos episodicos curtos e subtramas romanticas; a fonte comunitaria observa que alguns arcos sao apresentados fora de ordem, mas nao define limites. A lista por volumes mistura capitulo 0 e capitulos regulares e nao explica a contagem AniList de 115; nao foram inferidos segmentos." }
+  ]
 }

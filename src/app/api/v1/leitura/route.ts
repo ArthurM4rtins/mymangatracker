@@ -1,0 +1,130 @@
+/**
+ * POST /api/v1/leitura — registra o capítulo que o usuário JÁ está lendo, a
+ * partir da aba aberta. É a rota da extensão de navegador (issue #52).
+ *
+ * Irmã do `POST /api/v1/progresso`, e de propósito separada dela: lá o app abre
+ * um capítulo e a URL nasce no servidor pelo template confirmado; aqui a fonte
+ * não tem template, o usuário já está na página, e a URL gravada é a que ele
+ * está lendo. Misturar as duas afrouxaria o contrato do `/progresso`, onde URL
+ * vinda do client não entra no histórico.
+ *
+ * Controller: resolve a sessão (só aqui), valida a forma com Zod, delega. Faixa
+ * do capítulo e esquema da URL são regra de domínio, não se repetem aqui.
+ */
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { registrarLeituraExternaDoSistema } from "@/server/services/leitura-externa.service";
+import { lerJson } from "../_shared/corpo";
+import { ERRO } from "../_shared/erros";
+import { usuarioDaSessao } from "../_shared/sessao";
+
+export const dynamic = "force-dynamic";
+
+const ESQUEMA = z.object({
+  entradaId: z.string().min(1),
+  // Só a forma: quem diz se o número cabe no contrato é o domínio, que devolve
+  // 422. O teto Decimal(8,2) mora em `domain/capitulo`, num lugar só.
+  capitulo: z.number(),
+  url: z.string().min(1),
+});
+
+export async function POST(request: Request)
+{
+  // A extensão registra por Bearer (#52); é uma das duas rotas que aceitam (#137).
+  const userId = await usuarioDaSessao({ aceitarBearer: true });
+
+  if (!userId)
+  {
+    return NextResponse.json(
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
+      { status: 401 },
+    );
+  }
+
+  const leitura = await lerJson(request);
+
+  if (!leitura.ok)
+  {
+    return leitura.resposta;
+  }
+
+  const corpo: unknown = leitura.corpo;
+
+  const analise = ESQUEMA.safeParse(corpo);
+
+  if (!analise.success)
+  {
+    return NextResponse.json(
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
+      { status: 400 },
+    );
+  }
+
+  try
+  {
+    const resultado = await registrarLeituraExternaDoSistema({
+      userId,
+      entradaId: analise.data.entradaId,
+      capitulo: analise.data.capitulo,
+      urlVisitada: analise.data.url,
+    });
+
+    if (resultado.estado === "nao_encontrada")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.ENTRADA_NAO_ENCONTRADA } },
+        { status: 404 },
+      );
+    }
+
+    if (resultado.estado === "capitulo_invalido")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.CAPITULO_INVALIDO } },
+        { status: 422 },
+      );
+    }
+
+    if (resultado.estado === "url_invalida")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.URL_INVALIDA } },
+        { status: 422 },
+      );
+    }
+
+    if (resultado.estado === "limitado")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
+        { status: 429, headers: { "Retry-After": String(resultado.esperarSegundos) } },
+      );
+    }
+
+    if (resultado.estado === "nao_avanca")
+    {
+      // O progresso vai junto: a extensão diz onde a estante está, não só "não".
+      return NextResponse.json(
+        { erros: { _geral: ERRO.NAO_AVANCA }, progresso: resultado.progresso },
+        { status: 409 },
+      );
+    }
+
+    return NextResponse.json(
+      {
+        url: resultado.url,
+        capitulo: resultado.capitulo,
+        progresso: resultado.progresso,
+      },
+      { status: 200 },
+    );
+  }
+  catch (erro)
+  {
+    console.error("[leitura] falha ao registrar:", erro instanceof Error ? erro.message : erro);
+    return NextResponse.json(
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
+      { status: 500 },
+    );
+  }
+}

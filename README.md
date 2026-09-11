@@ -1,6 +1,6 @@
 # MyMangaTracker
 
-Um Letterboxd para mangá, manhwa e novel — que lembra sozinho em que capítulo você parou.
+Sua estante de mangá, manhwa e novel — que lembra sozinho em que capítulo você parou.
 
 **No ar:** https://mymangatracker.vercel.app · **Saúde:** [`/api/v1/health`](https://mymangatracker.vercel.app/api/v1/health)
 
@@ -11,9 +11,9 @@ Integrantes: Arthur Juchem Martins e Nicholas Gabriel Deotti Schlindwein.
 
 ## O problema
 
-O Letterboxd resolveu o registro para filme: você loga o que viu, dá nota, escreve resenha, monta listas.
-Mídia serializada não tem esse lugar — e tem um problema que filme não tem: a obra continua saindo, em
-capítulos, espalhada por sites diferentes.
+Registrar filme é problema resolvido: existe onde logar o que se viu, dar nota, escrever resenha e montar
+lista. Mídia serializada não tem esse lugar — e tem um problema que filme não tem: a obra continua saindo,
+em capítulos, espalhada por sites diferentes.
 
 Pedir o número do capítulo toda vez é o tipo de trabalho que faz o usuário abandonar o app na terceira
 semana. Aqui ele informa **uma coisa só, uma vez**: onde lê, colando o link do primeiro capítulo.
@@ -139,11 +139,47 @@ Verde sozinho não prova nada. Cada invariante do projeto foi visto **falhando**
 - `Media` é cache do AniList: se sumir, é reconstruído. Por isso as FKs que apontam para ele são
   `Restrict`, não `Cascade` — cache não apaga dado de usuário.
 
+## Dependências
+
+`next`, `react`, `react-dom`, `prisma`, `@prisma/client` e `@prisma/adapter-pg` são
+**pinados**. Os três do Prisma têm um motivo específico: a tag `latest` do CLI já
+esteve num major à frente do client, e `pnpm add` monta a combinação quebrada sem
+avisar (registrado em `tasks/lessons.md`). O resto usa caret.
+
+`pnpm audit` reporta seis avisos, três altos e três moderados. **Todos** passam por
+`prisma`, o CLI: lodash via `@prisma/studio-core`, `deepmerge-ts` via
+`@prisma/config`, e `mysql2` direto. O CLI é `devDependency` e peer opcional do
+client, então o tracing do Next não o leva para o bundle da função, e nada sob
+`src/` importa qualquer um dos três. Não há ação de runtime a tomar, e o CI não
+roda `audit` justamente por isso. Se um dia algum deles aparecer numa dependência
+de produção, aí é bug, não ruído (#148, item 15).
+
 ## Deploy
 
 Push na `main` → build automático na Vercel → `prisma generate` → migration condicional → `next build`.
-Cada pull request ganha um **branch próprio do Neon**, então a migration de uma PR nunca toca produção
-antes do merge.
+
+### O banco só existe em produção
+
+O recurso do Neon está marcado como **Production environment only** na Vercel. Preview e Development
+**não recebem `DATABASE_URL`**, e isso é de propósito, por dois motivos:
+
+1. **O plano Free tem limite de branches.** Enquanto o recurso valia para todos os ambientes, cada
+   preview criava um branch do banco, os órfãos se acumulavam e o deploy passou a morrer na etapa de
+   provisionamento — antes de instalar dependência, antes de buildar. O check da Vercel ficou vermelho
+   em **todo** PR por semanas, e um check que sempre falha ensina o time a ignorar o vermelho (#162).
+2. **Não há revisão de tela em preview hoje.** O preview de verdade é local, com `pnpm dev`.
+
+Preview então serve a tela com a faixa de configuração pendente e o resto funcionando, que é o
+comportamento desenhado na Fase 1 — o build não depende do banco.
+
+⚠️ **Religar o Neon para Preview traz o problema de volta.** Se um dia fizer falta (revisão de tela
+por PR, por exemplo), o caminho é branch efêmero por PR **com limpeza automática**, e provavelmente
+plano pago. Não basta marcar "All environments".
+
+### A migration
+
+`prisma migrate deploy` só roda quando `VERCEL_ENV` é `production` ou não existe (desenvolvimento
+local). Preview nunca aplica DDL, mesmo que um dia volte a ter banco (#148, item 8).
 
 ## Documentação
 

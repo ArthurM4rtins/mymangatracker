@@ -7,6 +7,9 @@ import { limparBanco, semearMedia, semearUsuario } from "./apoio";
 // O feed da comunidade (issue #50): resenhas COM TEXTO de todo mundo, mais
 // recente primeiro, com username e obra — e-mail e ids de usuário nunca.
 // Nota sem texto fica fora. Progresso e fonte não entram.
+//
+// "Mais recente" é por `publishedAt` desde a #143: a data pública, carimbada uma
+// vez. Antes era `reviewedAt`, que apagar e reescrever o texto recarimbava.
 
 beforeEach(limparBanco);
 
@@ -21,10 +24,10 @@ describe("listarResenhasDaComunidade", function ()
     const m2 = await semearMedia(30013);
 
     await prisma.entry.create({
-      data: { userId: ana.id, mediaId: m1.id, rating: 5, review: "antiga", reviewedAt: new Date("2026-09-01T10:00:00Z") },
+      data: { userId: ana.id, mediaId: m1.id, rating: 5, review: "antiga", publishedAt: new Date("2026-09-01T10:00:00Z") },
     });
     await prisma.entry.create({
-      data: { userId: bia.id, mediaId: m1.id, rating: 4, review: "recente", containsSpoilers: true, reviewedAt: new Date("2026-09-02T10:00:00Z") },
+      data: { userId: bia.id, mediaId: m1.id, rating: 4, review: "recente", containsSpoilers: true, publishedAt: new Date("2026-09-02T10:00:00Z") },
     });
     await prisma.entry.create({
       data: { userId: ana.id, mediaId: m2.id, rating: 3, review: null },
@@ -39,7 +42,7 @@ describe("listarResenhasDaComunidade", function ()
       ["bia", "recente"],
       ["ana", "antiga"],
     ]);
-    expect(resenhas[0]).toMatchObject({ anilistId: 30002, containsSpoilers: true, rating: "4", curtidas: 0 });
+    expect(resenhas[0]).toMatchObject({ chave: "anilist:30002", containsSpoilers: true, rating: "4", curtidas: 0 });
 
     const serializado = JSON.stringify(resenhas);
     expect(serializado).not.toContain("@exemplo.test");

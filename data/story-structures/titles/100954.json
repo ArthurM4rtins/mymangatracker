@@ -11,10 +11,15 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "sweet-home-webtoon-wiki", "url": "https://webtoon.fandom.com/wiki/Sweet_Home", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "sweet-home-webtoon-wikipedia", "url": "https://en.wikipedia.org/wiki/Sweet_Home_(webtoon)", "type": "EDITORIAL", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "As fontes convergem em prólogo mais 140 episódios, compatível com as 141 entradas do AniList, mas não apresentam uma taxonomia de arcos nomeados com limites verificáveis. Os blocos de sinopse editoriais não foram convertidos em segmentos narrativos." }
+  ]
 }

@@ -67,7 +67,7 @@ describe("reordenarItens", function ()
     expect(await reordenarItens(dona.id, lista.id, [medias[2].id, medias[0].id, medias[1].id])).toEqual({ reordenada: true });
 
     const ordem = await listarItensParaOrdem(dona.id, lista.id);
-    expect(ordem?.map(function (i) { return i.anilistId; })).toEqual([30656, 30013, 30002]);
+    expect(ordem?.map(function (i) { return i.chave; })).toEqual(["anilist:30656", "anilist:30013", "anilist:30002"]);
     expect(await listarItensParaOrdem(intruso.id, lista.id)).toBeNull();
 
     const quarta = await salvarMediaDoAniList(
@@ -76,7 +76,7 @@ describe("reordenarItens", function ()
     );
     await adicionarItem(dona.id, lista.id, quarta.id);
     const depois = await buscarListaComItens(lista.id, null);
-    expect(depois?.itens.map(function (i) { return i.anilistId; })).toEqual([30656, 30013, 30002, 30642]);
+    expect(depois?.itens.map(function (i) { return i.chave; })).toEqual(["anilist:30656", "anilist:30013", "anilist:30002", "anilist:30642"]);
   });
 });
 

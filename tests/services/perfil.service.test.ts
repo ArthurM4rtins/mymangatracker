@@ -10,16 +10,19 @@ const USUARIO = {
   id: "u1",
   username: "leitora",
   createdAt: new Date("2026-08-01T00:00:00Z"),
+  avatarUpdatedAt: new Date("2026-09-03T10:00:00Z"),
 };
 
 const OBRA = {
-  anilistId: 30002,
+  chave: "anilist:30002",
   titleRomaji: "Berserk",
   titleEnglish: null,
   coverImageUrl: null,
 };
 
-function fakeDeps(cenario: { usuario?: typeof USUARIO | null })
+function fakeDeps(cenario: { usuario?: typeof USUARIO | null
+  totalAvaliadas?: number;
+})
 {
   return {
     buscarPorUsername: vi.fn(async function ()
@@ -29,12 +32,15 @@ function fakeDeps(cenario: { usuario?: typeof USUARIO | null })
     listarAvaliadas: vi.fn(async function ()
     {
       return [
-        { ...OBRA, anilistId: 1, rating: 3, avaliadaEm: new Date("2026-08-01") },
-        { ...OBRA, anilistId: 2, rating: 5, avaliadaEm: new Date("2026-08-03") },
-        { ...OBRA, anilistId: 3, rating: 4.5, avaliadaEm: new Date("2026-08-02") },
+        { ...OBRA, chave: "anilist:1", rating: 3, avaliadaEm: new Date("2026-08-01") },
+        { ...OBRA, chave: "anilist:2", rating: 5, avaliadaEm: new Date("2026-08-03") },
+        { ...OBRA, chave: "anilist:3", rating: 4.5, avaliadaEm: new Date("2026-08-02") },
       ];
     }),
     contarResenhas: vi.fn(async function () { return 1; }),
+    // Os numeros do perfil vem de COUNT, nao do tamanho da pagina (#135).
+    contarAvaliadas: vi.fn(async function () { return cenario.totalAvaliadas ?? 3; }),
+    contarListas: vi.fn(async function () { return 1; }),
     contarCurtidasDadas: vi.fn(async function () { return 7; }),
     listarResenhas: vi.fn(async function ()
     {
@@ -72,6 +78,10 @@ function fakeDeps(cenario: { usuario?: typeof USUARIO | null })
         { entradaId: "s2", status: "COMPLETED" as const, progressChapter: null, obra: OBRA },
       ];
     }),
+    resumoSocial: vi.fn(async function ()
+    {
+      return { seguidores: 2, seguindo: 1, curtidas: 3, sigo: true, curti: false };
+    }),
   };
 }
 
@@ -79,6 +89,16 @@ const SEM_FILTRO = { ordem: "recentes" as const };
 
 describe("perfilDoUsuario", function ()
 {
+  it("o total de avaliadas e a contagem, mesmo quando a pagina traz menos (#135)", async function ()
+  {
+    const deps = fakeDeps({ totalAvaliadas: 42 });
+
+    const perfil = await perfilDoUsuario({ username: "leitora", viewerId: null, filtro: SEM_FILTRO }, deps);
+
+    expect(perfil?.numeros.avaliadas).toBe(42);
+    expect(perfil?.avaliadas).toHaveLength(3);
+  });
+
   it("username inexistente devolve null sem consultar mais nada", async function ()
   {
     const deps = fakeDeps({ usuario: null });
@@ -103,15 +123,20 @@ describe("perfilDoUsuario", function ()
       username: "leitora",
       membroDesde: USUARIO.createdAt,
       souEu: false,
+      avatarVersao: new Date("2026-09-03T10:00:00Z").getTime(),
       estante: null,
       numeros: { avaliadas: 3, resenhas: 1, listas: 1, curtidasDadas: 7 },
     });
-    expect(perfil?.avaliadas.map(function (a) { return a.anilistId; })).toEqual([2, 3, 1]);
+    expect(perfil?.avaliadas.map(function (a) { return a.chave; })).toEqual(["anilist:2", "anilist:3", "anilist:1"]);
     expect(perfil?.resenhasRecentes.map(function (r) { return r.titleRomaji; })).toEqual([
       "Berserk",
     ]);
     expect(perfil?.listas.map(function (l) { return l.nome; })).toEqual(["seinen"]);
     expect(deps.listarResenhas).toHaveBeenCalledWith("u1", 5);
+    // Leituras publicas com teto (#135): o perfil de quem inflou a conta nao
+    // materializa tudo a cada visita.
+    expect(deps.listarAvaliadas).toHaveBeenCalledWith("u1", 200);
+    expect(deps.listarListas).toHaveBeenCalledWith("u1", 50);
     expect(deps.listarEstante).not.toHaveBeenCalled();
   });
 
@@ -134,6 +159,27 @@ describe("perfilDoUsuario", function ()
     });
   });
 
+  // Issue #74: o bloco social vem por id do dono e pelo id de quem olha —
+  // anônimo passa null e o repositório devolve sigo/curti false.
+  it("traz o bloco social, consultado com o id do dono e de quem olha", async function ()
+  {
+    const deps = fakeDeps({});
+
+    const perfil = await perfilDoUsuario(
+      { username: "leitora", viewerId: "u2", filtro: SEM_FILTRO },
+      deps,
+    );
+
+    expect(perfil?.social).toEqual({
+      seguidores: 2,
+      seguindo: 1,
+      curtidas: 3,
+      sigo: true,
+      curti: false,
+    });
+    expect(deps.resumoSocial).toHaveBeenCalledWith("u1", "u2");
+  });
+
   it("aplica o filtro da URL na grade de avaliadas", async function ()
   {
     const perfil = await perfilDoUsuario(
@@ -141,7 +187,7 @@ describe("perfilDoUsuario", function ()
       fakeDeps({}),
     );
 
-    expect(perfil?.avaliadas.map(function (a) { return a.anilistId; })).toEqual([2]);
+    expect(perfil?.avaliadas.map(function (a) { return a.chave; })).toEqual(["anilist:2"]);
     // O total conta todas, não só as filtradas.
     expect(perfil?.numeros.avaliadas).toBe(3);
   });

@@ -11,10 +11,16 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "seven-deadly-sins-jbc-chapters", "url": "https://editorajbc.com.br/mangas/colecao/the-seven-deadly-sins-capitulos/", "type": "OFFICIAL", "accessedAt": "2026-09-01" },
+    { "id": "nanatsu-wiki-story-arcs", "url": "https://nanatsu-no-taizai.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "nanatsu-wiki-chapter-346", "url": "https://nanatsu-no-taizai.fandom.com/wiki/Chapter_346", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "chapter total and arc taxonomy", "reason": "A publicação oficial e a wiki confirmam o fim da série principal no capítulo 346, enquanto o catálogo AniList registra 367 entradas. A wiki enumera vinte arcos, mas a taxonomia acessível não apresenta todos os intervalos de forma contínua para verificação; não foram inferidos segmentos nem atribuídos os extras." }
+  ]
 }

@@ -2,8 +2,14 @@ import { describe, expect, it, vi } from "vitest";
 import {
   apagarComentarioDaReview,
   comentarReview,
+  comentariosAnterioresDaReview,
   curtirReview,
 } from "@/server/services/review-social.service";
+
+async function livre()
+{
+  return { bloqueado: false as const };
+}
 
 // As regras da issue #39: curtir é toggle em resenha existente; comentário
 // tem texto de 1 a 2000 depois do trim; apagar só o próprio.
@@ -14,7 +20,9 @@ describe("curtirReview", function ()
   {
     const alternar = vi.fn(async function () { return { curtida: true, total: 3 }; });
 
-    const resultado = await curtirReview({ userId: "u1", entryId: "e1" }, { alternar });
+    const buscarDono = vi.fn(async function (): Promise<string | null> { return "dona"; });
+
+    const resultado = await curtirReview({ userId: "u1", entryId: "e1" }, { alternar, buscarDono });
 
     expect(alternar).toHaveBeenCalledWith("e1", "u1");
     expect(resultado).toEqual({ estado: "ok", curtida: true, total: 3 });
@@ -23,9 +31,10 @@ describe("curtirReview", function ()
   it("resenha inexistente é nao_encontrada", async function ()
   {
     const alternar = vi.fn(async function () { return null; });
+    const buscarDono = vi.fn(async function (): Promise<string | null> { return null; });
 
     await expect(
-      curtirReview({ userId: "u1", entryId: "morta" }, { alternar }),
+      curtirReview({ userId: "u1", entryId: "morta" }, { alternar, buscarDono }),
     ).resolves.toEqual({ estado: "nao_encontrada" });
   });
 });
@@ -38,7 +47,7 @@ describe("comentarReview", function ()
 
     const resultado = await comentarReview(
       { userId: "u1", entryId: "e1", texto: "  concordo!  " },
-      { comentar },
+      { comentar, limitar: livre },
     );
 
     expect(comentar).toHaveBeenCalledWith("e1", "u1", "concordo!");
@@ -50,12 +59,12 @@ describe("comentarReview", function ()
     const comentar = vi.fn();
 
     await expect(
-      comentarReview({ userId: "u1", entryId: "e1", texto: "   " }, { comentar }),
+      comentarReview({ userId: "u1", entryId: "e1", texto: "   " }, { comentar, limitar: livre }),
     ).resolves.toEqual({ estado: "comentario_invalido" });
     await expect(
       comentarReview(
         { userId: "u1", entryId: "e1", texto: "x".repeat(2001) },
-        { comentar },
+        { comentar, limitar: livre },
       ),
     ).resolves.toEqual({ estado: "comentario_invalido" });
     expect(comentar).not.toHaveBeenCalled();
@@ -66,8 +75,52 @@ describe("comentarReview", function ()
     const comentar = vi.fn(async function () { return null; });
 
     await expect(
-      comentarReview({ userId: "u1", entryId: "morta", texto: "oi" }, { comentar }),
+      comentarReview({ userId: "u1", entryId: "morta", texto: "oi" }, { comentar, limitar: livre }),
     ).resolves.toEqual({ estado: "nao_encontrada" });
+  });
+});
+
+describe("comentarReview — teto por usuário (#109)", function ()
+{
+  it("usuário que estourou o teto é muitos_comentarios, sem gravar", async function ()
+  {
+    const comentar = vi.fn(async function () { return { id: "c1" }; });
+    const limitar = vi.fn(async function () { return { bloqueado: true as const, esperarSegundos: 120 }; });
+
+    const resultado = await comentarReview(
+      { userId: "u1", entryId: "e1", texto: "spam" },
+      { comentar, limitar },
+    );
+
+    expect(resultado).toEqual({ estado: "muitos_comentarios", esperarSegundos: 120 });
+    expect(limitar).toHaveBeenCalledWith("u1");
+    expect(comentar).not.toHaveBeenCalled();
+  });
+
+  it("texto inválido nem consulta o limite", async function ()
+  {
+    const comentar = vi.fn(async function () { return { id: "c1" }; });
+    const limitar = vi.fn(async function () { return { bloqueado: false as const }; });
+
+    await comentarReview({ userId: "u1", entryId: "e1", texto: "   " }, { comentar, limitar });
+
+    expect(limitar).not.toHaveBeenCalled();
+  });
+});
+
+describe("comentariosAnterioresDaReview", function ()
+{
+  it("pede ao repositório os anteriores ao comentário, com o userId para marcar os meus", async function ()
+  {
+    const listar = vi.fn(async function () { return []; });
+
+    const resultado = await comentariosAnterioresDaReview(
+      { entryId: "e1", antesDoId: "c6", userId: "u1" },
+      { listar },
+    );
+
+    expect(listar).toHaveBeenCalledWith("e1", "c6", "u1");
+    expect(resultado).toEqual([]);
   });
 });
 
@@ -89,5 +142,44 @@ describe("apagarComentarioDaReview", function ()
     await expect(
       apagarComentarioDaReview({ userId: "u1", comentarioId: "alheio" }, { apagar }),
     ).resolves.toEqual({ estado: "nao_encontrada" });
+  });
+});
+
+// #148, item 4: curtir o proprio PERFIL ja era recusado com 422 desde a #74, mas
+// a autora podia curtir a propria resenha e subir no ranking por curtidas da
+// pagina da obra. Assimetria provavel, nao teorica: os dois CHECK de
+// auto-relacao do banco cobrem Follow e ProfileLike, e nao ReviewLike.
+describe("curtir a propria resenha", function ()
+{
+  it("e recusado, e nao chega a alternar", async function ()
+  {
+    const alternar = vi.fn(async function () { return { curtida: true, total: 1 }; });
+    const buscarDono = vi.fn(async function () { return "u1"; });
+
+    await expect(
+      curtirReview({ userId: "u1", entryId: "e1" }, { alternar, buscarDono }),
+    ).resolves.toEqual({ estado: "a_si_mesmo" });
+    expect(alternar).not.toHaveBeenCalled();
+  });
+
+  it("resenha de outra pessoa continua passando", async function ()
+  {
+    const alternar = vi.fn(async function () { return { curtida: true, total: 1 }; });
+    const buscarDono = vi.fn(async function () { return "dona"; });
+
+    await expect(
+      curtirReview({ userId: "u1", entryId: "e1" }, { alternar, buscarDono }),
+    ).resolves.toEqual({ estado: "ok", curtida: true, total: 1 });
+  });
+
+  it("resenha inexistente ou sem texto e nao_encontrada, sem alternar", async function ()
+  {
+    const alternar = vi.fn(async function () { return { curtida: true, total: 1 }; });
+    const buscarDono = vi.fn(async function (): Promise<string | null> { return null; });
+
+    await expect(
+      curtirReview({ userId: "u1", entryId: "e1" }, { alternar, buscarDono }),
+    ).resolves.toEqual({ estado: "nao_encontrada" });
+    expect(alternar).not.toHaveBeenCalled();
   });
 });

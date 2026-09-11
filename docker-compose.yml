@@ -4,7 +4,10 @@ services:
     container_name: mymangatracker-postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      # So no loopback (#147): sem o endereco o Docker publica em todas as
+      # interfaces, e a credencial deste arquivo e publica. Nada no projeto
+      # conecta de outro host.
+      - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_USER: mymangatracker
       POSTGRES_PASSWORD: mymangatracker

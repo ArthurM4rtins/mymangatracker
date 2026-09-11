@@ -9,36 +9,49 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { ErroCampoDuplicado } from "@/server/domain/erros";
 import { cadastrarUsuarioNoSistema } from "@/server/services/cadastro.service";
+import { limitarCadastro } from "@/server/services/limite.service";
+import { lerJson } from "../_shared/corpo";
+import { mesmaOrigem } from "../_shared/origem";
+import { ERRO } from "../_shared/erros";
+import { ipDoPedido } from "../_shared/ip";
 
 export const dynamic = "force-dynamic";
 
+// As mensagens aqui são código do catálogo, não frase: o 400 de validação
+// devolve `questao.message` cru por campo, e quem escolhe o texto é a tela.
 const ESQUEMA_CADASTRO = z.object({
   username: z
     .string()
-    .min(3, "no mínimo 3 caracteres")
-    .max(30, "no máximo 30 caracteres")
-    .regex(/^[a-zA-Z0-9_.-]+$/, "só letras, números, ponto, hífen e underline"),
-  email: z.email("e-mail inválido").max(254),
+    .min(3, ERRO.USERNAME_CURTO)
+    .max(30, ERRO.USERNAME_LONGO)
+    .regex(/^[a-zA-Z0-9_.-]+$/, ERRO.USERNAME_CARACTERES),
+  email: z.email(ERRO.EMAIL_INVALIDO).max(254, ERRO.EMAIL_INVALIDO),
   senha: z
     .string()
-    .min(8, "no mínimo 8 caracteres")
-    .max(72, "no máximo 72 caracteres"),
+    .min(8, ERRO.SENHA_CURTA)
+    .max(72, ERRO.SENHA_LONGA),
 });
 
 export async function POST(request: Request)
 {
-  let corpo: unknown;
-  try
-  {
-    corpo = await request.json();
-  }
-  catch
+  // CSRF (#131): esta rota grava cookie sem exigir cookie. Form de outro site
+  // nao passa daqui; o corpo nem chega a ser lido.
+  if (!mesmaOrigem(request))
   {
     return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
-      { status: 400 },
+      { erros: { _geral: ERRO.ORIGEM_RECUSADA } },
+      { status: 403 },
     );
   }
+
+  const leitura = await lerJson(request);
+
+  if (!leitura.ok)
+  {
+    return leitura.resposta;
+  }
+
+  const corpo: unknown = leitura.corpo;
 
   const analise = ESQUEMA_CADASTRO.safeParse(corpo);
 
@@ -52,6 +65,19 @@ export async function POST(request: Request)
 
   try
   {
+    // Cadastro em massa (#108) para aqui. A enumeração de e-mail (#113, #140) é
+    // contida em dois níveis: a resposta não nomeia o e-mail (abaixo), e este
+    // medidor limita a sondagem que sobra pelo status.
+    const limite = await limitarCadastro({ ip: ipDoPedido(request) });
+
+    if (limite.bloqueado)
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
+        { status: 429, headers: { "Retry-After": String(limite.esperarSegundos) } },
+      );
+    }
+
     const usuario = await cadastrarUsuarioNoSistema(analise.data);
     return NextResponse.json({ usuario }, { status: 201 });
   }
@@ -59,16 +85,27 @@ export async function POST(request: Request)
   {
     if (erro instanceof ErroCampoDuplicado)
     {
+      // Username é público em /u/<username>: dizer "já está em uso" não revela
+      // nada. E-mail não é — o 409 nomeado confirmava quem tem conta (#140).
+      // Vai como falha genérica, no status das validações, sem nomear o campo.
+      if (erro.campo === "username")
+      {
+        return NextResponse.json(
+          { erros: { username: ERRO.JA_EM_USO } },
+          { status: 409 },
+        );
+      }
+
       return NextResponse.json(
-        { erros: { [erro.campo]: "já está em uso" } },
-        { status: 409 },
+        { erros: { _geral: ERRO.CADASTRO_NAO_CONCLUIDO } },
+        { status: 400 },
       );
     }
 
     // Detalhe de banco não entra no corpo — quem precisa olha o log da plataforma.
     console.error("[usuarios] falha ao cadastrar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível concluir o cadastro agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

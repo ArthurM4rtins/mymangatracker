@@ -690,3 +690,552 @@ Cadeia: ... <- #57 <- #58 <- #59.
 
 Cadeia: ... <- #58 <- #59 <- #60. Restam: #53 MangaDex, #56 logo (decisao),
 #16 curadoria.
+
+## Sessao 03/09 — pagina do autor: so autoria e bio com ver mais (#69)
+
+- Cadeia #19->#60 ja mergeada na main; branch nova feature/autor-papel-e-bio
+  a partir da main. Conta gh ativa trocada para NicholasSchlindwein-dev
+  (unica com push); git local do repo aponta para essa conta.
+- Achado: AniList devolve todo o staffMedia, com papel em staffRole. Hara
+  (Kingdom) vinha com Vagabond e Real como Assistant. Papeis vistos na API:
+  Story & Art, Story, Art, Story & Art (vols 1-41), Original Creator,
+  Original Story, Illustration, Illustration (vol 1), Assistant, Assistant
+  (Former), Assistant (Background), Producer.
+- Decisao do usuario: so autoria entra. Dominio ehPapelDeAutoria (regex com
+  sufixo opcional entre parenteses), filtro antes da dedup em mapearAutor.
+  Teste antes, vermelho, depois verde.
+- Bio: componente client BioDoAutor com ver mais/ver menos; botao so quando
+  scrollHeight > clientHeight.
+- Provas: lint 0, 223 unitarios, build verde, print no browser das paginas
+  do Urasawa (ver mais abre/fecha) e do Hara (so os 3 Kingdom).
+- Pendencia da sessao: 48 arquivos de data/story-structures modificados na
+  arvore, herdados de sessao anterior (#16 curadoria) — nao tocados, nao
+  commitados aqui.
+
+## Sessao 03/09 — lote 2 da curadoria narrativa (#16)
+
+- Lote de 44 obras (01/09) estava na arvore sem commit. Contadores batiam,
+  mas 8 arquivos reprovavam no validador do dominio: 7 em formato proprio
+  ({name, range sem unit}) e Fire Force comecando no capitulo 0.
+- Decisoes do usuario: aceitar capitulo 0; Berserk como caso de teste.
+  Achado do Berserk: prologo sem numero na serializacao; listfist numera
+  -16, MangaDex 0.01-0.09, Golden Age no cap. 1. Tracker so registra
+  positivo (zod positive, Decimal(8,2)) -> base e o decimal do MangaDex;
+  negativo segue recusado, com teste nomeando o caso.
+- Validador ganhou: start >= 0, identidade obrigatoria do segmento (key,
+  kind SAGA|ARC, title, status). Teste novo roda o validador nos 100 JSON
+  reais e confere progress.json (quebrado de proposito: ficou vermelho).
+- Os 7 arquivos foram normalizados por script (key slug do nome, kind ARC,
+  position sequencial, unit CHAPTER, status DRAFT); intervalos e fontes
+  intactos.
+- Branch feature/curadoria-lote-2, 6 commits, PR aberto.
+- PENDENTE (nao mexido, ja estava na main): Solo Leveling cap. 61 em dois
+  arcos; Record of Ragnarok 4 sobreposicoes + 2 lacunas; Kaguya 18 lacunas
+  sem registro de intencao. Abrir issue separada.
+- PENDENTE de produto: capitulo 0 e 0.01 passam no validador, mas a API de
+  progresso ainda exige positivo — quando a estrutura for pro banco, decidir
+  se o tracker aceita 0.
+
+## Sessao 03/09 — continuacao: lacunas e sobreposicoes (#16)
+
+- Decisao do usuario: trecho entre arcos vira segmento explicito. Kind novo
+  INTERLUDE no validador (teste antes) e no vault.
+- Solo Leveling: cap. 61 so no Demon Castle (infobox da wiki: 61 = Demon
+  Castle, 62 = Retesting). Ragnarok: 7/13/20/84 abrem o round seguinte
+  (titulos dos capitulos sao do proximo round); 85 e 97 viram INTERLUDE;
+  round 10 = 84 + 86-96. Kaguya: 18 INTERLUDE "Capitulos avulsos N-M".
+- Teste dos 100 JSON ganhou contiguidade entre irmaos (mesmo parentKey):
+  sem sobreposicao, sem lacuna, fim aberto so no ultimo. Quebrado de
+  proposito: vermelho.
+- Fandom bloqueia WebFetch (402); a API MediaWiki
+  (/api.php?action=parse&prop=wikitext) responde ao curl com User-Agent.
+- PR #71 atualizado com esses commits. Nao mergeado por decisao do usuario.
+## Sessao 03/09 — seguir usuarios e curtir perfis (#74)
+
+- Desenho no vault feature-seguir-usuarios (aprovado por pergunta: botao +
+  contagens no perfil, curtida igual a de lista, sem feed nesta rodada).
+- Migration `follow_profile_like` (Follow e ProfileLike, unico por par,
+  Cascade dos dois lados, CHECK de auto-relacao a mao). Aplicada no dev e no
+  teste; `pnpm prisma generate` + reiniciar dev depois (pegadinha do Prisma 7).
+- Dominio social (podeSeRelacionar), repositorio social (toggles + resumo por
+  viewer), servico social (por username; nao_encontrado / a_si_mesmo / ok),
+  perfil.service com bloco `social`, rotas POST /usuarios/:username/seguir e
+  /curtida ({ ativo, total }), tela acoes-sociais no header do perfil.
+- Provas: lint 0, unitarios verdes, test:db 71, build verde, browser: seguir
+  e curtir no /u/leitor2 persistem apos reload; /u/Roca mostra 1 seguindo;
+  anonimo 401, inexistente 404.
+- Ferramenta: para listar usuarios do dev sem expor a URL, script no
+  scratchpad que le o .env (tem BOM — `^DATABASE_URL=` nao casa no grep).
+- Pendente: paginas seguidores/seguindo; aba "Seguindo" no feed (#50).
+- Pendente: paginas seguidores/seguindo; aba "Seguindo" no feed (#50).
+
+## Sessao 03/09 — foto de perfil e vitrine da home (#76)
+
+- Branch feature/home-vitrine-avatar EMPILHADA em feature/seguir-usuarios
+  (o banco dev ja tinha a migration do Follow; sair da main quebrava o
+  migrate dev com "migration missing"). PR com base em feature/seguir-usuarios;
+  depois do merge do #75, rebase/retarget para main.
+- Foto: migration user_avatar (bytes, mime, data no User). Dominio validarAvatar
+  (jpeg/png/webp ate 512 KB), repositorio (bytes so em buscarAvatarPorUsername;
+  teste trava), servico, rotas PUT/DELETE /perfil/avatar e GET
+  /usuarios/:username/avatar (ETag = versao, 304, 404 sem foto, cache
+  imutavel com ?v= na URL). Tela foto-de-perfil: recorte 256x256 JPEG no
+  navegador (canvas), trocar/remover so para o dono.
+  PEGADINHA: Prisma Bytes exige Uint8Array<ArrayBuffer> — copiar com
+  new Uint8Array(bytes) antes do update.
+- Vitrine: repositorios "mais curtidas desde" (groupBy nas curtidas da
+  janela; acumulado antigo nao conta), servico vitrineDaHome (4 trilhos,
+  janela 7 dias, fonte que falha vira vazio), componente Carrossel (rAF sobre
+  scrollLeft, pausa hover/foco, setas, seletor, reduced-motion), cards, home
+  reorganizada: Continuar lendo -> Resenhas -> Listas -> grade 2/3 catalogo
+  (ver mais no fim) + 1/3 atividade recente.
+- Provas: lint 0, unitarios, test:db 77, tsc, build, browser (upload via
+  componente, remover, GET com 304/404/401, home com os dois carrosseis e a
+  grade, aba Mais curtidas).
+- Ferramenta: file_upload do Chrome so aceita arquivo compartilhado com a
+  sessao; para testar upload, DataTransfer + dispatchEvent(change) via JS.
+- Pendente: avatar nos cards do feed/resenhas; ajustar janela quando a
+  comunidade crescer.
+## Sessao 05/09 — modal de resenha transacional (#62)
+
+- Branch feature/resenha-transacional saiu da main (arquivo identico nas duas).
+- #53 (MangaDex por API) FECHADA sem implementar: a extensao (#52/#91) grava a
+  URL real em resolvedUrl, o adapter perdeu razao de existir.
+- Causa raiz da #62 e do sintoma novo (nota mudada no modal + cancelar ficava
+  nas estrelas de fora): ModalDeResenha escrevia direto no estado do pai
+  (setNota/setResenha/setSpoilers). Fechar nao desfazia nada.
+- Fix em avaliacao-da-obra.tsx: modal com rascunho proprio (nota, resenha,
+  spoilers) iniciado do salvo; so Salvar entrega ao pai. Pai nao guarda mais
+  resenha/spoilers em estado — deriva das props (refresh atualiza). Estrela de
+  fora persiste sempre a resenha JA SALVA.
+- Provas: lint 0, 354 unitarios, next build verde (tsc so passou depois de
+  apagar .next/dev/types, lixo do next dev da branch da extensao — rota
+  leitura nao existe na main). Browser com usuario novo teste62: nota 4 no
+  modal + Esc -> fora "sem nota"; rascunho digitado + Esc + estrela 4,5 fora
+  -> 4,5 salva, botao "Resenhar…", texto nao foi; nota 3 + texto + Salvar ->
+  persistiu; texto apagado no modal + fechar + "limpar" fora -> nota null,
+  resenha salva sobreviveu (era o ramo DELETE destrutivo da #62).
+- Pendente: commit + PR; fechar #62 depois de aprovado.
+
+## Sessao 05/09 — continuacao: #67 (doc do seletor) e #61 (progresso manual)
+
+- #67: uma linha em identidade-visual/CLAUDE.md, agora com as duas decisoes
+  (31/08 segmentado, 01/09 swatch). PR #93 mergeado.
+- #61 (TDD): dominio progressoAtual(marcado, maiorAberto) = maior dos dois,
+  null so quando ambos null. abrirCapitulo usa esse valor em proximoCapitulo e
+  progrideEstante (antes so olhava maiorCapitulo e ignorava progressChapter
+  que ja carregava). Fake do teste do servico ganhou progressChapter — era o
+  gap que deixou passar. Desenho no vault (feature-progresso-leitura) corrigido:
+  "nunca divergem" virou "podem divergir, vale o maior".
+- Provas: 8 testes novos vermelhos antes, 363 verdes depois; lint 0; tsc 0.
+- ATENCAO: feature/extensao-navegador (12 commits, sem PR) tambem mexe em
+  progresso.service.ts (promover para Lendo). Vai conflitar no rebase — a
+  resolucao e manter `atual` no lugar de `maior`.
+
+## Sessao 05/09 — continuacao: #63 (obra degrada) e #64 (portao de CI)
+
+- #63 (TDD): buscarCompleta em obraParaPagina agora dentro de try/catch ->
+  indisponivel. Teste "banco fora e indisponivel" vermelho antes, 364 verdes.
+  Prova: next build sem DATABASE_URL + next start -> /, /obra/105398 e
+  /obra/30002 respondem 200 com o aviso. PR #95.
+- #64: .github/workflows/ci.yml (pull_request + push main): install, prisma
+  generate, lint, test, test:db com Postgres 16 de servico
+  (mymangatracker_test), pnpm build SEM DATABASE_URL. Roda em ~1 min.
+  CLAUDE.md: o portao e o CI, a Vercel nao roda lint. PR #96.
+  Prova: PR #97 descartavel com import ui->repository ficou vermelho em 37s
+  no lint; fechado sem merge, branch apagada.
+- ACHADO: o check "Vercel" (preview deployment) falha em TODO PR (#92, #94,
+  #95, #96), enquanto o deploy de producao da main passa. Preexistente, nao
+  investigado — provavelmente env do ambiente Preview. Abrir issue se quiser
+  preview funcionando.
+- PENDENTE de decisao do dono do repo: branch protection na main exigindo o
+  check "lint, testes e build". Sem isso o CI avisa mas nao bloqueia o merge.
+
+## Sessao 05/09 — continuacao: #65, os 50 achados da auditoria
+
+- 8 PRs mergeados na main, cada um com CI verde: #99 indices (migration
+  indices_consultas, com parcial a mao), #100 erros do Prisma discriminados +
+  posicao pelo maximo, #101 paginas degradam + cache() no metadata, #102
+  pequenos de tela, #103 capitulo com duas casas, #104 fonte com query +
+  DELETE de item da lista, #105 health (session_secret, sonda lembrada 30s),
+  #106 lint (sessao por arquivo, globais HTTP barrados).
+- Balanco na issue: 36 feitos, 7 resolvidos por #61/#63/#64, 1 obsoleto,
+  8 AGUARDANDO DECISAO (M15 rate limit, M16 paginacao de comentarios, M17
+  ordem migrate/build, M18 reviewedAt, L5 social ao apagar resenha, L27
+  oraculo de e-mail no cadastro, L28 username case, L30 codigo morto da
+  curadoria). #65 fica aberta como guarda-chuva desses.
+- LICAO (nao foi correcao do usuario, mas mordeu): eslint-plugin-boundaries 7
+  casa `elements` contra PASTA; arquivo individual e `boundaries/files`
+  (category), e as policies usam `file: { categories }`. O debug
+  (ESLINT_PLUGIN_BOUNDARIES_DEBUG=1) avisa isso.
+- Heredoc do bash com script Python grande quebra no parser da ferramenta;
+  escrever o script em arquivo no scratchpad e rodar.
+- Testes: 376 unitarios, 76 test:db.
+
+
+## Sessao 05/09 — continuacao: i18n desenhada, 8 decisoes da auditoria resolvidas
+
+- #116 i18n: desenho em Obsidian/02. Implementacoes/feature-i18n/CLAUDE.md,
+  APROVADO (D1 fallback en, D2 prefixo sempre, D3 next-intl 4.14, D4 messages
+  por tela, D5 erros por codigo, D6 formatos, D7 titulo, D8 lint em duas
+  regras, D9 extensao). Proximo: branch feature/i18n-infra (fase 1).
+- Decisoes da auditoria, todas fechadas: #110 manter ordem migrate->build
+  (registrado); #115 README em data/story-structures; #111 reviewedAt avanca
+  quando a resenha nasce (repositorio, TDD); #112 apagar texto leva
+  curtidas/comentarios na transacao + confirm na tela; #108 AuthAttempt +
+  limite.service (login 5/15min por ip+email, 30/h por ip; cadastro 5/h por
+  ip; 429 + Retry-After; provado ao vivo); #113 fechada pela mitigacao do
+  #108; #109 comentarios: 20 por resenha + total + GET paginado por cursor de
+  id + teto 30/h por usuario; #114 User.usernameNormalizado unico com
+  backfill, perfil/foto resolvem em qualquer caixa.
+- ERRO MEU: mergeei #124 (#114) com o CI vermelho — encadeei checks e merge
+  sem condicionar. O vermelho era teste flaky da #109 (ordem por createdAt no
+  mesmo ms). Hotfix: desempate por id + cursor por id. Licao em lessons.md.
+- Migration username_normalizado tem timestamp local (1415) e ordena antes
+  das de UTC (1525, 1701). Inofensivo; nao renomear (mexeria em
+  _prisma_migrations dos bancos locais).
+- Nao ha banco de producao ainda (05/09, confirmado pelo usuario: o site nao
+  foi lancado). As migrations de hoje (indices, auth_attempt,
+  username_normalizado) vao rodar num banco vazio no primeiro deploy — a
+  checagem de colisao de username nao se aplica.
+- Abertas: #116 (i18n), #91/#52 (extensao), #16 (curadoria).
+
+
+## Sessao 05/09 — continuacao: extensao de navegador (#52 servidor, #91 cliente)
+
+- Servidor: rebase de feature/extensao-navegador (12 commits) na main. Conflito so
+  no fake do teste de progresso (progressChapter do #61 + status); o servico
+  casou sozinho. ACHADO no caminho: registrarLeituraExterna ignorava
+  progressChapter (mesmo furo do #61) — corrigido com progressoAtual, TDD.
+  PR #128. 456 unitarios.
+- Cliente: extension/ na raiz (manifest MV3, comum.js, popup.*, background.js,
+  README). Sem bundler. Sessao: cookie kidoku_sessao lido em
+  mymangatracker.vercel.app e depois localhost:3000 — o primeiro com cookie
+  ganha, zero config. Pareamento host+slug (ou host+nome do titulo) ->
+  entradaId em chrome.storage.local (DESVIO do desenho: nao em ReadingSource,
+  registrado no vault). Badge no service worker. PR #129.
+- Dominio de producao existe: mymangatracker.vercel.app (503 no health porque
+  nao tem banco). host_permissions destravado.
+- Funcoes puras provadas no Node com chrome stub (MangaFire, MangaDex, Manga
+  Livre, "Vagabond 2" sem chute). NAO TESTADO no Chrome com sessao real: a
+  automacao nao instala extensao — passo do usuario, ver extension/README.md.
+- Pendentes da extensao (vault): icones, mais sites no teste de titulo, key do
+  manifest antes da Store, i18n do popup junto da #116, adicionar obra nova
+  pela extensao (issue propria a abrir).
+- Abertas: #116 (i18n) e #16 (curadoria).
+
+
+## Sessao 07/09 — #116 internacionalizacao, as cinco fases
+
+Cinco PRs empilhados, cada um com `lint, testes e build` verde: #149 (infra),
+#150 (ingles), #151 (erro por codigo + extensao), #152 (formatos), #153 (conta).
+A base de cada um e a branch do anterior — mergear na ordem.
+
+- 346 strings do site + 31 da extensao fora do codigo. 16 plurais a mao viraram
+  ICU. 40 codigos de erro levantados dos 125 pontos reais em 21 rotas, com ZERO
+  status HTTP alterado (conferido por script contra o HEAD).
+- Desvios de desenho, todos com motivo medido e registrados no vault: D5 (Zod
+  com codigo no `message`, nao `customError`), D6 (data no `Intl` nativo, nao
+  `useFormatter` — o `timeZone` do next-intl e resolvido no servidor e viaja ate
+  o cliente), D2 (o login escreve o cookie de idioma; o proxy nao abre JWT na
+  borda). O da D2 foi decidido com o dono do repo.
+- Decisoes do dono do repo em 07/09: 401 num codigo so (`sessao_necessaria`);
+  status da estante no estilo MyAnimeList; **"obra" NAO traduzida** — fica em
+  portugues tambem no ingles, com pendencia aberta para rediscutir.
+
+### DOIS DEFEITOS QUE PASSARAM POR LINT, TESTE E BUILD
+
+Achados so rodando o app. Vale como regra: verde nos tres nao prova tela.
+
+1. O matcher do proxy barrava TODO link antigo — `/catalogo` dava 404. O ponto
+   escapado virou ponto solto no literal TypeScript e o lookahead negativo
+   passou a excluir quase toda rota. Consertado com a classe `[.]` e coberto por
+   `tests/i18n/proxy-matcher.test.ts`, que LE `src/proxy.ts`: `matcher` e
+   analisado estaticamente pelo Next, entao testar uma copia nao serve — a copia
+   pode estar certa enquanto o que roda esta errado, que foi o que aconteceu na
+   primeira tentativa de conserto (constante importada e ignorada em silencio,
+   com /api/v1/health levando redirect de idioma).
+2. Trocar de idioma apagava o tema escolhido. O `lang` do `<html>` muda, o React
+   re-renderiza o elemento e leva junto o `data-theme` que o script inline poe —
+   `suppressHydrationWarning` so vale na hidratacao, nao em update. O seletor
+   passou a recarregar o documento.
+
+### Acrescentar um idioma ficou barato — e o furo que fechou junto
+
+Os testes importavam `pt-BR.json` e `en.json` PELO NOME: um `es.json` novo nao
+seria conferido por nada. Agora saem de `routing.locales`, e entrou a regra que
+faltava — CATEGORIA DE PLURAL do CLDR (russo pede one/few/many/other, arabe seis,
+japones so other). Copiar o one/other do ingles para o russo passava em tudo.
+
+Passo a passo em `messages/README.md`. Nao ficou automatico: subset de fonte
+para outro alfabeto, e RTL (~29 classNames com lado fisico).
+
+### Pendencias
+
+- **NAO PROVADO AO VIVO**: o login escrevendo o cookie de idioma (exige
+  autenticar). Cada elo esta provado em separado. Verificacao de 20s: trocar o
+  idioma logado, sair, entrar de novo.
+- Termo "obra" no ingles, para rediscutir (candidatas anotadas no vault).
+- Contagem nao passa pelo `#` do ICU: "1000 curtidas" viraria "1.000 curtidas".
+- `updatedAt` do User avanca a cada troca de idioma (`@updatedAt`).
+- Pre-existente, nao investigado: o check "Vercel" falha em todo PR desde o #92,
+  com o deploy de producao da main passando. Nao piorou nesta sessao.
+
+
+## Sessao 07/09 — continuacao: cinco idiomas e as pendencias fechadas
+
+Espanhol (#159), frances (#160) e alemao (#161) entraram, e as decisoes que
+estavam em aberto foram tomadas e aplicadas (#163). Tudo mergeado e verificado
+em producao: os cinco idiomas respondem 200 e a negociacao por Accept-Language
+manda cada um para o prefixo certo.
+
+### Acrescentar idioma custa uma linha + dois arquivos
+
+`routing.locales`, `messages/<lang>.json` (346 strings) e
+`extension/_locales/<lang>/messages.json` (31). Nada de codigo de tela. Receita
+em `messages/README.md`.
+
+### Cada idioma novo achou um furo no proprio portao
+
+Isso e o padrao da sessao, e vale esperar que continue:
+
+- **espanhol**: o teste importava `pt-BR.json` e `en.json` PELO NOME — um `es.json`
+  novo nao seria conferido por nada. Passou a sair de `routing.locales`.
+- **espanhol de novo**: `{n, plural, =1 {…} other {…}}` caia no atalho de
+  "invariavel" que existia para o `seguindo`, entao os plurais do PROPRIO
+  portugues nunca tinham sido conferidos e o `many` do espanhol nunca era
+  cobrado. `=1` passou a contar como cobrindo `PluralRules.select(1)`.
+- **frances**: catalogo copiado e nao traduzido passava em TODAS as regras.
+  Virou portao com corte medido — ingles e frances repetem 4% do portugues,
+  espanhol 19%, copia 100%, corte em 50%.
+
+### Aprendizado de idioma que vale registrar
+
+`=1` NAO e `one`. `select(0)` e `other` em en/es, mas `one` em pt-BR e fr — por
+isso `=1`/`other` em frances produz "0 chapitres" quando o frances escreve
+"0 chapitre". O pt-BR usa `=1` DE PROPOSITO: pelo CLDR o portugues tambem manda o
+zero para `one`, mas quem escreve em portugues diz "0 obras". Documentado.
+
+### Pendencias fechadas
+
+- **"obra" traduzida por idioma**: en=series, fr=œuvre, de=Werk, es=obra (ja e
+  palavra do espanhol). O alemao forcou a decisao: exige genero em cada frase,
+  entao `obra` carimbava genero inventado e o plural saia "die Obras".
+- **NOVEL** vira "Novel" nos cinco: manga/manhwa/manhua sao emprestimos que
+  ninguem traduz, e o quarto rotulo da linha nao tinha por que ser diferente.
+- **Abas alemas** Abgeschlossen/Abgebrochen viraram Fertig/Abbruch — as duas
+  estavam CERTAS, o problema era dividirem o prefixo "Abge-" e se confundirem.
+- **Contagem** continua sem separador de milhar, por decisao.
+- **`User.updatedAt`**: investigado, NAO mudado. Ninguem le esse campo — os
+  unicos usos de `updatedAt` no codigo sao do `ShelfEntry`. Sem efeito observavel.
+
+### Aberto
+
+- **#162** — o check da Vercel falha em TODO preview e passa em TODA producao,
+  mesmos commits. Isso descarta codigo e aponta variavel de ambiente; a hipotese
+  (DATABASE_URL presente no Preview mas sem conectar, derrubando o
+  `migrate deploy` do build) e o comando para confirmar estao na issue. Precisa
+  de acesso a Vercel.
+- **#158** — canal para o usuario apontar erro de traducao. Ficou mais importante:
+  cinco idiomas e nenhum revisor nativo no time.
+- **Revisao nativa** de es, fr e de. Cada um tem `messages/revisao/<lang>.md` com
+  as chaves de maior risco marcadas pelos agentes — ~80 a 180 linhas em vez das
+  346 strings. A secao de FALSO AMIGO e a que mais importa: sao palavras CERTAS
+  que um revisor lusofono vai querer "corrigir" para o cognato do portugues.
+- **Proximos idiomas** mudam de natureza: id nao tem revisao possivel; ru precisa
+  de subset cirilico e 4 formas de plural; ja/ko/zh precisam de subset; ar/he
+  precisam de RTL (~29 classNames com lado fisico). Decidido parar em cinco.
+
+
+## Sessao 08/09 — teste manual da extensao, Continuar leitura, login por nome
+
+Comecou como "testar a #142" e virou a maior bateria manual da extensao ate aqui:
+13 casos no Chrome com a extensao carregada sem compactacao, MangaDex e MangaFire
+reais, duas contas. Cinco PRs na `main`, todos com o job do CI verde antes do merge.
+
+### Fechado
+
+- **#142** — a URL da aba aparece antes do clique (altura travada em 3 linhas, o
+  excesso ROLA em vez de cortar: o segredo mora no fim da string) e o fragmento
+  nao vai mais para o banco. `?token=…&code=…#pagina-3` gravou sem o `#pagina-3`;
+  `/painel#access_token=abc123` gravou `/painel`.
+- **#167, #168** — dois bugs pre-existentes da extensao que so apareceram porque o
+  popup foi usado de verdade: `No tab with id` no badge quando a aba fecha no
+  meio, e `.formulario { display: flex }` sobrepondo o atributo `hidden` — o
+  formulario NUNCA escondia, em nenhum estado de erro, desde a #91.
+- **#170** — o botao "Abrir a obra" usava a `ReadingSource` colada a mao e ignorava
+  o `resolvedUrl` que a extensao grava. Conta `Roca`: progresso no 94, botao
+  abrindo o capitulo 2. Decisao: a extensao vira a UNICA fonte do ultimo link,
+  o "Trocar fonte"/"Configurar leitura" sai inteiro, o botao vira "Continuar
+  leitura". Tracking passa a exigir a extensao; o site fica com estante, resenhas
+  e avaliacoes. Desenho em `Obsidian/02. Implementacoes/feature-continuar-leitura/`.
+- **#166** — entrar por e-mail OU nome de usuario no mesmo campo. A arroba decide,
+  no dominio. Nome inexistente paga o mesmo scrypt: 0,090s vs 0,099s medidos.
+- **#175** — confirmar antes de sair, modal do site, foco no Cancelar, Esc cancela.
+
+### O que os dados reais ensinaram
+
+- **"Ultimo" e "maior" sao coisas diferentes.** A primeira versao do Continuar
+  leitura ordenava por `openedAt`; a `Roca` tinha 94 no MangaDex e depois 70 no
+  MangaFire, e o botao voltaria para o 70. Trocado para o capitulo mais avancado,
+  com teste de BANCO — ordenacao so se prova no banco: como texto, "9.5" vem
+  depois de "57.5".
+- **Progresso pertence a obra, nao ao site** — a invariante do CLAUDE.md foi
+  verificada ponta a ponta pela primeira vez: 94 registrado no MangaDex apareceu
+  como "no cap. 94" ao abrir o MangaFire, e registrar o 70 la respondeu "estante
+  segue no 94".
+- **A regex do capitulo ignora o numero da pagina.** MangaDex poe `1 | Chapter 68`
+  no titulo; a exigencia da palavra `Chapter` antes do numero pegou o 68 e nao o 1.
+- **AniList desligou a API** (403 "temporarily disabled due to severe stability
+  issues"). Nao e rede nem rate limit. O catalogo degrada certo, mas fica vazio
+  mesmo com 15 obras em cache: #165.
+
+### Aberto
+
+- **#165** — cache-first no catalogo, so no fallback.
+- **#171 → #172 → #173** — serie da extensao: casar o nome do titulo com a
+  estante e pre-selecionar; corrigir progresso PARA TRAS apagando aberturas acima
+  do capitulo escolhido (marcar menor nao desce: `progressoAtual` e MAX); registro
+  automatico, bloqueado pela #172 porque sem desfazer o erro e permanente.
+- **#176** — recuperacao de senha por e-mail. Tres invariantes na issue: nao
+  enumerar, teto por pedido, e redefinir precisa encerrar sessoes — que depende
+  da #137 (sair nao revoga o JWT).
+- **`ReadingSource`** ficou no schema sem receber linhas novas. Remocao vira issue
+  propria quando estiver comprovadamente sem uso; esperar a #172.
+- **Nao testado na extensao**: os 5 idiomas (exige trocar o idioma do Chrome) e
+  producao (`host_permissions` aponta para a Vercel, so testamos em localhost).
+
+## Sessao 08/09 — continuacao: #171, #172 e o que abriu no caminho
+
+### Fechado
+
+- **#171** — o popup pre-seleciona a obra pelo nome no titulo da aba. Casa TODOS os
+  pedacos do titulo com romaji, ingles e nativo (em `1 | Chapter 68 - Berserk -
+  MangaDex` o maior pedaco e o site, nao a obra — foi o primeiro teste a falhar).
+  `titleNative` entrou no DTO da estante para o caso do site em outra lingua.
+  Detalhe que so o teste pegou: NFC depois de tirar acentos latinos, senao o Hangul
+  fica em jamo solto. Dominio em `obra-do-titulo.ts`, espelhado em `comum.js`.
+- **#172** — mudou de forma no meio: o desenho original era "corrigir para N com
+  contagem por faixa"; o usuario preferiu **reset + marcacao manual**. Parte 2 (#183):
+  reset no card da estante, apaga o historico E zera o `progressChapter` na mesma
+  transacao (o progresso e o MAX dos dois — apagar um lado so nao corrige nada), com
+  confirmacao numerica. Parte 1 (#184): a extensao so registra capitulo que avanca,
+  regra no SERVIDOR (`nao_avanca` 409 com o progresso); releitura deixou de existir.
+  Ordem deliberada: o reset entrou antes para nunca haver intervalo sem desfazer.
+- **#166, #175** — login por nome de usuario; confirmar antes de sair.
+
+### Aberto
+
+- **#173** — registro automatico. Destravado: "so avanca" + reset cumprem a decisao 10
+  do desenho da extensao. Inverte tambem a decisao 8 (background nunca escreve).
+  Pede desenho no Obsidian.
+- **#181** — badge acende com par salvo por OUTRA conta no mesmo navegador. O popup
+  ja checa o `entradaId` contra a estante logada; o `background.js` nao.
+- **#176** — recuperacao de senha; **#182** — ideia da estante de lombadas; **#165**.
+
+### Dado de teste
+
+Conta `provadona` (`provadona@teste.local`): senha regravada nesta sessao, so no banco
+local, anotada em `tasks/lessons.md`. Berserk esta no cap. 3 depois dos testes.
+
+## Sessao 09/09 — prateleira vira estante, e o AniList fora
+
+### Contexto que manda em tudo
+
+O AniList responde **403** no GraphQL desde 06/09 (#215, aberta). Todo o catalogo,
+a home, a pagina da obra e agora o adicionar na estante vivem do **Kitsu**, que tem
+63.065 obras contra as ~300 mil do AniList. O espelho proprio (#219, desenho no
+Obsidian em `02. Implementacoes/feature-acervo-proprio/`) segue esperando o AniList
+voltar, e a pendencia de tamanho do banco continua de pe.
+
+### Fechado
+
+- **#222, #225, #229, #234** — a prateleira virou estante de verdade. Sem cabecalho
+  "01 · N obras" e sem setas; os andares ficam colados; o trilho nao rola. A
+  prateleira **mede a propria largura** e enche cada andar com o que cabe
+  (`componentes/andares.ts`, com teste em `tests/ui/`). So um livro aberto por vez:
+  quando outro abre, a vitrine fecha, entao a largura total nao muda e o ultimo
+  livro abre sem estourar. Home: 36 populares, teto de 9 por andar — o andar fecha
+  **cheio** apertando a capa aberta ate 120 px. Catalogo: sem teto, cada andar leva
+  o que couber. Grupo com nome proprio (estante por status, laboratorio) mantem so
+  o nome em cima do primeiro andar — **decisao do usuario**, contra tirar o nome ou
+  manter a contagem.
+- **#227** — "+ Estante" respondia "nao deu" para toda obra fora do cache:
+  `adicionarNaEstante` e `obraParaPagina` so sabiam buscar no AniList. Agora descem
+  para o Kitsu. O Kitsu nao conhecer a obra **nao** vira "nao encontrada" quando ha
+  cache velho: o acervo dele e menor.
+- **#228** — o catalogo dizia "chegou ao fim" com ~55 obras. Duas causas: a pagina
+  pedia 36 da fonte e o dominio descartava parte (`oneshot`, `oel`, obra sem
+  mapeamento), entao o offset seguinte pulava o descartado; e `temMais` era a
+  contagem depois do descarte. Agora a pagina cobre uma **fatia fixa de 60 obras da
+  fonte** e o `temMais` e resposta da fonte. Provado: 4 paginas, 230 obras
+  distintas, nenhuma repetida. A vitrine do Kitsu passou a ser lembrada por 30 s,
+  como a do AniList.
+
+### Aberto
+
+- **#215** — AniList fora, sem previsao. Nada a fazer alem de esperar e monitorar.
+- **#176** (recuperacao de senha) e **#16** (curadoria narrativa), os dois no backlog.
+
+### Proxima sessao — 11/09: REBRANDING
+
+Decidido pelo usuario em 10/09, ao encerrar: a proxima sessao e o **rebranding do
+produto**. Logo novo e varredura total de onde estiver escrito "Kidoku".
+
+**Ler antes de mexer em qualquer coisa:**
+`Obsidian/05. Divulgacao/rebrand-folunio.md` — tem o roteiro, as armadilhas medidas
+e o custo. Nao redescobrir o que ja esta anotado la.
+
+Resumo do que esta decidido e do que nao esta:
+
+- **Candidato: Folunio** = Folha + Universo (definicao do usuario). Nome **ainda nao
+  fechado** — fechar isso e o passo 0 da sessao.
+- Motivo da troca: existe **outro Kidoku na mesma categoria** (`kidoku.net`, app de
+  registro de leitura). Isso torna **falsa** a premissa registrada em
+  `Obsidian/02. Implementacoes/identidade-visual/CLAUDE.md` de 31/08, que dizia que
+  nenhum tracker de leitura usava o nome. Corrigir la durante o rebrand.
+- O **既読** do logo morre com o nome: e o kanji de "lido". O double-check pode ficar.
+- Nome aparece em **29 arquivos** de `src/`, `extension/` e `messages/`.
+- Quatro armadilhas que find-and-replace cego nao pega: `kidoku-tema` esta em DOIS
+  lugares (`seletor-tema.tsx:18` e o script anti-flash em `layout.tsx:67` — errar um
+  quebra em silencio); `kidoku_sessao` esta no servidor E na extensao (`sessao.ts:13`,
+  `extension/comum.js:14`, mesmo commit ou a extensao perde a sessao, e trocar
+  desloga todo mundo); `eslint.config.mjs` tem "Kidoku" e "既読" na allowlist do
+  `react/jsx-no-literals`; `messages/*.json` nos 5 idiomas.
+- Renomear tambem o arquivo `nota-kidoku.tsx` e os `_locales` da extensao.
+- **Sequencia:** rebrand ANTES de publicar a extensao na Chrome Web Store (pendencia
+  no `extension/README.md`) e ANTES de abrir conta em rede social. Nome de listagem
+  de loja e dificil de mudar depois.
+- **Nao existe issue ainda** — abrir depois de fechar o nome.
+
+Travado por isso: a fase 1 do plano de divulgacao
+(`Obsidian/05. Divulgacao/redes-sociais/CLAUDE.md`) nao comeca antes do nome fechar.
+
+**PR #266 esta em DRAFT de proposito, esperando este rebrand.** Decisao do usuario
+em 10/09: nao mergear o plano de divulgacao antes do nome, porque ele esta escrito
+inteiro como Kidoku e precisaria ser reescrito no dia seguinte.
+
+Ordem: fechar o nome -> rebranding -> corrigir o plano -> tirar do draft -> mergear.
+O que precisa mudar la esta listado no comentario do proprio #266: decisao 1, a
+estrategia de handle, a pendencia de dominio, a pendencia 3 (trocar a mencao nao
+verificada ao Kenmei pelo achado real do `kidoku.net`) e a fase 1.
+
+Os outros dois PRs desta leva nao dependem do nome e podem mergear antes: **#265**
+(desenho do PWA, ver #264) e **#267** (este handoff e o doc do rebrand).
+
+O pedido anterior de **design de telas e botoes** (09/09) continua na fila, atras do
+rebranding.
+
+### Como provar cada coisa
+
+`pnpm dev` sobe **com banco e sessao logada** (usuario `prova146b1788961683`): e
+onde se prova estante, listas, perfil e o botao de adicionar. O build de producao
+local (`pnpm build && pnpm start --port 3002`) e o certo para medir HTML e payload,
+e o unico onde o laboratorio da prateleira **nao** existe (`notFound()` fora de
+desenvolvimento). Aba do Chrome minimizada mente: congela transicao CSS, nao casa
+`:focus` e faz o screenshot estourar o tempo — ver `tasks/lessons.md`.
+
+### Dado de teste
+
+My Hero Academia entrou na estante da conta de desenvolvimento como **Planejado**,
+ao provar o #227 de ponta a ponta. Da para tirar pela propria tela da obra.

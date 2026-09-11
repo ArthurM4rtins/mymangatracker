@@ -1,0 +1,143 @@
+.colecao { min-width: 0; }
+/* A barra só carrega o seletor de visualização, então ele fica à direita
+   sozinho. A contagem de obras saiu daqui (#251): as obras estão logo abaixo e
+   o número não dizia nada que a tela já não mostrasse. */
+.barra { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 1rem; margin-bottom: 1.75rem; }
+.modos { display: flex; padding: 4px; border: 1px solid var(--borda); border-radius: 9px; gap: 3px; }
+.modos button { display: flex; align-items: center; gap: .5rem; padding: .55rem .85rem; border-radius: 5px; color: var(--texto-suave); font-size: .8rem; cursor: pointer; }
+.modos button[aria-pressed="true"] { background: var(--texto); color: var(--fundo); }
+.colecao button:focus-visible { outline: 2px solid var(--acento); outline-offset: 4px; }
+.prateleiras { display: flex; flex-direction: column; gap: 2.75rem; }
+/* Andares simples: sem cabeçalho, colados um no outro como numa estante. */
+.prateleiras[data-simples] { gap: .5rem; }
+/* O nome do grupo (o status, na estante) respira antes do primeiro andar dele. */
+.nomeDoGrupo { margin-bottom: .35rem; font-weight: 600; font-size: 1rem; }
+.secao[data-simples]:has(.nomeDoGrupo) { margin-top: 1.75rem; }
+.secao[data-simples]:has(.nomeDoGrupo):first-child { margin-top: 0; }
+.secao[data-simples] .movel { margin-top: 0; }
+/* Sem rolagem: os nove cabem na largura porque a vitrine fecha quando outro livro abre. */
+.secao[data-simples] .trilho { padding-inline: var(--recuo-do-trilho); gap: var(--vao); overflow-x: hidden; }
+.dica { margin-bottom: -1rem; color: var(--texto-suave); font-size: .75rem; line-height: 1.7; }
+.secao { min-width: 0; }
+.cabecalho { display: flex; justify-content: space-between; align-items: center; gap: .75rem; }
+.identificacao { display: flex; align-items: baseline; flex-wrap: wrap; gap: .75rem; }
+.numero { font-size: .7rem; font-variant-numeric: tabular-nums; color: var(--acento); letter-spacing: .06em; }
+.identificacao h2 { font-weight: 600; font-size: 1rem; }
+.quantidade { font-size: .7rem; color: var(--texto-suave); }
+.setas { display: flex; gap: .4rem; }
+.setas button { border: 1px solid var(--borda); border-radius: 50%; width: 36px; height: 36px; cursor: pointer; }
+.setas button:hover:not(:disabled) { background: var(--superficie); border-color: var(--texto-suave); }
+.setas button:disabled { opacity: .25; cursor: default; }
+.movel { position: relative; margin-top: .75rem; }
+.trilho { display: flex; align-items: flex-end; gap: 5px; padding: 30px 22px 0; overflow-x: auto; overflow-y: hidden; min-height: 306px; list-style: none; scrollbar-width: thin; scrollbar-color: var(--borda) transparent; overscroll-behavior-x: contain; cursor: grab; background: linear-gradient(0deg, color-mix(in srgb, var(--texto) 5%, transparent), transparent 65%); }
+.trilho:active { cursor: grabbing; }
+.livro { position: relative; flex: 0 0 auto; width: var(--largura-lombada); height: var(--altura-livro); perspective: 900px; transition: width 280ms ease; }
+.volume { display: block; position: relative; width: 100%; height: 100%; text-align: left; border-radius: 3px 5px 2px 2px; background: var(--cor-lombada); box-shadow: 3px 0 5px #0003, inset 1px 0 #ffffff30; cursor: pointer; user-select: none; -webkit-user-select: none; transform-origin: bottom left; transition: transform 280ms ease, box-shadow 280ms ease; }
+.lombada { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; padding: 13px 4px 11px; overflow: hidden; border-radius: inherit; color: #fff9ee; background: var(--cor-lombada); }
+.lombada::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #0005, #ffffff15 12%, transparent 24%, #0003 90%, #0006); pointer-events: none; }
+.recorte { object-fit: cover; opacity: .18; filter: saturate(.7); }
+.selo, .marca, .tituloLombada { position: relative; z-index: 1; }
+.selo { padding-bottom: 9px; border-bottom: 1px solid #ffffff50; }
+.selo svg { display: block; width: 16px; height: auto; overflow: visible; }
+.tituloLombada { writing-mode: vertical-rl; flex: 1; min-height: 0; margin: 12px 0; font-size: 13px; font-weight: 600; line-height: 1.2; letter-spacing: .025em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 1px 2px #0008; }
+.marca { font-size: 12px; }
+.capa { position: absolute; inset: 0; z-index: 2; overflow: hidden; opacity: 0; border-radius: inherit; background: var(--cor-lombada); transition: opacity 180ms ease; pointer-events: none; }
+.capa::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #0006, #ffffff25 3%, #0002 6%, transparent 10%); border: 1px solid #0002; border-radius: inherit; }
+.capa img { object-fit: cover; }
+.tituloCapa { position: absolute; inset: auto 0 0; padding: 30px 12px 13px; background: linear-gradient(transparent, #000d); color: white; font-size: 12px; line-height: 1.4; font-weight: 600; }
+/* `:focus-visible`, não `:focus-within` (#241): ao fechar o painel o foco volta
+   para o botão que o abriu, e com `:focus-within` aquele livro ficava aberto
+   para sempre depois de um clique de mouse. O teclado continua abrindo o livro
+   que recebe o foco — é assim que quem navega por Tab sabe onde está. */
+.livro[data-vitrine], .livro:has(:focus-visible) { width: var(--largura-aberta, 168px); }
+.livro[data-vitrine] .capa, .livro:has(:focus-visible) .capa { opacity: 1; }
+/* Só um livro aberto por vez: quando outro abre, os demais voltam a ser lombada,
+   e a largura total do trilho não muda — o último livro abre sem estourar. As
+   regras miram QUALQUER livro aberto, não só a vitrine: mirando só nela, o livro
+   focado e o livro sob o mouse abriam juntos e o andar estourava (#241).
+   `:has()` não aninha dentro de `:has()` — o seletor inteiro seria descartado —,
+   e aqui não precisa: o único focável dentro do trilho é o botão do livro. */
+.trilho:has(:focus-visible) .livro:not(:has(:focus-visible)):not(:hover) { width: var(--largura-lombada); }
+.trilho:has(:focus-visible) .livro:not(:has(:focus-visible)):not(:hover) .capa { opacity: 0; }
+.livro:has(:focus-visible) .volume { transform: translateY(-10px) rotateY(-8deg); box-shadow: 9px 12px 14px #0003; }
+@media (hover: hover) and (pointer: fine) {
+  .livro:hover { width: var(--largura-aberta, 168px); }
+  .livro:hover .capa { opacity: 1; }
+  .trilho:has(.livro:hover) .livro:not(:hover) { width: var(--largura-lombada); }
+  .trilho:has(.livro:hover) .livro:not(:hover) .capa { opacity: 0; }
+  /* O mouse manda enquanto está na prateleira: o livro que ficou com o foco
+     do teclado baixa junto com os outros, senão sobrava uma lombada erguida. */
+  .trilho:has(.livro:hover) .livro:not(:hover) .volume { transform: none; box-shadow: 3px 0 5px #0003, inset 1px 0 #ffffff30; }
+  .livro:hover .volume { transform: translateY(-10px) rotateY(-8deg); box-shadow: 9px 12px 14px #0003; }
+}
+/* Arrastando (#242): a base fecha tudo, e logo abaixo uma exceção reabre a capa
+   congelada. Fechar por hover e por foco é o que interessa aqui: livro que abre
+   sob o ponteiro muda de largura no meio do gesto e o alvo do solto vira
+   loteria. As regras vencem hover, foco e vitrine porque desligam a origem de
+   cada um. */
+.prateleiras[data-arrastando] .livro { width: var(--largura-lombada); }
+.prateleiras[data-arrastando] .capa { opacity: 0; }
+.prateleiras[data-arrastando] .volume { transform: none; box-shadow: 3px 0 5px #0003, inset 1px 0 #ffffff30; }
+.prateleiras[data-arrastando] .trilho { cursor: grabbing; }
+/* A exceção: a capa congelada na pegada continua aberta. Existe sempre
+   exatamente um livro aberto no andar, e nunca é o da mão, então a largura
+   total não muda durante o gesto — era ela mudando que encolhia a prateleira
+   uns 120px na pegada e fazia os alvos fugirem do cursor.
+   Precisa empatar em especificidade com as regras de hover e foco que fecham
+   os outros livros, e vir depois delas, senão passar o mouse fechava esta capa
+   e a prateleira voltava a se mexer. */
+.prateleiras[data-arrastando] .livro[data-vitrine]:not([data-arrastado]) { width: var(--largura-aberta, 168px); }
+.prateleiras[data-arrastando] .livro[data-vitrine]:not([data-arrastado]) .capa { opacity: 1; }
+/* O livro na mão fecha como os outros e segue o ponteiro: arrastar uma capa
+   aberta pela prateleira lê estranho, e o que resolve o "nada se mexe" é ele
+   acompanhar o cursor, não o tamanho. Solto na posição 1, ele reabre sozinho
+   porque volta a ser a vitrine do andar.
+   Sem transição, senão o livro corre atrás do cursor com atraso.
+   `pointer-events: none` é o que faz o gesto funcionar: o cursor está grudado
+   neste livro, então ele seria SEMPRE o resultado do teste de acerto e nenhum
+   destino apareceria. Fora do teste, quem responde é o livro de baixo. */
+.prateleiras[data-arrastando] .livro[data-arrastado] {
+  transform: translateX(var(--deslize, 0px));
+  transition: none;
+  pointer-events: none;
+  z-index: 3;
+}
+.prateleiras[data-arrastando] .livro[data-arrastado] .volume { transform: translateY(-12px); box-shadow: 10px 14px 22px #0005; outline: 2px solid var(--acento); outline-offset: 2px; }
+/* O texto não pode ser selecionado no meio do gesto, nem no toque nem no mouse. */
+.prateleiras[data-arrastando] { user-select: none; -webkit-user-select: none; }
+.livro[data-obra] .volume { cursor: grab; }
+
+.base { position: relative; height: 15px; border-top: 2px solid color-mix(in srgb, var(--superficie) 75%, var(--borda)); border-bottom: 1px solid var(--borda); border-radius: 1px 1px 3px 3px; background: linear-gradient(var(--borda), color-mix(in srgb, var(--borda) 65%, var(--fundo))); box-shadow: 0 13px 18px -12px color-mix(in srgb, var(--texto) 45%, transparent); }
+.dialogo { position: fixed; inset: 0; width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: var(--texto); }
+.dialogo::backdrop { background: #0007; backdrop-filter: blur(3px); }
+.painel { position: absolute; inset: 0 0 0 auto; width: min(100%, 440px); overflow-y: auto; overscroll-behavior: contain; padding: 1.5rem; background: var(--fundo); border-left: 1px solid var(--borda); box-shadow: -12px 0 60px #0002; animation: abrir 200ms ease-out; }
+.topoPainel { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-bottom: 1px solid var(--borda); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+.topoPainel p { font-size: .75rem; color: var(--texto-suave); }
+.topoPainel button { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--borda); cursor: pointer; }
+.topoPainel button:focus-visible { outline: 2px solid var(--acento); outline-offset: 3px; }
+.cardDetalhe { list-style: none; }
+.cardDetalhe > li { flex-direction: column; border: 0; background: transparent; padding: 0; gap: 1.5rem; }
+.cardDetalhe > li > a { align-self: center; }
+.cardDetalhe > li > a > img { width: 176px; height: 264px; box-shadow: 5px 8px 20px #0003; }
+.cardDetalhe h2 { font-size: 1.5rem; margin-bottom: .5rem; }
+.cardDetalhe h2, .cardDetalhe p { -webkit-line-clamp: unset; }
+.cardDetalhe > li[data-cartao-obra] > a { align-self: stretch; gap: 1.5rem; }
+.cardDetalhe > li[data-cartao-obra] > a > img,
+.cardDetalhe [data-capa-vazia] { align-self: center; width: min(100%, 176px); height: auto; aspect-ratio: 2 / 3; }
+.cardDetalhe [data-titulo-obra] { font-size: 1.5rem; font-weight: 600; color: var(--texto); -webkit-line-clamp: unset; overflow-wrap: anywhere; }
+@keyframes abrir { from { opacity: 0; translate: 24px 0; } to { opacity: 1; translate: 0 0; } }
+/* Tela estreita: os nove não cabem, então o andar simples volta a rolar. */
+@media (max-width: 720px) {
+  .secao[data-simples] .trilho { overflow-x: auto; }
+}
+@media (max-width: 480px) {
+  .trilho { padding-inline: 12px; }
+  .prateleiras { gap: 2rem; }
+  .quantidade { display: block; }
+  .painel { padding: 1.25rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .livro, .volume, .capa { transition: none; }
+  .painel { animation: none; }
+  .livro:has(:focus-visible) .volume, .livro:hover .volume { transform: none; }
+}

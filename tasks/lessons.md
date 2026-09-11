@@ -217,17 +217,31 @@ que imitem o logo do Letterboxd.
 
 ---
 
-## Preview vermelho na Vercel nao prova producao vermelha
+## "Fecha #NN" em portugues nao fecha issue no GitHub
 
-**03/09/2026.** Antes de mergear a cadeia da Fase 2 eu vi o check "Vercel" vermelho em todas as
-branches de `feature/avaliacao` (#34) em diante e afirmei ao usuario que o merge daria deploy de
-producao falho. Mergeamos: o deploy de **producao passou verde** no mesmo codigo. Os vermelhos
-eram todos de **Preview**, que na Vercel e outro ambiente, com outro conjunto de variaveis.
+**03/09/2026.** Cinco PRs mergeados com "Fecha #NN" no corpo; nenhuma issue
+fechou sozinha. O GitHub so reconhece as palavras-chave em ingles (close,
+closes, fixes, resolves...). Foi preciso fechar as cinco a mao depois.
 
-**Regra:** o check "Vercel" que aparece no PR e o deploy de Preview. Nao extrapolar dele o
-resultado de producao. Para falar de producao, olhar o deployment de Production:
-`gh api repos/<owner>/<repo>/deployments --jq '[.[] | select(.environment=="Production")][0]'` e
-o `/statuses` dele. E quando os dois divergem, a diferenca esta no ambiente — nao no codigo.
+**Regra:** no corpo do PR usar `Closes #NN` (a frase pode continuar em
+portugues em volta). Ou fechar a issue com `gh issue close` no fim, com o
+comentario-resumo que o workflow ja pede.
+
+---
+
+## PR empilhado morre quando a base e apagada
+
+**03/09/2026.** O #77 tinha base em `feature/seguir-usuarios` (empilhado no
+#75). O merge do #75 com `--delete-branch` apagou a base e o GitHub FECHOU o
+#77 em vez de reapontar para `main` — e PR fechado nao aceita `gh pr edit
+--base`. Precisou de PR novo (#83) da mesma branch.
+
+**Regra:** antes de mergear a base de uma pilha, reapontar os PRs de cima
+(`gh pr edit N --base main`) — ou mergear a base SEM `--delete-branch` e
+apagar a branch so depois que a pilha inteira entrou. Conflito em
+`tasks/todo.md` entre branches paralelas e esperado: as duas anexam secoes
+no fim; resolver mantendo os dois lados em ordem cronologica.
+
 
 ---
 
@@ -278,3 +292,385 @@ evitou.
 **Regra:** erro de resolucao de modulo que nao faz sentido, em worktree dentro do scratchpad,
 testar antes num caminho curto (`C:\<nome>`) e so depois investigar o codigo. Para rodar suite,
 build ou `next start` de uma branch, criar a worktree na raiz do disco.
+
+---
+
+## Merge so com o check verde — condicionar, nao encadear (05/09)
+
+**O que aconteceu:** num mesmo comando encadeei `gh pr checks --watch` e
+`gh pr merge`. O check falhou (teste flaky) e o merge rodou mesmo assim, porque
+o `merge` nao dependia do resultado do `checks`. Codigo com teste vermelho no CI
+entrou na main (#124).
+
+**Regra:** o merge so roda depois de ler o estado do JOB "lint, testes e
+build", nao do conjunto: o check "Vercel" (preview) falha em todo PR, entao o
+exit code de `gh pr checks` e sempre != 0 e nao serve de portao. Forma que
+funciona: laco em `gh pr checks <ref> --json name,state`, esperar o job sair
+de PENDING, mergear so em SUCCESS. Logo apos o push o job ainda nao existe
+("no checks reported") — esperar, nao tratar como vermelho. Nunca
+`checks; merge`.
+
+## Ordenar por `createdAt` sozinho e flaky (05/09)
+
+`TIMESTAMP(3)` tem milissegundo. Linhas criadas em laco caem no mesmo ms e a
+ordem fica ao acaso — passou local, quebrou no CI. Toda `orderBy` de lista que
+precisa de ordem estavel leva desempate por `id` (cuid e monotonico no
+processo), e paginacao usa cursor por `id`, nunca `createdAt < x`.
+
+## Migration criada a mao quando o `--create-only` recusa (05/09)
+
+`prisma migrate dev --create-only` recusa em ambiente nao interativo quando a
+mudanca exige confirmacao (coluna NOT NULL em tabela com linhas). Saida:
+criar a pasta `prisma/migrations/<timestamp UTC>_<nome>/migration.sql` a mao e
+rodar `migrate dev` para aplicar. Usar `date -u` no timestamp: o relogio local
+(UTC-3) gerou uma pasta que ordena ANTES de migrations mais antigas.
+
+## Entregavel de auditoria e .md no repo + issue, nao artifact (06/09)
+
+Terminei a auditoria de seguranca e tentei publicar o relatorio como artifact.
+Errado por dois motivos: o artifact vive fora do repo, entao o achado nao entra
+no fluxo de trabalho do projeto; e o CLAUDE.md ja diz que toda implementacao
+gera issue. **Regra:** resultado de auditoria ou de analise vira arquivo `.md`
+versionado no vault (`Obsidian/04. BUGS/Criar Issue Antes de Fazer/` quando os
+achados precisam virar issue antes de alguem pegar) mais uma issue por achado,
+com o `.md` como fonte de verdade e a issue apontando para ele. Nao propor
+artifact para entregavel que o time vai perseguir depois.
+
+
+## `--delete-branch` mata a PR de cima numa pilha (07/09/2026)
+
+**O que tentei:** mergear seis PRs empilhados com
+`gh pr merge <n> --merge --delete-branch`, na ordem.
+
+**O que aconteceu:** o merge do primeiro apagou `feature/i18n-infra`, que era a
+BASE do segundo. O GitHub nao retargetou o #150 para a `main` — **fechou** ele.
+E PR fechada com base inexistente nao reabre: `reopenPullRequest` responde
+"Could not open the pull request". Foi preciso abrir um PR novo (#155) da mesma
+branch para a `main`.
+
+**A regra:** em pilha de PRs, **retargetar antes de mergear**, e so apagar branch
+no fim.
+
+```bash
+# ordem certa
+gh pr edit 151 --base main
+gh pr edit 152 --base main   # todas de uma vez, antes de qualquer merge
+gh pr merge 150 --merge      # SEM --delete-branch
+gh pr merge 151 --merge
+...
+git push origin --delete feature/x  # limpeza so no fim
+```
+
+Nenhum commit se perde nesse acidente — a branch de cima continua intacta —, mas
+o PR e sua descricao vao junto, e a auditoria do historico fica com um numero
+fechado sem merge no meio.
+
+
+## Verde em lint, teste e build nao prova que a saida esta certa (07/09/2026)
+
+Tres defeitos da #116 passaram pelos tres portoes. Todos apareceram so ao olhar
+o que o servidor de verdade devolveu:
+
+1. **O matcher do proxy barrava todo link antigo.** `/catalogo` dava 404: o ponto
+   escapado virou ponto solto no literal TypeScript (`"\."` -> `"."`) e o
+   lookahead negativo passou a excluir quase toda rota. O teste que consertou
+   **le `src/proxy.ts`**, nao uma copia — `matcher` e analisado estaticamente
+   pelo Next, entao a copia pode estar certa enquanto o que roda esta errado.
+   Foi exatamente o que aconteceu na primeira tentativa de conserto, com a
+   constante importada sendo ignorada em silencio.
+2. **Trocar de idioma apagava o tema escolhido.** O `lang` do `<html>` muda, o
+   React re-renderiza o elemento e leva junto o `data-theme` posto pelo script
+   inline. `suppressHydrationWarning` so vale na hidratacao, nao em update.
+3. **O `hreflang` saia com URL relativa e era ignorado pelo buscador.** Sem
+   `metadataBase` o Next deixa `alternates.languages` relativo, e o build nao
+   reclama. A tag estava no HTML sem servir para nada.
+
+**A regra:** feature que muda ROTA, CABECALHO ou METADATA so esta pronta depois
+de `curl` na resposta de verdade. Os tres portoes leem o codigo; nenhum le a
+saida.
+
+Corolario do escape: quando um padrao precisa de barra invertida dentro de string
+(regex em `matcher`, por exemplo), preferir a forma que dispensa o escape —
+`[.]` no lugar de `\.` — e um nivel a menos de coisa para errar sem ninguem ver.
+
+
+## Senha de conta de teste morre com a sessao (08/09/2026)
+
+`tasks/todo.md:607` registrou "senha no historico da sessao, nao aqui" ao criar a
+conta `provadona`. A decisao de nao versionar credencial esta certa, mas a
+consequencia so apareceu tres dias depois: sessao nova, senha inacessivel, e a
+unica conta com estante pronta virou intestavel. Como o `passwordHash` e scrypt,
+nao ha leitura de volta.
+
+Custou uma excecao consciente a uma regra absoluta: alterar o banco a mao para
+regravar o hash. Feita so no banco `localhost` (o script recusa qualquer outra
+string de conexao), com `gerarHashDeSenha` do proprio dominio em vez de hash
+inventado, e provada com `curl` no `POST /api/v1/sessao` — 200 e cookie emitido.
+
+**A regra:** conta de teste que precisa sobreviver a sessao nasce por script
+versionado (seed), nao por cadastro manual com senha no chat. Enquanto nao
+existir seed, criar a conta com senha deterministica anotada no `.env.example`
+como valor de exemplo — nunca com senha que so o historico guarda.
+
+Corolario: dependencia de terceiro fora (AniList, 08/09/2026) transforma
+"e so criar outra conta" em bloqueio — `estante.service.ts:88` recusa adicionar
+obra sem AniList, e sem estante o popup da extensao nem abre o formulario. O seed
+resolveria os dois de uma vez.
+
+## Mergear deixa o repo na `main`, e o proximo commit cai la (08/09/2026)
+
+Depois de `gh pr merge` + `git checkout main` + `git pull` para atualizar, o commit
+seguinte foi para a `main` direto — a regra absoluta que o CLAUDE.md lista primeiro.
+Nada tinha sido enviado, entao bastou `git branch <nova>` no commit e
+`git reset --hard origin/main` na `main`.
+
+**A regra:** terminar todo merge criando a branch da proxima tarefa na hora, ou conferir
+`git branch --show-current` antes do primeiro `git add` de qualquer trabalho novo. O
+estado "acabei de mergear" e exatamente onde a inercia leva para o lugar errado.
+
+## Mudar o que um campo aceita e revisar TODA frase que o cita (08/09/2026)
+
+Na #166 o campo de entrar passou a aceitar nome de usuario. Rotulo atualizado nos
+cinco idiomas, contrato da API atualizado, testes verdes — e a mensagem de erro
+continuou "e-mail ou senha incorretos". So apareceu no teste manual do usuario.
+
+**A regra:** ao mudar o que um campo aceita ou significa, buscar no `messages/`
+TODA frase que o mencione — rotulo, placeholder, erro, ajuda, e-mail — nao so a
+que esta ao lado do input. `grep -rn "e-mail" messages/pt-BR.json` teria mostrado
+em segundos.
+
+## Dev rodando + rebase = bundle velho parecendo bug (08/09/2026)
+
+Depois de um rebase com o `pnpm dev` no ar, a tela mostrou a chave crua
+`entrar.campos.email` e o login por nome falhou. Parecia bug da #166 recem-mergeada;
+era o bundle do cliente antigo servindo o componente velho com o JSON de mensagens
+novo. Custou um round-trip com o usuario e um print de "falha" que nao era.
+
+**A regra:** depois de rebase, merge ou troca de branch com o dev rodando, matar o
+processo, apagar `.next` e subir de novo ANTES de pedir teste manual. E provar com
+`curl` que a pagina serve o markup novo antes de mandar alguem olhar.
+
+## `grep -c "frase"` na pagina nao prova que o botao existe (08/09/2026)
+
+Sondando se o "Resetar leitura" tinha saido da pagina da obra, `grep -c` achou 1 —
+mas era o catalogo do `next-intl`, que embute o namespace inteiro no payload
+quando qualquer componente da pagina usa `useTranslations("obra")`. O botao ja
+nao estava la.
+
+**A regra:** sondar pelo MARKUP renderizado (`>Resetar leitura</button>`), nunca
+pela frase solta. Frase solta aparece no JSON de mensagens de qualquer pagina que
+carregue o namespace.
+
+## Script grande por heredoc quebra o shell antes de rodar (08/09/2026)
+
+Tres vezes na mesma sessao um bloco Python de 100+ linhas passado por `<<'PY'`
+morreu com "unexpected EOF while looking for matching quote" — e como o erro e de
+ANALISE, nada do comando roda, nem o que vinha antes. Custou round-trips e um
+commit que parecia feito e nao estava.
+
+**A regra:** edicao multi-arquivo vai para um `.py` no scratchpad (escrito pela
+ferramenta de arquivo, nao pelo shell) e roda com `python arquivo.py`. Heredoc so
+para bloco curto. E depois de qualquer falha de shell, `git status` antes de
+assumir que algo foi aplicado.
+
+## Duas sessoes na mesma copia do repo: o trabalho some e o commit vai para a branch errada (09/09/2026)
+
+Enquanto eu mexia nas issues de seguranca, o usuario trabalhava na #182 na MESMA
+pasta. O que aconteceu, em ordem: minhas tres edicoes foram parar num
+`git stash` que eu nao criei ("WIP ... antes de retomar issue 182"), o
+`git commit` respondeu "nothing to commit, working tree clean", e mais adiante um
+commit meu caiu na branch `desenvNovoDesignCatalogo`, que era a dele — a branch
+tinha trocado embaixo de mim entre um comando e outro.
+
+Nada se perdeu: o stash foi recuperado com `git stash pop`, e o commit foi salvo
+com `git format-patch` antes de `git reset --mixed` devolver a branch dele
+intacta. Mas custou tempo e quase contaminou o trabalho do outro lado.
+
+Sinal de alerta que apareceu antes do problema: `pnpm test` deu 56 arquivos numa
+rodada e 53 na seguinte, sem eu ter mexido em teste nenhum. Contagem de suite que
+muda sozinha significa que a arvore mudou por fora.
+
+**A regra:** ao trabalhar em paralelo com outra sessao no mesmo repositorio,
+`git worktree add ../<pasta> <branch>` e trabalhar la — indice, HEAD e working
+tree proprios. Copiar o `.env` (nao versionado) e rodar `pnpm install` na
+worktree; o `pnpm` usa store global, entao e rapido. Nunca `git add -A` numa
+arvore compartilhada: `git add` por arquivo, sempre.
+
+## Provar na tela sem dizer QUAL servidor esta rodando o codigo novo (09/09/2026)
+
+Baixei o carrossel da home de 12 para 10 itens e segui trabalhando. O usuario
+mandou um print: "mas ali mostra que tem 12". Estava certo — o `pnpm dev` que ele
+tinha aberto servia a `main`, sem a minha mudanca, que vivia numa branch nao
+mergeada.
+
+**A regra:** mudanca de tela so vira prova no servidor que roda o codigo dela.
+Subir o dev da propria branch em outra porta, conferir ali, e dizer explicitamente
+que o servidor do usuario continua na `main` ate o merge. Sem isso o print dele
+mede outra coisa e a conversa gasta um round-trip.
+
+Corolario que apareceu no mesmo dia: o contador do carrossel (`{centro + 1} / {total}`)
+e renderizado no cliente e NAO existe no HTML servido — procurar por ele com
+`grep` no `curl` nao acha nada. Contar o MARKUP do card, lembrando que o carrossel
+renderiza um card fantasma `aria-hidden` para medir largura: 11 no HTML sao 10 na
+tela.
+
+## Teto por autor em lista mesclada vale sobre a MESCLA, nao por fonte (09/09/2026)
+
+Na #144 apliquei "no maximo 2 por autor" nas resenhas e nas listas separadamente,
+e o feed da home continuou deixando a mesma conta ocupar QUATRO linhas — 2 de cada
+fonte. O teste unitario passava, porque testava uma fonte de cada vez; o furo so
+apareceu ao contar autor por autor no HTML da home de verdade.
+
+**A regra:** quando o produto final e UMA lista, o limite por autor se aplica
+depois da mescla, e a funcao que mescla recebe o tamanho da BUSCA, nao o do
+resultado. Quando sao trilhos visualmente distintos (dois carrosseis), o teto por
+trilho e o certo. Decidir isso olhando a tela, nao a assinatura da funcao.
+
+E o teste que garante isso precisa de uma conta presente nas DUAS fontes — com
+uma fonte so, as duas formas passam igual.
+
+## `pnpm test` nao faz type-check; `pnpm build` faz — inclusive nos testes (09/09/2026)
+
+Adicionei uma dependencia obrigatoria a `DependenciasDoCatalogo` e ajustei os
+testes que usavam a nova propriedade. Lint verde, 600 testes verdes, push — e o
+CI vermelho com **doze** `TS2345: Property 'limitar' is missing`, todos em
+`tests/services/catalogo.service.test.ts`.
+
+O vitest transpila sem checar tipo. Quem checa e o `next build`, e ele checa o
+`tests/` junto. Entao teste que monta objeto de dependencia na mao quebra o BUILD
+sem quebrar o TESTE.
+
+**A regra:** ao mudar a forma de um tipo que os testes constroem — campo novo
+obrigatorio em `Dependencias*`, retorno com variante nova —, rodar `pnpm build`
+antes do push, nao so `pnpm lint` e `pnpm test`. E preferir `{ ...fakeDeps(), x }`
+a montar o objeto inteiro em cada teste: uma fabrica so absorve o campo novo em
+um lugar, doze objetos literais nao.
+
+## Worktree com CRLF faz o Prisma pedir reset do banco de desenvolvimento (09/09/2026)
+
+`pnpm prisma migrate dev` na worktree respondeu que duas migrations de 01/09
+"foram modificadas depois de aplicadas" e que precisava **resetar o schema**,
+apagando o banco de desenvolvimento inteiro — com os dados de teste do usuario e
+o trabalho dele em andamento.
+
+Nao havia modificacao nenhuma: `git log` mostrava um commit por arquivo, sem
+alteracao posterior. A diferenca era o FIM DE LINHA. O `git worktree add` fez
+checkout com `core.autocrlf` ligado e gravou CRLF; a copia original tem LF, e foi
+dela que o checksum guardado em `_prisma_migrations` foi calculado. O Prisma
+compara o arquivo byte a byte.
+
+| copia | bytes | CRLF |
+|---|---|---|
+| original do usuario | 1500 | 1 |
+| worktree | 1543 | 44 |
+
+**A regra:** "migration modificada depois de aplicada" com `git log` limpo e
+Windows no meio e' fim de linha, nao corrupcao. NUNCA aceitar o reset para sair
+disso. Conferir com `python -c "print(open(f,'rb').read().count(b'\r\n'))"` nas
+duas copias e igualar os bytes — o que funcionou foi copiar os arquivos de
+migration da copia original para a worktree, rodar `migrate dev`, e restaurar os
+arquivos com `git checkout --` depois, para nao commitar troca de EOL.
+
+Antes disso: `git config core.autocrlf false` na worktree, senao o proximo
+checkout recria o problema.
+
+## Banco de preview por PR estoura o Free do Neon e aparece como check da Vercel (09/09/2026)
+
+O check **Vercel** falhava em TODO preview desde o #92, com producao passando no
+mesmo commit. A #162 investigou por semanas e parou em duas hipoteses erradas:
+"e a migration rodando contra banco invalido" (caiu quando o #205 fez o script
+pular fora de producao, e o preview seguinte continuou vermelho) e "e variavel de
+ambiente faltando no Preview".
+
+Junto vai a regra que veio do PR #68, da sessao de 03/09: o check "Vercel" que aparece no PR e o
+deploy de **Preview**, e nao se extrapola dele o resultado de producao. Para falar de producao,
+olhar o deployment de Production — `gh api repos/<owner>/<repo>/deployments --jq '[.[] | select(.environment=="Production")][0]'` e o `/statuses` dele. Quando os dois
+divergem, a diferenca esta no ambiente, nao no codigo.
+
+Nao era nenhuma das duas. O log do deployment dizia, na etapa **Provisioning
+Integrations**, antes de instalar qualquer dependencia:
+
+```
+mymangatracker: Create database branch for deployment
+Branch limit reached. Upgrade your plan or delete unused branches.
+```
+
+A integracao Neon cria uma branch de banco por preview deployment. Ninguem
+apagava. O Free do Neon para em **10 branches**. Na decima o teto bateu e desde
+entao todo preview morria em 1s, antes do build. Por isso o bot comentava
+`previewUrl: ""` — o deployment nunca chegava a existir.
+
+**A regra:** deployment que falha em **1s** nao falhou no build. Antes de teorizar
+sobre codigo, variavel ou migration, abrir o deployment e expandir as etapas: o
+que quebra antes de instalar dependencia e provisionamento de integracao ou
+quota, e o log diz qual em uma linha. E recurso que cria artefato por PR (branch
+de banco, ambiente efemero) precisa de limpeza automatica ou de um teto, senao a
+falha chega disfarcada de outra coisa semanas depois.
+
+Correcao aplicada: as 9 branches orfas apagadas e o recurso Neon restrito a
+`Production environment only` na Vercel — preview e development nao recebem mais
+banco, o build passa e a tela degrada com o aviso de configuracao pendente, que e
+o comportamento desenhado na Fase 1.
+
+## Aba oculta do Chrome parece página travada
+
+- **Tentativa**: screenshot e sonda com `requestAnimationFrame` numa aba do Chrome; ambos estouraram 30-45 s e a ferramenta disse "renderer may be frozen". Fui atrás de bug na prateleira (ResizeObserver, capas, CSS) por meia hora.
+- **Erro**: a aba estava com `document.visibilityState === "hidden"` (janela minimizada ou outra aba/janela na frente). Aba oculta não pinta frame: `Page.captureScreenshot` não retorna e `requestAnimationFrame` nunca dispara. JS sem rAF respondia na hora.
+- **Regra**: antes de diagnosticar "travou", rodar `document.visibilityState` pelo `javascript_tool`. Se vier `hidden`, o problema é a janela, não a página. Sonda de desempenho usa `setTimeout`/`PerformanceObserver` (longtask), nunca rAF. Uma aba por vez para captura: ação em outra aba tira a primeira do primeiro plano.
+- **Mais dois sintomas da aba oculta** (09/09/2026): transição CSS fica congelada no meio (livro com `width` computada de 168 px sem regra nenhuma dando isso — `li.style.transition = "none"` resolve na hora) e `:focus`/`:focus-within` não casam porque `document.hasFocus()` é falso. Prova de largura em aba oculta: zerar transições antes de medir; prova de foco/hover: só com janela visível.
+
+## Paginar por contagem entregue, com a fonte filtrada depois
+
+- **Tentativa**: pagina N do Kitsu = offsets [(N-1)*36, N*36) e `temMais = obras.length >= 36`, com o dominio descartando `oneshot`, `oel` e obra sem mapeamento depois da busca.
+- **Erro**: o descarte acontece DEPOIS da fonte responder, entao a contagem entregue nao serve nem de offset nem de fim. O catalogo parava em 55 obras com 63 mil disponiveis, e o ultimo andar so enchia depois do "ver mais".
+- **Regra**: quando a camada de dominio filtra o que a fonte devolveu, a pagina cobre uma fatia FIXA da fonte e o "tem mais" e resposta da fonte, nunca `length >= N` do que sobrou. Vale para toda fonte externa com filtro nosso em cima.
+
+## Fallback tem que descer em todo caminho, nao so no que se testou
+
+- **Tentativa**: com o AniList fora, so o catalogo e a home ganharam o degrau do Kitsu (#219).
+- **Erro**: `adicionarNaEstante` e `obraParaPagina` continuaram chamando so o AniList. O botao "+ Estante" respondia "nao deu" para toda obra que a propria vitrine acabara de mostrar.
+- **Regra**: ao criar fonte de fallback, listar TODO caminho que chama a fonte original (`grep` pelo import do infra) e decidir caso a caso. Fonte de fallback com acervo menor nao prova ausencia: obra que ela nao conhece nao vira "nao encontrada" quando ha cache.
+
+## `:has()` nao aninha dentro de `:has()` — o seletor inteiro morre calado
+
+- **Tentativa**: `.trilho:has(.livro:has(:focus-visible)) .livro:not(:has(:focus-visible))` para fechar os outros livros quando um recebe foco (#241).
+- **Erro**: a especificacao proibe `:has()` dentro de `:has()`. O navegador descarta a regra inteira sem aviso, sem erro no console e sem falhar build, lint ou teste. Na tela: o livro focado E a vitrine abriram juntos e o andar estourou 120 px. `:has()` dentro de `:not()` e permitido, o que torna o erro mais dificil de ver — metade do seletor parecia legitima.
+- **Regra**: `:has()` so aninha pseudo-classes simples. Quando precisar do ancestral, mirar direto o que casa (`.trilho:has(:focus-visible)`) em vez de repetir o filho. E seletor novo com `:has()` so conta como pronto depois de visto na tela: nenhum portao le CSS descartado — mesma familia do [portoes-nao-leem-a-saida].
+
+## Regex cega sobre arquivo de teste troca fixture por asserção
+
+- **Tentativa**: com o repositório passando a devolver `chave: "anilist:30013"` no lugar de `anilistId: 30013`, rodei um `replace(/anilistId: (\d+)([,\s}])/g, 'chave: "anilist:$1"$2')` em cinco arquivos de teste de banco de uma vez.
+- **Erro**: num teste de repositório, `anilistId: N` aparece nos DOIS lados — na asserção, que precisava mudar, e na fixture que alimenta o `create` do Prisma, que não. A troca cega reescreveu as duas e levou a suíte de 6 falhas para 16, com sintomas em testes que eu nem tinha tocado.
+- **Regra**: renomear campo em teste é edição por sítio, não por arquivo. Antes de qualquer troca em massa, separar os usos em duas listas — o que ENTRA no banco e o que SAI dele — e só mexer no segundo. Se a lista não couber num `grep` que dê para ler, o rename está grande demais para uma regex.
+
+## Suíte de banco verde não prova que o banco de desenvolvimento tem a migration
+
+- **Tentativa**: com `pnpm test:db` verde e a migration escrita, abri a página da obra do Kitsu no `pnpm dev` e vi "o AniList não respondeu". Fui atrás de erro na fonte, no User-Agent e no timeout.
+- **Erro**: `test:db` roda contra o banco de TESTE, que a suíte prepara sozinha. O banco de desenvolvimento estava uma migration atrás, e o `findUnique` por uma coluna que ainda não existia lá estourava — a página caía no degrau de "fonte indisponível" e escondia a causa.
+- **Regra**: antes de julgar comportamento no `pnpm dev`, rodar `pnpm prisma migrate status`. Erro de coluna inexistente vira "serviço fora do ar" em qualquer camada que degrade com `try/catch`, então o `catch` mudo é o primeiro lugar a instrumentar, não a rede.
+
+## Renomear campo de contrato: o cliente não é typescript-checado contra a rota
+
+- **Tentativa**: a obra passou a ser dita por chave textual, e renomeei o campo do corpo para `obra` nas rotas de estante, itens de lista e avaliações. `tsc`, `lint`, 766 testes de unidade, 110 de banco e o build passaram.
+- **Erro**: as seis chamadas do lado do cliente continuavam mandando `chave`. O Zod recusava com 400 antes de qualquer regra rodar, e a tela mostrava "não deu — tente de novo". Nada disso é typecheck: o corpo do `fetch` é um objeto solto, e o esquema do Zod vive do outro lado da rede. Só apareceu quando o usuário clicou.
+- **Regra**: nome de campo de corpo ou query é contrato entre dois lados que nenhum portão compara. Ao renomear um, `grep` pelo NOME ANTIGO em `src/app/(ui)` antes de dizer que acabou, e clicar no botão que usa a rota. Mesma família do [portoes-nao-leem-a-saida]: o que atravessa a rede não é lido por `tsc`.
+
+## Troca em massa com script reescreve o final de linha e incha o diff
+
+- **Tentativa**: na varredura do rebranding, troquei o nome do produto em 30+ arquivos com `python` lendo e gravando em modo texto, e depois com `sed -i`. Lint, `tsc` e os 769 testes passaram — nada acusou.
+- **Erro**: sete ocorrências em `messages/pt-BR.json` viraram um diff de **1328 linhas**. O `io.open(p, "w")` do Python converte `
+` para `
+` no Windows, e o `sed -i` do Git Bash faz o contrário em arquivo CRLF. O repo tem finais de linha **mistos** e nenhum `.gitattributes` (é a issue #247), então cada ferramenta normaliza para um lado diferente e reescreve o arquivo inteiro. Precisei desfazer e refazer seis commits.
+- **Regra**: edição em massa neste repo é byte a byte. Em Python, `io.open(p, encoding="utf-8", newline="")` na leitura **e** na gravação. Onde o bloco a trocar tem várias linhas, editar por linha (`readlines(newline="")`) e reusar o final da linha original, porque arquivo de final misto quebra qualquer normalização global. E conferir com `git diff --numstat` antes de commitar: **diff maior que a mudança é bug, mesmo com o portão verde** — nenhum portão lê final de linha, mesma família do [portoes-nao-leem-a-saida].
+
+## Commit que compila sozinho não é o mesmo que commit que passa no teste sozinho
+
+- **Tentativa**: separei o rebranding da extensão num commit próprio — `_locales`, popup, background e o global que `comum.js` publica (`KIDOKU` → `FOLUNIO`). O `tsc` passou, porque a extensão é JS puro fora de `src/`.
+- **Erro**: `tests/extensao/pares.test.ts` carrega `comum.js` e lê `globalThis.KIDOKU`. O commit ficou verde no typecheck e **vermelho na suíte**, e eu só descobri dois commits depois, ao varrer o que tinha sobrado.
+- **Regra**: quando o commit renomeia um símbolo que vive fora de `src/`, o `grep` do nome antigo tem que incluir `tests/` antes de fechar o commit — e a prova do commit atômico é `pnpm test`, não `tsc`. Typecheck não enxerga o que a suíte carrega por `importScripts`.
+
+## `git checkout -- .` apaga modificação não commitada, inclusive a de outra sessão
+
+- **Tentativa**: depois de renormalizar os finais de linha (#247), quis atualizar a cópia de trabalho. Apaguei os arquivos rastreados **limpos** num laço que pulava os modificados, e chamei `git checkout -- .` para o Git regravar tudo com a regra nova.
+- **Erro**: o laço protegeu o arquivo modificado do `rm`, mas o `git checkout -- .` reescreve a cópia de trabalho a partir do ÍNDICE para **todos** os caminhos — inclusive os que eu tinha acabado de poupar. Perdi nove linhas que outra sessão tinha escrito em `rebrand-folunio.md` e ainda não havia commitado. Só recuperei porque o `git diff` daquele arquivo já tinha passado por este chat; o Git não guarda cópia de mudança não commitada em lugar nenhum.
+- **Regra**: antes de qualquer comando que regrave a cópia de trabalho em massa (`checkout -- .`, `restore .`, `reset --hard`), rodar `git status --short` e **commitar ou guardar em stash o que estiver modificado** — próprio ou de terceiro. Quando houver trabalho de outra sessão na árvore, restringir o comando aos caminhos que interessam (`git checkout -- src tests`) em vez de `.`. Diferente de arquivo rastreado, mudança não commitada não tem reflog: errar aqui é perda definitiva.

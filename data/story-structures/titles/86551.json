@@ -12,9 +12,167 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
+  "sources": [
+    {
+      "id": "made-in-abyss-wiki-story-arcs",
+      "url": "https://madeinabyss.fandom.com/wiki/Story_Arcs",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "made-in-abyss-wiki-chapters",
+      "url": "https://madeinabyss.fandom.com/wiki/Chapters",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [
+    {
+      "key": "orth",
+      "kind": "ARC",
+      "position": 1,
+      "title": "Orth",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "1",
+        "end": "8"
+      },
+      "sourceIds": [
+        "made-in-abyss-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "descent-to-the-abyss",
+      "kind": "ARC",
+      "position": 2,
+      "title": "Descent to the Abyss",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "9",
+        "end": "12"
+      },
+      "sourceIds": [
+        "made-in-abyss-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "seeker-camp",
+      "kind": "ARC",
+      "position": 3,
+      "title": "Seeker Camp",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "13",
+        "end": "17"
+      },
+      "sourceIds": [
+        "made-in-abyss-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "the-great-fault",
+      "kind": "ARC",
+      "position": 4,
+      "title": "The Great Fault",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "18",
+        "end": "18"
+      },
+      "sourceIds": [
+        "made-in-abyss-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "poison-and-soul-liberation",
+      "kind": "ARC",
+      "position": 5,
+      "title": "Poison and Soul Liberation",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "19",
+        "end": "26"
+      },
+      "sourceIds": [
+        "made-in-abyss-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "ido-front",
+      "kind": "ARC",
+      "position": 6,
+      "title": "Ido Front",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "27",
+        "end": "38"
+      },
+      "sourceIds": [
+        "made-in-abyss-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "iruburu",
+      "kind": "ARC",
+      "position": 7,
+      "title": "Iruburu",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "39",
+        "end": "60"
+      },
+      "sourceIds": [
+        "made-in-abyss-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "capital-of-the-unreturned",
+      "kind": "ARC",
+      "position": 8,
+      "title": "Capital of the Unreturned",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "61",
+        "end": "61"
+      },
+      "sourceIds": [
+        "made-in-abyss-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "curse-fleet",
+      "kind": "ARC",
+      "position": 9,
+      "title": "Curse Fleet",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "62",
+        "end": null
+      },
+      "sourceIds": [
+        "made-in-abyss-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    }
+  ],
   "conflicts": []
 }

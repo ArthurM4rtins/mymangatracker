@@ -11,10 +11,28 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    {
+      "id": "shonen-jump-plus-three-days-chapter-16",
+      "url": "https://shonenjumpplus.com/episode/13932016480029136441",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "three-days-of-happiness-wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Three_Days_of_Happiness",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-09-01"
+    }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    {
+      "field": "chapter count and arc taxonomy",
+      "reason": "A publicação oficial encerra no capítulo 16 e informa três volumes, enquanto o AniList registra 18 entradas. Não foi localizada taxonomia de arcos nem equivalência editorial que explique os itens adicionais; capítulos, volumes e progressão da adaptação não foram inferidos como segmentos."
+    }
+  ]
 }

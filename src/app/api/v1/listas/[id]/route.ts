@@ -9,6 +9,8 @@ import {
   apagarListaDoSistema,
   editarListaDoSistema,
 } from "@/server/services/lista.service";
+import { lerJson } from "../../_shared/corpo";
+import { ERRO } from "../../_shared/erros";
 import { usuarioDaSessao } from "../../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -28,30 +30,26 @@ export async function PATCH(
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para usar listas" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
 
-  let corpo: unknown;
-  try
+  const leitura = await lerJson(request);
+
+  if (!leitura.ok)
   {
-    corpo = await request.json();
+    return leitura.resposta;
   }
-  catch
-  {
-    return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
-      { status: 400 },
-    );
-  }
+
+  const corpo: unknown = leitura.corpo;
 
   const analise = ESQUEMA_EDICAO.safeParse(corpo);
 
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "pedido inválido" } },
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -70,7 +68,7 @@ export async function PATCH(
     if (resultado.estado === "lista_invalida")
     {
       return NextResponse.json(
-        { erros: { nome: "de 1 a 100 caracteres" } },
+        { erros: { nome: ERRO.NOME_INVALIDO } },
         { status: 422 },
       );
     }
@@ -78,7 +76,7 @@ export async function PATCH(
     if (resultado.estado === "nao_encontrada")
     {
       return NextResponse.json(
-        { erros: { _geral: "lista não encontrada" } },
+        { erros: { _geral: ERRO.LISTA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -89,7 +87,7 @@ export async function PATCH(
   {
     console.error("[listas] falha ao editar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }
@@ -105,7 +103,7 @@ export async function DELETE(
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para usar listas" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
@@ -119,7 +117,7 @@ export async function DELETE(
     if (resultado.estado === "nao_encontrada")
     {
       return NextResponse.json(
-        { erros: { _geral: "lista não encontrada" } },
+        { erros: { _geral: ERRO.LISTA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -130,7 +128,7 @@ export async function DELETE(
   {
     console.error("[listas] falha ao apagar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

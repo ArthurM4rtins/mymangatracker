@@ -1,0 +1,26 @@
+# Política de quebra de linha (#247).
+#
+# Antes disto o repo não tinha nenhuma: `core.autocrlf` em `false` e arquivos em
+# LF e CRLF misturados sem critério. O custo não era estético — script que grava
+# no final de linha errado reescreve o arquivo inteiro, o diff esconde a mudança
+# de verdade na revisão, e o `git blame` passa a apontar para o commit que trocou
+# a quebra de linha em vez do que escreveu a linha.
+#
+# `text=auto` deixa o Git detectar o que é texto; `eol=lf` grava LF no repositório
+# E na cópia de trabalho, inclusive no Windows. Uniforme nos dois lados é o que
+# faz `sed`, `python` e editor concordarem sem ninguém precisar lembrar.
+* text=auto eol=lf
+
+# Binário: nunca converter, nunca tentar diffar como texto.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary

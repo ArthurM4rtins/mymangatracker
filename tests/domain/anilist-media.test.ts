@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  ehPapelDeAutoria,
   mapearAutor,
   mapearBusca,
   mapearMedia,
   mapearRecomendacoes,
+  semRepetidas,
+  type MediaDoAniList,
 } from "@/server/domain/anilist-media";
 
 // Registro real, capturado de graphql.anilist.co em 27/08/2026.
@@ -181,6 +184,25 @@ describe("mapearMedia — campos da página da obra", () =>
     ]);
   });
 
+  // #65, item 12: o mesmo autor em dois papéis virava duas entradas com a
+  // mesma key na tela. Fica o primeiro papel.
+  it("autor repetido em dois papéis entra uma vez, com o primeiro papel", () =>
+  {
+    const media = mapearMedia({
+      ...VAGABOND_COMPLETO,
+      staff: {
+        edges: [
+          { role: "Story", node: { id: 96879, name: { full: "Takehiko Inoue" } } },
+          { role: "Art", node: { id: 96879, name: { full: "Takehiko Inoue" } } },
+        ],
+      },
+    });
+
+    expect(media?.autores).toEqual([
+      { anilistStaffId: 96879, nome: "Takehiko Inoue", papel: "Story" },
+    ]);
+  });
+
   it("sem os campos novos, nada é inventado", () =>
   {
     const media = mapearMedia(LOOKISM);
@@ -281,7 +303,7 @@ describe("mapearAutor", () =>
       descricao: "Autor de Slam Dunk.\nFã de basquete.",
       obras: [
         {
-          anilistId: 30656,
+          chave: "anilist:30656",
           titleRomaji: "Vagabond",
           titleEnglish: null,
           coverImageUrl: "https://capa/vagabond.jpg",
@@ -289,7 +311,7 @@ describe("mapearAutor", () =>
           papel: "Story & Art",
         },
         {
-          anilistId: 30051,
+          chave: "anilist:30051",
           titleRomaji: "Slam Dunk",
           titleEnglish: null,
           coverImageUrl: null,
@@ -305,5 +327,124 @@ describe("mapearAutor", () =>
     expect(mapearAutor(null)).toBeNull();
     expect(mapearAutor({ data: { Page: { staff: [] } } })).toBeNull();
     expect(mapearAutor({ data: { Page: { staff: [{ id: 1, name: {} }] } } })).toBeNull();
+  });
+});
+
+// Issue #69: só autoria entra na grade do autor. O AniList lista todo o
+// staffMedia, inclusive assistência — Yasuhisa Hara (Kingdom) vinha com
+// Vagabond e Real, onde foi assistente do Inoue (probe de 03/09/2026).
+describe("ehPapelDeAutoria", () =>
+{
+  it("aceita os papéis de autoria, com ou sem sufixo entre parênteses", () =>
+  {
+    expect(ehPapelDeAutoria("Story & Art")).toBe(true);
+    expect(ehPapelDeAutoria("Story")).toBe(true);
+    expect(ehPapelDeAutoria("Art")).toBe(true);
+    expect(ehPapelDeAutoria("Original Creator")).toBe(true);
+    expect(ehPapelDeAutoria("Original Story")).toBe(true);
+    expect(ehPapelDeAutoria("Story & Art (vols 1-41)")).toBe(true);
+  });
+
+  it("recusa papel secundário", () =>
+  {
+    expect(ehPapelDeAutoria("Assistant")).toBe(false);
+    expect(ehPapelDeAutoria("Assistant (Former)")).toBe(false);
+    expect(ehPapelDeAutoria("Assistant (Background)")).toBe(false);
+    expect(ehPapelDeAutoria("Illustration")).toBe(false);
+    expect(ehPapelDeAutoria("Illustration (vol 1)")).toBe(false);
+    expect(ehPapelDeAutoria("Producer")).toBe(false);
+    expect(ehPapelDeAutoria("Translator")).toBe(false);
+    expect(ehPapelDeAutoria("")).toBe(false);
+  });
+
+  it("não deixa prefixo passar por autoria", () =>
+  {
+    expect(ehPapelDeAutoria("Art Assistant")).toBe(false);
+    expect(ehPapelDeAutoria("Story Supervisor")).toBe(false);
+  });
+});
+
+const HARA = {
+  data: {
+    Page: {
+      staff: [{
+        id: 109715,
+        name: { full: "Yasuhisa Hara", native: "原泰久" },
+        staffMedia: {
+          edges: [
+            { staffRole: "Assistant (Background)", node: { id: 30656, title: { romaji: "Vagabond" } } },
+            { staffRole: "Story & Art", node: { id: 46765, title: { romaji: "Kingdom" } } },
+            { staffRole: "Assistant (Former)", node: { id: 30657, title: { romaji: "Real" } } },
+            { staffRole: "Assistant", node: { id: 99999, title: { romaji: "Obra mista" } } },
+            { staffRole: "Story", node: { id: 99999, title: { romaji: "Obra mista" } } },
+          ],
+        },
+      }],
+    },
+  },
+};
+
+describe("mapearAutor — só autoria", () =>
+{
+  it("deixa de fora a obra onde o staff foi só assistente", () =>
+  {
+    const ids = mapearAutor(HARA)?.obras.map((obra) => obra.chave);
+
+    expect(ids).toEqual(["anilist:46765", "anilist:99999"]);
+  });
+
+  it("obra com edge de assistência e de autoria fica, com o papel de autoria", () =>
+  {
+    const mista = mapearAutor(HARA)?.obras.find((obra) => obra.chave === "anilist:99999");
+
+    expect(mista?.papel).toBe("Story");
+  });
+});
+
+// #240: a mesma obra voltando duas vezes na MESMA resposta. Medido contra a API
+// do Kitsu em 10/09/2026: buscando "berserk", os offsets 0 e 20 devolvem as
+// vinte mesmas linhas, na mesma ordem — o `id` do Kitsu repetido, não duas
+// obras parecidas. Uma página nossa junta três offsets, então 20 das 60 linhas
+// chegavam repetidas. Na tela virava card em dobro, e a chave repetida derrubava
+// a lista do React.
+describe("semRepetidas", function ()
+{
+  const obra = function (anilistId: number, titleRomaji: string): MediaDoAniList
+  {
+    return { anilistId, type: "MANGA", titleRomaji };
+  };
+
+  it("mantem a primeira aparicao e descarta as seguintes", function ()
+  {
+    const entrada = [obra(1, "a"), obra(2, "b"), obra(1, "a de novo"), obra(3, "c")];
+
+    expect(semRepetidas(entrada)).toEqual([obra(1, "a"), obra(2, "b"), obra(3, "c")]);
+  });
+
+  it("preserva a ordem de quem sobrou", function ()
+  {
+    const ids = semRepetidas([obra(9, "i"), obra(4, "ii"), obra(9, "iii"), obra(7, "iv")])
+      .map(function (item) { return item.anilistId; });
+
+    expect(ids).toEqual([9, 4, 7]);
+  });
+
+  it("lista sem repetida atravessa intacta", function ()
+  {
+    const entrada = [obra(1, "a"), obra(2, "b")];
+
+    expect(semRepetidas(entrada)).toEqual(entrada);
+  });
+
+  it("lista vazia continua vazia", function ()
+  {
+    expect(semRepetidas([])).toEqual([]);
+  });
+
+  it("nao altera o array recebido", function ()
+  {
+    const entrada = [obra(1, "a"), obra(1, "a de novo")];
+    semRepetidas(entrada);
+    expect(entrada).toHaveLength(2);
   });
 });

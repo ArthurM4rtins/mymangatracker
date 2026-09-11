@@ -11,7 +11,7 @@ import {
 
 function fakeRepositorio()
 {
-  const gravados: Array<{ username: string; email: string; passwordHash: string }> = [];
+  const gravados: Array<{ username: string; usernameNormalizado: string; email: string; passwordHash: string }> = [];
 
   const deps: DependenciasDoCadastro = {
     criarUsuario: async function (dados)
@@ -72,6 +72,18 @@ describe("cadastrarUsuario", function ()
     await expect(cadastrarUsuario(ENTRADA, deps)).rejects.toMatchObject({
       name: "ErroCampoDuplicado",
       campo: "email",
+    });
+  });
+
+  it("grava o username normalizado junto do digitado (#114)", async function ()
+  {
+    const { deps, gravados } = fakeRepositorio();
+
+    await cadastrarUsuario({ ...ENTRADA, username: "Rankine.Dev" }, deps);
+
+    expect(gravados[0]).toMatchObject({
+      username: "Rankine.Dev",
+      usernameNormalizado: "rankine.dev",
     });
   });
 

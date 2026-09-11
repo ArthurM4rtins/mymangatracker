@@ -11,10 +11,18 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "DISPUTED",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "tokyo-ghoul-wiki-story-arcs", "url": "https://tokyoghoul.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "fiction-horizon-tokyo-ghoul-arcs", "url": "https://fictionhorizon.com/tokyo-ghoul-arcs-in-order/", "type": "EDITORIAL", "accessedAt": "2026-09-01" },
+    { "id": "viz-tokyo-ghoul-re", "url": "https://www.viz.com/shonenjump/chapters/tokyo-ghoul-re", "type": "OFFICIAL", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "arc boundaries", "reason": "As taxonomias divergem desde o inicio: a wiki comunitaria separa Torso em 1--7 e Nutcracker em 8--14, enquanto a fonte editorial usa 1--9 e 10--16. Ha tambem diferencas nos agrupamentos Rose/Tsukiyama e no arco final (Defense of Tokyo 144--179 versus Dragon War 122--179)." },
+    { "field": "chapter total", "reason": "A publicacao e as fontes de capitulos tratam a historia principal como 179 capitulos; o AniList registra 181 entradas, normalmente descritas como 179 mais Joker e 31.5. Os extras nao possuem posicao de arco consistente." }
+  ],
+  "notes": "Ha estrutura de arcos documentada, mas nenhum conjunto de limites foi publicado por causa das divergencias entre fontes e da equivalencia incompleta das entradas extras."
 }

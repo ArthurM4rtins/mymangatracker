@@ -1,10 +1,13 @@
+import type { ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
 /**
  * Caso de uso: avaliar uma obra — nota e/ou resenha, estilo Letterboxd.
  * Uma avaliação por obra, editável; vazia não existe. Desde a issue #45 NÃO
  * exige a obra na estante: vale ter a obra no cache (a página dela cacheia).
  */
 import { ratingValido } from "@/server/domain/rating";
-import { buscarMediaPorAnilistId } from "@/server/repositories/media.repository";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import { limitarAvaliacao } from "./limite.service";
+import { buscarMediaPorReferencia } from "@/server/repositories/media.repository";
 import {
   removerAvaliacao,
   salvarAvaliacao,
@@ -12,7 +15,7 @@ import {
 
 export type PedidoDeAvaliacao = {
   userId: string;
-  anilistId: number;
+  referencia: ReferenciaDaObra;
   rating: number | null;
   review: string | null;
   containsSpoilers: boolean;
@@ -21,10 +24,11 @@ export type PedidoDeAvaliacao = {
 export type ResultadoDeAvaliacao =
   | { estado: "ok" }
   | { estado: "obra_desconhecida" }
-  | { estado: "avaliacao_invalida" };
+  | { estado: "avaliacao_invalida" }
+  | { estado: "muitos_pedidos"; esperarSegundos: number };
 
 export type DependenciasDeAvaliacao = {
-  buscarMedia: (anilistId: number) => Promise<{ id: string } | null>;
+  buscarMedia: (referencia: ReferenciaDaObra) => Promise<{ id: string } | null>;
   salvar: (dados: {
     userId: string;
     mediaId: string;
@@ -33,6 +37,7 @@ export type DependenciasDeAvaliacao = {
     containsSpoilers: boolean;
   }) => Promise<{ id: string }>;
   remover: (userId: string, mediaId: string) => Promise<{ removida: true } | null>;
+  limitar: (userId: string) => Promise<Veredito>;
 };
 
 export async function salvarAvaliacaoDaEntrada(
@@ -54,7 +59,16 @@ export async function salvarAvaliacaoDaEntrada(
     return { estado: "avaliacao_invalida" };
   }
 
-  const media = await deps.buscarMedia(pedido.anilistId);
+  // Depois da validacao e antes de tocar o banco (#143): pedido invalido nao
+  // gasta balde, e pedido acima do teto nao custa consulta.
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "muitos_pedidos", esperarSegundos: limite.esperarSegundos };
+  }
+
+  const media = await deps.buscarMedia(pedido.referencia);
 
   if (media === null)
   {
@@ -73,7 +87,7 @@ export async function salvarAvaliacaoDaEntrada(
 }
 
 export async function removerAvaliacaoDaEntrada(
-  pedido: { userId: string; anilistId: number },
+  pedido: { userId: string; referencia: ReferenciaDaObra },
   deps: DependenciasDeAvaliacao,
 ): Promise<
   | { estado: "ok" }
@@ -81,7 +95,7 @@ export async function removerAvaliacaoDaEntrada(
   | { estado: "obra_desconhecida" }
 >
 {
-  const media = await deps.buscarMedia(pedido.anilistId);
+  const media = await deps.buscarMedia(pedido.referencia);
 
   if (media === null)
   {
@@ -104,14 +118,15 @@ export function salvarAvaliacaoDoSistema(
 /** A composição de produção. */
 export function removerAvaliacaoDoSistema(pedido: {
   userId: string;
-  anilistId: number;
+  referencia: ReferenciaDaObra;
 })
 {
   return removerAvaliacaoDaEntrada(pedido, DEPS_DE_PRODUCAO);
 }
 
 const DEPS_DE_PRODUCAO: DependenciasDeAvaliacao = {
-  buscarMedia: buscarMediaPorAnilistId,
+  buscarMedia: buscarMediaPorReferencia,
   salvar: salvarAvaliacao,
   remover: removerAvaliacao,
+  limitar: function (userId) { return limitarAvaliacao({ userId }); },
 };

@@ -1,0 +1,664 @@
+{
+  "colecao": {
+    "visualizacao": "Collection view",
+    "grade": "Grid",
+    "prateleira": "Bookshelf",
+    "andar": "Shelf {n}",
+    "contagem": "{n, plural, one {# series} other {# series}}",
+    "dica": "Explore the spines. Use the arrows, drag or swipe. Select a series to see its details.",
+    "dicaOrdenavel": "Drag the books to change the order. On a phone, press and hold a book, then drag. Select a series to see the details.",
+    "anterior": "Scroll back on {grupo}",
+    "proxima": "Scroll forward on {grupo}",
+    "abrir": "View details for {titulo}",
+    "detalhes": "Details · {titulo}",
+    "fechar": "Close details",
+    "laboratorio": "A new way to explore",
+    "descricaoLaboratorio": "A first look at your bookshelf. Explore this sample collection and switch between the two views.",
+    "avisoLaboratorio": "Demo collection · your bookshelf stays as it is",
+    "selecao": "Worth discovering",
+    "favoritos": "Stories to keep",
+    "verObra": "View series page"
+  },
+  "meta": {
+    "titulo": "Folunio",
+    "descricao": "Your shelf for manga, manhwa, and novels, with automatic, private reading progress."
+  },
+  "cabecalho": {
+    "navegacao": "Navigation",
+    "catalogo": "Catalog",
+    "listas": "Lists",
+    "estante": "Shelf",
+    "perfil": "Profile",
+    "entrar": "Sign in",
+    "idioma": "Language"
+  },
+  "rodape": {
+    "explorar": {
+      "titulo": "Explore"
+    },
+    "conta": {
+      "titulo": "Your account",
+      "ajustes": "Account settings",
+      "cadastrar": "Create account"
+    },
+    "dados": {
+      "titulo": "Data",
+      "anilist": "Catalogue and covers from AniList.",
+      "kitsu": "Kitsu as a backup source when AniList does not respond."
+    },
+    "direitos": "© {ano} Folunio",
+    "fonte": {
+      "agora": "Currently served by {fonte}"
+    }
+  },
+  "comum": {
+    "salvar": "Save",
+    "salvando": "Saving…",
+    "cancelar": "Cancel",
+    "voltar": "Back",
+    "status": {
+      "READING": "Reading",
+      "COMPLETED": "Completed",
+      "PLANNED": "Plan to Read",
+      "PAUSED": "On Hold",
+      "DROPPED": "Dropped"
+    },
+    "formato": {
+      "JP": "Manga",
+      "KR": "Manhwa",
+      "CN": "Manhua",
+      "NOVEL": "Novel"
+    }
+  },
+  "erros": {
+    "corpo_invalido": "invalid body — JSON expected",
+    "pedido_invalido": "invalid request",
+    "anilist_id_invalido": "invalid anilistId",
+    "obra_invalida": "invalid series",
+    "status_invalido": "invalid status",
+    "comentario_invalido": "invalid comment",
+    "cursor_invalido": "pass antesDe with the comment id",
+    "nome_invalido": "name must be 1 to 100 characters",
+    "username_curto": "at least 3 characters",
+    "username_longo": "at most 30 characters",
+    "username_caracteres": "only letters, numbers, period, hyphen and underscore",
+    "email_invalido": "invalid email",
+    "senha_curta": "at least 8 characters",
+    "senha_longa": "at most 72 characters",
+    "credenciais_invalidas": "wrong email, username or password",
+    "sessao_necessaria": "sign in to continue",
+    "obra_nao_encontrada": "series not found",
+    "obra_fora_do_catalogo": "series not found in the catalog",
+    "entrada_nao_encontrada": "entry not found",
+    "lista_nao_encontrada": "list not found",
+    "lista_ou_obra_nao_encontrada": "list or series not found",
+    "resenha_nao_encontrada": "review not found",
+    "comentario_nao_encontrado": "comment not found",
+    "avaliacao_nao_encontrada": "rating not found",
+    "usuario_nao_encontrado": "user not found",
+    "ja_em_uso": "already taken",
+    "cadastro_nao_concluido": "could not complete sign-up — check the details or, if you already have an account, log in",
+    "origem_recusada": "the request did not come from Folunio",
+    "conteudo_nao_json": "the request must be JSON",
+    "nao_avanca": "that chapter does not go past your shelf progress — to go back, use reset",
+    "sem_fonte": "set up the reading source first",
+    "arquivo_grande_demais": "the image is over 512 KB",
+    "tipo_de_arquivo_invalido": "send a JPEG, PNG or WebP image",
+    "capitulo_invalido": "invalid chapter",
+    "lista_cheia": "the list has reached its 500-series limit",
+    "avaliacao_invalida": "invalid rating — 0.5 to 5 in half stars, or a review",
+    "url_invalida": "invalid reading URL",
+    "url_de_capitulo_invalida": "paste the full URL of chapter 1, with https://",
+    "template_invalido": "invalid template — derive it again",
+    "ordem_invalida": "the order must contain exactly the series in the list",
+    "comentario_tamanho_invalido": "comment is empty or too long",
+    "proprio_perfil": "doesn't apply to your own profile",
+    "proprio_conteudo": "doesn't apply to your own content",
+    "relato_indisponivel": "the reporting channel is down right now. Try again in a moment.",
+    "confirmacao_invalida": "the name you typed doesn't match your account.",
+    "idioma_invalido": "language not available",
+    "limite_excedido": "too many attempts — wait before trying again",
+    "falha_interna": "couldn't do that right now",
+    "catalogo_indisponivel": "catalog unavailable right now — try again"
+  },
+  "entrar": {
+    "meta": {
+      "titulo": "Sign in"
+    },
+    "titulo": "Sign in",
+    "subtitulo": "Back to your reading.",
+    "contaCriada": "Account created. Now sign in.",
+    "semConta": "Don't have an account yet? <link>Create account</link>",
+    "campos": {
+      "identificador": "Email or username",
+      "senha": "Password"
+    },
+    "acoes": {
+      "enviar": "Sign in",
+      "enviando": "Signing in…"
+    },
+    "erros": {
+      "geral": "couldn't sign in",
+      "conexao": "no connection to the server — try again",
+      "falhaInterna": "couldn't sign in right now"
+    }
+  },
+  "cadastrar": {
+    "meta": {
+      "titulo": "Create account"
+    },
+    "titulo": "Create account",
+    "subtitulo": "Shelf, progress and reviews — your reading stays yours alone.",
+    "jaTemConta": "Already have an account? <link>Sign in</link>",
+    "campos": {
+      "username": "Username",
+      "email": "Email",
+      "senha": "Password"
+    },
+    "acoes": {
+      "enviar": "Create account",
+      "enviando": "Creating…"
+    },
+    "erros": {
+      "geral": "couldn't complete sign-up",
+      "conexao": "no connection to the server — try again",
+      "falhaInterna": "couldn't complete sign-up right now"
+    }
+  },
+  "autor": {
+    "meta": {
+      "titulo": "Author"
+    },
+    "erros": {
+      "indisponivel": "AniList didn't respond just now. Try again in a moment."
+    },
+    "bio": {
+      "verMais": "Show more",
+      "verMenos": "Show less"
+    },
+    "obras": {
+      "titulo": "Series",
+      "vazia": "No manga or novel series listed on AniList."
+    }
+  },
+  "catalogo": {
+    "meta": {
+      "titulo": "Catalog"
+    },
+    "titulo": "Catalog",
+    "subtitulo": "Search for a series, add it to your shelf and your reading starts counting.",
+    "busca": {
+      "rotulo": "Search series",
+      "placeholder": "Lookism, Solo Leveling, Berserk…",
+      "buscando": "Searching…"
+    },
+    "filtros": {
+      "tipo": "Type",
+      "genero": "Genre",
+      "decada": "Decade",
+      "ordenar": "Sort",
+      "todos": "All",
+      "limpar": "clear filters",
+      "ordens": {
+        "popular": "Popular",
+        "nota": "Top rated",
+        "alta": "Trending",
+        "recente": "Newest"
+      }
+    },
+    "erros": {
+      "indisponivel": "AniList didn't respond just now. Try again in a moment.",
+      "muitosPedidos": "Too many searches from here. Wait a moment and try again.",
+      "doCache": "Results limited to the series that have already been through here."
+    },
+    "vazio": {
+      "semTermo": "The catalog didn't return anything just now. Try again in a moment.",
+      "semResultado": "Nothing found for <forte>{termo}</forte>."
+    },
+    "destaques": "Popular right now",
+    "cartao": {
+      "formatoGenerico": "Series",
+      "capitulos": "{n, plural, one {{n} chapter} other {{n} chapters}}"
+    },
+    "botaoEstante": {
+      "naEstante": "On shelf",
+      "adicionar": "+ Shelf",
+      "erro": "didn't work — try again"
+    },
+    "mais": {
+      "verMais": "Show more works",
+      "carregando": "Loading…",
+      "fim": "That's everything we have here.",
+      "erroMais": "Couldn't load more right now. Try again."
+    }
+  },
+  "componentes": {
+    "sair": "Sign out",
+    "confirmarSaida": {
+      "titulo": "Log out",
+      "pergunta": "You’ll need to log in again to keep tracking your progress.",
+      "confirmar": "Log out",
+      "saindo": "Logging out…"
+    },
+    "logo": {
+      "rotulo": "Folunio — home"
+    },
+    "carrossel": {
+      "anterior": "Previous",
+      "proximo": "Next"
+    },
+    "estrelas": {
+      "grupo": "Rating from 0.5 to 5",
+      "nota": "{nota} out of 5",
+      "semNota": "no rating",
+      "limpar": "clear"
+    },
+    "tema": {
+      "grupo": "Site theme",
+      "escolher": "{nome} theme",
+      "nomes": {
+        "sumi": "Sumi",
+        "noturno": "Noturno",
+        "matcha": "Matcha"
+      }
+    }
+  },
+  "estante": {
+    "meta": {
+      "titulo": "Shelf"
+    },
+    "titulo": "Shelf",
+    "descricao": "Your series, by status. Reading progress stays private to you.",
+    "vazia": "Nothing here yet. <catalogo>Search the catalog</catalogo> and add your first series.",
+    "obra": "Series",
+    "capitulos": "{capitulo} chapters",
+    "seletorStatus": "Series status",
+    "filtros": {
+      "rotulo": "Filter by status",
+      "tudo": "All"
+    },
+    "progresso": {
+      "editar": "Edit chapter",
+      "marcar": "set chapter",
+      "atual": "on ch. {capitulo}",
+      "prefixo": "on ch.",
+      "campo": "Current chapter",
+      "salvar": "save",
+      "cancelar": "cancel"
+    },
+    "continuar": {
+      "continuar": "Continue reading ↗",
+      "capituloEm": "ch. {capitulo} on {host}",
+      "semLeitura": "register a chapter with the extension to continue from here"
+    },
+    "avaliacao": {
+      "nota": "Rating {nota} of 5",
+      "avaliar": "Rate",
+      "editar": "Edit rating",
+      "spoilerOculto": "review with spoiler — show",
+      "resenha": "Write your review (optional)",
+      "spoiler": "contains spoiler",
+      "remover": "Remove"
+    },
+    "erros": {
+      "banco": "The shelf depends on the database, which didn't respond just now. Try again in a moment.",
+      "avaliacaoVazia": "give a rating or write a review",
+      "salvar": "couldn't save — try again",
+      "remover": "couldn't remove — try again",
+      "derivar": "couldn't derive — check the link",
+      "capituloInvalido": "invalid chapter",
+      "acao": "didn't work — try again",
+      "rede": "didn't work just now — try again",
+      "registrar": "couldn't record that right now"
+    }
+  },
+  "home": {
+    "saude": {
+      "aviso": "{estado} — {dependencias}. Everything that doesn't depend on it keeps working.",
+      "resumo": {
+        "ok": "all systems up",
+        "degraded": "up, with configuration pending",
+        "down": "a dependency is down"
+      },
+      "dependencia": {
+        "database": "database",
+        "anilist": "AniList catalog"
+      },
+      "estado": {
+        "ok": "responding",
+        "down": "down",
+        "not_configured": "not configured"
+      }
+    },
+    "boasVindas": {
+      "titulo": "Happy reading, {username}.",
+      "continuarLendo": "Continue reading",
+      "semFonte": "Nothing you're reading has a reading source set right now — mark a series as Reading and set its source in your <estante>shelf</estante>, and the continue button shows up here.",
+      "estanteVazia": "Your shelf is empty — <catalogo>search the catalog</catalogo> and add your first series."
+    },
+    "apresentacao": {
+      "descricao": "Log your reading of manga, manhwa and novel. Automatic progress, private history, a shelf that's yours.",
+      "criarConta": "Create account",
+      "entrar": "Sign in"
+    },
+    "vitrine": {
+      "resenhas": {
+        "titulo": "Reviews",
+        "vazio": "No reviews here yet — the first one shows up in this showcase."
+      },
+      "listas": {
+        "titulo": "Lists",
+        "vazio": "No lists here yet — the first one shows up in this showcase."
+      }
+    },
+    "populares": {
+      "titulo": "Popular now",
+      "verMais": "see more →",
+      "indisponivel": "The catalog didn't respond just now — try again in a moment."
+    },
+    "atividade": {
+      "titulo": "Recent activity",
+      "vazia": "No reviews or lists here yet — the first one shows up in this section."
+    },
+    "resenha": {
+      "notaAria": "Rating {nota} out of 5",
+      "spoiler": "Contains spoilers — read it on the series page.",
+      "spoilerMostrar": "Contains spoilers — show"
+    },
+    "feed": {
+      "resenhou": "reviewed",
+      "criouLista": "created the list"
+    },
+    "contagem": {
+      "obras": "{n, plural, one {series} other {series}}",
+      "curtidas": "{n, plural, one {like} other {likes}}",
+      "curtidasLeitorDeTela": "{n, plural, one {like} other {likes}}"
+    }
+  },
+  "listas": {
+    "erros": {
+      "semBanco": "Lists depend on the database, and it didn't respond just now."
+    },
+    "campos": {
+      "nome": "List name",
+      "descricao": "List description",
+      "descricaoOpcional": "Description (optional)"
+    },
+    "indice": {
+      "meta": {
+        "titulo": "Lists"
+      },
+      "titulo": "Lists",
+      "subtitulo": "Collections made by readers — from the classics to the silly ones.",
+      "convite": "<entrar>Sign in</entrar> to create your own.",
+      "vazia": "No lists yet — be the first to create one.",
+      "ordenar": {
+        "rotulo": "Sort lists",
+        "recentes": "Recent",
+        "curtidas": "Most liked"
+      },
+      "criar": {
+        "abrir": "Create list",
+        "enviar": "Create",
+        "enviando": "Creating…",
+        "erros": {
+          "semNome": "give the list a name",
+          "falhou": "didn't work — try again",
+          "rede": "didn't work just now — try again"
+        }
+      }
+    },
+    "detalhe": {
+      "meta": {
+        "titulo": "List"
+      },
+      "autoria": "by <autor>{username}</autor> · {n, plural, one {# series} other {# series}}",
+      "vazia": "Empty list for now.",
+      "vaziaPropria": "Empty list — search for a series above to add it.",
+      "busca": {
+        "rotulo": "Search for a series to add",
+        "placeholder": "Search for a series to add…",
+        "buscando": "Searching…",
+        "semResultado": "Nothing found for \"{termo}\".",
+        "indisponivel": "AniList did not respond. Try again in a moment.",
+        "muitosPedidos": "Too many searches from here. Wait a moment and try again.",
+        "adicionar": "+ add",
+        "jaNaLista": "✓ in the list",
+        "erros": {
+          "cheia": "the list has reached its limit",
+          "limite": "too many additions in a short time — wait a bit",
+          "indisponivel": "the catalog did not respond — try again",
+          "geral": "could not add — try again"
+        }
+      },
+      "remover": "remove",
+      "rascunho": {
+        "salvar": "Save",
+        "salvando": "Saving…",
+        "descartar": "Discard",
+        "pendentes": "{n, plural, =1 {# unsaved change} other {# unsaved changes}}",
+        "erro": "could not save — try again",
+        "limite": "too many changes in a short time — wait a bit"
+      },
+      "curtida": {
+        "curtir": "like the list",
+        "descurtir": "unlike the list"
+      },
+      "editar": {
+        "abrir": "Edit",
+        "erro": "couldn't save",
+        "sessao": "sign in to use lists",
+        "nomeInvalido": "1 to 100 characters"
+      },
+      "apagar": {
+        "abrir": "Delete list",
+        "confirmacao": "delete for good?",
+        "sim": "yes",
+        "nao": "no"
+      },
+      "ordenar": {
+        "antes": "Move {titulo} earlier",
+        "depois": "Move {titulo} later"
+      }
+    }
+  },
+  "obra": {
+    "meta": {
+      "titulo": "Series"
+    },
+    "indisponivel": "AniList didn't respond just now and this series isn't in our cache yet. Try again in a moment.",
+    "autoria": "by",
+    "formatoDesconhecido": "Series",
+    "curiosidades": "Trivia",
+    "similares": "Similar series",
+    "contagem": {
+      "capitulos": "{n, plural, one {{n} chapter} other {{n} chapters}}",
+      "aberturas": "{n, plural, one {{n} read} other {{n} reads}}",
+      "avaliacoes": "{n, plural, one {{n} rating} other {{n} ratings}}",
+      "curtidas": "{n, plural, one {{n} like} other {{n} likes}}",
+      "comentarios": "{n, plural, one {{n} comment} other {{n} comments}}"
+    },
+    "painel": {
+      "convite": "<entrar>Sign in</entrar> to add to your shelf, rate and track your reading.",
+      "adicionar": "Add to your shelf to rate and track your reading."
+    },
+    "historico": {
+      "titulo": "Reading history",
+      "maisRecentes": "{n} most recent",
+      "capitulo": "ch. {n}",
+      "fonteRemovida": "reading source removed"
+    },
+    "reset": {
+      "botao": "Reset reading",
+      "titulo": "Reset your reading of {titulo}",
+      "texto": "This deletes {n, plural, =0 {the history} =1 {1 opening} other {# openings}} for this series and clears your progress.",
+      "hoje": "Currently: ch. {capitulo}.",
+      "depois": "Afterwards, mark the chapter you are on.",
+      "confirmar": "Reset",
+      "resetando": "Resetting…",
+      "erro": "Could not reset right now. Try again."
+    },
+    "avaliacao": {
+      "titulo": "Your rating",
+      "resenhar": "Write a review…",
+      "editarResenha": "Edit review…"
+    },
+    "apagar": {
+      "confirmar": "Deleting the review text also deletes {itens}. Continue?"
+    },
+    "modal": {
+      "rotulo": "Write a review for {titulo}",
+      "fechar": "Close",
+      "placeholder": "Write your review — other readers can see it",
+      "spoiler": "contains spoiler"
+    },
+    "nota": {
+      "titulo": "Folunio rating",
+      "distribuicao": "Rating distribution"
+    },
+    "resenhas": {
+      "titulo": "Reviews",
+      "vazio": "No reviews here yet — rate it with a few words and yours shows up for everyone.",
+      "minha": "you",
+      "nota": "Rating {nota} out of 5",
+      "spoiler": "this review has a spoiler — show",
+      "verConversa": "see conversation",
+      "comentar": "comment",
+      "carregando": "Loading…",
+      "verAnteriores": "see {n, plural, one {{n} earlier comment} other {{n} earlier comments}}",
+      "apagarComentario": "Delete comment",
+      "apagar": "delete",
+      "placeholderComentario": "Write a comment…",
+      "enviar": "send",
+      "entreParaComentar": "Sign in to comment."
+    },
+    "listas": {
+      "botao": "+ List",
+      "titulo": "My lists",
+      "carregando": "Loading…",
+      "vazia": "You haven't created a list yet. <link>Create the first one</link>"
+    },
+    "erros": {
+      "salvar": "couldn't save — try again",
+      "comentar": "couldn't post the comment — try again",
+      "limite": "too many comments too fast — wait a moment",
+      "listas": "couldn't load your lists",
+      "rede": "that didn't work — try again"
+    }
+  },
+  "perfil": {
+    "voce": "you",
+    "membroDesde": "on Folunio since {mes}",
+    "notaAria": "Rating {nota} out of 5",
+    "erros": {
+      "semBanco": "The profile needs the database, and it didn't respond just now."
+    },
+    "numeros": {
+      "avaliadas": "{n, plural, one {<forte>{valor}</forte> rated} other {<forte>{valor}</forte> rated}}",
+      "resenhas": "{n, plural, one {<forte>{valor}</forte> review} other {<forte>{valor}</forte> reviews}}",
+      "listas": "{n, plural, one {<forte>{valor}</forte> list} other {<forte>{valor}</forte> lists}}",
+      "curtidasDadas": "{n, plural, one {<forte>{valor}</forte> like given} other {<forte>{valor}</forte> likes given}}",
+      "seguindo": "{n, plural, other {<forte>{valor}</forte> following}}",
+      "seguidores": "{n, plural, one {<forte>{valor}</forte> follower} other {<forte>{valor}</forte> followers}}",
+      "curtidasNoPerfil": "{n, plural, one {<forte>{valor}</forte> profile like} other {<forte>{valor}</forte> profile likes}}"
+    },
+    "social": {
+      "seguir": "Follow",
+      "seguindo": "Following",
+      "curtir": "Like profile",
+      "descurtir": "Unlike profile"
+    },
+    "foto": {
+      "altPropria": "Your profile photo",
+      "altOutro": "Photo of {username}",
+      "trocar": "Change photo",
+      "trocarAria": "Change profile photo",
+      "trocarCurto": "change",
+      "remover": "remove",
+      "erros": {
+        "geral": "couldn't do that right now",
+        "leitura": "couldn't read that image",
+        "sessao": "sign in to change your photo"
+      }
+    },
+    "estante": {
+      "titulo": "My shelf",
+      "gerenciar": "manage your shelf",
+      "abas": "Status",
+      "vazia": "Nothing in {status}.",
+      "semCapitulo": "no chapter",
+      "capitulo": "ch. {n}"
+    },
+    "avaliadas": {
+      "titulo": "Rated",
+      "vaziaComFiltro": "No series match this filter.",
+      "vaziaPropria": "You haven't rated anything yet. Rate a series and it shows up here.",
+      "vaziaOutro": "{username} hasn't rated any series yet."
+    },
+    "filtros": {
+      "ordenar": "Sort",
+      "nota": "Rating",
+      "todas": "All",
+      "limpar": "clear",
+      "ordens": {
+        "recentes": "Newest",
+        "antigas": "Oldest",
+        "maior_nota": "Highest rating",
+        "menor_nota": "Lowest rating"
+      }
+    },
+    "resenhas": {
+      "titulo": "Recent reviews",
+      "vaziaPropria": "You haven't written a review yet. Rate a series with text and it shows up here.",
+      "vaziaOutro": "{username} hasn't written a review yet.",
+      "spoiler": "Contains spoiler — show",
+      "curtidas": "{n, plural, one {{valor} like} other {{valor} likes}}"
+    },
+    "listas": {
+      "titulo": "Lists",
+      "vaziaPropria": "You haven't created a list yet. <link>Create the first one</link>",
+      "vaziaOutro": "{username} hasn't created a list yet.",
+      "obras": "{n, plural, one {{valor} series} other {{valor} series}}"
+    }
+  },
+  "relatar": {
+    "meta": {
+      "titulo": "Report a translation issue"
+    },
+    "titulo": "Found wrong wording?",
+    "subtitulo": "Folunio speaks five languages, and not all of them have a native reviewer here. If something reads wrong, tell us.",
+    "avisoPublico": "What you write becomes a public issue in the project repository, along with your username and the screen you were on. Don't write anything personal.",
+    "precisaEntrar": "To report, sign in to your account.",
+    "entrar": "sign in",
+    "linkDoRodape": "Report a translation issue",
+    "obrigado": "Got it, thanks. The team sees the report in the repository.",
+    "enviar": "Send report",
+    "enviando": "Sending…",
+    "campos": {
+      "texto": "What's wrong?",
+      "sugestao": "How should it read? (optional)"
+    },
+    "erros": {
+      "geral": "couldn't send just now. Try again in a moment."
+    }
+  },
+  "conta": {
+    "meta": {
+      "titulo": "Account"
+    },
+    "titulo": "Your account",
+    "subtitulo": "Settings that apply to the whole account.",
+    "linkDoPerfil": "account",
+    "apagar": {
+      "titulo": "Delete account",
+      "oQueSome": "Everything goes: shelf, reading progress, ratings, reviews, lists, likes and comments — including comments other people wrote on your reviews. This can't be undone.",
+      "nomeLivre": "Your username becomes available again right away, and someone else can register it.",
+      "rotulo": "To confirm, type {username}",
+      "botao": "Delete my account",
+      "apagando": "Deleting…"
+    },
+    "erros": {
+      "geral": "couldn't do it just now. Try again in a moment."
+    }
+  }
+}

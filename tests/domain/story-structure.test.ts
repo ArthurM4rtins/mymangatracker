@@ -76,6 +76,72 @@ describe("validarEstruturaNarrativa", () => {
 
     expect(validarEstruturaNarrativa(invalida)).toContain("segments[1]: segmento verificado sem fonte");
   });
+  // Issue #16, lote 2: Fire Force tem capítulo 00 (prólogo) e o AniList o
+  // conta nas 305 entradas — zero é início válido.
+  it("aceita capítulo 0 como início (Fire Force)", () => {
+    const valida = structuredClone(ESTRUTURA_VALIDA);
+    valida.segments[1].range!.start = "0";
+
+    expect(validarEstruturaNarrativa(valida)).toEqual([]);
+  });
+
+  // Berserk: o prólogo Black Swordsman aparece como "-16" em site editorial
+  // (listfist) e como "0.01"–"0.09" no MangaDex. O tracker só registra
+  // capítulo positivo (Decimal(8,2), zod positive), então a base é o decimal —
+  // negativo nunca casaria com progresso de leitura.
+  it("recusa capítulo negativo (Berserk numerado -16 por site editorial)", () => {
+    const invalida = structuredClone(ESTRUTURA_VALIDA);
+    invalida.segments[1].range = { unit: "CHAPTER", start: "-16", end: "-9" };
+
+    expect(validarEstruturaNarrativa(invalida)).toContain("segments[1]: intervalo inválido");
+  });
+
+  it("aceita prólogo decimal antes do capítulo 1 (Berserk 0.01–0.09 no MangaDex)", () => {
+    const valida = structuredClone(ESTRUTURA_VALIDA);
+    valida.segments[1].range = { unit: "CHAPTER", start: "0.01", end: "0.09" };
+
+    expect(validarEstruturaNarrativa(valida)).toEqual([]);
+  });
+
+  // Lote 2 chegou com 7 arquivos em formato próprio ({name, range sem unit}):
+  // segmento sem identidade não é importável.
+  it("recusa segmento sem key, kind, title ou status", () => {
+    const invalida = structuredClone(ESTRUTURA_VALIDA);
+    const solto = { name: "Easton Enrollment", range: { start: "1", end: "15" }, sourceIds: ["fonte-1"] };
+    (invalida.segments as unknown[]).push(solto);
+
+    const erros = validarEstruturaNarrativa(invalida);
+
+    expect(erros).toContain("segments[2]: intervalo inválido");
+    expect(erros).toContain("segments[2]: segmento sem key, kind, title ou status");
+  });
+
+  // Decisão de 03/09 (#16): trecho entre arcos que nenhuma fonte atribui a
+  // arco (interlúdio do Ragnarok, capítulos avulsos do Kaguya) vira segmento
+  // explícito, em vez de lacuna ou de limite inventado.
+  it("aceita INTERLUDE como segmento entre arcos", () => {
+    const valida = structuredClone(ESTRUTURA_VALIDA);
+    valida.segments.push({
+      key: "avulsos-6-10",
+      parentKey: "saga",
+      kind: "INTERLUDE",
+      position: 2,
+      title: "Capítulos avulsos 6–10",
+      range: { unit: "CHAPTER", start: "6", end: "10" },
+      sourceIds: ["fonte-1"],
+      status: "DRAFT",
+    });
+
+    expect(validarEstruturaNarrativa(valida)).toEqual([]);
+  });
+
+  it("recusa kind fora de SAGA/ARC/INTERLUDE", () => {
+    const invalida = structuredClone(ESTRUTURA_VALIDA);
+    invalida.segments[1].kind = "PARTE";
+
+    expect(validarEstruturaNarrativa(invalida)).toContain("segments[1]: segmento sem key, kind, title ou status");
+  });
+
   it("aceita arco com intervalos descontínuos", () => {
     const valida = structuredClone(ESTRUTURA_VALIDA);
     delete valida.segments[1].range;

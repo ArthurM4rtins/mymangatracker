@@ -10,6 +10,8 @@ import {
   definirProgressoDoSistema,
   mudarStatusDaEntradaDoSistema,
 } from "@/server/services/estante.service";
+import { lerJson } from "../../_shared/corpo";
+import { ERRO } from "../../_shared/erros";
 import { usuarioDaSessao } from "../../_shared/sessao";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +20,8 @@ const ESQUEMA_PATCH = z
   .object({
     status: z.enum(["READING", "COMPLETED", "PLANNED", "PAUSED", "DROPPED"]).optional(),
     // Decimal com até 2 casas — capítulo 57.5 existe. Máximo do Decimal(8,2).
-    capitulo: z.number().positive().max(999999.99).optional(),
+    // Decimal(8,2): duas casas, senão o banco arredonda o que a resposta afirmou.
+    capitulo: z.number().positive().max(999999.99).multipleOf(0.01).optional(),
   })
   .refine(
     function (corpo) { return corpo.status !== undefined || corpo.capitulo !== undefined; },
@@ -35,30 +38,26 @@ export async function PATCH(
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para usar a estante" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
 
-  let corpo: unknown;
-  try
+  const leitura = await lerJson(request);
+
+  if (!leitura.ok)
   {
-    corpo = await request.json();
+    return leitura.resposta;
   }
-  catch
-  {
-    return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
-      { status: 400 },
-    );
-  }
+
+  const corpo: unknown = leitura.corpo;
 
   const analise = ESQUEMA_PATCH.safeParse(corpo);
 
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "pedido inválido" } },
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -78,7 +77,7 @@ export async function PATCH(
       if (resultado.estado === "nao_encontrada")
       {
         return NextResponse.json(
-          { erros: { _geral: "entrada não encontrada" } },
+          { erros: { _geral: ERRO.ENTRADA_NAO_ENCONTRADA } },
           { status: 404 },
         );
       }
@@ -95,7 +94,7 @@ export async function PATCH(
       if (resultado.estado === "nao_encontrada")
       {
         return NextResponse.json(
-          { erros: { _geral: "entrada não encontrada" } },
+          { erros: { _geral: ERRO.ENTRADA_NAO_ENCONTRADA } },
           { status: 404 },
         );
       }
@@ -103,7 +102,7 @@ export async function PATCH(
       if (resultado.estado === "capitulo_invalido")
       {
         return NextResponse.json(
-          { erros: { _geral: "capítulo inválido" } },
+          { erros: { _geral: ERRO.CAPITULO_INVALIDO } },
           { status: 422 },
         );
       }
@@ -115,7 +114,7 @@ export async function PATCH(
   {
     console.error("[estante] falha ao atualizar entrada:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível salvar agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }

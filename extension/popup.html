@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Folunio</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="topo">
+      <!-- A marca desenhada, não escrita: o mesmo wordmark do site, com a folha
+           no primeiro o e o planeta no último. Aqui cabe — não é o cabeçalho de
+           20px do site, a marca aparece uma vez e tem espaço. -->
+      <svg class="marca" viewBox="-6 0 440 100" role="img" aria-label="Folunio">
+        <ellipse cx="388" cy="60" rx="36" ry="13.5" fill="none" stroke="var(--acento)" stroke-width="9" transform="rotate(-20 388 60)" />
+        <g fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M34,84 V26 A18,18 0 0 1 52,8" />
+          <line x1="12" y1="36" x2="58" y2="36" />
+          <path d="M134,32 C104,30 84,48 84,63 C84,79 97,88 112,84 C126,80 136,58 134,32 Z" />
+          <line x1="158" y1="8" x2="158" y2="84" />
+          <path d="M186,36 V64 A20,20 0 0 0 226,64 V36" />
+          <line x1="226" y1="36" x2="226" y2="84" />
+          <line x1="254" y1="84" x2="254" y2="36" />
+          <path d="M254,58 A22,22 0 0 1 298,58 V84" />
+          <line x1="326" y1="36" x2="326" y2="84" />
+        </g>
+        <circle cx="388" cy="60" r="22" fill="var(--fundo)" stroke="currentColor" stroke-width="16" />
+        <g clip-path="url(#anel-frente)">
+          <ellipse cx="388" cy="60" rx="36" ry="13.5" fill="none" stroke="var(--acento)" stroke-width="9" transform="rotate(-20 388 60)" />
+        </g>
+        <circle cx="326" cy="19" r="7.5" fill="var(--acento)" />
+        <defs>
+          <clipPath id="anel-frente">
+            <rect x="338" y="60" width="100" height="46" transform="rotate(-20 388 60)" />
+          </clipPath>
+        </defs>
+      </svg>
+      <!-- Qual servidor esta recebendo a leitura (#148, item 9). O build e
+           unico e tenta producao antes do localhost, entao quem testa local
+           logado nos dois gravava em producao sem nada na tela dizer. -->
+      <span id="ambiente" class="ambiente" hidden></span>
+      <a
+        id="abrir-site"
+        class="discreto"
+        href="#"
+        target="_blank"
+        rel="noreferrer"
+        data-i18n="abrirSite"
+      ></a>
+    </header>
+
+    <main id="conteudo" class="conteudo">
+      <p id="estado" class="estado" data-i18n="carregando"></p>
+
+      <form id="formulario" class="formulario" hidden>
+        <!-- O rotulo existe porque e daqui que saem os dois palpites, obra e
+             capitulo. Sem ele o titulo da aba aparece solto e ninguem entende
+             por que aquele texto esta ali. -->
+        <div class="pagina">
+          <span class="rotulo" data-i18n="nestaAba"></span>
+          <span id="pagina-titulo" class="pagina-titulo"></span>
+          <!-- A URL que vai para o banco (#142) continua a um toque: escondida por
+               padrao porque o reset ja apaga o que subiu, e o registro automatico
+               grava sem o popup abrir — mostrar sempre virou ruido (#173). -->
+          <button id="ver-link" type="button" class="discreto ver-link" data-i18n="verLink"></button>
+          <span id="pagina-url" class="pagina-url" hidden></span>
+        </div>
+
+        <!-- `div`, nao `label`: o rotulo serve a DOIS controles, o filtro e a
+             lista, e `label` so nomeia um. Os dois apontam para ele por
+             `aria-labelledby`. -->
+        <div class="campo">
+          <span class="rotulo" id="rotulo-obra" data-i18n="campoObra"></span>
+          <input
+            id="filtro"
+            type="search"
+            data-i18n-placeholder="filtroPlaceholder"
+            autocomplete="off"
+            aria-labelledby="rotulo-obra"
+            aria-controls="obra"
+          />
+          <!-- Era um `select`. Virou listbox de verdade — `role`, `aria-selected`
+               e setas — porque trocar `select` por `div` sem isso e perder
+               teclado e leitor de tela, o que seria regressao disfarcada de
+               melhoria. -->
+          <div
+            id="obra"
+            class="lista"
+            role="listbox"
+            tabindex="0"
+            aria-labelledby="rotulo-obra"
+          ></div>
+          <small id="obra-origem" class="discreto" hidden></small>
+        </div>
+
+        <label class="campo">
+          <span class="rotulo" data-i18n="campoCapitulo"></span>
+          <span class="capitulo-linha">
+            <input
+              id="capitulo"
+              type="number"
+              step="0.01"
+              min="0.01"
+              inputmode="decimal"
+              placeholder="—"
+            />
+            <small id="origem" class="discreto"></small>
+          </span>
+        </label>
+
+        <button id="registrar" type="submit" data-i18n="registrar"></button>
+        <p id="resultado" class="resultado" role="status"></p>
+
+        <!-- A faixa espelha o badge que o Chrome carimba no icone: mesmo glifo,
+             mesma cor. Fora daqui, o ● e o ✓ so sao explicados na tela de
+             tutorial do site, que ainda nao existe publicada. -->
+        <p id="faixa" class="faixa" hidden>
+          <i id="faixa-badge" class="faixa-badge" aria-hidden="true"></i>
+          <span id="faixa-texto"></span>
+        </p>
+
+        <label class="chave">
+          <input id="auto" type="checkbox" />
+          <span>
+            <span data-i18n="autoRegistro"></span>
+            <small class="discreto" data-i18n="autoRegistroAjuda"></small>
+          </span>
+        </label>
+      </form>
+
+      <p id="sem-sessao" class="estado" hidden>
+        <span data-i18n="semSessao"></span>
+        <a id="entrar" href="#" target="_blank" rel="noreferrer" data-i18n="entrar"></a>
+      </p>
+    </main>
+
+    <script src="comum.js"></script>
+    <script src="i18n.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

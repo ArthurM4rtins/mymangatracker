@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { resumirNotas } from "@/server/domain/nota-media";
 
-// A nota do Kidoku (issue #48): média das notas dos NOSSOS usuários sobre uma
+// A nota do Folunio (issue #48): média das notas dos NOSSOS usuários sobre uma
 // obra, a partir da contagem por valor (o banco agrupa; o domínio resume).
 // Média com uma casa; histograma com as dez posições de 0,5 a 5,0 sempre
 // presentes, na ordem crescente. Sem nota nenhuma = null, não zero.

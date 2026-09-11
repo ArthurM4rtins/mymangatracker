@@ -12,9 +12,27 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
-  "conflicts": []
+  "sources": [
+    { "id": "inkr-land-lustrous-chapters", "url": "https://comics.inkr.com/title/1124-land-of-the-lustrous/chapters", "type": "OFFICIAL", "accessedAt": "2026-09-01" },
+    { "id": "houseki-wiki-story-arcs", "url": "https://houseki-no-kuni.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "wikipedia-land-lustrous", "url": "https://en.wikipedia.org/wiki/Land_of_the_Lustrous", "type": "EDITORIAL", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "natural-historian", "kind": "ARC", "position": 1, "title": "Natural Historian Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "11" }, "sourceIds": ["houseki-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "new-assignment", "kind": "ARC", "position": 2, "title": "New Assignment Arc", "range": { "unit": "CHAPTER", "start": "12", "end": "14" }, "sourceIds": ["houseki-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "winter", "kind": "ARC", "position": 3, "title": "Winter Arc", "range": { "unit": "CHAPTER", "start": "15", "end": "20" }, "sourceIds": ["houseki-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "spring", "kind": "ARC", "position": 4, "title": "Spring Arc", "range": { "unit": "CHAPTER", "start": "21", "end": "28" }, "sourceIds": ["houseki-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "new-purpose", "kind": "ARC", "position": 5, "title": "New Purpose Arc", "range": { "unit": "CHAPTER", "start": "29", "end": "37" }, "sourceIds": ["houseki-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "cairngorm", "kind": "ARC", "position": 6, "title": "Cairngorm Arc", "range": { "unit": "CHAPTER", "start": "38", "end": "45" }, "sourceIds": ["houseki-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "new-head", "kind": "ARC", "position": 7, "title": "New Head Arc", "range": { "unit": "CHAPTER", "start": "46", "end": "51" }, "sourceIds": ["houseki-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "journey-moon", "kind": "ARC", "position": 8, "title": "Journey to the Moon Arc", "range": { "unit": "CHAPTER", "start": "52", "end": "63" }, "sourceIds": ["houseki-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "prayer", "kind": "ARC", "position": 9, "title": "Prayer Arc", "range": { "unit": "CHAPTER", "start": "64", "end": "81" }, "sourceIds": ["houseki-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "invasion", "kind": "ARC", "position": 10, "title": "Invasion Arc", "range": { "unit": "CHAPTER", "start": "82", "end": "95" }, "sourceIds": ["houseki-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "pure-new-land", "kind": "ARC", "position": 11, "title": "Pure New Land Arc", "range": { "unit": "CHAPTER", "start": "96", "end": "108" }, "sourceIds": ["houseki-wiki-story-arcs"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "numbering and arc naming", "reason": "A taxonomia comunitaria, que declara seus nomes e organizacao nao oficiais, cobre a serializacao principal 1--108. O catalogo AniList registra 120 entradas, sem uma equivalencia editorial encontrada para os extras; os segmentos nao foram estendidos por inferencia." }
+  ]
 }

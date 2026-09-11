@@ -2,29 +2,55 @@
  * Casos de uso do social das resenhas (issue #39): curtir (toggle), comentar
  * e apagar o próprio comentário. Quem resolve a sessão é o controller.
  */
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import { limitarComentario } from "./limite.service";
+import { podeSeRelacionar } from "@/server/domain/social";
 import {
   alternarCurtida,
+  donoDaResenha,
   apagarComentario,
   comentarNaReview,
+  listarComentariosAnteriores,
+  type ComentarioDaReview,
 } from "@/server/repositories/review-social.repository";
 
 const TAMANHO_MAXIMO_DO_COMENTARIO = 2000;
 
 export type DependenciasDeCurtida = {
+  /** O dono da resenha, ou null quando ela não existe ou está sem texto. */
+  buscarDono: (entryId: string) => Promise<string | null>;
   alternar: (
     entryId: string,
     userId: string,
   ) => Promise<{ curtida: boolean; total: number } | null>;
 };
 
+/**
+ * Curtir a PRÓPRIA resenha é recusado (#148, item 4). Curtir o próprio perfil já
+ * era, desde a #74; a resenha ficou de fora, e a autora podia se somar no
+ * ranking por curtidas da página da obra. Mesma regra de domínio dos dois lados.
+ */
 export async function curtirReview(
   pedido: { userId: string; entryId: string },
   deps: DependenciasDeCurtida,
 ): Promise<
   | { estado: "ok"; curtida: boolean; total: number }
   | { estado: "nao_encontrada" }
+  | { estado: "a_si_mesmo" }
 >
 {
+  const dono = await deps.buscarDono(pedido.entryId);
+
+  if (dono === null)
+  {
+    return { estado: "nao_encontrada" };
+  }
+
+  if (!podeSeRelacionar(pedido.userId, dono))
+  {
+    return { estado: "a_si_mesmo" };
+  }
+
   const resultado = await deps.alternar(pedido.entryId, pedido.userId);
 
   if (resultado === null)
@@ -41,6 +67,8 @@ export type DependenciasDeComentario = {
     userId: string,
     texto: string,
   ) => Promise<{ id: string } | null>;
+  /** Teto de comentários por usuário na janela (#109). */
+  limitar: (userId: string) => Promise<Veredito>;
 };
 
 export async function comentarReview(
@@ -50,6 +78,7 @@ export async function comentarReview(
   | { estado: "ok" }
   | { estado: "nao_encontrada" }
   | { estado: "comentario_invalido" }
+  | { estado: "muitos_comentarios"; esperarSegundos: number }
 >
 {
   const texto = pedido.texto.trim();
@@ -59,9 +88,43 @@ export async function comentarReview(
     return { estado: "comentario_invalido" };
   }
 
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "muitos_comentarios", esperarSegundos: limite.esperarSegundos };
+  }
+
   const criado = await deps.comentar(pedido.entryId, pedido.userId, texto);
 
   return criado === null ? { estado: "nao_encontrada" } : { estado: "ok" };
+}
+
+export type DependenciasDePaginacao = {
+  listar: (
+    entryId: string,
+    antesDoId: string,
+    userId: string | null,
+  ) => Promise<ComentarioDaReview[]>;
+};
+
+/** A página anterior da conversa de uma resenha (#109): antes do comentário dado. */
+export function comentariosAnterioresDaReview(
+  pedido: { entryId: string; antesDoId: string; userId: string | null },
+  deps: DependenciasDePaginacao,
+): Promise<ComentarioDaReview[]>
+{
+  return deps.listar(pedido.entryId, pedido.antesDoId, pedido.userId);
+}
+
+/** A composição de produção. */
+export function comentariosAnterioresDaReviewDoSistema(pedido: {
+  entryId: string;
+  antesDoId: string;
+  userId: string | null;
+}): Promise<ComentarioDaReview[]>
+{
+  return comentariosAnterioresDaReview(pedido, { listar: listarComentariosAnteriores });
 }
 
 export type DependenciasDeRemocao = {
@@ -84,7 +147,7 @@ export async function apagarComentarioDaReview(
 /** A composição de produção. */
 export function curtirReviewDoSistema(pedido: { userId: string; entryId: string })
 {
-  return curtirReview(pedido, { alternar: alternarCurtida });
+  return curtirReview(pedido, { alternar: alternarCurtida, buscarDono: donoDaResenha });
 }
 
 /** A composição de produção. */
@@ -94,7 +157,10 @@ export function comentarReviewDoSistema(pedido: {
   texto: string;
 })
 {
-  return comentarReview(pedido, { comentar: comentarNaReview });
+  return comentarReview(pedido, {
+    comentar: comentarNaReview,
+    limitar: function (userId) { return limitarComentario({ userId }); },
+  });
 }
 
 /** A composição de produção. */

@@ -11,10 +11,15 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "webtoon-teenage-mercenary", "url": "https://www.webtoons.com/en/action/teenage-mercenary/list?title_no=2677", "type": "OFFICIAL", "accessedAt": "2026-09-01" },
+    { "id": "mercenary-enrollment-wiki-story-arcs", "url": "https://mercenary-enrollment.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A publicação oficial lista episódios, mas não arcos. A taxonomia comunitária encontrada não é contínua nem completa: o primeiro arco salta o episódio 1 e não sustenta limites verificáveis para o catálogo atual. Não foram inferidos segmentos a partir de missões ou casos isolados." }
+  ]
 }

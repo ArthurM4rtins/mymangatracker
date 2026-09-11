@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
 import {
   removerAvaliacaoDaEntrada,
   salvarAvaliacaoDaEntrada,
@@ -17,12 +18,20 @@ function fakeDeps(media: { id: string } | null = { id: "m1" })
     return { removida: true };
   });
 
-  return { deps: { buscarMedia, salvar, remover }, buscarMedia, salvar, remover };
+  const limitar = vi.fn(async function (): Promise<Veredito> { return { bloqueado: false }; });
+
+  return {
+    deps: { buscarMedia, salvar, remover, limitar },
+    buscarMedia,
+    salvar,
+    remover,
+    limitar,
+  };
 }
 
 const PEDIDO = {
   userId: "u1",
-  anilistId: 30002,
+  referencia: { fonte: "anilist" as const, id: 30002 },
   rating: 4.5 as number | null,
   review: "obra-prima" as string | null,
   containsSpoilers: false,
@@ -117,7 +126,7 @@ describe("removerAvaliacaoDaEntrada", function ()
     const { deps, remover } = fakeDeps();
 
     const resultado = await removerAvaliacaoDaEntrada(
-      { userId: "u1", anilistId: 30002 },
+      { userId: "u1", referencia: { fonte: "anilist" as const, id: 30002 } },
       deps,
     );
 
@@ -131,10 +140,48 @@ describe("removerAvaliacaoDaEntrada", function ()
     remover.mockResolvedValue(null);
 
     const resultado = await removerAvaliacaoDaEntrada(
-      { userId: "u1", anilistId: 30002 },
+      { userId: "u1", referencia: { fonte: "anilist" as const, id: 30002 } },
       deps,
     );
 
     expect(resultado).toEqual({ estado: "nao_encontrada" });
+  });
+});
+
+// #143: a rota de avaliacao nao tinha teto nenhum, e era ela que o truque de
+// apagar-e-reescrever repetia. A coluna carimbada uma vez fecha a regra; o teto
+// e defesa em profundidade sobre a rota inteira.
+describe("teto de avaliacoes por hora", function ()
+{
+  it("acima do teto, nao grava e diz quanto esperar", async function ()
+  {
+    const { deps, limitar, salvar } = fakeDeps();
+    limitar.mockResolvedValue({ bloqueado: true, esperarSegundos: 90 });
+
+    await expect(salvarAvaliacaoDaEntrada(PEDIDO, deps)).resolves.toEqual({
+      estado: "muitos_pedidos",
+      esperarSegundos: 90,
+    });
+    expect(salvar).not.toHaveBeenCalled();
+  });
+
+  it("o teto e por dono, e corre antes de tocar o banco", async function ()
+  {
+    const { deps, limitar, buscarMedia } = fakeDeps();
+    limitar.mockResolvedValue({ bloqueado: true, esperarSegundos: 5 });
+
+    await salvarAvaliacaoDaEntrada(PEDIDO, deps);
+
+    expect(limitar).toHaveBeenCalledWith("u1");
+    expect(buscarMedia).not.toHaveBeenCalled();
+  });
+
+  it("avaliacao invalida nem chega ao teto", async function ()
+  {
+    const { deps, limitar } = fakeDeps();
+
+    await salvarAvaliacaoDaEntrada({ ...PEDIDO, rating: null, review: null }, deps);
+
+    expect(limitar).not.toHaveBeenCalled();
   });
 });

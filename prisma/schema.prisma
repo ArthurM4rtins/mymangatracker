@@ -43,38 +43,103 @@ enum ShelfStatus {
 model User {
   id           String   @id @default(cuid())
   username     String   @unique
+  // A identidade do username (#114): minúsculas, sem espaços nas pontas.
+  // `username` fica como digitado, só para exibição. Backfill na migration.
+  usernameNormalizado String @unique
   email        String   @unique
   passwordHash String
+  // Versão do token de sessão (#137): sair incrementa, e todo JWT assinado com
+  // a versão antiga deixa de valer. Nunca sai em DTO.
+  tokenVersion Int      @default(0)
   role         Role     @default(USER)
+  // Idioma da interface escolhido pela pessoa (#116, fase 5). Nulo = nunca
+  // escolheu, e a negociacao por Accept-Language decide.
+  locale       String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  shelfEntries    ShelfEntry[]
-  readingSources  ReadingSource[]
-  readingProgress ReadingProgress[]
-  entries         Entry[]
-  reviewLikes     ReviewLike[]
-  reviewComments  ReviewComment[]
-  lists           List[]
-  listLikes       ListLike[]
+  // Foto de perfil (issue #76): 256x256 JPEG recortado no navegador, guardada
+  // aqui porque a Vercel nao tem disco. Os bytes so saem pela rota de imagem.
+  avatar          Bytes?
+  avatarMime      String?
+  avatarUpdatedAt DateTime?
+
+  shelfEntries     ShelfEntry[]
+  readingSources   ReadingSource[]
+  readingProgress  ReadingProgress[]
+  entries          Entry[]
+  reviewLikes      ReviewLike[]
+  reviewComments   ReviewComment[]
+  lists            List[]
+  listLikes        ListLike[]
+  seguindo         Follow[]          @relation("Seguidor")
+  seguidores       Follow[]          @relation("Seguido")
+  perfisCurtidos   ProfileLike[]     @relation("QuemCurtiu")
+  curtidasDoPerfil ProfileLike[]     @relation("PerfilCurtido")
+}
+
+// Tentativas de login e cadastro (#108), para o limite por IP e por
+// IP+e-mail. `key` é hash (domínio limite-de-tentativas): nada em claro.
+// Sem FK: tentativa existe antes de haver usuário. Leitura sempre por
+// (scope, key) numa janela — índice nessa direção.
+model AuthAttempt {
+  id        String   @id @default(cuid())
+  scope     String
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([scope, key, createdAt])
+}
+
+// Seguir (issue #74): quem segue quem. Um vínculo por par; apagar qualquer
+// dos dois leva o vínculo junto. O CHECK de não seguir a si mesmo está à mão
+// na migration.
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("Seguidor", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Seguido", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followingId])
+}
+
+// Curtida de perfil (issue #74): igual à ListLike, só número. CHECK de não
+// curtir o próprio perfil à mão na migration.
+model ProfileLike {
+  id            String   @id @default(cuid())
+  userId        String
+  profileUserId String
+  createdAt     DateTime @default(now())
+
+  user    User @relation("QuemCurtiu", fields: [userId], references: [id], onDelete: Cascade)
+  profile User @relation("PerfilCurtido", fields: [profileUserId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, profileUserId])
+  @@index([profileUserId])
 }
 
 // Lista nomeada de obras (painel 06). Pública desde o início — recorte do
 // social: username do dono, nunca e-mail. Nome não é único, como no
 // Letterboxd; o CHECK de não-vazio está à mão na migration.
 model List {
-  id          String   @id @default(cuid())
-  userId      String
-  nome        String
-  descricao   String?  @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  userId    String
+  nome      String
+  descricao String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   itens ListItem[]
   likes ListLike[]
 
+  // /listas (públicas, mais recentes) e as listas do dono, na mesma direção.
   @@index([createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
 }
 
 // Uma obra por lista; ordem = posição de inserção.
@@ -92,8 +157,8 @@ model ListItem {
   @@index([listId, position])
 }
 
-// Cache do AniList. Se sumir, é reconstruído da API — nenhum dado do usuário
-// se perde junto, e é por isso que as FKs que apontam para cá são Restrict.
+// Curtida numa lista (issue #51): uma por (listId, userId), toggle. Cascade
+// dos dois lados; só a contagem é pública.
 model ListLike {
   id        String   @id @default(cuid())
   listId    String
@@ -104,11 +169,20 @@ model ListLike {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([listId, userId])
+  // O perfil conta curtidas dadas por usuário.
+  @@index([userId])
 }
 
+// Cache do AniList. Se sumir, é reconstruído da API — nenhum dado do usuário
+// se perde junto, e é por isso que as FKs que apontam para cá são Restrict.
 model Media {
   id              String           @id @default(cuid())
-  anilistId       Int              @unique
+  // Identidade externa (#254): a obra e o par (fonte, id). Os dois sao
+  // anulaveis porque nem toda obra existe nas duas fontes -- "The Beginning
+  // After the End" nao tem AniList --, mas UM dos dois e obrigatorio. O CHECK
+  // que cobra isso nao sai do schema do Prisma: esta escrito a mao na migration.
+  anilistId       Int?             @unique
+  kitsuId         Int?             @unique
   type            MediaType
   countryOfOrigin CountryOfOrigin?
   titleRomaji     String
@@ -121,7 +195,7 @@ model Media {
   // válida e é reidratada pelo TTL de 24h.
   bannerImageUrl  String?
   startYear       Int?
-  genres          String[] @default([])
+  genres          String[]         @default([])
   averageScore    Int?
   // [{anilistStaffId, nome, papel}] — tabela própria só quando a página do
   // autor existir; até lá o Json evita entidade sem tela.
@@ -148,16 +222,27 @@ model Entry {
   review           String?  @db.Text
   containsSpoilers Boolean  @default(false)
   reviewedAt       DateTime @default(now())
+  // A data PUBLICA da resenha (#143). Escrita uma vez, na transicao de vazio
+  // para texto, e nunca mais. Apagar o texto e escrever de novo NAO recarimba:
+  // era isso que deixava qualquer conta voltar ao topo do feed quantas vezes
+  // quisesse, em duas requisicoes. Nula enquanto a linha nunca teve resenha.
+  // A regra esta em `Obsidian/03. Regras de Negocio/data-de-publicacao-da-resenha.md`.
+  publishedAt      DateTime?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   media Media @relation(fields: [mediaId], references: [id], onDelete: Restrict)
 
-  likes      ReviewLike[]
+  likes       ReviewLike[]
   comentarios ReviewComment[]
 
   @@unique([userId, mediaId])
+  // Página da obra: resenhas públicas e histograma de notas filtram só por mediaId.
+  // O feed da home (publishedAt DESC WHERE review IS NOT NULL) é índice parcial,
+  // escrito à mão na migration data_de_publicacao — o de reviewedAt saiu junto,
+  // porque nenhuma consulta pública ordena mais por aquela coluna (#143).
+  @@index([mediaId])
 }
 
 // Curtida numa resenha: uma por (entryId, userId), toggle. Apagar a resenha ou
@@ -172,6 +257,8 @@ model ReviewLike {
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([entryId, userId])
+  // O perfil conta curtidas dadas por usuário.
+  @@index([userId])
 }
 
 // Comentário numa resenha: sequência cronológica plana, tipo chat. O CHECK de

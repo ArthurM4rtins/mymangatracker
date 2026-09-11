@@ -11,10 +11,34 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "NOT_APPLICABLE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    {
+      "id": "yen-press-yotsuba-series",
+      "url": "https://yenpress.com/series/yotsuba",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "kadokawa-yotsuba-volume-16",
+      "url": "https://www.kadokawa.co.jp/product/322410000005/",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "yotsuba-wikipedia-chapters",
+      "url": "https://en.wikipedia.org/wiki/List_of_Yotsuba%26!_chapters",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-09-01"
+    }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    {
+      "field": "narrative segmentation",
+      "reason": "A editora classifica a obra como comédia slice-of-life e seus capítulos acompanham acontecimentos cotidianos independentes, sem arcos narrativos recorrentes com limites de capítulos. A progressão sazonal não foi tratada como saga."
+    }
+  ]
 }

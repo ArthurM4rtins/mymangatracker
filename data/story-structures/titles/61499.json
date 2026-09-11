@@ -12,9 +12,64 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
-  "conflicts": []
+  "sources": [
+    {
+      "id": "viz-nisekoi-chapters",
+      "url": "https://www.viz.com/shonenjump/chapters/nisekoi",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "shonen-jump-nisekoi-volumes",
+      "url": "https://www.shonenjump.com/j/rensai/_list/nisekoi/",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "nisekoipedia-plot",
+      "url": "https://nisekoi.fandom.com/wiki/Plot_of_Nisekoi",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [
+    {
+      "key": "first-year-arc",
+      "kind": "SAGA",
+      "position": 1,
+      "title": "First Year Arc",
+      "range": { "unit": "CHAPTER", "start": "1", "end": "74" },
+      "sourceIds": ["nisekoipedia-plot"],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "second-year-arc",
+      "kind": "SAGA",
+      "position": 2,
+      "title": "Second Year Arc",
+      "range": { "unit": "CHAPTER", "start": "75", "end": "200" },
+      "sourceIds": ["nisekoipedia-plot"],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "third-year-arc",
+      "kind": "SAGA",
+      "position": 3,
+      "title": "Third Year Arc",
+      "range": { "unit": "CHAPTER", "start": "201", "end": "229" },
+      "sourceIds": ["nisekoipedia-plot"],
+      "status": "DRAFT",
+      "confidence": "LOW"
+    }
+  ],
+  "conflicts": [
+    {
+      "field": "arc taxonomy and chapter coverage",
+      "reason": "A taxonomia de três anos escolares vem de wiki comunitária; a editora confirma a série em 25 volumes, mas não esses arcos. O terceiro limite é descrito como aproximado pela fonte, e as entradas AniList após o capítulo 229 correspondem a especiais/epílogo não incluídos na macroestrutura."
+    }
+  ]
 }

@@ -26,14 +26,26 @@
       "url": "https://listfist.com/list-of-berserk-arcs",
       "type": "EDITORIAL",
       "accessedAt": "2026-08-31"
+    },
+    {
+      "id": "mangadex-berserk-aggregate",
+      "url": "https://mangadex.org/title/801513ba-a712-498c-8f57-cae55b38cc92",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-03"
+    },
+    {
+      "id": "wikipedia-berserk-chapters",
+      "url": "https://en.wikipedia.org/wiki/List_of_Berserk_chapters",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-09-03"
     }
   ],
   "segments": [],
   "conflicts": [
     {
-      "field": "range.unit",
-      "reason": "As referências usam episódios iniciais com numeração negativa e/ou intervalos por volume; o contrato inicial só aceita capítulos positivos do tracking."
+      "field": "range.start",
+      "reason": "O prólogo Black Swordsman não tem número na serialização (vols. 1–3, Wikipedia). Fontes divergem na representação: listfist numera de -16 e dá 8 capítulos; o MangaDex numera 0.01–0.09 (positivo, decimal) e o Golden Age começa no capítulo 1 do vol. 3. O contrato aceita 0 e decimal, não negativo, porque o tracker só registra capítulo positivo — a base para publicar é a numeração do MangaDex, mas os limites dos arcos seguintes (95, 177, 308) vêm só de fontes editoriais/comunitárias."
     }
   ],
-  "notes": "A estrutura principal de cinco arcos foi confirmada, mas não foi publicada porque ainda falta uma conversão verificável para a numeração de capítulo usada pelo produto."
+  "notes": "Cinco arcos confirmados (Black Swordsman, Golden Age, Conviction, Falcon of the Millennium Empire, Fantasia). Publicação depende de confirmar a contagem do prólogo (8 ou 9 episódios) e os limites 94/95, 176/177, 307/308 em fonte oficial. Prólogo, quando entrar, vai como 0.01–0.0N."
 }

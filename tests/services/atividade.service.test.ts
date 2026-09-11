@@ -8,7 +8,7 @@ import { feedDaComunidade } from "@/server/services/atividade.service";
 const RESENHA = {
   entryId: "e1",
   username: "leitora",
-  anilistId: 30002,
+  chave: "anilist:30002",
   titulo: "Berserk",
   coverImageUrl: null,
   rating: "5",
@@ -58,8 +58,10 @@ describe("feedDaComunidade", function ()
 
     const feed = await feedDaComunidade(deps);
 
-    expect(deps.listarResenhas).toHaveBeenCalledWith(10);
-    expect(deps.listarListas).toHaveBeenCalledWith(10);
+    // Pede mais do que exibe (#144): o rodízio de autoria precisa ter de onde
+    // repor o que descarta.
+    expect(deps.listarResenhas).toHaveBeenCalledWith(40);
+    expect(deps.listarListas).toHaveBeenCalledWith(40);
     expect(feed.map(function (item) { return item.tipo; })).toEqual(["lista", "resenha"]);
     expect(feed[1]).toMatchObject({ tipo: "resenha", username: "leitora", titulo: "Berserk" });
   });
@@ -76,5 +78,55 @@ describe("feedDaComunidade", function ()
     const feed = await feedDaComunidade(fakeDeps({ listasFora: true }));
 
     expect(feed.map(function (item) { return item.tipo; })).toEqual(["resenha"]);
+  });
+
+  // #144: 12 obras na estante e 12 resenhas com texto tomavam o feed inteiro,
+  // que ordena estritamente por data. Agora passa pelo rodízio de autoria.
+  it("nenhuma conta ocupa o feed: no máximo duas por autor", async function ()
+  {
+    const listarResenhas = vi.fn(async function ()
+    {
+      return Array.from({ length: 30 }, function (_, indice)
+      {
+        return {
+          ...RESENHA,
+          entryId: `e${indice}`,
+          username: indice < 25 ? "spam" : "bia",
+          quando: new Date(Date.now() - indice * 1000),
+        };
+      });
+    });
+
+    const feed = await feedDaComunidade({
+      listarResenhas,
+      listarListas: vi.fn(async function () { return []; }),
+    });
+
+    expect(listarResenhas).toHaveBeenCalledWith(40);
+    expect(feed.filter(function (item) { return item.username === "spam"; })).toHaveLength(2);
+  });
+
+  // O feed é UMA lista, não dois trilhos: o teto tem que valer sobre a mescla.
+  // Aplicado por fonte, a mesma conta somava duas resenhas mais duas listas.
+  it("duas por autor valem sobre a mescla, não por fonte", async function ()
+  {
+    const feed = await feedDaComunidade({
+      listarResenhas: vi.fn(async function ()
+      {
+        return Array.from({ length: 5 }, function (_, i)
+        {
+          return { ...RESENHA, entryId: `e${i}`, username: "spam", quando: new Date(2026, 8, 9, 12, i) };
+        });
+      }),
+      listarListas: vi.fn(async function ()
+      {
+        return Array.from({ length: 5 }, function (_, i)
+        {
+          return { ...LISTA, listaId: `l${i}`, username: "spam", quando: new Date(2026, 8, 9, 11, i) };
+        });
+      }),
+    });
+
+    expect(feed.filter(function (item) { return item.username === "spam"; })).toHaveLength(2);
   });
 });

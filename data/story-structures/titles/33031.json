@@ -12,9 +12,178 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
-  "conflicts": []
+  "sources": [
+    {
+      "id": "manga-up-pandora-hearts",
+      "url": "https://www.manga-up.com/titles/520/chapters/104477",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "mochijun-pandora-hearts-volumes",
+      "url": "https://mochijun.fandom.com/wiki/List_of_Volumes_(Pandora_Hearts)",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "pandora-hearts-manga-order",
+      "url": "https://mostrecommendedbooks.com/series/pandora-hearts-manga-in-order",
+      "type": "EDITORIAL",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [
+    {
+      "key": "coming-of-age-ceremony",
+      "kind": "ARC",
+      "position": 1,
+      "title": "Coming-of-Age Ceremony",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "1",
+        "end": "4"
+      },
+      "sourceIds": [
+        "pandora-hearts-manga-order"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "working-for-pandora",
+      "kind": "ARC",
+      "position": 2,
+      "title": "Working for Pandora",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "5",
+        "end": "13"
+      },
+      "sourceIds": [
+        "pandora-hearts-manga-order"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "cheshire-cat-s-lair",
+      "kind": "ARC",
+      "position": 3,
+      "title": "Cheshire Cat's Lair",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "14",
+        "end": "23"
+      },
+      "sourceIds": [
+        "pandora-hearts-manga-order"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "lutwidge-academy",
+      "kind": "ARC",
+      "position": 4,
+      "title": "Lutwidge Academy",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "24",
+        "end": "28"
+      },
+      "sourceIds": [
+        "pandora-hearts-manga-order"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "break-s-past",
+      "kind": "ARC",
+      "position": 5,
+      "title": "Break's Past",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "29",
+        "end": "32"
+      },
+      "sourceIds": [
+        "pandora-hearts-manga-order"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "sablier",
+      "kind": "ARC",
+      "position": 6,
+      "title": "Sablier",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "33",
+        "end": "42"
+      },
+      "sourceIds": [
+        "pandora-hearts-manga-order"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "the-feast",
+      "kind": "ARC",
+      "position": 7,
+      "title": "The Feast",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "43",
+        "end": "61"
+      },
+      "sourceIds": [
+        "pandora-hearts-manga-order"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "jack-s-intention",
+      "kind": "ARC",
+      "position": 8,
+      "title": "Jack's Intention",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "62",
+        "end": "82"
+      },
+      "sourceIds": [
+        "pandora-hearts-manga-order"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "swan-song",
+      "kind": "ARC",
+      "position": 9,
+      "title": "Swan Song",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "83",
+        "end": "104"
+      },
+      "sourceIds": [
+        "pandora-hearts-manga-order"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    }
+  ],
+  "conflicts": [
+    {
+      "field": "chapter total",
+      "reason": "A publicação oficial e a lista de volumes encerram a serialização principal em Retrace:CIV (104), enquanto o catálogo AniList registra 107 entradas. A taxonomia localizada cobre 1--104; não foram inferidos limites para as três entradas adicionais."
+    }
+  ]
 }

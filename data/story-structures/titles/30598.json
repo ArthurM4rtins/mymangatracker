@@ -12,9 +12,301 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
-  "conflicts": []
+  "sources": [
+    {
+      "id": "fairy-tail-wiki-story-arcs",
+      "url": "https://fairytail.fandom.com/wiki/Story_Arcs",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "fairy-tail-wiki-chapter-545",
+      "url": "https://fairytail.fandom.com/wiki/Chapter_545",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [
+    {
+      "key": "macao",
+      "kind": "ARC",
+      "position": 1,
+      "title": "Macao",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "1",
+        "end": "3"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "daybreak",
+      "kind": "ARC",
+      "position": 2,
+      "title": "Daybreak",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "4",
+        "end": "9"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "eisenwald",
+      "kind": "ARC",
+      "position": 3,
+      "title": "Eisenwald",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "10",
+        "end": "23"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "sub-zero-emperor-lyon",
+      "kind": "ARC",
+      "position": 4,
+      "title": "Sub-Zero Emperor Lyon",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "24",
+        "end": "46"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "phantom-lord",
+      "kind": "ARC",
+      "position": 5,
+      "title": "Phantom Lord",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "47",
+        "end": "69"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "loke",
+      "kind": "ARC",
+      "position": 6,
+      "title": "Loke",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "70",
+        "end": "74"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "tower-of-heaven",
+      "kind": "ARC",
+      "position": 7,
+      "title": "Tower of Heaven",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "75",
+        "end": "102"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "the-battle-of-fairy-tail",
+      "kind": "ARC",
+      "position": 8,
+      "title": "The Battle of Fairy Tail",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "103",
+        "end": "130"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "oracion-seis",
+      "kind": "ARC",
+      "position": 9,
+      "title": "Oración Seis",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "131",
+        "end": "164"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "edolas",
+      "kind": "ARC",
+      "position": 10,
+      "title": "Edolas",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "165",
+        "end": "199"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "tenrou-island",
+      "kind": "ARC",
+      "position": 11,
+      "title": "Tenrou Island",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "200",
+        "end": "253"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "x791",
+      "kind": "ARC",
+      "position": 12,
+      "title": "X791",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "254",
+        "end": "257"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "grand-magic-games",
+      "kind": "ARC",
+      "position": 13,
+      "title": "Grand Magic Games",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "258",
+        "end": "340"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "sun-village",
+      "kind": "ARC",
+      "position": 14,
+      "title": "Sun Village",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "341",
+        "end": "355"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "tartaros",
+      "kind": "ARC",
+      "position": 15,
+      "title": "Tartaros",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "356",
+        "end": "417"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "avatar",
+      "kind": "ARC",
+      "position": 16,
+      "title": "Avatar",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "418",
+        "end": "437"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "alvarez",
+      "kind": "ARC",
+      "position": 17,
+      "title": "Alvarez",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "438",
+        "end": "545"
+      },
+      "sourceIds": [
+        "fairy-tail-wiki-story-arcs",
+        "fairy-tail-wiki-chapter-545"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    }
+  ],
+  "conflicts": [
+    {
+      "field": "chapter total",
+      "reason": "A taxonomia da série principal termina no capítulo 545; o catálogo AniList registra 549 entradas. Fairy Tail Zerø e 100 Years Quest são obras separadas e não foram incorporadas, e não foram inferidos limites para as quatro entradas adicionais."
+    }
+  ]
 }

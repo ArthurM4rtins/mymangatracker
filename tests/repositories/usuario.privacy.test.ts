@@ -3,6 +3,7 @@ import { ErroCampoDuplicado } from "@/server/domain/erros";
 import {
   buscarCredenciaisPorEmail,
   buscarUsuarioPorId,
+  buscarUsuarioPorUsername,
   criarUsuario,
 } from "@/server/repositories/usuario.repository";
 import { limparBanco } from "./apoio";
@@ -13,6 +14,7 @@ import { limparBanco } from "./apoio";
 
 const NOVO = {
   username: "rankine",
+  usernameNormalizado: "rankine",
   email: "rankine@exemplo.test",
   passwordHash: "scrypt$16384$8$1$saltsalt$hashhash",
 };
@@ -54,6 +56,28 @@ describe("criarUsuario", function ()
   });
 });
 
+// #114: identidade do username é a forma normalizada.
+describe("username sem distinção de caixa", function ()
+{
+  it("username em caixa diferente é duplicado", async function ()
+  {
+    await criarUsuario({ ...NOVO, username: "Leitor", usernameNormalizado: "leitor", email: "a@x.test" });
+
+    await expect(
+      criarUsuario({ ...NOVO, username: "LEITOR", usernameNormalizado: "leitor", email: "b@x.test" }),
+    ).rejects.toMatchObject({ campo: "username" });
+  });
+
+  it("perfil e foto resolvem o username em qualquer caixa, exibindo o digitado", async function ()
+  {
+    await criarUsuario({ ...NOVO, username: "Leitor", usernameNormalizado: "leitor", email: "a@x.test" });
+
+    const perfil = await buscarUsuarioPorUsername("leitor");
+    expect(perfil?.username).toBe("Leitor");
+    expect(await buscarUsuarioPorUsername("LEITOR")).not.toBeNull();
+  });
+});
+
 describe("buscarUsuarioPorId", function ()
 {
   it("devolve o usuário sem o passwordHash", async function ()
@@ -73,15 +97,31 @@ describe("buscarUsuarioPorId", function ()
 
 describe("buscarCredenciaisPorEmail", function ()
 {
-  it("devolve só id e passwordHash — o mínimo que a autenticação precisa", async function ()
+  it("devolve só o mínimo que o login precisa, e nada de pessoal", async function ()
   {
     const criado = await criarUsuario(NOVO);
     const credenciais = await buscarCredenciaisPorEmail("rankine@exemplo.test");
 
+    // `locale` entrou na #116 (fase 5): o login escreve o cookie de idioma a
+    // partir dele, então a query precisa dele. É preferência de interface, não
+    // dado pessoal — o que a regra protege continua de fora, abaixo.
     expect(credenciais).toEqual({
       id: criado.id,
       passwordHash: NOVO.passwordHash,
+      locale: null,
+      tokenVersion: 0,
     });
+  });
+
+  it("não traz e-mail, username, avatar nem papel para o login", async function ()
+  {
+    await criarUsuario(NOVO);
+    const credenciais = await buscarCredenciaisPorEmail("rankine@exemplo.test");
+
+    for (const proibido of ["email", "username", "usernameNormalizado", "avatar", "role"])
+    {
+      expect(credenciais).not.toHaveProperty(proibido);
+    }
   });
 
   it("devolve null para email desconhecido", async function ()

@@ -1,0 +1,149 @@
+{
+  "nome": {
+    "message": "Folunio"
+  },
+  "descricao": {
+    "message": "Registra en tu estantería de Folunio el capítulo que estás leyendo, sin salir de la pestaña."
+  },
+  "acaoTitulo": {
+    "message": "Folunio — registrar lectura"
+  },
+  "abrirSite": {
+    "message": "abrir el sitio"
+  },
+  "verLink": {
+    "message": "ver enlace"
+  },
+  "ocultarLink": {
+    "message": "ocultar enlace"
+  },
+  "carregando": {
+    "message": "cargando…"
+  },
+  "campoObra": {
+    "message": "Obra"
+  },
+  "filtroPlaceholder": {
+    "message": "filtrar por nombre"
+  },
+  "campoCapitulo": {
+    "message": "Capítulo"
+  },
+  "registrar": {
+    "message": "Registrar lectura"
+  },
+  "autoRegistro": {
+    "message": "registrar automáticamente"
+  },
+  "autoRegistroAjuda": {
+    "message": "solo obras ya emparejadas, tras 20 s en la página del capítulo"
+  },
+  "semSessao": {
+    "message": "Inicia sesión en Folunio para registrar tu lectura."
+  },
+  "entrar": {
+    "message": "Iniciar sesión"
+  },
+  "semResposta": {
+    "message": "Folunio no respondió ahora — inténtalo de nuevo"
+  },
+  "estanteNaoCarregou": {
+    "message": "no se pudo cargar tu estantería — inténtalo de nuevo"
+  },
+  "estanteVazia": {
+    "message": "tu estantería no tiene ninguna obra sin terminar — agrega una en el sitio."
+  },
+  "escolhaObra": {
+    "message": "elige la obra"
+  },
+  "informeCapitulo": {
+    "message": "indica el capítulo"
+  },
+  "registrando": {
+    "message": "registrando…"
+  },
+  "capituloLido": {
+    "message": "leído del título de la pestaña — compruébalo"
+  },
+  "capituloNaoLido": {
+    "message": "no encontré el capítulo en el título de la pestaña — escríbelo"
+  },
+  "obraPeloTitulo": {
+    "message": "obra reconocida por el título de la pestaña — revisa"
+  },
+  "obraNoCapitulo": {
+    "message": "en el cap. $capitulo$",
+    "placeholders": {
+      "capitulo": {
+        "content": "$1"
+      }
+    }
+  },
+  "registradoAlcancou": {
+    "message": "cap. $capitulo$ registrado — la estantería va por el $progresso$",
+    "placeholders": {
+      "capitulo": {
+        "content": "$1"
+      },
+      "progresso": {
+        "content": "$2"
+      }
+    }
+  },
+  "erroPadrao": {
+    "message": "no se pudo registrar"
+  },
+  "erroCorpoInvalido": {
+    "message": "no se pudo registrar"
+  },
+  "erroPedidoInvalido": {
+    "message": "no se pudo registrar"
+  },
+  "erroEntradaNaoEncontrada": {
+    "message": "esa obra ya no está en tu estantería"
+  },
+  "erroCapituloInvalido": {
+    "message": "capítulo inválido"
+  },
+  "erroUrlInvalida": {
+    "message": "esta página no sirve como fuente de lectura"
+  },
+  "erroSemFonte": {
+    "message": "configura primero la fuente de lectura"
+  },
+  "erroNaoAvanca": {
+    "message": "tu estantería ya está en el cap. $progresso$ — para volver, usa el reinicio en el sitio",
+    "placeholders": {
+      "progresso": {
+        "content": "$1"
+      }
+    }
+  },
+  "erroLimiteExcedido": {
+    "message": "demasiados registros en poco tiempo — espera un momento"
+  },
+  "erroFalhaInterna": {
+    "message": "Folunio no pudo registrarlo ahora"
+  },
+  "nestaAba": {
+    "message": "En esta pestaña"
+  },
+  "obraPareadaMarca": {
+    "message": "emparejada"
+  },
+  "filtroSemResultado": {
+    "message": "ninguna obra de tu estantería coincide con el filtro"
+  },
+  "estadoPareada": {
+    "message": "obra emparejada — el icono se enciende en esta página"
+  },
+  "estadoSemPar": {
+    "message": "esta página aún no está emparejada — registrar aquí la empareja"
+  },
+  "estadoRegistrado": {
+    "message": "registrado desde aquí, solo"
+  },
+  "estadoFalhou": {
+    "message": "el automático no lo consiguió — regístralo a mano"
+  }
+}

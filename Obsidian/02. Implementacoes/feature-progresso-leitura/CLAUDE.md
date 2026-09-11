@@ -57,7 +57,10 @@ registro acontece quando o usuário abre o capítulo PELO app.
   devolver o link) — o client não manda URL pronta, só o número do capítulo.
   URL forjada pelo client não entra no histórico.
 - `ShelfEntry.progressChapter` é atualizado na mesma transação do
-  `ReadingProgress` — nunca divergem.
+  `ReadingProgress` quando a abertura avança o progresso. Desde a edição manual
+  (#31) os dois PODEM divergir; o progresso atual é o MAIOR dos dois
+  (`progressoAtual`, #61) — é dele que sai o próximo capítulo e é contra ele
+  que se decide se a estante avança.
 - Abrir em nova aba com `window.open` depois da resposta — o registro não
   depende do site de terceiro responder.
 

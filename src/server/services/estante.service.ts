@@ -1,3 +1,5 @@
+import { buscarObraNaFonte, type ResultadoDaFonte } from "./obra-externa.service";
+import type { ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
 /**
  * Caso de uso: adicionar uma obra à estante.
  *
@@ -6,25 +8,27 @@
  * cache alimentado pelo cliente seria dado forjável.
  */
 import { cacheEstaFresco } from "@/server/domain/media-cache";
-import {
-  proximoCapitulo,
-  tipoDaFonte,
-  urlDaPagina,
-} from "@/server/domain/progresso";
+import { capituloValido } from "@/server/domain/progresso";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import { limitarEntrada } from "./limite.service";
 import type { MediaDoAniList } from "@/server/domain/anilist-media";
 import { buscarMediaPorId } from "@/server/infra/anilist";
+import { buscarNoKitsuPorAnilistId } from "@/server/infra/kitsu";
 import {
-  buscarMediaPorAnilistId,
+  buscarMediaPorReferencia,
   salvarMediaDoAniList,
 } from "@/server/repositories/media.repository";
 import {
   adicionarOuAtualizarEntrada,
   atualizarProgressoDaEntrada,
   atualizarStatusDaEntrada,
-  listarAnilistIdsDaEstante,
+  listarChavesDaEstante,
   listarEntradasDoUsuario,
 } from "@/server/repositories/shelf.repository";
-import { listarFontesAtivas } from "@/server/repositories/reading-source.repository";
+import {
+  contarAberturasPorObra,
+  listarAberturasMaisAvancadas,
+} from "@/server/repositories/reading-progress.repository";
 import { listarAvaliacoes } from "@/server/repositories/avaliacao.repository";
 
 export type StatusDaEstante =
@@ -36,29 +40,34 @@ export type StatusDaEstante =
 
 export type PedidoDeEstante = {
   userId: string;
-  anilistId: number;
+  /** A obra pela referência (#254): pode não ter AniList nenhum. */
+  referencia: ReferenciaDaObra;
   status: StatusDaEstante;
 };
 
 export type ResultadoDaEstante =
   | { estado: "ok"; entradaId: string }
   | { estado: "obra_desconhecida" }
-  | { estado: "indisponivel" };
+  | { estado: "indisponivel" }
+  | { estado: "limitado"; esperarSegundos: number };
 
 export type DependenciasDaEstante = {
   buscarMediaNoBanco: (
-    anilistId: number,
+    referencia: ReferenciaDaObra,
   ) => Promise<{ id: string; syncedAt: Date } | null>;
   salvarMedia: (
     obra: MediaDoAniList,
     sincronizadoEm: Date,
   ) => Promise<{ id: string; syncedAt: Date }>;
-  buscarNoAniList: (anilistId: number) => Promise<MediaDoAniList | null>;
+  /** A escada de fontes, uma só para o sistema inteiro (#254). */
+  buscarNaFonte: (referencia: ReferenciaDaObra) => Promise<ResultadoDaFonte>;
   gravarEntrada: (dados: {
     userId: string;
     mediaId: string;
     status: StatusDaEstante;
   }) => Promise<{ id: string }>;
+  /** Teto de entradas por usuário na janela (#136). Antes do AniList: é I/O de terceiro. */
+  limitar: (userId: string) => Promise<Veredito>;
   relogio?: () => Date;
 };
 
@@ -69,7 +78,14 @@ export async function adicionarNaEstante(
 {
   const agora = deps.relogio?.() ?? new Date();
 
-  const emCache = await deps.buscarMediaNoBanco(pedido.anilistId);
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "limitado", esperarSegundos: limite.esperarSegundos };
+  }
+
+  const emCache = await deps.buscarMediaNoBanco(pedido.referencia);
 
   let mediaId: string;
 
@@ -79,17 +95,16 @@ export async function adicionarNaEstante(
   }
   else
   {
-    let obra: MediaDoAniList | null;
-    try
+    const daFonte = await deps.buscarNaFonte(pedido.referencia);
+
+    if (daFonte.estado === "indisponivel")
     {
-      obra = await deps.buscarNoAniList(pedido.anilistId);
-    }
-    catch
-    {
-      // AniList fora. Mesmo com cache velho não gravamos entrada: a obra pode
-      // ter mudado de formato e sido descartada — melhor pedir para tentar depois.
+      // Mesmo com cache velho não gravamos entrada: a obra pode ter mudado de
+      // formato e sido descartada — melhor pedir para tentar depois.
       return { estado: "indisponivel" };
     }
+
+    const obra = daFonte.obra;
 
     if (obra === null)
     {
@@ -116,23 +131,24 @@ export type EntradaDaEstante = {
   status: StatusDaEstante;
   progressChapter: string | null;
   obra: {
-    anilistId: number;
+    chave: string;
     titleRomaji: string;
     titleEnglish: string | null;
+    /** Para a extensão casar o nome em site de outra língua (#171). */
+    titleNative: string | null;
     coverImageUrl: string | null;
     type: "MANGA" | "NOVEL";
     countryOfOrigin: string | null;
     chapters: number | null;
   };
   /**
-   * A fonte de leitura ativa. `urlDaObra` só existe no tipo página: a tela
-   * abre direto, sem fingir registro de capítulo que não controla.
+   * Para onde o "Continuar leitura" leva: a abertura mais avançada que a
+   * extensão registrou. `null` quando ainda não houve nenhuma — a tela não
+   * tem para onde continuar, e diz isso em vez de inventar destino (#170).
    */
-  fonte:
-    | { sourceHost: string; tipo: "template" }
-    | { sourceHost: string; tipo: "pagina"; urlDaObra: string }
-    | null;
-  proximoCapitulo: number;
+  continuarEm: { url: string; host: string; capitulo: string } | null;
+  /** Total de aberturas: e o numero que a confirmacao do reset mostra (#172). */
+  totalDeAberturas: number;
   /** A avaliação do dono — nota e/ou resenha, estilo Letterboxd. */
   avaliacao: {
     rating: string | null;
@@ -148,7 +164,7 @@ export type FiltroDaEstante = {
 
 type EntradaNoRepositorio = Omit<
   EntradaDaEstante,
-  "fonte" | "proximoCapitulo" | "avaliacao"
+  "continuarEm" | "avaliacao" | "totalDeAberturas"
 > & {
   mediaId: string;
 };
@@ -158,9 +174,12 @@ export type DependenciasDeListagem = {
     userId: string,
     status?: StatusDaEstante,
   ) => Promise<EntradaNoRepositorio[]>;
-  listarFontes: (
+  listarLeiturasMaisAvancadas: (
     userId: string,
-  ) => Promise<Array<{ mediaId: string; sourceHost: string; urlTemplate: string }>>;
+  ) => Promise<Array<{ mediaId: string; resolvedUrl: string; chapter: string }>>;
+  contarAberturasPorObra: (
+    userId: string,
+  ) => Promise<Array<{ mediaId: string; total: number }>>;
   listarAvaliacoes: (
     userId: string,
   ) => Promise<
@@ -177,21 +196,25 @@ export type DependenciasDeListagem = {
  * A estante é privada do dono: o userId vem da sessão resolvida no controller
  * e é obrigatório aqui por tipo — não existe caminho de listar sem ele.
  *
- * O DTO compõe a fonte ativa e o próximo capítulo; o mediaId interno não sai.
+ * O DTO compõe a última abertura; o mediaId interno não sai.
  */
 export async function listarEstante(
   filtro: FiltroDaEstante,
   deps: DependenciasDeListagem,
 ): Promise<EntradaDaEstante[]>
 {
-  const [entradas, fontes, avaliacoes] = await Promise.all([
+  const [entradas, leituras, avaliacoes, totais] = await Promise.all([
     deps.listarEntradas(filtro.userId, filtro.status),
-    deps.listarFontes(filtro.userId),
+    deps.listarLeiturasMaisAvancadas(filtro.userId),
     deps.listarAvaliacoes(filtro.userId),
+    deps.contarAberturasPorObra(filtro.userId),
   ]);
+  const totalPorMedia = new Map(
+    totais.map(function (t) { return [t.mediaId, t.total] as const; }),
+  );
 
-  const fontePorMedia = new Map(
-    fontes.map(function (fonte) { return [fonte.mediaId, fonte] as const; }),
+  const leituraPorMedia = new Map(
+    leituras.map(function (leitura) { return [leitura.mediaId, leitura] as const; }),
   );
   const avaliacaoPorMedia = new Map(
     avaliacoes.map(function (avaliacao) { return [avaliacao.mediaId, avaliacao] as const; }),
@@ -199,18 +222,16 @@ export async function listarEstante(
 
   return entradas.map(function (entrada)
   {
-    const fonte = fontePorMedia.get(entrada.mediaId) ?? null;
+    const leitura = leituraPorMedia.get(entrada.mediaId) ?? null;
     const avaliacao = avaliacaoPorMedia.get(entrada.mediaId) ?? null;
-    const maior =
-      entrada.progressChapter === null ? null : Number(entrada.progressChapter);
 
     return {
       entradaId: entrada.entradaId,
       status: entrada.status,
       progressChapter: entrada.progressChapter,
       obra: entrada.obra,
-      fonte: fonte === null ? null : recorteDaFonte(fonte),
-      proximoCapitulo: proximoCapitulo(maior),
+      continuarEm: leitura === null ? null : recorteDaLeitura(leitura),
+      totalDeAberturas: totalPorMedia.get(entrada.mediaId) ?? 0,
       avaliacao:
         avaliacao === null
           ? null
@@ -223,20 +244,18 @@ export async function listarEstante(
   });
 }
 
-function recorteDaFonte(fonte: {
-  sourceHost: string;
-  urlTemplate: string;
-}): NonNullable<EntradaDaEstante["fonte"]>
+// O host sai da propria URL gravada, nao de coluna a parte: uma verdade so.
+// A URL passou por `normalizarUrlVisitada` antes de entrar no banco, entao
+// `new URL` aqui nao levanta.
+function recorteDaLeitura(leitura: {
+  resolvedUrl: string;
+  chapter: string;
+}): NonNullable<EntradaDaEstante["continuarEm"]>
 {
-  if (tipoDaFonte(fonte.urlTemplate) === "template")
-  {
-    return { sourceHost: fonte.sourceHost, tipo: "template" };
-  }
-
   return {
-    sourceHost: fonte.sourceHost,
-    tipo: "pagina",
-    urlDaObra: urlDaPagina(fonte.sourceHost, fonte.urlTemplate),
+    url: leitura.resolvedUrl,
+    host: new URL(leitura.resolvedUrl).host,
+    capitulo: leitura.chapter,
   };
 }
 
@@ -269,7 +288,7 @@ export async function definirProgresso(
   deps: DependenciasDeProgresso,
 ): Promise<ResultadoDeProgresso>
 {
-  if (!Number.isFinite(pedido.capitulo) || pedido.capitulo <= 0)
+  if (!capituloValido(pedido.capitulo))
   {
     return { estado: "capitulo_invalido" };
   }
@@ -294,24 +313,26 @@ export function definirProgressoDoSistema(
 }
 
 export type DependenciasDeMarcacao = {
-  listarAnilistIds: (userId: string) => Promise<number[]>;
+  listarChaves: (userId: string) => Promise<string[]>;
 };
 
-/** O que da estante já existe, por anilistId — para o catálogo marcar os cards. */
-export function anilistIdsNaEstante(
+/**
+ * O que da estante já existe, por CHAVE da obra — para o catálogo marcar os
+ * cards. Era por `anilistId` (#254): obra que só o Kitsu conhece nunca ficava
+ * marcada, porque não tinha número nenhum para comparar.
+ */
+export function chavesNaEstante(
   userId: string,
   deps: DependenciasDeMarcacao,
-): Promise<number[]>
+): Promise<string[]>
 {
-  return deps.listarAnilistIds(userId);
+  return deps.listarChaves(userId);
 }
 
 /** A composição de produção. */
-export function anilistIdsNaEstanteDoSistema(userId: string): Promise<number[]>
+export function chavesNaEstanteDoSistema(userId: string): Promise<string[]>
 {
-  return anilistIdsNaEstante(userId, {
-    listarAnilistIds: listarAnilistIdsDaEstante,
-  });
+  return chavesNaEstante(userId, { listarChaves: listarChavesDaEstante });
 }
 
 export type PedidoDeStatus = {
@@ -355,7 +376,8 @@ export function listarEstanteDoSistema(
 {
   return listarEstante(filtro, {
     listarEntradas: listarEntradasDoUsuario,
-    listarFontes: listarFontesAtivas,
+    listarLeiturasMaisAvancadas: listarAberturasMaisAvancadas,
+    contarAberturasPorObra,
     listarAvaliacoes,
   });
 }
@@ -376,9 +398,10 @@ export function adicionarNaEstanteDoSistema(
 ): Promise<ResultadoDaEstante>
 {
   return adicionarNaEstante(pedido, {
-    buscarMediaNoBanco: buscarMediaPorAnilistId,
+    buscarMediaNoBanco: buscarMediaPorReferencia,
     salvarMedia: salvarMediaDoAniList,
-    buscarNoAniList: buscarMediaPorId,
+    buscarNaFonte: function (referencia) { return buscarObraNaFonte(referencia); },
     gravarEntrada: adicionarOuAtualizarEntrada,
+    limitar: function (userId) { return limitarEntrada({ userId }); },
   });
 }

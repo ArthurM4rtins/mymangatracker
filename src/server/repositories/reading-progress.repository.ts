@@ -2,7 +2,7 @@
 // para dentro do `where`. Não existe consulta que devolva progresso sem dono —
 // é invariante do sistema, não preferência do usuário, e os testes em
 // `tests/repositories/reading-progress.privacy.test.ts` travam isso.
-import type { ReadingProgress } from "@/generated/prisma/client";
+import type { ReadingProgress, ShelfStatus } from "@/generated/prisma/client";
 import { getPrisma } from "./prisma";
 
 export type NovaAbertura = {
@@ -11,12 +11,25 @@ export type NovaAbertura = {
   chapter: number;
   resolvedUrl: string;
   readingSourceId?: string;
+  /**
+   * Status que a entrada passa a ter — quem decide é o domínio
+   * (`statusAposLeitura`). Ausente quando não há o que mudar.
+   */
+  novoStatus?: ShelfStatus;
 };
 
-/** Grava a abertura de um capítulo. Uma linha por clique — o histórico. */
-export function registrarAbertura(dados: NovaAbertura): Promise<ReadingProgress>
+/**
+ * Grava a abertura de um capítulo. Uma linha por clique — o histórico.
+ *
+ * Releitura não mexe no progresso, mas ainda pode mexer no status: quem volta à
+ * obra que tinha pausado voltou a ler. Quando isso acontece, histórico e status
+ * vão na MESMA transação.
+ */
+export async function registrarAbertura(dados: NovaAbertura): Promise<{ id: string }>
 {
-  return getPrisma().readingProgress.create({
+  const prisma = getPrisma();
+
+  const criacao = {
     data: {
       userId: dados.userId,
       mediaId: dados.mediaId,
@@ -24,7 +37,23 @@ export function registrarAbertura(dados: NovaAbertura): Promise<ReadingProgress>
       chapter: dados.chapter,
       resolvedUrl: dados.resolvedUrl,
     },
-  });
+    select: { id: true },
+  };
+
+  if (dados.novoStatus === undefined)
+  {
+    return prisma.readingProgress.create(criacao);
+  }
+
+  const [registro] = await prisma.$transaction([
+    prisma.readingProgress.create(criacao),
+    prisma.shelfEntry.updateMany({
+      where: { userId: dados.userId, mediaId: dados.mediaId },
+      data: { status: dados.novoStatus },
+    }),
+  ]);
+
+  return registro;
 }
 
 /**
@@ -54,7 +83,10 @@ export async function registrarAberturaComProgresso(
     }),
     prisma.shelfEntry.updateMany({
       where: { userId: dados.userId, mediaId: dados.mediaId },
-      data: { progressChapter: dados.novoProgresso },
+      data: {
+        progressChapter: dados.novoProgresso,
+        ...(dados.novoStatus !== undefined && { status: dados.novoStatus }),
+      },
     }),
   ]);
 
@@ -74,6 +106,110 @@ export function ultimaAbertura(
     where: { userId, mediaId },
     orderBy: { openedAt: "desc" },
   });
+}
+
+export type AberturaMaisAvancada = {
+  mediaId: string;
+  resolvedUrl: string;
+  chapter: string;
+};
+
+/**
+ * A abertura MAIS AVANÇADA de cada obra do usuário — uma linha por obra. É o
+ * destino do "Continuar leitura" na estante e na home (#170).
+ *
+ * Maior capítulo, não o mais recente: quem releu o 2 depois de chegar no 94
+ * continua do 94, a mesma regra que o progresso da estante já segue. Empate no
+ * capítulo desempata pela abertura mais nova — o site onde a pessoa leu por
+ * último é o que ela quer reabrir.
+ *
+ * Privado do dono como toda leitura de progresso: a consulta carrega `userId`.
+ */
+export async function listarAberturasMaisAvancadas(
+  userId: string,
+): Promise<AberturaMaisAvancada[]>
+{
+  const linhas = await getPrisma().readingProgress.findMany({
+    where: { userId },
+    orderBy: [{ mediaId: "asc" }, { chapter: "desc" }, { openedAt: "desc" }],
+    distinct: ["mediaId"],
+    select: { mediaId: true, resolvedUrl: true, chapter: true },
+  });
+
+  return linhas.map(function (linha)
+  {
+    return {
+      mediaId: linha.mediaId,
+      resolvedUrl: linha.resolvedUrl,
+      chapter: linha.chapter.toString(),
+    };
+  });
+}
+
+/**
+ * A abertura mais avançada NESTA obra — destino do "Continuar leitura" na
+ * página da obra (#170). Mesma regra de `listarAberturasMaisAvancadas`.
+ */
+export async function aberturaMaisAvancadaDaObra(
+  userId: string,
+  mediaId: string,
+): Promise<{ resolvedUrl: string; chapter: string } | null>
+{
+  const linha = await getPrisma().readingProgress.findFirst({
+    where: { userId, mediaId },
+    orderBy: [{ chapter: "desc" }, { openedAt: "desc" }],
+    select: { resolvedUrl: true, chapter: true },
+  });
+
+  return linha === null
+    ? null
+    : { resolvedUrl: linha.resolvedUrl, chapter: linha.chapter.toString() };
+}
+
+/**
+ * Total de aberturas de CADA obra do usuario, numa consulta so: a estante lista
+ * varias obras e a confirmacao do reset precisa do numero de cada uma (#172).
+ * Privado do dono: carrega userId.
+ */
+export async function contarAberturasPorObra(
+  userId: string,
+): Promise<Array<{ mediaId: string; total: number }>>
+{
+  const grupos = await getPrisma().readingProgress.groupBy({
+    by: ["mediaId"],
+    where: { userId },
+    _count: { _all: true },
+  });
+
+  return grupos.map(function (grupo)
+  {
+    return { mediaId: grupo.mediaId, total: grupo._count._all };
+  });
+}
+
+/**
+ * O reset de leitura (#172, parte 2): apaga o historico da obra E zera o
+ * capitulo marcado a mao, na MESMA transacao. O progresso e o maior entre os
+ * dois, entao apagar so um lado nao corrige nada. O status fica.
+ *
+ * Privado do dono: as duas escritas carregam userId.
+ */
+export async function apagarHistoricoEZerarProgresso(
+  userId: string,
+  mediaId: string,
+): Promise<{ removidas: number }>
+{
+  const prisma = getPrisma();
+
+  const [apagadas] = await prisma.$transaction([
+    prisma.readingProgress.deleteMany({ where: { userId, mediaId } }),
+    prisma.shelfEntry.updateMany({
+      where: { userId, mediaId },
+      data: { progressChapter: null },
+    }),
+  ]);
+
+  return { removidas: apagadas.count };
 }
 
 export type AberturaDoHistorico = {

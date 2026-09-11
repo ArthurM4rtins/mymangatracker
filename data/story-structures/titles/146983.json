@@ -11,10 +11,28 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "NOT_APPLICABLE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    {
+      "id": "viz-goodbye-eri-chapter",
+      "url": "https://www.viz.com/shonenjump/chapters/goodbye-eri?locale=en",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "shueisha-goodbye-eri-volume",
+      "url": "https://www.shueisha.co.jp/books/items/contents.html?isbn=978-4-08-883167-1",
+      "type": "OFFICIAL",
+      "accessedAt": "2026-09-01"
+    }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    {
+      "field": "narrative segmentation",
+      "reason": "A obra foi publicada como one-shot especial de capítulo único. Não há uma serialização de arcos ou sagas a segmentar."
+    }
+  ]
 }

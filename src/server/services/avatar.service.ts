@@ -1,0 +1,121 @@
+/**
+ * Casos de uso da foto de perfil (issue #76). O dono da sessão define ou
+ * remove a própria; qualquer um lê por username. Tipo e tamanho são
+ * decididos no domínio antes de tocar no banco.
+ */
+import { validarAvatar, type ErroDoAvatar } from "@/server/domain/avatar";
+import {
+  apagarAvatar,
+  buscarAvatarPorUsername,
+  buscarVersaoDoAvatarPorUsername,
+  salvarAvatar,
+  type AvatarDoUsuario,
+} from "@/server/repositories/usuario.repository";
+import type { Veredito } from "@/server/domain/limite-de-tentativas";
+import { limitarAvatar } from "./limite.service";
+
+export type DependenciasDoAvatar = {
+  salvar: (userId: string, mime: string, bytes: Uint8Array) => Promise<{ avatarUpdatedAt: Date }>;
+  /** Teto de gravações por usuário (#136): 512 KB por chamada sem teto era DoS barato. */
+  limitar: (userId: string) => Promise<Veredito>;
+  apagar: (userId: string) => Promise<void>;
+  buscarPorUsername: (username: string) => Promise<AvatarDoUsuario | null>;
+  /** Só versão e tipo (#135): a rota decide 404 e 304 sem os bytes. */
+  buscarVersaoPorUsername: (username: string) => Promise<{ mime: string; avatarUpdatedAt: Date } | null>;
+};
+
+export type ResultadoDeDefinir =
+  | { estado: "ok"; versao: number }
+  | { estado: "invalido"; motivo: ErroDoAvatar }
+  | { estado: "limitado"; esperarSegundos: number };
+
+export async function definirAvatar(
+  pedido: { userId: string; mime: string; bytes: Uint8Array },
+  deps: DependenciasDoAvatar,
+): Promise<ResultadoDeDefinir>
+{
+  const motivo = validarAvatar(pedido.mime, pedido.bytes);
+
+  if (motivo !== null)
+  {
+    return { estado: "invalido", motivo };
+  }
+
+  const limite = await deps.limitar(pedido.userId);
+
+  if (limite.bloqueado)
+  {
+    return { estado: "limitado", esperarSegundos: limite.esperarSegundos };
+  }
+
+  const salvo = await deps.salvar(pedido.userId, pedido.mime, pedido.bytes);
+
+  return { estado: "ok", versao: salvo.avatarUpdatedAt.getTime() };
+}
+
+export async function removerAvatar(
+  pedido: { userId: string },
+  deps: DependenciasDoAvatar,
+): Promise<{ estado: "ok" }>
+{
+  await deps.apagar(pedido.userId);
+
+  return { estado: "ok" };
+}
+
+export type AvatarServido = { bytes: Uint8Array; mime: string; versao: number };
+
+/** A versão da foto sem os bytes (#135). `null` sem foto. */
+export async function versaoDoAvatar(
+  username: string,
+  deps: DependenciasDoAvatar,
+): Promise<{ mime: string; versao: number } | null>
+{
+  const foto = await deps.buscarVersaoPorUsername(username);
+
+  return foto === null ? null : { mime: foto.mime, versao: foto.avatarUpdatedAt.getTime() };
+}
+
+export async function avatarDoUsuario(
+  username: string,
+  deps: DependenciasDoAvatar,
+): Promise<AvatarServido | null>
+{
+  const foto = await deps.buscarPorUsername(username);
+
+  if (foto === null)
+  {
+    return null;
+  }
+
+  return { bytes: foto.bytes, mime: foto.mime, versao: foto.avatarUpdatedAt.getTime() };
+}
+
+const DEPS_DO_SISTEMA: DependenciasDoAvatar = {
+  salvar: salvarAvatar,
+  limitar: function (userId) { return limitarAvatar({ userId }); },
+  apagar: apagarAvatar,
+  buscarPorUsername: buscarAvatarPorUsername,
+  buscarVersaoPorUsername: buscarVersaoDoAvatarPorUsername,
+};
+
+/** As composições de produção. */
+export function definirAvatarDoSistema(pedido: { userId: string; mime: string; bytes: Uint8Array })
+{
+  return definirAvatar(pedido, DEPS_DO_SISTEMA);
+}
+
+export function removerAvatarDoSistema(pedido: { userId: string })
+{
+  return removerAvatar(pedido, DEPS_DO_SISTEMA);
+}
+
+export function avatarDoUsuarioDoSistema(username: string)
+{
+  return avatarDoUsuario(username, DEPS_DO_SISTEMA);
+}
+
+export function versaoDoAvatarDoSistema(username: string)
+{
+  return versaoDoAvatar(username, DEPS_DO_SISTEMA);
+}

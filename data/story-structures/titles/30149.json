@@ -11,10 +11,16 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "nihei-wiki-blame", "url": "https://tsutomu-nihei.fandom.com/wiki/Blame!", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "nihei-wiki-blame-chapters", "url": "https://tsutomu-nihei.fandom.com/wiki/Category:Blame!_Chapters", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "inkr-blame-chapters", "url": "https://comics.inkr.com/title/1104-blame/chapters", "type": "OFFICIAL", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "numbering and arc taxonomy", "reason": "A wiki especializada contabiliza 65 LOGs regulares e 2 EX-LOGs, enquanto o catalogo AniList tem 66 capitulos e a leitura oficial lista 65. Nao foi localizada uma taxonomia de arcos nem uma equivalencia editorial verificavel para EX-LOGs e FINAL LOG." }
+  ]
 }

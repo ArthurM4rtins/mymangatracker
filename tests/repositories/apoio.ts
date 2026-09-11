@@ -7,6 +7,8 @@ export async function limparBanco(): Promise<void>
   const prisma = getPrisma();
 
   // A ordem respeita as FKs: o que aponta some antes do que é apontado.
+  await prisma.follow.deleteMany();
+  await prisma.profileLike.deleteMany();
   await prisma.readingProgress.deleteMany();
   await prisma.readingSource.deleteMany();
   await prisma.reviewLike.deleteMany();
@@ -25,6 +27,7 @@ export async function semearUsuario(username: string)
   return getPrisma().user.create({
     data: {
       username,
+      usernameNormalizado: username.toLowerCase(),
       email: `${username}@exemplo.test`,
       passwordHash: "hash-de-teste",
     },

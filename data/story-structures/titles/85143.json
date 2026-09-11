@@ -11,10 +11,18 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "DISPUTED",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "tower-god-wiki-arcs", "url": "https://towerofgod.fandom.com/wiki/List_of_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "tower-god-wiki-chapters", "url": "https://towerofgod.fandom.com/wiki/List_of_Chapters", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "webtoon-corporate-tower-god", "url": "https://ir.webtoon.com/static-files/537b5bbd-519f-4b65-b3dd-25e797b3b839", "type": "OFFICIAL", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "range.unit", "reason": "A taxonomia comunitaria possui dezenas de arcos e limites claros, mas a numeracao reinicia em cada parte/temporada da webtoon, inclusive com capitulos 0. O contrato atual aceita apenas CHAPTER em uma sequencia numerica unica, sem identificador de temporada, portanto intervalos como 'Part I 1--4' e 'Part II 1--5' seriam ambiguos." },
+    { "field": "current coverage", "reason": "A obra esta em andamento e o catalogo AniList nao informa total de capitulos. A fonte comunitaria tambem distingue capitulos gratuitos, Fast Pass e preview por idioma; nao foi possivel fixar uma cobertura atual unica." }
+  ],
+  "notes": "A estrutura deve ser revisitada quando o contrato suportar uma chave de temporada/parte para a unidade de capitulo."
 }

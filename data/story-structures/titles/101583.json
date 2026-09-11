@@ -12,9 +12,221 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
-  "conflicts": []
+  "sources": [
+    {
+      "id": "bisque-wiki-story-arcs",
+      "url": "https://sono-bisque-doll-wa-koi-wo-suru.fandom.com/wiki/Story_Arcs",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "bisque-wiki-final-arc",
+      "url": "https://sono-bisque-doll-wa-koi-wo-suru.fandom.com/wiki/Final_Arc",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [
+    {
+      "key": "shizuku-kuroe",
+      "kind": "ARC",
+      "position": 1,
+      "title": "Shizuku Kuroe",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "1",
+        "end": "14"
+      },
+      "sourceIds": [
+        "bisque-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "flower-princess-blaze",
+      "kind": "ARC",
+      "position": 2,
+      "title": "Flower Princess Blaze",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "15",
+        "end": "30"
+      },
+      "sourceIds": [
+        "bisque-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "veronica",
+      "kind": "ARC",
+      "position": 3,
+      "title": "Veronica",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "31",
+        "end": "33"
+      },
+      "sourceIds": [
+        "bisque-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "liz",
+      "kind": "ARC",
+      "position": 4,
+      "title": "Liz",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "34",
+        "end": "36"
+      },
+      "sourceIds": [
+        "bisque-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "fireworks-festival",
+      "kind": "ARC",
+      "position": 5,
+      "title": "Fireworks Festival",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "37",
+        "end": "39"
+      },
+      "sourceIds": [
+        "bisque-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "shizuku-kuroe-part-2",
+      "kind": "ARC",
+      "position": 6,
+      "title": "Shizuku Kuroe, Part 2",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "40",
+        "end": "43"
+      },
+      "sourceIds": [
+        "bisque-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "arisa-izayoi",
+      "kind": "ARC",
+      "position": 7,
+      "title": "Arisa Izayoi",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "44",
+        "end": "50"
+      },
+      "sourceIds": [
+        "bisque-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "rei-kogami",
+      "kind": "ARC",
+      "position": 8,
+      "title": "Rei Kogami",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "51",
+        "end": "63"
+      },
+      "sourceIds": [
+        "bisque-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "new-dslr",
+      "kind": "ARC",
+      "position": 9,
+      "title": "New DSLR",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "64",
+        "end": "70"
+      },
+      "sourceIds": [
+        "bisque-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "coffin",
+      "kind": "ARC",
+      "position": 10,
+      "title": "Coffin",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "71",
+        "end": "85"
+      },
+      "sourceIds": [
+        "bisque-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "mandate-of-heaven",
+      "kind": "ARC",
+      "position": 11,
+      "title": "Mandate of Heaven",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "86",
+        "end": "102"
+      },
+      "sourceIds": [
+        "bisque-wiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "final",
+      "kind": "ARC",
+      "position": 12,
+      "title": "Final",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "103",
+        "end": "115.5"
+      },
+      "sourceIds": [
+        "bisque-wiki-story-arcs",
+        "bisque-wiki-final-arc"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    }
+  ],
+  "conflicts": [
+    {
+      "field": "chapter total",
+      "reason": "A taxonomia comunitária encerra o mangá em 115.5, incluindo o capítulo fracionado final, enquanto o catálogo AniList registra 119 entradas. Materiais extras não receberam limites inferidos."
+    }
+  ]
 }

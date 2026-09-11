@@ -1,0 +1,66 @@
+# Portão de CI (#64): o que o CLAUDE.md promete — lint com as regras de camada,
+# testes e build — passa a rodar de fato em todo PR e em todo push na main.
+#
+# O build roda SEM DATABASE_URL de propósito: é a prova de que o build não
+# depende do banco (regra do deploy). O migrate condicional do `pnpm build` vê
+# a variável ausente e pula, igual ao primeiro deploy na Vercel.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: lint, testes e build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: mymangatracker
+          POSTGRES_PASSWORD: mymangatracker
+          POSTGRES_DB: mymangatracker_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U mymangatracker -d mymangatracker_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        # A versão vem do campo packageManager do package.json.
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm prisma generate
+
+      - name: Lint (inclui as regras de camada)
+        run: pnpm lint
+
+      - name: Testes unitários (domínio e serviços)
+        run: pnpm test
+
+      - name: Testes de repositório (Postgres do job)
+        run: pnpm test:db
+        env:
+          DATABASE_URL_TEST: postgresql://mymangatracker:mymangatracker@localhost:5432/mymangatracker_test?schema=public
+
+      - name: Build sem DATABASE_URL
+        run: pnpm build

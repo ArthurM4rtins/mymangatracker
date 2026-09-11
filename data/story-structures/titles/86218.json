@@ -11,10 +11,15 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "INSUFFICIENT_EVIDENCE",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "yagakimi-wiki-main-series", "url": "https://yagakimi.fandom.com/wiki/Bloom_Into_You", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "dengeki-wiki-volumes", "url": "https://dengeki.fandom.com/wiki/Bloom_Into_You", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "numbering and arc taxonomy", "reason": "As fontes da obra principal registram 45 capitulos completos, enquanto o catalogo AniList possui 53 entradas. As fontes localizadas organizam volumes e capitulos, mas nao oferecem uma taxonomia de arcos nem explicam a equivalencia das oito entradas adicionais; nao foram inferidos segmentos." }
+  ]
 }

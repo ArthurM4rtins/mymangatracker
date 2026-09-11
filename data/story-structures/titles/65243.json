@@ -12,9 +12,22 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
-  "conflicts": []
+  "sources": [
+    { "id": "haikyuu-wiki-arcs", "url": "https://haikyuu.fandom.com/wiki/Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "haikyuu-wiki-volumes", "url": "https://haikyuu.fandom.com/wiki/Haiky%C5%AB!!_Volumes", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
+  "segments": [
+    { "key": "karasuno-team-formation", "kind": "ARC", "position": 1, "title": "Karasuno High Team Formation Arc", "range": { "unit": "CHAPTER", "start": "1", "end": "35" }, "sourceIds": ["haikyuu-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "interhigh", "kind": "ARC", "position": 2, "title": "Interhigh Arc", "range": { "unit": "CHAPTER", "start": "36", "end": "71" }, "sourceIds": ["haikyuu-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "tokyo-expedition", "kind": "ARC", "position": 3, "title": "Tokyo Expedition Arc", "range": { "unit": "CHAPTER", "start": "72", "end": "96" }, "sourceIds": ["haikyuu-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "spring-high-preliminary", "kind": "ARC", "position": 4, "title": "Spring High Preliminary Arc", "range": { "unit": "CHAPTER", "start": "97", "end": "206" }, "sourceIds": ["haikyuu-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "tokyo-nationals", "kind": "ARC", "position": 5, "title": "Tokyo Nationals Arc", "range": { "unit": "CHAPTER", "start": "207", "end": "369" }, "sourceIds": ["haikyuu-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" },
+    { "key": "final", "kind": "ARC", "position": 6, "title": "Final Arc", "range": { "unit": "CHAPTER", "start": "370", "end": "402" }, "sourceIds": ["haikyuu-wiki-arcs"], "status": "DRAFT", "confidence": "MEDIUM" }
+  ],
+  "conflicts": [
+    { "field": "chapter total", "reason": "A taxonomia e a lista de volumes cobrem a serie serializada de 1 a 402. O AniList registra 404 entradas porque dois one-shots piloto precederam a serializacao e nao foram republicados nos volumes; eles nao foram associados aos arcos da historia principal." },
+    { "field": "arc taxonomy", "reason": "Os seis arcos e seus limites provem de uma wiki comunitaria especializada; permanecem DRAFT ate haver confirmacao editorial independente." }
+  ]
 }

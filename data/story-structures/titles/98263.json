@@ -11,10 +11,16 @@
   },
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
-    "status": "DRAFT",
-    "researchedAt": null
+    "status": "DISPUTED",
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
+  "sources": [
+    { "id": "witch-hat-wiki-story-arcs", "url": "https://witch-hat-atelier.fandom.com/wiki/Story_Arcs", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "independent-witch-hat-chapters", "url": "https://witchhatatelier.telepedia.net/wiki/Witch_Hat_Atelier_(Manga)/List_of_Chapters", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
+    { "id": "witch-hat-reddit-arc-length", "url": "https://www.reddit.com/r/WitchHatAtelier/comments/1t8cegl/arc_length_confusion/", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+  ],
   "segments": [],
-  "conflicts": []
+  "conflicts": [
+    { "field": "arc taxonomy", "reason": "A wiki principal declara que todos os nomes de arcos sao fan-made. A wiki independente usa outra divisao para arcos posteriores (por exemplo, Silver Eve, Valance Leech e Silverwood), e a discussao comunitaria registra limites conflitantes para essas fases. Nao ha evidencia suficiente para escolher uma taxonomia com intervalos publicaveis." }
+  ]
 }

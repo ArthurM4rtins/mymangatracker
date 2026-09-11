@@ -12,9 +12,381 @@
   "numberingBasis": "ORIGINAL_SERIALIZATION",
   "curation": {
     "status": "DRAFT",
-    "researchedAt": null
+    "researchedAt": "2026-09-01"
   },
-  "sources": [],
-  "segments": [],
+  "sources": [
+    {
+      "id": "jojowiki-story-arcs",
+      "url": "https://jojowiki.com/Story_Arcs",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "jojo-wiki-jojolion-chapter-list",
+      "url": "https://jojo.fandom.com/wiki/JoJolion/Chapter_List",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "jojowiki-jojolion",
+      "url": "https://jojowiki.com/JoJolion",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    }
+  ],
+  "segments": [
+    {
+      "key": "soft-and-wet",
+      "kind": "ARC",
+      "position": 1,
+      "title": "Soft & Wet",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "1",
+        "end": "6"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "california-king-bed",
+      "kind": "ARC",
+      "position": 2,
+      "title": "California King Bed",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "7",
+        "end": "10"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "paisley-park-and-born-this-way",
+      "kind": "ARC",
+      "position": 3,
+      "title": "Paisley Park and Born This Way",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "11",
+        "end": "17"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "shakedown-road",
+      "kind": "ARC",
+      "position": 4,
+      "title": "Shakedown Road",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "18",
+        "end": "22"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "paper-moon-deception",
+      "kind": "ARC",
+      "position": 5,
+      "title": "Paper Moon Deception",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "23",
+        "end": "25"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "norisuke-higashikata-tsurugi-higashikata-and-yotsuyu-yagiyama",
+      "kind": "ARC",
+      "position": 6,
+      "title": "Norisuke Higashikata, Tsurugi Higashikata, and Yotsuyu Yagiyama",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "26",
+        "end": "30"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "i-am-a-rock",
+      "kind": "ARC",
+      "position": 7,
+      "title": "I Am a Rock",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "31",
+        "end": "32"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "it-s-a-summer-vacation-everyday",
+      "kind": "ARC",
+      "position": 8,
+      "title": "It's a Summer Vacation Everyday",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "33",
+        "end": "38"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "doobie-wah",
+      "kind": "ARC",
+      "position": 9,
+      "title": "Doobie Wah!",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "39",
+        "end": "42"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "love-love-deluxe",
+      "kind": "ARC",
+      "position": 10,
+      "title": "Love Love Deluxe",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "43",
+        "end": "46"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "hato-brought-her-boyfriend-home",
+      "kind": "ARC",
+      "position": 11,
+      "title": "Hato Brought Her Boyfriend Home",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "47",
+        "end": "49"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "vitamin-c-and-killer-queen",
+      "kind": "ARC",
+      "position": 12,
+      "title": "Vitamin C and Killer Queen",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "50",
+        "end": "53"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "walking-heart",
+      "kind": "ARC",
+      "position": 13,
+      "title": "Walking Heart",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "54",
+        "end": "55"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "milagroman",
+      "kind": "ARC",
+      "position": 14,
+      "title": "Milagroman",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "56",
+        "end": "57"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "dolomite-s-blue-lagoon",
+      "kind": "ARC",
+      "position": 15,
+      "title": "Dolomite's Blue Lagoon",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "58",
+        "end": "63"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "the-plant-appraiser-rai-mamezuku",
+      "kind": "ARC",
+      "position": 16,
+      "title": "The Plant Appraiser - Rai Mamezuku",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "64",
+        "end": "67"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "urban-guerrilla-and-doremifasolati-do",
+      "kind": "ARC",
+      "position": 17,
+      "title": "Urban Guerrilla and Doremifasolati Do",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "68",
+        "end": "71"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "ozon-baby-s-pressure",
+      "kind": "ARC",
+      "position": 18,
+      "title": "Ozon Baby's Pressure",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "72",
+        "end": "76"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "doctor-wu-and-awaking-iii-leaves",
+      "kind": "ARC",
+      "position": 19,
+      "title": "Doctor Wu and Awaking III Leaves",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "77",
+        "end": "82"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "the-wonder-of-you",
+      "kind": "ARC",
+      "position": 20,
+      "title": "The Wonder of You",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "83",
+        "end": "104"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "go-beyond",
+      "kind": "ARC",
+      "position": 21,
+      "title": "Go Beyond",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "105",
+        "end": "108"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "the-radio-gaga-incident",
+      "kind": "ARC",
+      "position": 22,
+      "title": "The Radio Gaga Incident",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "109",
+        "end": "110"
+      },
+      "sourceIds": [
+        "jojowiki-story-arcs"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    }
+  ],
   "conflicts": []
 }

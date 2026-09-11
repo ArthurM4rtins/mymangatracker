@@ -15,25 +15,281 @@
     "researchedAt": "2026-09-01"
   },
   "sources": [
-    { "id": "record-of-ragnarok-wiki-rounds", "url": "https://record-of-ragnarok.fandom.com/wiki/Ragnarok/List_of_Rounds", "type": "COMMUNITY", "accessedAt": "2026-09-01" },
-    { "id": "record-of-ragnarok-wiki-volumes", "url": "https://record-of-ragnarok.fandom.com/wiki/Chapters_%26_Volumes", "type": "COMMUNITY", "accessedAt": "2026-09-01" }
+    {
+      "id": "record-of-ragnarok-wiki-rounds",
+      "url": "https://record-of-ragnarok.fandom.com/wiki/Ragnarok/List_of_Rounds",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "record-of-ragnarok-wiki-volumes",
+      "url": "https://record-of-ragnarok.fandom.com/wiki/Chapters_%26_Volumes",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-01"
+    },
+    {
+      "id": "record-of-ragnarok-wiki-chapter-85",
+      "url": "https://record-of-ragnarok.fandom.com/wiki/Chapter_85",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-03"
+    },
+    {
+      "id": "record-of-ragnarok-wiki-chapter-97",
+      "url": "https://record-of-ragnarok.fandom.com/wiki/Chapter_97",
+      "type": "COMMUNITY",
+      "accessedAt": "2026-09-03"
+    }
   ],
   "segments": [
-    { "key": "round-1-lu-bu-thor", "kind": "ARC", "position": 1, "title": "Round 1: Lü Bu vs. Thor", "range": { "unit": "CHAPTER", "start": "1", "end": "7" }, "sourceIds": ["record-of-ragnarok-wiki-rounds"], "status": "DRAFT", "confidence": "MEDIUM" },
-    { "key": "round-2-adam-zeus", "kind": "ARC", "position": 2, "title": "Round 2: Adam vs. Zeus", "range": { "unit": "CHAPTER", "start": "7", "end": "13" }, "sourceIds": ["record-of-ragnarok-wiki-rounds"], "status": "DRAFT", "confidence": "MEDIUM" },
-    { "key": "round-3-kojiro-poseidon", "kind": "ARC", "position": 3, "title": "Round 3: Kojiro Sasaki vs. Poseidon", "range": { "unit": "CHAPTER", "start": "13", "end": "20" }, "sourceIds": ["record-of-ragnarok-wiki-rounds"], "status": "DRAFT", "confidence": "MEDIUM" },
-    { "key": "round-4-jack-heracles", "kind": "ARC", "position": 4, "title": "Round 4: Jack the Ripper vs. Heracles", "range": { "unit": "CHAPTER", "start": "20", "end": "30" }, "sourceIds": ["record-of-ragnarok-wiki-rounds"], "status": "DRAFT", "confidence": "MEDIUM" },
-    { "key": "round-5-raiden-shiva", "kind": "ARC", "position": 5, "title": "Round 5: Raiden Tameemon vs. Shiva", "range": { "unit": "CHAPTER", "start": "31", "end": "42" }, "sourceIds": ["record-of-ragnarok-wiki-rounds"], "status": "DRAFT", "confidence": "MEDIUM" },
-    { "key": "round-6-buddha-zerofuku-hajun", "kind": "ARC", "position": 6, "title": "Round 6: Buddha vs. Zerofuku/Hajun", "range": { "unit": "CHAPTER", "start": "43", "end": "54" }, "sourceIds": ["record-of-ragnarok-wiki-rounds"], "status": "DRAFT", "confidence": "MEDIUM" },
-    { "key": "round-7-qin-hades", "kind": "ARC", "position": 7, "title": "Round 7: Qin Shi Huang vs. Hades", "range": { "unit": "CHAPTER", "start": "55", "end": "65" }, "sourceIds": ["record-of-ragnarok-wiki-rounds"], "status": "DRAFT", "confidence": "MEDIUM" },
-    { "key": "round-8-tesla-beelzebub", "kind": "ARC", "position": 8, "title": "Round 8: Nikola Tesla vs. Beelzebub", "range": { "unit": "CHAPTER", "start": "66", "end": "77" }, "sourceIds": ["record-of-ragnarok-wiki-rounds", "record-of-ragnarok-wiki-volumes"], "status": "DRAFT", "confidence": "MEDIUM" },
-    { "key": "round-9-leonidas-apollo", "kind": "ARC", "position": 9, "title": "Round 9: Leonidas vs. Apollo", "range": { "unit": "CHAPTER", "start": "78", "end": "84" }, "sourceIds": ["record-of-ragnarok-wiki-rounds"], "status": "DRAFT", "confidence": "MEDIUM" },
-    { "key": "round-10-okita-susanoo", "kind": "ARC", "position": 10, "title": "Round 10: Soji Okita vs. Susano'o no Mikoto", "ranges": [{ "unit": "CHAPTER", "start": "84", "end": "84" }, { "unit": "CHAPTER", "start": "86", "end": "96" }], "sourceIds": ["record-of-ragnarok-wiki-rounds"], "status": "DRAFT", "confidence": "MEDIUM" },
-    { "key": "round-11-simo-loki", "kind": "ARC", "position": 11, "title": "Round 11: Simo Häyhä vs. Loki", "range": { "unit": "CHAPTER", "start": "98", "end": "106" }, "sourceIds": ["record-of-ragnarok-wiki-rounds", "record-of-ragnarok-wiki-volumes"], "status": "DRAFT", "confidence": "MEDIUM" },
-    { "key": "round-12-kintoki-odin", "kind": "ARC", "position": 12, "title": "Round 12: Sakata Kintoki vs. Odin", "range": { "unit": "CHAPTER", "start": "107", "end": null }, "sourceIds": ["record-of-ragnarok-wiki-rounds", "record-of-ragnarok-wiki-volumes"], "status": "DRAFT", "confidence": "MEDIUM" }
+    {
+      "key": "round-1-lu-bu-thor",
+      "kind": "ARC",
+      "position": 1,
+      "title": "Round 1: Lü Bu vs. Thor",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "1",
+        "end": "6"
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "round-2-adam-zeus",
+      "kind": "ARC",
+      "position": 2,
+      "title": "Round 2: Adam vs. Zeus",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "7",
+        "end": "12"
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "round-3-kojiro-poseidon",
+      "kind": "ARC",
+      "position": 3,
+      "title": "Round 3: Kojiro Sasaki vs. Poseidon",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "13",
+        "end": "19"
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "round-4-jack-heracles",
+      "kind": "ARC",
+      "position": 4,
+      "title": "Round 4: Jack the Ripper vs. Heracles",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "20",
+        "end": "30"
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "round-5-raiden-shiva",
+      "kind": "ARC",
+      "position": 5,
+      "title": "Round 5: Raiden Tameemon vs. Shiva",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "31",
+        "end": "42"
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "round-6-buddha-zerofuku-hajun",
+      "kind": "ARC",
+      "position": 6,
+      "title": "Round 6: Buddha vs. Zerofuku/Hajun",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "43",
+        "end": "54"
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "round-7-qin-hades",
+      "kind": "ARC",
+      "position": 7,
+      "title": "Round 7: Qin Shi Huang vs. Hades",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "55",
+        "end": "65"
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "round-8-tesla-beelzebub",
+      "kind": "ARC",
+      "position": 8,
+      "title": "Round 8: Nikola Tesla vs. Beelzebub",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "66",
+        "end": "77"
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds",
+        "record-of-ragnarok-wiki-volumes"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "round-9-leonidas-apollo",
+      "kind": "ARC",
+      "position": 9,
+      "title": "Round 9: Leonidas vs. Apollo",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "78",
+        "end": "83"
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "round-10-okita-susanoo",
+      "kind": "ARC",
+      "position": 10,
+      "title": "Round 10: Soji Okita vs. Susano'o no Mikoto",
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM",
+      "ranges": [
+        {
+          "unit": "CHAPTER",
+          "start": "84",
+          "end": "84"
+        },
+        {
+          "unit": "CHAPTER",
+          "start": "86",
+          "end": "96"
+        }
+      ]
+    },
+    {
+      "key": "interludio-85",
+      "kind": "INTERLUDE",
+      "position": 11,
+      "title": "Interlúdio: Secrets (cap. 85)",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "85",
+        "end": "85"
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds",
+        "record-of-ragnarok-wiki-chapter-85"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "interludio-97",
+      "kind": "INTERLUDE",
+      "position": 12,
+      "title": "Interlúdio: Yggdrasil (cap. 97)",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "97",
+        "end": "97"
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds",
+        "record-of-ragnarok-wiki-chapter-97"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "round-11-simo-loki",
+      "kind": "ARC",
+      "position": 13,
+      "title": "Round 11: Simo Häyhä vs. Loki",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "98",
+        "end": "106"
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds",
+        "record-of-ragnarok-wiki-volumes"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "key": "round-12-kintoki-odin",
+      "kind": "ARC",
+      "position": 14,
+      "title": "Round 12: Sakata Kintoki vs. Odin",
+      "range": {
+        "unit": "CHAPTER",
+        "start": "107",
+        "end": null
+      },
+      "sourceIds": [
+        "record-of-ragnarok-wiki-rounds",
+        "record-of-ragnarok-wiki-volumes"
+      ],
+      "status": "DRAFT",
+      "confidence": "MEDIUM"
+    }
   ],
   "conflicts": [
-    { "field": "round boundaries", "reason": "A lista comunitária atribui os capítulos 7, 13, 20 e 84 a rounds adjacentes e deixa os capítulos 85 e 97 fora da navegação por rounds, provavelmente como transições/especiais. Os intervalos foram preservados como publicados, inclusive com sobreposição e lacunas." },
-    { "field": "arc taxonomy", "reason": "Os rounds são a organização comunitária dos combates do torneio; não foi localizada tabela oficial equivalente. Todos os segmentos permanecem DRAFT." }
+    {
+      "field": "round boundaries",
+      "reason": "A lista de rounds da wiki repete os capítulos 7, 13, 20 e 84 no round que termina e no que começa. Os títulos desses capítulos são do round seguinte (File No.00000000001 = ficha de Adam; Prime; Justice vs. Evil; Manslayer and Godslayer), então cada um foi atribuído ao round que abre: R1 1–6, R2 7–12, R3 13–19, R4 20–30, R9 78–83, R10 a partir de 84."
+    },
+    {
+      "field": "interludes",
+      "reason": "Os capítulos 85 (Secrets, vol. 21) e 97 (Yggdrasil, vol. 24) não pertencem a round nenhum na wiki — são interlúdios de bastidor. Viraram segmentos INTERLUDE; o round 10 fica 84 e 86–96."
+    },
+    {
+      "field": "arc taxonomy",
+      "reason": "Os rounds são a organização comunitária dos combates do torneio; não foi localizada tabela oficial equivalente. Todos os segmentos permanecem DRAFT."
+    }
   ]
 }

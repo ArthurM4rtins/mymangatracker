@@ -1,0 +1,509 @@
+# feature-i18n — o site em mais de um idioma
+
+Issue: #116. Desenho de 05/09/2026. **Aprovado em 05/09** (decisões do usuário registradas em cada D).
+
+## Objetivo
+
+O Kidoku hoje é 100% pt-BR, hardcoded em 47 componentes, 22 rotas de API e
+7 formatadores de data. O site pode ser usado por gente do mundo todo: idioma
+da interface, das mensagens de erro e dos formatos (data, nota) tem que seguir
+quem está lendo, sem regressão para quem lê em português.
+
+## Escopo
+
+Entra:
+
+1. Interface inteira (`src/app/(ui)`): textos, `aria-label`, `placeholder`,
+   `<title>`/description do `generateMetadata`, `<html lang>`.
+2. Erros da API: deixam de ser frase e viram **código**; a tela traduz.
+3. Datas, horas relativas ("há 3 dias"), nota (`4,5` vs `4.5`).
+4. Idioma na URL (`/en/obra/30002`, `/pt-BR/obra/30002`) e negociação por
+   `Accept-Language` na primeira visita.
+5. Preferência salva na conta (`User.locale`) para quem está logado.
+6. Extensão (#91): `_locales/` do MV3, alinhada com os mesmos idiomas.
+
+Não entra:
+
+- Conteúdo do AniList (sinopse, gêneros) — já vem em inglês, fica como está.
+- Conteúdo de usuário (resenha, lista, bio) — nunca se traduz.
+- Curadoria narrativa (`data/story-structures/`, #16) — nomes de arcos em
+  inglês; decidir na #16 se ganham pt-BR.
+- Marca: "Kidoku", logo, `SIMBOLO` ✦.
+- Plataforma de tradução (Crowdin etc.) — dois idiomas, dois integrantes,
+  JSON revisado à mão basta.
+
+## Medições (05/09)
+
+| O quê | Quanto |
+|---|---|
+| `.tsx` em `src/app/(ui)` | 47, dos quais **34 são `"use client"`** |
+| `erros: {...}` em português na API | 116 ocorrências, 22 rotas |
+| Mensagens do Zod com texto | 4 |
+| `Intl.*Format`/`toLocaleString` fixos em pt-BR | 7 |
+| Plurais à mão (`=== 1 ? "obra" : "obras"`) | 16 |
+| Estados dos serviços | já são códigos (`nao_encontrada`, `sem_fonte`…) |
+
+Os 34 client components decidem a biblioteca: `next/root-params` (a forma
+nativa do Next 16 de ler `[lang]`) **não roda em client component**. Precisa
+de um provider que leve as mensagens ao cliente — é o que o next-intl faz.
+
+## Decisões tomadas
+
+### D1. Idiomas: `pt-BR` e `en`. Fallback `en`. (aprovado 05/09: inglês é a língua universal)
+
+- Visitante sem cookie: `Accept-Language` negociado contra `["pt-BR", "en"]`.
+  `pt`, `pt-PT` → `pt-BR`; qualquer outra coisa → `en`.
+- Terceiro idioma (es, ja) só quando houver quem revise a tradução.
+
+### D2. Idioma na URL, prefixo sempre. Preferência na conta quando logado. (aprovado 05/09, por recomendação)
+
+Por que `always` e não `as-needed`: com `as-needed` o idioma padrão fica sem
+prefixo e o outro com — duas formas de URL para a mesma tela, cache e
+`alternates` mais confusos, e trocar o padrão no futuro quebra links. Com
+`always` toda URL de tela declara o idioma; o custo é um redirect 307 nos
+links antigos, uma vez.
+
+- `localePrefix: "always"`: `/pt-BR/obra/30002`, `/en/obra/30002`. Link
+  compartilhado carrega o idioma; cache e SEO não misturam.
+- `/obra/30002` (links antigos) → redirect 307 para o idioma negociado, feito
+  no `proxy.ts` (Next 16 renomeou middleware para proxy).
+- `generateMetadata` ganha `alternates.languages` apontando as duas URLs.
+- Logado: `User.locale` (fase 5) vence o cookie; troca no seletor grava nos
+  dois. Visitante: cookie `NEXT_LOCALE` (padrão do next-intl).
+- `/api/**` **não** tem prefixo. A API fala código, não idioma.
+
+### D3. Biblioteca: `next-intl` 4.14 (peer `next ^16`).
+
+Por quê: App Router + server components + client provider + ICU
+(plural, interpolação) + `useFormatter` para data/número + tipagem das chaves.
+Alternativas descartadas: Paraglide (menos exemplos com Next 16, compila
+mensagens em código gerado — mais um generator no build), à mão (sem ICU; os
+16 plurais viram 16 `if`s em dois idiomas, e regride).
+
+Peças (nomes do next-intl):
+
+```
+messages/pt-BR.json, messages/en.json       # fora de src: sem camada, sem lint
+src/i18n/routing.ts                          # locales, defaultLocale, localePrefix
+src/i18n/request.ts                          # carrega messages do locale pedido
+src/proxy.ts                                 # createMiddleware(routing) — redirect/negociação
+src/app/(ui)/[locale]/layout.tsx             # root layout desce um nível; <html lang>
+                                             # + NextIntlClientProvider
+next.config.ts                               # createNextIntlPlugin()
+```
+
+Camadas (`eslint-plugin-boundaries`): `src/i18n/**` vira element `i18n`, que
+não importa nada do projeto e é importável por `ui`, `controller` e pelo
+`proxy`. `src/proxy.ts` vira element `proxy`, importa só `i18n`. Comprovar
+quebrando, como manda o CLAUDE.md.
+
+### D4. Onde vive o texto: um namespace por tela, chave descritiva.
+
+```json
+{
+  "comum": { "salvar": "Salvar", "cancelar": "Cancelar", "carregando": "Salvando…" },
+  "estante": { "titulo": "Sua estante", "vazia": "Sua estante está vazia…",
+               "status": { "READING": "Lendo", "COMPLETED": "Concluído", "PAUSED": "Pausado", "PLANNED": "Planejo ler", "DROPPED": "Abandonado" } },
+  "obra": { "suaAvaliacao": "Sua avaliação", "resenhar": "Resenhar…",
+            "aberturas": "{n, plural, =1 {# abertura} other {# aberturas}}" }
+}
+```
+
+- Chave é o **papel**, não a frase: `estante.vazia`, nunca `suaEstanteEstaVazia`.
+- Plural só via ICU. Os 16 `=== 1 ?` morrem.
+- `messages/pt-BR.json` é a fonte de tipos: `declare module` com
+  `Messages = typeof import("../messages/pt-BR.json")` → `t("chave.errada")`
+  não compila.
+- Teste unitário `tests/i18n/mensagens.test.ts`: todo caminho de chave de
+  `pt-BR` existe em `en` e vice-versa; nenhum valor vazio. Roda no CI.
+
+### D5. Erros da API viram código. A tela traduz. (aprovado 05/09, por recomendação)
+
+Em uma frase: hoje o servidor responde a frase pronta em português
+(`"lista não encontrada"`); passa a responder um código
+(`"lista_nao_encontrada"`) e quem mostra a mensagem (tela, extensão) escolhe
+a frase no idioma de quem está lendo. O servidor não precisa saber idioma.
+
+Hoje: `{ erros: { _geral: "lista não encontrada" } }`. Passa a:
+`{ erros: { _geral: "lista_nao_encontrada" } }` e, por campo,
+`{ erros: { email: "email_invalido", senha: "senha_curta" } }`.
+
+- Códigos em `snake_case`, catálogo único em `src/app/api/v1/_shared/erros.ts`
+  (`as const`) — o mesmo arquivo alimenta o namespace `erros` das messages e
+  a extensão. Código sem tradução falha no teste de D4.
+- Zod: `z.config({ customError })` (Zod 4) devolvendo código por `issue.code`
+  + campo; as 4 mensagens com texto viram código.
+- Serviços já devolvem código de estado; o controller só mapeia estado →
+  código HTTP + código de erro. Nada de texto de produto no controller —
+  casa com "controller nunca contém regra de negócio".
+- **Quebra de contrato**: quem consome `erros._geral` como frase (telas,
+  extensão) atualiza junto. Uma virada só, na fase 3, com todos os
+  consumidores no mesmo PR ou em PRs encadeados sem deploy no meio.
+
+### D6. Formatos: pelo idioma ativo, hora pelo navegador.
+
+- `useFormatter()` do next-intl para data, hora relativa e número.
+- `DataHora` (client, #102) continua: hora exata no fuso do navegador.
+  next-intl no servidor formata em UTC salvo `timeZone` explícito — para hora
+  exata, formatar no cliente é a única forma correta sem saber o fuso.
+- Nota: `format.number(4.5)` → `4,5` / `4.5`.
+- **Número de capítulo NÃO é localizado**: `cap. 57.5` nos dois idiomas. É
+  identificador (bate com a URL e com o site de leitura), não quantidade.
+
+### D7. Título da obra por idioma.
+
+`en`: `titleEnglish ?? titleRomaji`. `pt-BR`: idem (AniList não tem
+português). `titleNative` continua secundário nos dois. Sem mudança de dado.
+
+### D8. Lint contra texto solto, sem furo e sem falso positivo. (aprovado 05/09)
+
+Duas regras, cada uma cobrindo o que a outra não cobre:
+
+1. `react/jsx-no-literals` (já vem no eslint-config-next) em
+   `src/app/(ui)/**`, `noStrings: true, ignoreProps: true`,
+   `allowedStrings` para pontuação/símbolo (`·`, `—`, `✦`, `/`, `%`).
+   Pega texto solto entre tags. `ignoreProps: true` evita centenas de falsos
+   positivos em `className`.
+2. `no-restricted-syntax` com seletor nas props que carregam texto para o
+   usuário — o furo da regra 1:
+   `JSXAttribute[name.name=/^(aria-label|aria-description|placeholder|title|alt)$/] > Literal`
+   e o mesmo para `JSXExpressionContainer > Literal` e `TemplateLiteral`.
+   Mensagem: "texto em prop: use t()". Regex só nessas props, então
+   `className`, `href`, `type` etc. passam.
+
+Liga no fim da fase 1, quando o pt-BR estiver todo extraído. Provar as duas
+quebrando de propósito (texto solto e `aria-label="Fechar"`), como manda o
+CLAUDE.md para regra de lint.
+
+### D9. Extensão (#91).
+
+`extension/_locales/en/messages.json`, `extension/_locales/pt_BR/messages.json`
+(underscore é regra do Chrome), `"default_locale": "en"` no manifest,
+`chrome.i18n.getMessage`. Códigos de erro da API (D5) traduzidos ali também.
+Idioma vem do navegador; não lê o cookie do site.
+
+## Fases (cada uma é PR próprio, CI verde, sem deploy quebrado no meio)
+
+1. **Infra sem mudança visual.** next-intl, `[locale]` na rota, `proxy.ts`,
+   `messages/pt-BR.json` extraído do que existe, `en.json` = cópia do pt-BR
+   (temporário, para o teste de paridade passar), seletor de idioma no header
+   ao lado do tema, elements `i18n`/`proxy` no lint. Prova: todas as telas
+   idênticas em `/pt-BR/...`, `/obra/30002` redireciona, lint quebrando com
+   import proibido de propósito.
+2. **`en` de verdade, tela a tela.** Ordem (aprovado 05/09: "organize
+   como achar melhor") — primeiro o que todo visitante vê, depois o que só
+   quem entrou vê, por último o que depende de tudo:
+   comum/header/rodapé → home → catálogo → obra (a tela mais densa) →
+   entrar/cadastrar → estante → listas → perfil (`/u`) → autor.
+   Um PR por tela; liga as duas regras de lint (D8) no primeiro PR e
+   corrige o resto conforme avança.
+3. **API por código.** Catálogo `erros.ts`, Zod com `customError`, 22 rotas,
+   telas consumindo código, extensão junto. Um PR encadeado.
+4. **Formatos.** `useFormatter` nas 7 datas e na nota; `alternates.languages`
+   no metadata; `<html lang>` dinâmico (já vem na fase 1).
+5. **Preferência na conta.** `User.locale String?` (migration aditiva),
+   `PATCH /api/v1/perfil` aceita, seletor grava, proxy respeita quando há
+   sessão.
+
+TDD onde há regra: teste de paridade das messages (fase 1), `customError`
+do Zod (fase 3), negociação de `Accept-Language` no domínio se sair do
+next-intl (fase 1). Componente de tela e JSON de mensagem não precisam.
+
+## Fase 1 — o que foi feito (07/09/2026)
+
+Branch `feature/i18n-infra`. O desenho valeu quase inteiro; os desvios abaixo são
+os que a implementação obrigou, cada um com o motivo.
+
+### Desvios do desenho
+
+| Desenho | O que foi feito | Motivo |
+|---|---|---|
+| `src/proxy.ts` vira **element** `proxy` no lint | virou **categoria de arquivo** (`boundaries/files`) | `eslint-plugin-boundaries` 7 casa `elements` contra **pasta** — `mode: "file"` está deprecado e a doc diz "for element descriptors, the mode is always folder". Mesma lição do `sessao.ts` (#65, item 19). A categoria satisfaz `no-unknown-files` (a regra passa se `!file.isUnknown`) e a policy `from: { file: { categories: "proxy" } }` funciona igual |
+| negociação de `Accept-Language` talvez precise de domínio próprio | **não precisou** | `@formatjs/intl-localematcher`, que o next-intl já usa, resolve `pt` e `pt-PT` → `pt-BR` e todo o resto → `en`, que é exatamente a D1. Medido antes de escrever código |
+| `messages/pt-BR.json` com um namespace por tela | mais um namespace `comum` **compartilhado** | `Salvar`, `Salvando…`, `Cancelar`, `Voltar`, os 5 rótulos de status e os 4 de formato aparecem em 3+ telas. Duplicar em cada namespace seria 3 lugares para corrigir a mesma palavra. `comum` é somente leitura para quem extrai: quem precisa de chave nova põe no namespace da própria tela |
+| — | `favicon.ico` subiu de `(ui)/` para `src/app/` | dentro de `[locale]` ele viraria `/pt-BR/favicon.ico`. O ícone é do site, não de um idioma |
+| — | `globals.css` **ficou** em `(ui)/`, o layout importa `../globals.css` | CSS não é específico de idioma; descer junto seria churn sem ganho |
+| lint de texto solto (D8) liga "no fim da fase 1" | liga **depois da extração**, ainda na fase 1 | é a mesma coisa: só faz sentido com o pt-BR todo extraído, senão são centenas de erros preexistentes |
+
+### Decisões novas, que o desenho não previa
+
+- **`generateMetadata` no lugar de `export const metadata`.** Quatro telas (`entrar`,
+  `cadastrar`, `catalogo`, `estante`) tinham título estático. Metadata estático não
+  alcança o `t()`, então virou `generateMetadata` lendo o `locale` de `params`.
+- **`src/i18n/navigation.ts`.** O desenho listava `routing.ts` e `request.ts`. Faltava
+  o terceiro: com `localePrefix: "always"`, um `<Link href="/catalogo">` do `next/link`
+  ou um `router.push("/estante")` do `next/navigation` **perde o idioma** e paga um
+  redirect do proxy. `createNavigation(routing)` resolve trocando só o import — 19
+  arquivos com `Link`, 27 com `useRouter`/`usePathname`/`redirect`. `notFound` e
+  `useSearchParams` continuam vindo do `next/navigation`: não têm relação com idioma.
+- **`requestLocale` continua sendo a API.** O `.d.ts` do next-intl 4.14.2 marca
+  `requestLocale` como deprecated em favor de `next/root-params`, mas o bundle da
+  versão não menciona `root-params` em lugar nenhum — a migração ainda não chegou.
+  Reavaliar quando o next-intl passar a usar de fato.
+- **Augmentation em `next-intl`, não em `use-intl`.** A `interface AppConfig` nasce no
+  `use-intl`, mas o pnpm não hoista o pacote: `declare module "use-intl"` não resolve.
+  Augmentar `next-intl` funciona — comprovado pelo erro de tipo que o `tsc` deu com a
+  árvore de mensagens já resolvida.
+
+### Provas rodadas
+
+- `pnpm lint` com import proibido de propósito: `service` no `src/i18n/routing.ts` e
+  `repository` no `src/proxy.ts` → um erro cada, com a mensagem certa. Probes desfeitos,
+  lint volta a exit 0.
+- `pnpm exec next build` sem depender de banco: verde, rotas saem como
+  `/[locale]`, `/[locale]/obra/[anilistId]` etc., e o `Proxy (Middleware)` aparece no
+  relatório.
+- `pnpm test`: 461 (eram 456; os 5 novos são o teste de paridade).
+
+## Fase 3 — o catálogo de códigos, medido (07/09/2026)
+
+Levantamento no código, não estimativa: **126 pontos de erro em 21 rotas**, com
+**~50 mensagens distintas**. A cauda é curta — as cinco mais frequentes cobrem
+metade dos pontos.
+
+| Mensagem de hoje | Vezes | Código proposto | HTTP |
+|---|---|---|---|
+| `não foi possível agora` (+ variantes "salvar/registrar/remover/entrar/carregar") | 29 | `falha_interna` | 500 |
+| `corpo inválido — esperado JSON` | 15 | `corpo_invalido` | 400 |
+| `pedido inválido` | 11 | `pedido_invalido` | 400 |
+| `entre para …` (11 frases diferentes) | 22 | ver **granularidade** abaixo | 401 |
+| `lista não encontrada` | 5 | `lista_nao_encontrada` | 404 |
+| `entrada não encontrada` | 5 | `entrada_nao_encontrada` | 404 |
+| `capítulo inválido` | 3 | `capitulo_invalido` | 422 |
+| `obra não encontrada` / `no catálogo` | 4 | `obra_nao_encontrada` | 404 |
+| `muitas tentativas — aguarde…` / `muitos comentários…` | 3 | `limite_excedido` | 429 |
+| `e-mail ou senha incorretos` | 2 | `credenciais_invalidas` | 401 |
+| `usuário não encontrado` | 2 | `usuario_nao_encontrado` | 404 |
+| `resenha não encontrada` | 2 | `resenha_nao_encontrada` | 404 |
+| `não vale para o próprio perfil` | 2 | `proprio_perfil` | 422 |
+| `nome de 1 a 100 caracteres` | 2 | `nome_invalido` | 400/422 |
+| `já está em uso` (por campo) | 1 | `ja_em_uso` | 409 |
+| resto (URL de leitura, template, spoiler, ordem, antesDe, …) | ~20 | um código cada | vário |
+
+### Pendência de desenho: granularidade do 401
+
+As 11 frases `entre para avaliar` / `entre para usar listas` / `entre para curtir` /
+`entre para comentar` / `entre para seguir` / `entre para apagar` / `entre para
+trocar a foto` / … dizem a mesma coisa: **não há sessão**. Duas saídas:
+
+- **A — um código só, `sessao_necessaria`.** Quem chama já sabe qual ação tentou;
+  a tela escolhe a frase. É o espírito da D5 ("o servidor não precisa saber
+  idioma") levado até o fim: o servidor também não precisa saber de qual botão
+  veio o clique. 11 chaves de mensagem a menos, e nenhuma perda de informação
+  para quem lê — a tela mostra a frase certa porque é ela que sabe o contexto.
+- **B — um código por ação** (`entre_para_avaliar`, …). Fiel ao texto de hoje,
+  mas duplica no servidor uma informação que o cliente já tem, e a extensão
+  precisaria de 11 traduções para dizer "entre".
+
+**Decidido em 07/09: A.** Um código só, `sessao_necessaria`, para os 22 pontos.
+Quem mostra a frase é quem sabe qual ação foi tentada — a tela da avaliação diz
+"entre para avaliar", a dos comentários diz "entre para comentar", e o texto na
+tela não muda. A extensão traduz uma chave em vez de onze.
+
+### Forma
+
+```ts
+// src/app/api/v1/_shared/erros.ts
+export const ERROS = {
+  corpo_invalido: "corpo_invalido",
+  pedido_invalido: "pedido_invalido",
+  sessao_necessaria: "sessao_necessaria",
+  // …
+} as const;
+
+export type CodigoDeErro = (typeof ERROS)[keyof typeof ERROS];
+```
+
+O mesmo arquivo alimenta o namespace `erros` das messages e o `_locales/` da
+extensão. Código sem tradução quebra o teste de paridade da D4.
+
+## Fase 2 — o inglês de verdade (07/09/2026)
+
+Branch `feature/i18n-en`. `en.json` deixa de ser cópia; 306 chaves traduzidas.
+
+### Glossário fixado antes de traduzir
+
+Consistência vale mais que elegância: a mesma coisa com o mesmo nome em toda a
+interface. O glossário foi entregue pronto a quem traduziu, junto com o texto.
+
+| pt-BR | en |
+|---|---|
+| estante | shelf |
+| catálogo | catalog (americano, sem `ue`) |
+| capítulo | chapter (`ch.` onde o pt usa `cap.`) |
+| resenha | review |
+| avaliação (a nota) / avaliar | rating / rate |
+| fonte de leitura | reading source |
+| curtida / descurtir | like / unlike |
+| seguir / seguidor / seguindo | follow / follower / following |
+| entrar / sair | sign in / sign out |
+| cadastrar | sign up |
+| e-mail | email |
+
+Status da estante, **estilo MyAnimeList** (decidido em 07/09): `READING`→Reading,
+`COMPLETED`→Completed, `PLANNED`→**Plan to Read**, `PAUSED`→**On Hold**,
+`DROPPED`→Dropped. Conferido na tela: as seis abas continuam numa linha só, e o
+container é `flex-wrap` de qualquer forma — rótulo longo quebra linha, não estoura.
+
+### PENDÊNCIA ABERTA — "obra" não foi traduzida
+
+**Decisão de 07/09 do dono do repo: manter `obra`/`obras` em português também no
+inglês, com esta observação registrada para rediscutir depois.**
+
+O que isso produz hoje, na tela em inglês:
+
+- `Your shelf is empty — search the catalog and add your first obra.`
+- `Your obras, by status. Reading progress stays private to you.`
+- `12 obras`
+
+Para quem lê inglês, `obra` não é um termo de produto reconhecível como "Kidoku"
+ou "manga" — lê como palavra portuguesa não traduzida. As três candidatas
+descartadas na hora da decisão, para quando a conversa voltar:
+
+| candidata | a favor | contra |
+|---|---|---|
+| `series` | cobre os quatro formatos, é o que leitor de mangá usa em inglês | nenhum forte |
+| `title` | é o termo do AniList e do MAL, que são a fonte dos dados | colide com o nome da obra e com `titleEnglish`/`titleRomaji` no código |
+| `work` | literal e neutra quanto a formato | soa acadêmica para um app de leitura casual |
+
+Trocar depois é barato **enquanto for só o catálogo**: é `en.json`, não é código.
+Fica caro no dia em que a palavra entrar em URL, slug ou nome de coluna.
+
+### Outros pontos levantados por quem traduziu
+
+- `meta.descricao` usa `novels` no plural (`manga, manhwa, and novels`): em inglês
+  `and novel` no singular não fecha a lista, embora `manga` e `manhwa` sejam
+  invariáveis. O rótulo de formato `comum.formato.NOVEL` continua `Novel`.
+- Apóstrofo: o inglês usa o ASCII reto (`'`) em `Don't`/`couldn't`. O pt-BR não tem
+  apóstrofo, então não havia precedente no arquivo.
+
+### Dois defeitos achados rodando o app, não pelo CI
+
+Os dois passaram por lint, teste e build verdes. Foram para o PR da fase 1, que
+é onde nasceram.
+
+1. **O matcher do proxy barrava todo link antigo.** `/catalogo` dava 404 em vez de
+   redirecionar: o ponto escapado virou ponto solto no literal TypeScript, e o
+   lookahead negativo passou a excluir praticamente toda rota. Consertado com a
+   classe `[.]` — um nível de escape a menos — e coberto por
+   `tests/i18n/proxy-matcher.test.ts`, que **lê `src/proxy.ts`** em vez de importar
+   uma cópia: `matcher` é analisado estaticamente pelo Next, então a cópia poderia
+   estar certa enquanto o que roda está errado. Foi exatamente o que aconteceu na
+   primeira tentativa de conserto, com a constante importada sendo ignorada em
+   silêncio e `/api/v1/health` recebendo redirect de idioma.
+2. **Trocar de idioma apagava o tema escolhido.** Trocar o idioma muda o `lang` do
+   `<html>`, o React re-renderiza o elemento e leva junto o `data-theme` que o
+   script inline tinha posto ali — `suppressHydrationWarning` só vale na hidratação,
+   não em update. O seletor passou a recarregar o documento em vez de navegar pelo
+   cliente, e o script inline roda de novo.
+
+Lição para as fases 3 a 5: **lint, teste e build verdes não são prova de que a
+tela funciona.** Os dois defeitos eram invisíveis para os três.
+
+## Fases 3, 4 e 5 — o que ficou (07/09/2026)
+
+### Fase 3 — erro por código
+
+40 códigos levantados dos **125 pontos reais** em 21 rotas. Nenhum status HTTP
+mudou (conferido por script, comparando a sequência de `status: N` contra o HEAD
+nos 26 arquivos). Duas colapsadas sem mudar o que o usuário lê, porque a tela
+sabe qual ação foi tentada: `sessao_necessaria` (11 frases) e `falha_interna`
+(5 frases).
+
+**Desvio da D5:** as seis mensagens do Zod do cadastro viram código escrito
+direto no `message` do esquema (`.min(3, ERRO.USERNAME_CURTO)`), e não
+`z.config({ customError })`. Um customError global teria que adivinhar por
+`issue.path` que `min(3)` em `username` é `username_curto` e não `senha_curta`.
+
+### Fase 4 — formatos
+
+**Desvio da D6:** número vai pelo `useFormatter()` do next-intl; **data fica no
+`Intl` nativo** com o idioma vindo de `useLocale()`/`getLocale()`. Medido no
+próprio next-intl: `timeZone` é resolvido no SERVIDOR (`getConfig` o devolve
+`NonNullable`) e viaja até o provider, então formatar data por ele daria a hora
+do servidor — UTC na Vercel — no cliente, que é o oposto do que a D6 pede para a
+hora exata.
+
+Contagem continua indo como string crua, não pelo `#` do ICU: `"1000 curtidas"`
+viraria `"1.000 curtidas"`, que é outra tela. Fica em aberto para quem quiser.
+
+### Fase 5 — preferência na conta
+
+**Desvio da D2, decidido em 07/09 com o dono do repo:** o proxy continua burro e
+só lê o cookie `NEXT_LOCALE`. Quem escreve é o **login** (a partir de
+`User.locale`) e o `PATCH /api/v1/perfil`.
+
+Para o proxy saber o idioma da conta, ele teria que abrir o JWT na borda — o que
+fura a regra de camada do proxy e obrigaria o `locale` a entrar no token, deixando
+as sessões de 7 dias já emitidas sem a preferência até novo login. Pelo cookie não
+há nenhum dos dois: para estar logada num aparelho novo a pessoa precisa entrar, e
+entrar já escreve.
+
+**Não provado ao vivo:** o login escrevendo o cookie. Exercitar exige autenticar.
+Cada elo está provado em separado (serviço devolve o locale, repositório grava e
+lê de volta, controller chama `escreverIdiomaNoCookie` sob `hasLocale`); falta
+juntar numa sessão real. Verificação de 20 segundos: trocar o idioma logado, sair,
+entrar de novo.
+
+## Acrescentar um idioma — o estado final
+
+O caro nunca foi traduzir; foi deixar o código traduzível. Isso está feito, e as
+duas regras de lint da D8 impedem de desfazer.
+
+Três passos, nenhum em código de tela: uma linha em `routing.locales`,
+`messages/<código>.json` (346 strings) e `extension/_locales/<código>/messages.json`
+(31 strings). O passo a passo está em **`messages/README.md`**, que é onde quem
+vai traduzir olha.
+
+### O furo que foi fechado no caminho
+
+Os testes importavam `pt-BR.json` e `en.json` **pelo nome**. Um `es.json` novo não
+seria conferido por nada. Agora saem de `routing.locales`, e junto entrou a regra
+que faltava: **categoria de plural**. O CLDR exige formas diferentes por língua —
+russo pede `one/few/many/other`, árabe seis, japonês só `other`. Copiar o
+`one`/`other` do inglês para o russo passa em lint, tipo, build e em todo o resto,
+e renderiza errado para 2, 3, 4, 5.
+
+A regra distingue descuido de decisão: declarar **todas** as formas exigidas, ou
+declarar **só `other`** (= a palavra não varia). Metade é o que quebra. Dobra
+deliberada fica em `PLURAL_DOBRADO_EM_OUTRO` com o motivo.
+
+### O que continua NÃO sendo automático
+
+- **Subset da fonte.** `subsets: ["latin"]` no layout; cirílico, grego, japonês ou
+  árabe caem na fonte do sistema até alguém acrescentar.
+- **Direita para a esquerda.** ~29 `className` com lado físico (`left-4`, `pl-`,
+  `border-r`) mais `dir` no `<html>`. É trabalho de CSS, não de catálogo, e não
+  fica mais barato por já existir um segundo idioma.
+
+## Lição da sessão
+
+**Lint, teste e build verdes não provam que a tela funciona.** Os dois piores
+defeitos desta sessão passaram pelos três:
+
+1. o matcher do proxy, que barrava TODO link antigo (`/catalogo` → 404), porque o
+   ponto escapado virou ponto solto no literal TypeScript;
+2. trocar de idioma apagava o tema escolhido, porque o React re-renderiza o
+   `<html>` e leva junto o `data-theme` posto pelo script inline.
+
+Os dois só apareceram rodando o app. O primeiro ganhou teste que **lê
+`src/proxy.ts`** em vez de uma cópia — `matcher` é analisado estaticamente pelo
+Next, então a cópia pode estar certa enquanto o que roda está errado (foi
+exatamente o que aconteceu na primeira tentativa de conserto).
+
+## Pendências
+
+Nenhuma de desenho. As cinco de 05/09 foram decididas (D1, D2, D5, D8, ordem
+da fase 2). Pode abrir `feature/i18n-infra` para a fase 1.
+
+- [ ] Ao abrir a fase 3, confirmar com quem estiver na extensão (#91) que o
+      popup lê o código de erro, não a frase.
+
+## Referências
+
+- `node_modules/next/dist/docs/01-app/02-guides/internationalization.md`
+  (Next 16: `[lang]`, `next/root-params`, `proxy.ts`)
+- `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md`
+- next-intl 4.14.2: peer `next ^16.0.0` (npm, 05/09)
+- CLAUDE.md raiz: camadas, "controller nunca contém regra de negócio"
+- #102 (`DataHora`), #91 (extensão), #16 (curadoria)

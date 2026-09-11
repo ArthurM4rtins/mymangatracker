@@ -3,10 +3,11 @@
 // fez em cima de obras (nota, resenha, curtida) — nada de status da estante,
 // progresso, fonte ou capítulo. A estante do dono vem do shelf.repository,
 // e só o serviço decide quando ela entra.
+import { chaveDaObra, referenciaDeMedia } from "@/server/domain/referencia-da-obra";
 import { getPrisma } from "./prisma";
 
 type ObraDoPerfil = {
-  anilistId: number;
+  chave: string;
   titleRomaji: string;
   titleEnglish: string | null;
   coverImageUrl: string | null;
@@ -28,23 +29,32 @@ export type ResenhaDoPerfil = ObraDoPerfil & {
 
 const SELECT_DA_OBRA = {
   anilistId: true,
+      kitsuId: true,
   titleRomaji: true,
   titleEnglish: true,
   coverImageUrl: true,
 } as const;
 
-/** Todas as obras que o usuário deu nota. Ordem e filtro são do domínio. */
-export async function listarAvaliadas(userId: string): Promise<AvaliadaDoPerfil[]>
+/**
+ * As obras que o usuário deu nota, as `limite` mais recentes (#135): o perfil
+ * de quem inflou a conta não materializa tudo a cada visita. Ordem e filtro
+ * finos continuam no domínio, dentro dessa página.
+ */
+export async function listarAvaliadas(userId: string, limite: number): Promise<AvaliadaDoPerfil[]>
 {
   const linhas = await getPrisma().entry.findMany({
     where: { userId, rating: { not: null } },
+    orderBy: { reviewedAt: "desc" },
+    take: limite,
     select: { rating: true, reviewedAt: true, media: { select: SELECT_DA_OBRA } },
   });
 
-  return linhas.map(function (linha)
+  return linhas
+    .map(function (linha)
   {
     return {
       ...linha.media,
+      chave: chaveDaObra(referenciaDeMedia(linha.media) ?? { fonte: "anilist", id: 0 }),
       rating: Number(linha.rating),
       avaliadaEm: linha.reviewedAt,
     };
@@ -73,29 +83,41 @@ export async function listarResenhasRecentes(
 {
   const linhas = await getPrisma().entry.findMany({
     where: { userId, review: { not: null } },
-    orderBy: { reviewedAt: "desc" },
+    // A data publica e `publishedAt` (#143). A lista de AVALIADAS acima segue
+    // por `reviewedAt`: la o que importa e quando a pessoa avaliou, nao quando
+    // publicou texto.
+    orderBy: { publishedAt: "desc" },
     take: limite,
     select: {
       id: true,
       rating: true,
       review: true,
       containsSpoilers: true,
-      reviewedAt: true,
+      publishedAt: true,
+      createdAt: true,
       _count: { select: { likes: true } },
       media: { select: SELECT_DA_OBRA },
     },
   });
 
-  return linhas.map(function (linha)
+  return linhas
+    .map(function (linha)
   {
     return {
       ...linha.media,
+      chave: chaveDaObra(referenciaDeMedia(linha.media) ?? { fonte: "anilist", id: 0 }),
       entryId: linha.id,
       rating: linha.rating?.toString() ?? null,
       review: linha.review ?? "",
       containsSpoilers: linha.containsSpoilers,
-      publicadaEm: linha.reviewedAt,
+      publicadaEm: linha.publishedAt ?? linha.createdAt,
       curtidas: linha._count.likes,
     };
   });
+}
+
+/** Quantas obras o usuário deu nota — o número do perfil, sem materializar (#135). */
+export function contarAvaliadas(userId: string): Promise<number>
+{
+  return getPrisma().entry.count({ where: { userId, rating: { not: null } } });
 }

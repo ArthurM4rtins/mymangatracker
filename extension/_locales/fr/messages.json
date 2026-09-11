@@ -1,0 +1,149 @@
+{
+  "nome": {
+    "message": "Folunio"
+  },
+  "descricao": {
+    "message": "Enregistre dans ta bibliothèque Folunio le chapitre que tu es en train de lire, sans quitter l’onglet."
+  },
+  "acaoTitulo": {
+    "message": "Folunio — enregistrer la lecture"
+  },
+  "abrirSite": {
+    "message": "ouvrir le site"
+  },
+  "verLink": {
+    "message": "voir le lien"
+  },
+  "ocultarLink": {
+    "message": "masquer le lien"
+  },
+  "carregando": {
+    "message": "chargement…"
+  },
+  "campoObra": {
+    "message": "Œuvre"
+  },
+  "filtroPlaceholder": {
+    "message": "filtrer par nom"
+  },
+  "campoCapitulo": {
+    "message": "Chapitre"
+  },
+  "registrar": {
+    "message": "Enregistrer la lecture"
+  },
+  "autoRegistro": {
+    "message": "enregistrer automatiquement"
+  },
+  "autoRegistroAjuda": {
+    "message": "uniquement les œuvres déjà associées, après 20 s sur la page du chapitre"
+  },
+  "semSessao": {
+    "message": "Connecte-toi à Folunio pour enregistrer ta lecture."
+  },
+  "entrar": {
+    "message": "Se connecter"
+  },
+  "semResposta": {
+    "message": "Folunio n’a pas répondu — réessaie"
+  },
+  "estanteNaoCarregou": {
+    "message": "impossible de charger ta bibliothèque — réessaie"
+  },
+  "estanteVazia": {
+    "message": "ta bibliothèque n’a aucune œuvre en cours — ajoutes-en une sur le site."
+  },
+  "escolhaObra": {
+    "message": "choisis l’œuvre"
+  },
+  "informeCapitulo": {
+    "message": "indique le chapitre"
+  },
+  "registrando": {
+    "message": "enregistrement…"
+  },
+  "capituloLido": {
+    "message": "lu depuis le titre de l’onglet — vérifie"
+  },
+  "capituloNaoLido": {
+    "message": "chapitre introuvable dans le titre de l’onglet — écris-le"
+  },
+  "obraPeloTitulo": {
+    "message": "œuvre reconnue d’après le titre de l’onglet — vérifie"
+  },
+  "obraNoCapitulo": {
+    "message": "au ch. $capitulo$",
+    "placeholders": {
+      "capitulo": {
+        "content": "$1"
+      }
+    }
+  },
+  "registradoAlcancou": {
+    "message": "ch. $capitulo$ enregistré — la bibliothèque est au $progresso$",
+    "placeholders": {
+      "capitulo": {
+        "content": "$1"
+      },
+      "progresso": {
+        "content": "$2"
+      }
+    }
+  },
+  "erroPadrao": {
+    "message": "enregistrement impossible"
+  },
+  "erroCorpoInvalido": {
+    "message": "enregistrement impossible"
+  },
+  "erroPedidoInvalido": {
+    "message": "enregistrement impossible"
+  },
+  "erroEntradaNaoEncontrada": {
+    "message": "cette œuvre n’est plus dans ta bibliothèque"
+  },
+  "erroCapituloInvalido": {
+    "message": "chapitre invalide"
+  },
+  "erroUrlInvalida": {
+    "message": "cette page ne convient pas comme source de lecture"
+  },
+  "erroSemFonte": {
+    "message": "configure d’abord la source de lecture"
+  },
+  "erroNaoAvanca": {
+    "message": "ton étagère est déjà au ch. $progresso$ — pour revenir en arrière, utilise la réinitialisation sur le site",
+    "placeholders": {
+      "progresso": {
+        "content": "$1"
+      }
+    }
+  },
+  "erroLimiteExcedido": {
+    "message": "trop d’enregistrements en peu de temps — attends un moment"
+  },
+  "erroFalhaInterna": {
+    "message": "Folunio n’a pas pu enregistrer"
+  },
+  "nestaAba": {
+    "message": "Dans cet onglet"
+  },
+  "obraPareadaMarca": {
+    "message": "associée"
+  },
+  "filtroSemResultado": {
+    "message": "aucune œuvre de ta bibliothèque ne correspond au filtre"
+  },
+  "estadoPareada": {
+    "message": "œuvre associée — l’icône s’allume sur cette page"
+  },
+  "estadoSemPar": {
+    "message": "cette page n’est pas encore associée — enregistrer ici l’associe"
+  },
+  "estadoRegistrado": {
+    "message": "enregistré d’ici, tout seul"
+  },
+  "estadoFalhou": {
+    "message": "l’automatique n’a pas réussi — enregistre à la main"
+  }
+}

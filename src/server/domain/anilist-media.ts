@@ -1,3 +1,4 @@
+import { chaveDaObra, type ReferenciaDaObra } from "./referencia-da-obra";
 /**
  * Traducao da resposta do AniList para o formato do nosso `Media`.
  *
@@ -19,8 +20,23 @@ export type AutorDaObra = {
   papel: string;
 };
 
-export type MediaDoAniList = {
-  anilistId: number;
+/**
+ * A identidade externa da obra (#254). Pelo menos um dos dois nomes existe, e o
+ * TIPO garante isso — é a mesma regra do `CHECK` da migration, aqui em cima.
+ *
+ * Obra com mapeamento carrega os dois: é a mesma linha com dois nomes. Obra que
+ * só o Kitsu conhece — como "The Beginning After the End" — carrega só o dele.
+ */
+export type IdentidadeDaObra =
+  | { anilistId: number; kitsuId?: number }
+  | { anilistId?: number; kitsuId: number };
+
+/**
+ * O nome ficou histórico: hoje a obra também vem do Kitsu. Trocar o nome mexe
+ * em 22 arquivos e não muda comportamento nenhum, então fica para um commit
+ * mecânico próprio.
+ */
+export type MediaDoAniList = IdentidadeDaObra & {
   type: TipoMedia;
   titleRomaji: string;
   countryOfOrigin?: PaisDeOrigem;
@@ -35,6 +51,17 @@ export type MediaDoAniList = {
   averageScore?: number;
   autores?: AutorDaObra[];
 };
+
+/**
+ * Como esta obra é chamada de fora. Com os dois nomes o AniList manda: é o nome
+ * canônico, e mantê-lo estável preserva os links que já existem.
+ */
+export function referenciaDaObra(obra: IdentidadeDaObra): ReferenciaDaObra
+{
+  return obra.anilistId === undefined
+    ? { fonte: "kitsu", id: obra.kitsuId as number }
+    : { fonte: "anilist", id: obra.anilistId };
+}
 
 /** Papéis do staff que contam como autoria — o resto (tradução etc.) fica fora. */
 const PAPEIS_DE_AUTOR = ["Story", "Art"];
@@ -160,6 +187,8 @@ function mapearAutores(staff: unknown): AutorDaObra[]
   }
 
   const autores: AutorDaObra[] = [];
+  // Mesmo autor em dois papéis (história e arte) entra uma vez, com o primeiro.
+  const vistos = new Set<number>();
 
   staff.edges.forEach(function (edge)
   {
@@ -178,8 +207,9 @@ function mapearAutores(staff: unknown): AutorDaObra[]
     const id = edge.node.id;
     const nome = ehObjeto(edge.node.name) ? edge.node.name.full : undefined;
 
-    if (typeof id === "number" && typeof nome === "string")
+    if (typeof id === "number" && typeof nome === "string" && !vistos.has(id))
     {
+      vistos.add(id);
       autores.push({ anilistStaffId: id, nome, papel });
     }
   });
@@ -193,6 +223,45 @@ function mapearAutores(staff: unknown): AutorDaObra[]
  * Resposta com `errors` do GraphQL, ou em formato inesperado, vira lista vazia —
  * a tela mostra "nada encontrado" em vez de estourar.
  */
+/**
+ * A mesma obra só entra uma vez na coleção, e vale a primeira aparição — que é
+ * a mais bem colocada, já que a fonte devolve por relevância.
+ *
+ * Existe por causa do Kitsu (#240): medido contra a API em 10/09/2026, buscando
+ * "berserk" os offsets 0 e 20 devolvem as vinte MESMAS linhas, na mesma ordem,
+ * com o mesmo `id` do Kitsu — não são duas obras parecidas. Uma página nossa
+ * junta três offsets, então vinte das sessenta linhas chegavam repetidas: card
+ * em dobro na tela, e a chave repetida derrubando a lista do React.
+ *
+ * Fica no domínio porque a regra é do sistema, não da fonte: uma coleção de
+ * obras não repete a mesma obra. `anilistId` é a identidade que o sistema
+ * inteiro usa — chave de lista na tela, chave do cache em `Media`.
+ */
+export function semRepetidas(obras: readonly MediaDoAniList[]): MediaDoAniList[]
+{
+  // A chave é a REFERÊNCIA, não o `anilistId` (#254): sem a fonte, duas obras
+  // que só o Kitsu conhece seriam ambas "sem AniList" e uma sumiria — e
+  // `anilistId 8` e `kitsuId 8` são obras diferentes.
+  const vistas = new Set<string>();
+  const saida: MediaDoAniList[] = [];
+
+  for (const obra of obras)
+  {
+    const referencia = referenciaDaObra(obra);
+    const chave = `${referencia.fonte}:${referencia.id}`;
+
+    if (vistas.has(chave))
+    {
+      continue;
+    }
+
+    vistas.add(chave);
+    saida.push(obra);
+  }
+
+  return saida;
+}
+
 export function mapearBusca(resposta: unknown): MediaDoAniList[]
 {
   if (!ehObjeto(resposta) || !ehObjeto(resposta.data))
@@ -275,7 +344,8 @@ export function mapearRecomendacoes(resposta: unknown): MediaDoAniList[]
 }
 
 export type ObraDoAutor = {
-  anilistId: number;
+  /** A obra pela chave (#254). */
+  chave: string;
   titleRomaji: string;
   titleEnglish: string | null;
   coverImageUrl: string | null;
@@ -293,10 +363,25 @@ export type AutorDoAniList = {
 };
 
 /**
+ * Papéis de autoria no `staffRole` do AniList (issue #69): Story, Art,
+ * Story & Art, Original Creator, Original Story — com ou sem sufixo entre
+ * parênteses ("Story & Art (vols 1-41)"). Assistência, ilustração de novel,
+ * produção e afins ficam de fora da página do autor.
+ */
+const PAPEL_DE_AUTORIA = /^(Story & Art|Story|Art|Original Creator|Original Story)(\s*\(.*\))?$/;
+
+export function ehPapelDeAutoria(papel: string): boolean
+{
+  return PAPEL_DE_AUTORIA.test(papel.trim());
+}
+
+/**
  * O perfil do autor a partir de `Page.staff` (issue #43) — por `Page` porque
  * `Staff(id:)` direto responde 404 com `errors` para id inexistente,
  * indistinguível de rate limit (mesmo caso do POR_ID; probe de 01/09).
- * A mesma obra chega uma vez por papel (Story, Art) — fica a primeira. Bio
+ * A mesma obra chega uma vez por papel (Story, Art) — fica a primeira de
+ * autoria; papel secundário (assistente etc.) não entra, e o filtro roda
+ * antes da dedup para a obra com edge Assistant + edge Story não sumir. Bio
  * perde HTML e o markdown de link; `null` quando o staff não existe.
  */
 export function mapearAutor(resposta: unknown): AutorDoAniList | null
@@ -349,10 +434,12 @@ export function mapearAutor(resposta: unknown): AutorDoAniList | null
       const node = edge.node;
       const anilistId = node.id;
       const titulo = ehObjeto(node.title) ? node.title : {};
+      const papel = typeof edge.staffRole === "string" ? edge.staffRole : "";
 
       if (
         typeof anilistId !== "number" ||
         typeof titulo.romaji !== "string" ||
+        !ehPapelDeAutoria(papel) ||
         vistos.has(anilistId)
       )
       {
@@ -365,12 +452,12 @@ export function mapearAutor(resposta: unknown): AutorDoAniList | null
       const inicio = ehObjeto(node.startDate) ? node.startDate.year : undefined;
 
       obras.push({
-        anilistId,
+        chave: chaveDaObra({ fonte: "anilist", id: anilistId }),
         titleRomaji: titulo.romaji,
         titleEnglish: typeof titulo.english === "string" ? titulo.english : null,
         coverImageUrl: typeof capa === "string" ? capa : null,
         startYear: typeof inicio === "number" ? inicio : null,
-        papel: typeof edge.staffRole === "string" ? edge.staffRole : "",
+        papel,
       });
     });
   }

@@ -55,7 +55,9 @@ Domínio        → src/server/domain     regras puras, ZERO imports do projeto
 ```
 
 Dependência tem sentido único. Isso é **cobrado pelo `eslint-plugin-boundaries`**, não é
-convenção de boa vontade: se a tela importar repositório, `pnpm lint` falha e o deploy não sai.
+convenção de boa vontade: se a tela importar repositório, `pnpm lint` falha e o CI
+(`.github/workflows/ci.yml`: lint, `test`, `test:db`, build sem `DATABASE_URL`) fica vermelho
+em todo PR. A Vercel não roda lint — o portão é o CI.
 
 Ao mexer na config de boundaries, comprovar que ainda quebra: escrever um import proibido de
 propósito, rodar `pnpm lint`, ver falhar, desfazer.

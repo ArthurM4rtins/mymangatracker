@@ -5,6 +5,7 @@ import {
   alternarCurtida,
   apagarComentario,
   comentarNaReview,
+  listarComentariosAnteriores,
   listarReviewsDaObra,
 } from "@/server/repositories/review-social.repository";
 import { limparBanco, semearUsuario } from "./apoio";
@@ -44,12 +45,13 @@ describe("listarReviewsDaObra", function ()
     const { usuario, media } = await semearReview("rankine", "obra-prima");
     const outro = await semearUsuario("leitor");
 
-    const reviews = await listarReviewsDaObra(media.id, outro.id);
+    const reviews = await listarReviewsDaObra(media.id, outro.id, 20);
 
     expect(reviews).toHaveLength(1);
     expect(reviews[0]).toEqual({
       entryId: expect.any(String),
       username: "rankine",
+      avatarVersao: null,
       minha: false,
       rating: "4.5",
       review: "obra-prima",
@@ -58,6 +60,7 @@ describe("listarReviewsDaObra", function ()
       curtidas: 0,
       curtiPorMim: false,
       comentarios: [],
+      totalDeComentarios: 0,
     });
     expect(JSON.stringify(reviews)).not.toContain("@exemplo.test");
     expect(JSON.stringify(reviews)).not.toContain(usuario.id);
@@ -67,7 +70,7 @@ describe("listarReviewsDaObra", function ()
   {
     const { media } = await semearReview("rankine", null);
 
-    await expect(listarReviewsDaObra(media.id, null)).resolves.toEqual([]);
+    await expect(listarReviewsDaObra(media.id, null, 20)).resolves.toEqual([]);
   });
 
   it("ordena por curtidas, desempate pelas recentes", async function ()
@@ -84,7 +87,7 @@ describe("listarReviewsDaObra", function ()
     const fa = await semearUsuario("fa");
     await alternarCurtida(entry2.id, fa.id);
 
-    const reviews = await listarReviewsDaObra(media.id, null);
+    const reviews = await listarReviewsDaObra(media.id, null, 20);
 
     expect(reviews.map(function (r) { return r.username; })).toEqual([
       "segundo",
@@ -109,7 +112,7 @@ describe("alternarCurtida", function ()
       total: 0,
     });
 
-    const [review] = await listarReviewsDaObra(media.id, fa.id);
+    const [review] = await listarReviewsDaObra(media.id, fa.id, 20);
     expect(review.curtidas).toBe(0);
   });
 
@@ -132,7 +135,7 @@ describe("comentarNaReview e apagarComentario", function ()
     const comentario = await comentarNaReview(entry.id, leitor.id, "concordo!");
     expect(comentario).not.toBeNull();
 
-    const [review] = await listarReviewsDaObra(media.id, leitor.id);
+    const [review] = await listarReviewsDaObra(media.id, leitor.id, 20);
     expect(review.comentarios).toHaveLength(1);
     expect(review.comentarios[0]).toMatchObject({
       username: "leitor",
@@ -144,6 +147,38 @@ describe("comentarNaReview e apagarComentario", function ()
     await expect(apagarComentario(leitor.id, comentario!.id)).resolves.toEqual({
       removido: true,
     });
+  });
+
+  // #109: a página da obra carregava TODOS os comentários de todas as
+  // resenhas. Agora vêm os 20 mais recentes (em ordem cronológica) e o total;
+  // o resto sai por página, pelos anteriores a uma data.
+  it("lista só os 20 mais recentes, em ordem, com o total; anteriores vêm por página", async function ()
+  {
+    const dono = await semearUsuario("dono");
+    const leitor = await semearUsuario("leitor");
+    const media = await salvarMediaDoAniList(OBRA, new Date());
+    const { id } = await salvarAvaliacao({
+      userId: dono.id,
+      mediaId: media.id,
+      rating: 5,
+      review: "texto",
+      containsSpoilers: false,
+    });
+
+    for (let i = 1; i <= 25; i += 1)
+    {
+      await comentarNaReview(id, leitor.id, `c${i}`);
+    }
+
+    const [review] = await listarReviewsDaObra(media.id, null, 20);
+    expect(review.totalDeComentarios).toBe(25);
+    expect(review.comentarios).toHaveLength(20);
+    expect(review.comentarios[0].texto).toBe("c6");
+    expect(review.comentarios[19].texto).toBe("c25");
+
+    const anteriores = await listarComentariosAnteriores(id, review.comentarios[0].id, leitor.id);
+    expect(anteriores.map(function (c) { return c.texto; })).toEqual(["c1", "c2", "c3", "c4", "c5"]);
+    expect(anteriores[0].meu).toBe(true);
   });
 
   it("comentário em resenha inexistente é null", async function ()

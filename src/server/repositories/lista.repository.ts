@@ -1,6 +1,9 @@
 // Listas de obras (issue #41). LEITURA É PÚBLICA — recorte do social:
 // username do dono, e-mail e ids de usuário nunca saem. ESCRITA é sempre do
 // dono: toda mutação carrega userId no where ou verifica a posse antes.
+import type { OrdemDasListas } from "@/server/domain/lista-listagem";
+import { Prisma } from "@/generated/prisma/client";
+import { chaveDaObra, referenciaDeMedia, type ReferenciaDaObra } from "@/server/domain/referencia-da-obra";
 import { getPrisma } from "./prisma";
 
 export type CapaDePreview = string | null;
@@ -17,7 +20,7 @@ export type ListaPublica = {
 };
 
 export type ItemDaLista = {
-  anilistId: number;
+  chave: string;
   titleRomaji: string;
   titleEnglish: string | null;
   coverImageUrl: string | null;
@@ -100,10 +103,32 @@ function paraCard(linha: LinhaDoCard): ListaPublica
   };
 }
 
-/** As listas mais recentes de todo mundo, com preview de capas. */
-export async function listarListasPublicas(limite: number): Promise<ListaPublica[]>
+/**
+ * As listas de todo mundo, com preview de capas. "recentes" pela criação;
+ * "curtidas" pelo total de curtidas, empate pela criação (issue #80).
+ */
+export async function listarListasPublicas(
+  limite: number,
+  ordem: OrdemDasListas = "recentes",
+): Promise<ListaPublica[]>
 {
   const linhas = await getPrisma().list.findMany({
+    orderBy:
+      ordem === "curtidas"
+        ? [{ likes: { _count: "desc" } }, { createdAt: "desc" }]
+        : { createdAt: "desc" },
+    take: limite,
+    select: SELECT_DO_CARD,
+  });
+
+  return linhas.map(paraCard);
+}
+
+/** As listas DE UM usuário, para o perfil público (issue #49) — as `limite` mais recentes (#135). */
+export async function listarListasDoUsuario(userId: string, limite: number): Promise<ListaPublica[]>
+{
+  const linhas = await getPrisma().list.findMany({
+    where: { userId },
     orderBy: { createdAt: "desc" },
     take: limite,
     select: SELECT_DO_CARD,
@@ -112,16 +137,32 @@ export async function listarListasPublicas(limite: number): Promise<ListaPublica
   return linhas.map(paraCard);
 }
 
-/** As listas DE UM usuário, para o perfil público (issue #49). */
-export async function listarListasDoUsuario(userId: string): Promise<ListaPublica[]>
+/** Quantas listas o usuário tem — o número do perfil, sem materializar (#135). */
+export function contarListasDoUsuario(userId: string): Promise<number>
 {
-  const linhas = await getPrisma().list.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-    select: SELECT_DO_CARD,
+  return getPrisma().list.count({ where: { userId } });
+}
+
+/**
+ * De quem é a lista. `null` quando não existe. O serviço usa para recusar
+ * curtida na própria lista (#148, item 4).
+ */
+export async function donoDaLista(listaId: string): Promise<string | null>
+{
+  const linha = await getPrisma().list.findUnique({
+    where: { id: listaId },
+    select: { userId: true },
   });
 
-  return linhas.map(paraCard);
+  return linha?.userId ?? null;
+}
+
+/** Só o nome, para o `generateMetadata` não carregar a lista inteira duas vezes (#135). */
+export async function buscarNomeDaLista(listaId: string): Promise<string | null>
+{
+  const linha = await getPrisma().list.findUnique({ where: { id: listaId }, select: { nome: true } });
+
+  return linha?.nome ?? null;
 }
 
 /** A lista com as obras, na ordem de inserção. `null` quando não existe. */
@@ -142,10 +183,13 @@ export async function buscarListaComItens(
       likes: userId === null ? false : { where: { userId }, select: { id: true } },
       itens: {
         orderBy: [{ position: "asc" }, { createdAt: "asc" }],
+        // O mesmo teto que `adicionarItem` impõe: a página nunca carrega mais (#135).
+        take: ITENS_POR_LISTA,
         select: {
           media: {
             select: {
               anilistId: true,
+              kitsuId: true,
               titleRomaji: true,
               titleEnglish: true,
               coverImageUrl: true,
@@ -167,7 +211,13 @@ export async function buscarListaComItens(
     descricao: linha.descricao,
     username: linha.user.username,
     minha: linha.userId === userId,
-    itens: linha.itens.map(function (item) { return item.media; }),
+    itens: linha.itens
+      .map(function (item) { return { media: item.media, referencia: referenciaDeMedia(item.media) }; })
+      .filter(function (item) { return item.referencia !== null; })
+      .map(function (item)
+      {
+        return { ...item.media, chave: chaveDaObra(item.referencia as ReferenciaDaObra) };
+      }),
     curtidas: linha._count.likes,
     curtiPorMim: Array.isArray(linha.likes) && linha.likes.length > 0,
   };
@@ -195,14 +245,14 @@ export async function editarLista(
 export async function listarItensParaOrdem(
   userId: string,
   listaId: string,
-): Promise<Array<{ anilistId: number; mediaId: string }> | null>
+): Promise<Array<{ chave: string; mediaId: string }> | null>
 {
   const lista = await getPrisma().list.findFirst({
     where: { id: listaId, userId },
     select: {
       itens: {
         orderBy: [{ position: "asc" }, { createdAt: "asc" }],
-        select: { mediaId: true, media: { select: { anilistId: true } } },
+        select: { mediaId: true, media: { select: { anilistId: true, kitsuId: true } } },
       },
     },
   });
@@ -212,15 +262,31 @@ export async function listarItensParaOrdem(
     return null;
   }
 
-  return lista.itens.map(function (item)
-  {
-    return { anilistId: item.media.anilistId, mediaId: item.mediaId };
-  });
+  return lista.itens
+    .map(function (item)
+    {
+      return { referencia: referenciaDeMedia(item.media), mediaId: item.mediaId };
+    })
+    .filter(function (item): item is { referencia: ReferenciaDaObra; mediaId: string }
+    {
+      return item.referencia !== null;
+    })
+    .map(function (item)
+    {
+      return { chave: chaveDaObra(item.referencia), mediaId: item.mediaId };
+    });
 }
 
 /**
- * Grava a ordem inteira: `position = índice + 1`, numa transação. Quem
- * garante que `mediaIds` é permutação exata dos itens é o serviço.
+ * Grava a ordem inteira: `position = índice + 1`. Quem garante que `mediaIds`
+ * é permutação exata dos itens é o serviço.
+ *
+ * Um `UPDATE` só (#146). Antes era um `updateMany` por item dentro de uma
+ * transação: uma lista no teto do schema virava 500 statements segurando lock
+ * nas 500 linhas durante toda a ida e volta, e repetir o pedido prendia
+ * conexões do pool. `unnest` casa os dois arrays em uma tabela derivada, então
+ * o custo deixa de crescer em statements — e os ids continuam indo como
+ * parâmetro, nunca interpolados na string.
  */
 export async function reordenarItens(
   userId: string,
@@ -240,15 +306,17 @@ export async function reordenarItens(
     return null;
   }
 
-  await prisma.$transaction(
-    mediaIds.map(function (mediaId, indice)
-    {
-      return prisma.listItem.updateMany({
-        where: { listId: listaId, mediaId },
-        data: { position: indice + 1 },
-      });
-    }),
-  );
+  if (mediaIds.length > 0)
+  {
+    const posicoes = mediaIds.map(function (_, indice) { return indice + 1; });
+
+    await prisma.$executeRaw`
+      UPDATE "ListItem" AS item
+      SET position = nova.posicao
+      FROM unnest(${mediaIds}::text[], ${posicoes}::int[]) AS nova(media_id, posicao)
+      WHERE item."listId" = ${listaId} AND item."mediaId" = nova.media_id
+    `;
+  }
 
   return { reordenada: true };
 }
@@ -256,6 +324,10 @@ export async function reordenarItens(
 /**
  * Toggle da curtida na lista (issue #51). `null` quando a lista não existe
  * (FK estoura no create). Devolve o estado final e o total.
+ *
+ * Atômico (#65, item 16): apaga se havia, senão cria. Dois cliques
+ * concorrentes não viram 404 — o segundo `create` bate no unique (P2002) e é
+ * lido como "já curtida". Qualquer outro erro sobe para a rota responder 500.
  */
 export async function alternarCurtidaDaLista(
   listaId: string,
@@ -264,31 +336,35 @@ export async function alternarCurtidaDaLista(
 {
   const prisma = getPrisma();
 
-  const existente = await prisma.listLike.findUnique({
-    where: { listId_userId: { listId: listaId, userId } },
-    select: { id: true },
-  });
+  const apagadas = await prisma.listLike.deleteMany({ where: { listId: listaId, userId } });
+  let curtida = false;
 
-  try
+  if (apagadas.count === 0)
   {
-    if (existente === null)
+    try
     {
       await prisma.listLike.create({ data: { listId: listaId, userId } });
     }
-    else
+    catch (erro)
     {
-      await prisma.listLike.delete({ where: { id: existente.id } });
+      if (eErroDoPrisma(erro, "P2003"))
+      {
+        // FK: lista (ou usuário) não existe. Mesma resposta de inexistente.
+        return null;
+      }
+
+      if (!eErroDoPrisma(erro, "P2002"))
+      {
+        throw erro;
+      }
     }
-  }
-  catch
-  {
-    // FK: lista (ou usuário) não existe. Mesma resposta de inexistente.
-    return null;
+
+    curtida = true;
   }
 
   const total = await prisma.listLike.count({ where: { listId: listaId } });
 
-  return { curtida: existente === null, total };
+  return { curtida, total };
 }
 
 /** As listas DO USUÁRIO, com "já contém" para o dropdown da página da obra. */
@@ -322,17 +398,20 @@ export async function listarMinhasListas(
  * Adiciona a obra à lista DO DONO, no fim. `null` quando a lista não é do
  * usuário ou não existe; `{ jaExistia: true }` quando a obra já estava lá.
  */
+/** Teto de obras por lista (#135). A rota de ordem (`listas/[id]/ordem`) assume o mesmo número. */
+export const ITENS_POR_LISTA = 500;
+
 export async function adicionarItem(
   userId: string,
   listaId: string,
   mediaId: string,
-): Promise<{ jaExistia: boolean } | null>
+): Promise<{ jaExistia: boolean } | { cheia: true } | null>
 {
   const prisma = getPrisma();
 
   const lista = await prisma.list.findFirst({
     where: { id: listaId, userId },
-    select: { id: true, _count: { select: { itens: true } } },
+    select: { id: true },
   });
 
   if (lista === null)
@@ -340,19 +419,46 @@ export async function adicionarItem(
     return null;
   }
 
+  // Fim da lista = maior posição + 1, não contagem + 1: depois de remoções a
+  // contagem repete posições e o item novo cairia no meio (#65, itens 8/25).
+  // A contagem entra só para o teto (#135): lista sem fim era o que inflava a
+  // página pública, e a rota de ordem já assumia 500.
+  const { _max, _count } = await prisma.listItem.aggregate({
+    where: { listId: listaId },
+    _max: { position: true },
+    _count: { _all: true },
+  });
+
+  if (_count._all >= ITENS_POR_LISTA)
+  {
+    return { cheia: true };
+  }
+
   try
   {
     await prisma.listItem.create({
-      data: { listId: listaId, mediaId, position: lista._count.itens + 1 },
+      data: { listId: listaId, mediaId, position: (_max.position ?? 0) + 1 },
     });
 
     return { jaExistia: false };
   }
-  catch
+  catch (erro)
   {
-    // Unique (listId, mediaId): a obra já estava na lista.
-    return { jaExistia: true };
+    // Só o unique (listId, mediaId) significa "já estava na lista" (#65,
+    // itens 7/20). O resto sobe: tratar banco fora como duplicata fazia o
+    // toggle REMOVER o item que outra requisição acabou de gravar.
+    if (eErroDoPrisma(erro, "P2002"))
+    {
+      return { jaExistia: true };
+    }
+
+    throw erro;
   }
+}
+
+function eErroDoPrisma(erro: unknown, codigo: "P2002" | "P2003"): boolean
+{
+  return erro instanceof Prisma.PrismaClientKnownRequestError && erro.code === codigo;
 }
 
 /** Remove a obra da lista DO DONO. `null` = lista alheia/inexistente ou obra fora. */

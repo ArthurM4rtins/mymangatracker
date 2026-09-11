@@ -1,0 +1,182 @@
+import type { Metadata } from "next";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Instrument_Sans, Zen_Kaku_Gothic_New } from "next/font/google";
+import { notFound } from "next/navigation";
+import "../globals.css";
+import { perfilDoUsuarioDoSistema } from "@/server/services/usuario.service";
+import { Link } from "@/i18n/navigation";
+import { Rodape } from "./componentes/rodape";
+import { idiomaDoSegmento, routing } from "@/i18n/routing";
+import { usuarioDaSessao } from "../../api/v1/_shared/sessao";
+import { BotaoSair } from "./componentes/botao-sair";
+import { BotaoVoltar } from "./componentes/botao-voltar";
+import { Logo } from "./componentes/logo";
+import { SeletorIdioma } from "./componentes/seletor-idioma";
+import { SeletorTema } from "./componentes/seletor-tema";
+
+const fonteUi = Instrument_Sans({
+  variable: "--font-ui",
+  subsets: ["latin"],
+});
+
+const fonteMarca = Zen_Kaku_Gothic_New({
+  variable: "--font-marca",
+  weight: ["500", "700", "900"],
+  subsets: ["latin"],
+});
+
+/**
+ * O endereço do site, para o metadata montar URL absoluta.
+ *
+ * `hreflang` sem protocolo é ignorado pelo buscador — a tag sai no HTML e não
+ * serve para nada. Sem `metadataBase` o Next deixa os `href` de
+ * `alternates.languages` relativos, que foi o que aconteceu no primeiro deploy
+ * da fase 4 da #116.
+ *
+ * `VERCEL_PROJECT_PRODUCTION_URL` é o domínio de produção, e a Vercel o entrega
+ * em todos os ambientes — inclusive no preview, que é o que se quer aqui: o
+ * canônico de um preview deve apontar para produção, não para o deploy efêmero.
+ */
+function enderecoDoSite(): URL
+{
+  const producao = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+
+  return new URL(producao ? `https://${producao}` : "http://localhost:3000");
+}
+
+export async function generateMetadata({
+  params,
+}: LayoutProps<"/[locale]">): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: idiomaDoSegmento(locale), namespace: "meta" });
+
+  return {
+    metadataBase: enderecoDoSite(),
+    title: {
+      default: t("titulo"),
+      template: `%s · ${t("titulo")}`,
+    },
+    description: t("descricao"),
+  };
+}
+
+// Aplica o tema salvo antes do primeiro paint, senão a página pisca na cor do sistema.
+//
+// A chave mudou de nome no rebranding (#268). Quem escolheu tema antes da troca
+// tem o valor só na chave antiga: lê de lá uma vez, regrava na nova e apaga a
+// velha. Sem isso todo mundo que já tinha tema voltaria para o padrão do sistema.
+const SCRIPT_TEMA = `(function () {
+  try {
+    var tema = localStorage.getItem("folunio-tema");
+    if (tema === null) {
+      var antigo = localStorage.getItem("kidoku-tema");
+      if (antigo !== null) {
+        localStorage.setItem("folunio-tema", antigo);
+        localStorage.removeItem("kidoku-tema");
+        tema = antigo;
+      }
+    }
+    if (tema === "sumi" || tema === "noturno" || tema === "matcha") {
+      document.documentElement.dataset.theme = tema;
+    }
+  } catch (e) {}
+})();`;
+
+function LinkDoHeader({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className="text-sm text-texto-suave transition-colors hover:text-texto"
+    >
+      {children}
+    </Link>
+  );
+}
+
+/** O username de quem está logado, para o link do perfil. Banco fora = sem link. */
+async function usernameDaSessao(userId: string): Promise<string | null>
+{
+  try
+  {
+    const perfil = await perfilDoUsuarioDoSistema(userId);
+
+    return perfil?.username ?? null;
+  }
+  catch
+  {
+    return null;
+  }
+}
+
+export default async function RootLayout({
+  children,
+  params,
+}: LayoutProps<"/[locale]">) {
+  // `[locale]` pega qualquer rota desconhecida (`/favicon.png`, `/xx`): idioma
+  // que não existe é 404, não um catálogo vazio.
+  const { locale } = await params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
+
+  // Resolver sessão aqui torna todas as rotas dinâmicas — aceito: as telas que
+  // importam já são dinâmicas, e o header precisa saber se há alguém logado.
+  const userId = await usuarioDaSessao();
+  const username = userId === null ? null : await usernameDaSessao(userId);
+  const t = await getTranslations("cabecalho");
+
+  return (
+    <html
+      lang={locale}
+      className={`${fonteUi.variable} ${fonteMarca.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-full flex flex-col">
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA }} />
+        <NextIntlClientProvider>
+          <header className="relative border-b border-borda">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2">
+              <BotaoVoltar />
+            </div>
+            {/* Mesma largura da home (max-w-5xl): o logo alinha com o conteúdo. */}
+            <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 py-4 pr-6 pl-14 sm:px-6">
+              <Logo />
+              <div className="flex flex-wrap items-center gap-4">
+                <nav aria-label={t("navegacao")} className="flex items-center gap-3">
+                  <LinkDoHeader href="/catalogo">{t("catalogo")}</LinkDoHeader>
+                  <LinkDoHeader href="/listas">{t("listas")}</LinkDoHeader>
+                  {userId && <LinkDoHeader href="/estante">{t("estante")}</LinkDoHeader>}
+                  {username && <LinkDoHeader href={`/u/${username}`}>{t("perfil")}</LinkDoHeader>}
+                </nav>
+
+                <SeletorIdioma logado={userId !== null} />
+                <SeletorTema />
+
+                {userId ? (
+                  <BotaoSair />
+                ) : (
+                  <LinkDoHeader href="/entrar">{t("entrar")}</LinkDoHeader>
+                )}
+              </div>
+            </div>
+          </header>
+          {children}
+          {/* Rodapé global. O caminho para apontar erro de tradução precisa
+              existir em TODA tela (#158), porque o erro aparece em qualquer uma
+              — e são cinco idiomas sem revisor nativo no time. */}
+          <Rodape logado={userId !== null} username={username} />
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}

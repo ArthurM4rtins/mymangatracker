@@ -1,3 +1,4 @@
+import { referenciaDaChave } from "@/server/domain/referencia-da-obra";
 /**
  * POST /api/v1/avaliacoes — salvar (criar ou editar) a avaliação de uma
  * entrada da estante. Nota e/ou resenha; vazia não existe.
@@ -5,12 +6,15 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { salvarAvaliacaoDoSistema } from "@/server/services/avaliacao.service";
+import { lerJson } from "../_shared/corpo";
+import { ERRO } from "../_shared/erros";
 import { usuarioDaSessao } from "../_shared/sessao";
 
 export const dynamic = "force-dynamic";
 
 const ESQUEMA = z.object({
-  anilistId: z.number().int().positive(),
+  /** A obra pela chave (#254): `anilist:30002` ou `kitsu:54598`. */
+  obra: z.string().min(3).max(40),
   rating: z.number().nullable(),
   review: z.string().max(20000).nullable(),
   containsSpoilers: z.boolean().default(false),
@@ -23,30 +27,37 @@ export async function POST(request: Request)
   if (!userId)
   {
     return NextResponse.json(
-      { erros: { _geral: "entre para avaliar" } },
+      { erros: { _geral: ERRO.SESSAO_NECESSARIA } },
       { status: 401 },
     );
   }
 
-  let corpo: unknown;
-  try
+  const leitura = await lerJson(request);
+
+  if (!leitura.ok)
   {
-    corpo = await request.json();
+    return leitura.resposta;
   }
-  catch
-  {
-    return NextResponse.json(
-      { erros: { _geral: "corpo inválido — esperado JSON" } },
-      { status: 400 },
-    );
-  }
+
+  const corpo: unknown = leitura.corpo;
 
   const analise = ESQUEMA.safeParse(corpo);
 
   if (!analise.success)
   {
     return NextResponse.json(
-      { erros: { _geral: "pedido inválido" } },
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
+      { status: 400 },
+    );
+  }
+
+  // A chave chega do corpo: nada nela e de confianca (#254).
+  const referencia = referenciaDaChave(analise.data.obra);
+
+  if (referencia === null)
+  {
+    return NextResponse.json(
+      { erros: { _geral: ERRO.PEDIDO_INVALIDO } },
       { status: 400 },
     );
   }
@@ -55,16 +66,24 @@ export async function POST(request: Request)
   {
     const resultado = await salvarAvaliacaoDoSistema({
       userId,
-      anilistId: analise.data.anilistId,
+      referencia,
       rating: analise.data.rating,
       review: analise.data.review,
       containsSpoilers: analise.data.containsSpoilers,
     });
 
+    if (resultado.estado === "muitos_pedidos")
+    {
+      return NextResponse.json(
+        { erros: { _geral: ERRO.LIMITE_EXCEDIDO } },
+        { status: 429, headers: { "Retry-After": String(resultado.esperarSegundos) } },
+      );
+    }
+
     if (resultado.estado === "obra_desconhecida")
     {
       return NextResponse.json(
-        { erros: { _geral: "obra não encontrada" } },
+        { erros: { _geral: ERRO.OBRA_NAO_ENCONTRADA } },
         { status: 404 },
       );
     }
@@ -72,7 +91,7 @@ export async function POST(request: Request)
     if (resultado.estado === "avaliacao_invalida")
     {
       return NextResponse.json(
-        { erros: { _geral: "avaliação inválida — nota de 0,5 a 5 em meia estrela, ou resenha" } },
+        { erros: { _geral: ERRO.AVALIACAO_INVALIDA } },
         { status: 422 },
       );
     }
@@ -83,7 +102,7 @@ export async function POST(request: Request)
   {
     console.error("[avaliacoes] falha ao salvar:", erro instanceof Error ? erro.message : erro);
     return NextResponse.json(
-      { erros: { _geral: "não foi possível salvar agora" } },
+      { erros: { _geral: ERRO.FALHA_INTERNA } },
       { status: 500 },
     );
   }
