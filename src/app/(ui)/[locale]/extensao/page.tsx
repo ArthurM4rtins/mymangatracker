@@ -161,6 +161,10 @@ export default async function Extensao({ params }: PageProps<"/[locale]/extensao
             <figcaption className="text-xs">{t("badge.registrado.legenda")}</figcaption>
           </figure>
         </div>
+        {/* O quarto estado nao tem imagem porque nao tem badge: pagina ainda
+            nao pareada nao acende nada no icone. E so no popup que ele existe,
+            e e justamente o que ensina o pareamento a quem nunca leu isto. */}
+        <p>{t("badge.faixa")}</p>
       </Secao>
 
       <Secao titulo={t("automatico.titulo")}>

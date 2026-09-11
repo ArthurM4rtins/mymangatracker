@@ -317,7 +317,7 @@
     "meta": {
       "titulo": "Extension"
     },
-    "titulo": "L'extension Kidoku",
+    "titulo": "L’extension Folunio",
     "subtitulo": "Elle enregistre dans votre bibliothèque le chapitre que vous lisez, sans quitter l'onglet. Vous indiquez l'œuvre une fois ; ensuite elle reconnaît le site toute seule.",
     "capturaEmOutroIdioma": "Les captures montrent l'extension dans une autre langue. Une fois installée, elle parle la langue de votre navigateur.",
     "instalar": {
@@ -327,17 +327,17 @@
       "aviso": "L'extension est prête, mais pas encore publiée. Dès sa sortie, le bouton ci-dessus y mènera directement.",
       "passos": {
         "loja": "Installez l'extension depuis le Chrome Web Store.",
-        "entrar": "Connectez-vous à Kidoku sur ce site. L'extension utilise la session de votre navigateur : elle ne demande jamais votre mot de passe et ne conserve aucun identifiant.",
-        "abrir": "Ouvrez un chapitre sur n'importe quel site de lecture et cliquez sur l'icône Kidoku dans la barre du navigateur."
+        "entrar": "Connectez-vous à Folunio sur ce site. L’extension utilise la session de votre navigateur : elle ne demande jamais votre mot de passe et ne conserve aucun identifiant.",
+        "abrir": "Ouvrez un chapitre sur n’importe quel site de lecture et cliquez sur l’icône Folunio dans la barre du navigateur."
       }
     },
     "usar": {
       "titulo": "Comment ça marche",
-      "obra": "La fenêtre liste les œuvres de votre bibliothèque. Choisissez celle que vous lisez : les œuvres terminées sont écartées, et le champ de filtre sert aux grandes bibliothèques.",
+      "obra": "La fenêtre liste les œuvres de votre bibliothèque, chacune avec le chapitre où vous vous êtes arrêté — les terminées restent de côté, et le champ de filtre sert aux grandes bibliothèques.",
       "capitulo": "Le chapitre vient du titre de la page. Quand il n'y a pas de certitude, le champ reste vide plutôt que de deviner, et vous le saisissez. C'est le serveur qui décide si votre progression avance, pas l'extension.",
       "captura": {
-        "alt": "Fenêtre de l'extension avec la liste de la bibliothèque, une œuvre sélectionnée et le chapitre rempli automatiquement.",
-        "legenda": "La fenêtre sur un chapitre ouvert, avec l'œuvre déjà reconnue et le chapitre lu depuis le titre de l'onglet."
+        "alt": "Fenêtre de l’extension : le titre de l’onglet en haut, la liste de la bibliothèque avec une œuvre sélectionnée et marquée comme associée, le chapitre lu depuis le titre, le bouton d’enregistrement et, en bas, l’indication que l’œuvre est associée.",
+        "legenda": "La fenêtre sur un chapitre ouvert : l’œuvre déjà reconnue, la bibliothèque un chapitre en arrière et le numéro lu depuis le titre de l’onglet."
       }
     },
     "badge": {
@@ -350,7 +350,8 @@
       "registrado": {
         "alt": "Icône de l'extension avec une coche verte dans le coin.",
         "legenda": "Coche verte : l'enregistrement automatique a sauvegardé ce chapitre."
-      }
+      },
+      "faixa": "La fenêtre répète le même signal par écrit, en bas — y compris quand la page n’est pas encore associée, ce qui est justement le cas où l’icône n’affiche rien."
     },
     "automatico": {
       "titulo": "Enregistrement automatique",
@@ -372,13 +373,13 @@
       "titulo": "Ça ne marche pas ?",
       "sessao": {
         "titulo": "La fenêtre demande de se connecter",
-        "texto": "L'extension n'a pas trouvé votre session. Connectez-vous à Kidoku sur ce site, dans un onglet normal, puis rouvrez la fenêtre.",
-        "alt": "Fenêtre de l'extension indiquant : connectez-vous à Kidoku pour enregistrer la lecture.",
+        "texto": "L’extension n’a pas trouvé votre session. Connectez-vous à Folunio sur ce site, dans un onglet normal, puis rouvrez la fenêtre.",
+        "alt": "Fenêtre de l’extension indiquant : connectez-vous à Folunio pour enregistrer la lecture.",
         "legenda": "Voici ce qui s'affiche sans session."
       },
       "capitulo": {
         "titulo": "Le champ du chapitre est vide",
-        "texto": "Le titre de cette page n'indique pas le chapitre de façon certaine. Saisissez le numéro et enregistrez : l'extension préfère un champ vide à une supposition fausse."
+        "texto": "Le titre de cette page n’indique pas le chapitre de façon sûre. La case reste en pointillés et vide plutôt que de deviner : tapez le numéro et enregistrez."
       },
       "foraDaEstante": {
         "titulo": "L'œuvre n'est pas dans la liste",

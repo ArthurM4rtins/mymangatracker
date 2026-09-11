@@ -317,7 +317,7 @@
     "meta": {
       "titulo": "Extensão"
     },
-    "titulo": "A extensão do Kidoku",
+    "titulo": "A extensão do Folunio",
     "subtitulo": "Registra na sua estante o capítulo que você está lendo, sem sair da aba. Você diz qual é a obra uma vez; daí em diante ela reconhece o site sozinha.",
     "capturaEmOutroIdioma": "As capturas mostram a extensão em outro idioma. Instalada, ela fala o idioma do seu navegador.",
     "instalar": {
@@ -327,17 +327,17 @@
       "aviso": "A extensão está pronta, mas ainda não foi publicada. Quando sair, o botão acima leva direto a ela.",
       "passos": {
         "loja": "Instale a extensão pela Chrome Web Store.",
-        "entrar": "Entre no Kidoku por este site. A extensão usa a sessão do seu navegador — ela nunca pede sua senha nem guarda seus dados de acesso.",
-        "abrir": "Abra um capítulo em qualquer site de leitura e clique no ícone do Kidoku na barra do navegador."
+        "entrar": "Entre no Folunio por este site. A extensão usa a sessão do seu navegador — ela nunca pede sua senha nem guarda seus dados de acesso.",
+        "abrir": "Abra um capítulo em qualquer site de leitura e clique no ícone do Folunio na barra do navegador."
       }
     },
     "usar": {
       "titulo": "Como funciona",
-      "obra": "O popup lista as obras da sua estante. Escolha a que você está lendo — as concluídas ficam de fora, e o campo de filtro serve para estantes grandes.",
+      "obra": "O popup lista as obras da sua estante, cada uma com o capítulo em que você parou — as concluídas ficam de fora, e o campo de filtro serve para estantes grandes.",
       "capitulo": "O capítulo vem do título da página. Quando não dá para saber com certeza, o campo fica vazio em vez de chutar: aí você digita. Quem decide se o seu progresso avança é o servidor, não a extensão.",
       "captura": {
-        "alt": "Popup da extensão com a lista da estante, uma obra selecionada e o capítulo preenchido automaticamente.",
-        "legenda": "O popup num capítulo aberto, com a obra já reconhecida e o capítulo lido do título da aba."
+        "alt": "Popup da extensão: o título da aba em cima, a lista da estante com uma obra selecionada e marcada como pareada, o capítulo lido do título, o botão de registrar e, no rodapé, o aviso de que a obra está pareada.",
+        "legenda": "O popup num capítulo aberto: a obra já reconhecida, a estante no capítulo anterior e o número lido do título da aba."
       }
     },
     "badge": {
@@ -350,7 +350,8 @@
       "registrado": {
         "alt": "Ícone da extensão com um visto verde no canto.",
         "legenda": "Visto verde: o registro automático gravou este capítulo."
-      }
+      },
+      "faixa": "O popup repete o mesmo sinal por escrito, no rodapé da janela — inclusive quando a página ainda não está pareada, que é justamente o caso em que o ícone não mostra nada."
     },
     "automatico": {
       "titulo": "Registro automático",
@@ -372,13 +373,13 @@
       "titulo": "Não funcionou?",
       "sessao": {
         "titulo": "O popup pede para entrar",
-        "texto": "A extensão não achou a sua sessão. Entre no Kidoku por este site, numa aba normal, e abra o popup de novo.",
-        "alt": "Popup da extensão dizendo: entre no Kidoku para registrar a leitura.",
+        "texto": "A extensão não achou a sua sessão. Entre no Folunio por este site, numa aba normal, e abra o popup de novo.",
+        "alt": "Popup da extensão dizendo: entre no Folunio para registrar a leitura.",
         "legenda": "É isto que aparece sem sessão."
       },
       "capitulo": {
         "titulo": "O campo do capítulo veio vazio",
-        "texto": "O título daquela página não diz o capítulo de um jeito que dê para ter certeza. Digite o número e registre: a extensão prefere o campo vazio a um palpite errado."
+        "texto": "O título daquela página não diz o capítulo de um jeito que dê para ter certeza. A caixa fica tracejada e vazia em vez de chutar: digite o número e registre."
       },
       "foraDaEstante": {
         "titulo": "A obra não está na lista",

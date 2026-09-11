@@ -317,7 +317,7 @@
     "meta": {
       "titulo": "Extensión"
     },
-    "titulo": "La extensión de Kidoku",
+    "titulo": "La extensión de Folunio",
     "subtitulo": "Registra en tu estantería el capítulo que estás leyendo, sin salir de la pestaña. Dices cuál es la obra una vez; a partir de ahí reconoce el sitio sola.",
     "capturaEmOutroIdioma": "Las capturas muestran la extensión en otro idioma. Una vez instalada, habla el idioma de tu navegador.",
     "instalar": {
@@ -327,17 +327,17 @@
       "aviso": "La extensión está lista, pero todavía no se ha publicado. Cuando salga, el botón de arriba llevará directo a ella.",
       "passos": {
         "loja": "Instala la extensión desde Chrome Web Store.",
-        "entrar": "Entra en Kidoku por este sitio. La extensión usa la sesión de tu navegador: nunca te pide la contraseña ni guarda tus datos de acceso.",
-        "abrir": "Abre un capítulo en cualquier sitio de lectura y haz clic en el icono de Kidoku en la barra del navegador."
+        "entrar": "Entra en Folunio por este sitio. La extensión usa la sesión de tu navegador: nunca te pide la contraseña ni guarda tus datos de acceso.",
+        "abrir": "Abre un capítulo en cualquier sitio de lectura y haz clic en el icono de Folunio en la barra del navegador."
       }
     },
     "usar": {
       "titulo": "Cómo funciona",
-      "obra": "La ventana lista las obras de tu estantería. Elige la que estás leyendo: las terminadas quedan fuera, y el campo de filtro está ahí para estanterías grandes.",
+      "obra": "La ventana lista las obras de tu estantería, cada una con el capítulo en el que te quedaste: las terminadas quedan fuera, y el campo de filtro sirve para estanterías grandes.",
       "capitulo": "El capítulo sale del título de la página. Cuando no se puede saber con certeza, el campo se queda vacío en vez de adivinar y lo escribes tú. Quien decide si tu progreso avanza es el servidor, no la extensión.",
       "captura": {
-        "alt": "Ventana de la extensión con la lista de la estantería, una obra seleccionada y el capítulo rellenado automáticamente.",
-        "legenda": "La ventana en un capítulo abierto, con la obra ya reconocida y el capítulo leído del título de la pestaña."
+        "alt": "Ventana de la extensión: el título de la pestaña arriba, la lista de la estantería con una obra seleccionada y marcada como emparejada, el capítulo leído del título, el botón de registrar y, abajo, el aviso de que la obra está emparejada.",
+        "legenda": "La ventana en un capítulo abierto: la obra ya reconocida, la estantería un capítulo atrás y el número leído del título de la pestaña."
       }
     },
     "badge": {
@@ -350,7 +350,8 @@
       "registrado": {
         "alt": "Icono de la extensión con una marca verde en la esquina.",
         "legenda": "Marca verde: el registro automático guardó este capítulo."
-      }
+      },
+      "faixa": "La ventana repite la misma señal por escrito, en el pie — incluso cuando la página aún no está emparejada, que es justo el caso en que el icono no muestra nada."
     },
     "automatico": {
       "titulo": "Registro automático",
@@ -372,13 +373,13 @@
       "titulo": "¿No funcionó?",
       "sessao": {
         "titulo": "La ventana pide entrar",
-        "texto": "La extensión no encontró tu sesión. Entra en Kidoku por este sitio, en una pestaña normal, y abre la ventana otra vez.",
-        "alt": "Ventana de la extensión diciendo: entra en Kidoku para registrar la lectura.",
+        "texto": "La extensión no encontró tu sesión. Entra en Folunio por este sitio, en una pestaña normal, y abre la ventana otra vez.",
+        "alt": "Ventana de la extensión diciendo: entra en Folunio para registrar la lectura.",
         "legenda": "Esto es lo que aparece sin sesión."
       },
       "capitulo": {
         "titulo": "El campo del capítulo salió vacío",
-        "texto": "El título de esa página no dice el capítulo de una forma que dé certeza. Escribe el número y registra: la extensión prefiere el campo vacío a una suposición equivocada."
+        "texto": "El título de esa página no dice el capítulo de forma segura. La caja se queda punteada y vacía en vez de adivinar: escribe el número y regístralo."
       },
       "foraDaEstante": {
         "titulo": "La obra no está en la lista",

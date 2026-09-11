@@ -317,7 +317,7 @@
     "meta": {
       "titulo": "Extension"
     },
-    "titulo": "The Kidoku extension",
+    "titulo": "The Folunio extension",
     "subtitulo": "Logs the chapter you're reading to your shelf without leaving the tab. You name the work once; from then on it recognises the site on its own.",
     "capturaEmOutroIdioma": "The screenshots show the extension in another language. Once installed, it speaks your browser's language.",
     "instalar": {
@@ -327,17 +327,17 @@
       "aviso": "The extension is ready but not published yet. Once it's out, the button above will take you straight to it.",
       "passos": {
         "loja": "Install the extension from the Chrome Web Store.",
-        "entrar": "Sign in to Kidoku on this site. The extension uses your browser session — it never asks for your password or stores your credentials.",
-        "abrir": "Open a chapter on any reading site and click the Kidoku icon in the browser bar."
+        "entrar": "Sign in to Folunio on this site. The extension uses your browser session — it never asks for your password or stores your credentials.",
+        "abrir": "Open a chapter on any reading site and click the Folunio icon in the browser bar."
       }
     },
     "usar": {
       "titulo": "How it works",
-      "obra": "The popup lists the works on your shelf. Pick the one you're reading — finished ones are left out, and the filter field is there for large shelves.",
+      "obra": "The popup lists the series on your shelf, each with the chapter you stopped at — completed ones stay out, and the filter field is there for large shelves.",
       "capitulo": "The chapter comes from the page title. When it can't be sure, the field stays empty instead of guessing, and you type it in. Whether your progress moves forward is decided by the server, not the extension.",
       "captura": {
-        "alt": "The extension popup showing the shelf list, a work selected and the chapter filled in automatically.",
-        "legenda": "The popup on an open chapter, with the work already recognised and the chapter read from the tab title."
+        "alt": "Extension popup: the tab title at the top, the shelf list with one series selected and marked as paired, the chapter read from the title, the log button, and at the bottom the note that the series is paired.",
+        "legenda": "The popup on an open chapter: the series already recognised, the shelf one chapter behind, and the number read from the tab title."
       }
     },
     "badge": {
@@ -350,7 +350,8 @@
       "registrado": {
         "alt": "Extension icon with a green check in the corner.",
         "legenda": "Green check: automatic logging saved this chapter."
-      }
+      },
+      "faixa": "The popup repeats the same signal in words, at the bottom of the window — including when the page isn't paired yet, which is exactly the case where the icon shows nothing."
     },
     "automatico": {
       "titulo": "Automatic logging",
@@ -372,13 +373,13 @@
       "titulo": "Not working?",
       "sessao": {
         "titulo": "The popup asks you to sign in",
-        "texto": "The extension couldn't find your session. Sign in to Kidoku on this site, in a normal tab, then open the popup again.",
-        "alt": "Extension popup saying: sign in to Kidoku to log your reading.",
+        "texto": "The extension couldn't find your session. Sign in to Folunio on this site, in a normal tab, then open the popup again.",
+        "alt": "Extension popup saying: sign in to Folunio to log your reading.",
         "legenda": "This is what shows with no session."
       },
       "capitulo": {
         "titulo": "The chapter field came up empty",
-        "texto": "That page's title doesn't state the chapter in a way anything could be sure about. Type the number and log it: the extension would rather leave the field empty than guess wrong."
+        "texto": "That page's title doesn't state the chapter in a way we can be sure about. The box stays dashed and empty instead of guessing: type the number and log it."
       },
       "foraDaEstante": {
         "titulo": "The work isn't in the list",

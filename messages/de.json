@@ -317,7 +317,7 @@
     "meta": {
       "titulo": "Erweiterung"
     },
-    "titulo": "Die Kidoku-Erweiterung",
+    "titulo": "Die Folunio-Erweiterung",
     "subtitulo": "Trägt das Kapitel, das du gerade liest, in dein Regal ein, ohne den Tab zu verlassen. Du nennst das Werk einmal; danach erkennt sie die Seite von allein.",
     "capturaEmOutroIdioma": "Die Aufnahmen zeigen die Erweiterung in einer anderen Sprache. Installiert spricht sie die Sprache deines Browsers.",
     "instalar": {
@@ -327,17 +327,17 @@
       "aviso": "Die Erweiterung ist fertig, aber noch nicht veröffentlicht. Sobald sie erscheint, führt die Schaltfläche oben direkt dorthin.",
       "passos": {
         "loja": "Installiere die Erweiterung über den Chrome Web Store.",
-        "entrar": "Melde dich auf dieser Seite bei Kidoku an. Die Erweiterung nutzt die Sitzung deines Browsers — sie fragt nie nach deinem Passwort und speichert keine Zugangsdaten.",
-        "abrir": "Öffne ein Kapitel auf einer beliebigen Leseseite und klicke auf das Kidoku-Symbol in der Browserleiste."
+        "entrar": "Melde dich auf dieser Seite bei Folunio an. Die Erweiterung nutzt die Sitzung deines Browsers — sie fragt nie nach deinem Passwort und speichert keine Zugangsdaten.",
+        "abrir": "Öffne ein Kapitel auf einer beliebigen Leseseite und klicke auf das Folunio-Symbol in der Browserleiste."
       }
     },
     "usar": {
       "titulo": "So funktioniert sie",
-      "obra": "Das Fenster listet die Werke aus deinem Regal. Wähle das, was du liest — abgeschlossene bleiben draußen, und das Filterfeld ist für große Regale da.",
+      "obra": "Das Fenster listet die Serien in deinem Regal auf, jede mit dem Kapitel, bei dem du stehen geblieben bist — abgeschlossene bleiben draußen, und das Filterfeld ist für große Regale da.",
       "capitulo": "Das Kapitel stammt aus dem Seitentitel. Wenn es nicht sicher zu erkennen ist, bleibt das Feld leer, statt zu raten, und du trägst es ein. Ob dein Fortschritt weiterrückt, entscheidet der Server, nicht die Erweiterung.",
       "captura": {
-        "alt": "Fenster der Erweiterung mit der Regalliste, einem ausgewählten Werk und automatisch eingetragenem Kapitel.",
-        "legenda": "Das Fenster bei einem offenen Kapitel, mit bereits erkanntem Werk und dem aus dem Tab-Titel gelesenen Kapitel."
+        "alt": "Fenster der Erweiterung: oben der Tab-Titel, die Regalliste mit einer ausgewählten und als verknüpft markierten Serie, das aus dem Titel gelesene Kapitel, die Schaltfläche zum Eintragen und unten der Hinweis, dass die Serie verknüpft ist.",
+        "legenda": "Das Fenster bei einem geöffneten Kapitel: die Serie schon erkannt, das Regal ein Kapitel dahinter und die Nummer aus dem Tab-Titel gelesen."
       }
     },
     "badge": {
@@ -350,7 +350,8 @@
       "registrado": {
         "alt": "Symbol der Erweiterung mit einem grünen Haken in der Ecke.",
         "legenda": "Grüner Haken: Das automatische Eintragen hat dieses Kapitel gespeichert."
-      }
+      },
+      "faixa": "Das Fenster wiederholt dasselbe Signal in Worten, ganz unten — auch dann, wenn die Seite noch nicht verknüpft ist, also genau in dem Fall, in dem das Symbol nichts zeigt."
     },
     "automatico": {
       "titulo": "Automatisches Eintragen",
@@ -372,13 +373,13 @@
       "titulo": "Klappt nicht?",
       "sessao": {
         "titulo": "Das Fenster bittet um Anmeldung",
-        "texto": "Die Erweiterung hat deine Sitzung nicht gefunden. Melde dich auf dieser Seite in einem normalen Tab bei Kidoku an und öffne das Fenster erneut.",
-        "alt": "Fenster der Erweiterung mit dem Hinweis: Melde dich bei Kidoku an, um die Lektüre einzutragen.",
+        "texto": "Die Erweiterung hat deine Sitzung nicht gefunden. Melde dich auf dieser Seite in einem normalen Tab bei Folunio an und öffne das Fenster erneut.",
+        "alt": "Fenster der Erweiterung mit dem Hinweis: Melde dich bei Folunio an, um die Lektüre einzutragen.",
         "legenda": "So sieht es ohne Sitzung aus."
       },
       "capitulo": {
         "titulo": "Das Kapitelfeld blieb leer",
-        "texto": "Der Titel dieser Seite nennt das Kapitel nicht eindeutig genug. Trag die Nummer ein und speichere: Der Erweiterung ist ein leeres Feld lieber als ein falscher Tipp."
+        "texto": "Der Titel dieser Seite nennt das Kapitel nicht eindeutig. Das Feld bleibt gestrichelt und leer, statt zu raten: Tipp die Nummer ein und trag sie ein."
       },
       "foraDaEstante": {
         "titulo": "Das Werk steht nicht in der Liste",
