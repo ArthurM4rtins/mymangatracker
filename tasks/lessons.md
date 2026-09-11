@@ -19,6 +19,13 @@ em área que já apareceu aqui.
 - A comparação com `image.original` mostrou fotos normais de Miura, Urasawa e
   Inoue. Antes de atribuir o defeito à foto inteira, verificar as variantes.
 
+## Identidade com fonte também precisa ser convertida nos links da estante
+
+- A estante interpolava `anilist:85486` diretamente no caminho, gerando uma
+  URL que a rota da obra não aceita. Capa e título repetiam o mesmo erro.
+- Converter chaves de DTO com `referenciaDaChave` e `caminhoDaObra` em todas
+  as entradas de navegação, incluindo o detalhe aberto pela prateleira.
+
 ---
 
 ## Rede que "não tem internet" mas tem — DNS só com AAAA
