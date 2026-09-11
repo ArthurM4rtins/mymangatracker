@@ -72,7 +72,7 @@
     "message": "œuvre reconnue d’après le titre de l’onglet — vérifie"
   },
   "obraNoCapitulo": {
-    "message": " — au ch. $capitulo$",
+    "message": "au ch. $capitulo$",
     "placeholders": {
       "capitulo": {
         "content": "$1"
@@ -124,5 +124,26 @@
   },
   "erroFalhaInterna": {
     "message": "Folunio n’a pas pu enregistrer"
+  },
+  "nestaAba": {
+    "message": "Dans cet onglet"
+  },
+  "obraPareadaMarca": {
+    "message": "associée"
+  },
+  "filtroSemResultado": {
+    "message": "aucune œuvre de ta bibliothèque ne correspond au filtre"
+  },
+  "estadoPareada": {
+    "message": "œuvre associée — l’icône s’allume sur cette page"
+  },
+  "estadoSemPar": {
+    "message": "cette page n’est pas encore associée — enregistrer ici l’associe"
+  },
+  "estadoRegistrado": {
+    "message": "enregistré d’ici, tout seul"
+  },
+  "estadoFalhou": {
+    "message": "l’automatique n’a pas réussi — enregistre à la main"
   }
 }

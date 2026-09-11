@@ -72,7 +72,7 @@
     "message": "obra reconocida por el título de la pestaña — revisa"
   },
   "obraNoCapitulo": {
-    "message": " — en el cap. $capitulo$",
+    "message": "en el cap. $capitulo$",
     "placeholders": {
       "capitulo": {
         "content": "$1"
@@ -124,5 +124,26 @@
   },
   "erroFalhaInterna": {
     "message": "Folunio no pudo registrarlo ahora"
+  },
+  "nestaAba": {
+    "message": "En esta pestaña"
+  },
+  "obraPareadaMarca": {
+    "message": "emparejada"
+  },
+  "filtroSemResultado": {
+    "message": "ninguna obra de tu estantería coincide con el filtro"
+  },
+  "estadoPareada": {
+    "message": "obra emparejada — el icono se enciende en esta página"
+  },
+  "estadoSemPar": {
+    "message": "esta página aún no está emparejada — registrar aquí la empareja"
+  },
+  "estadoRegistrado": {
+    "message": "registrado desde aquí, solo"
+  },
+  "estadoFalhou": {
+    "message": "el automático no lo consiguió — regístralo a mano"
   }
 }

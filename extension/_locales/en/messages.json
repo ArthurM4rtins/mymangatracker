@@ -72,7 +72,7 @@
     "message": "series recognized from the tab title — double-check"
   },
   "obraNoCapitulo": {
-    "message": " — on ch. $capitulo$",
+    "message": "on ch. $capitulo$",
     "placeholders": {
       "capitulo": {
         "content": "$1"
@@ -124,5 +124,26 @@
   },
   "erroFalhaInterna": {
     "message": "Folunio couldn't log that right now"
+  },
+  "nestaAba": {
+    "message": "In this tab"
+  },
+  "obraPareadaMarca": {
+    "message": "paired"
+  },
+  "filtroSemResultado": {
+    "message": "no series on your shelf matches the filter"
+  },
+  "estadoPareada": {
+    "message": "series paired — the icon lights up on this page"
+  },
+  "estadoSemPar": {
+    "message": "this page isn't paired yet — logging here pairs it"
+  },
+  "estadoRegistrado": {
+    "message": "logged from here, on its own"
+  },
+  "estadoFalhou": {
+    "message": "the automatic run didn't make it — log it by hand"
   }
 }
